@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, rmSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { tmpdir } from 'node:os';
 import { githubSlugify, buildSlugRegistry, lookupHeadings } from '../src/refs/slugs.js';
 import { genRefsFromCompiled, checkRefsRegistry } from '../src/refs/registry.js';
+import { useTmpDir } from './helpers/tmp-dir.js';
 
 describe('githubSlugify', () => {
   it('strips brace ids and punctuation', () => {
@@ -40,24 +40,21 @@ describe('semantic chapter keys', () => {
 });
 
 describe('checkRefsRegistry', () => {
-  const work = join(tmpdir(), `mdcp-refs-${Date.now()}`);
-  const refsPath = join(work, 'refs.json');
+  const work = useTmpDir('mdcp-refs-');
 
   it('reports stale registry', () => {
-    mkdirSync(work, { recursive: true });
+    const refsPath = join(work.path, 'refs.json');
     genRefsFromCompiled('# A\n\n## B\n', refsPath);
     const stale = checkRefsRegistry('# A\n\n## B\n\n## C\n', refsPath);
     expect(stale.ok).toBe(false);
-    rmSync(work, { recursive: true, force: true });
   });
 
   it('passes when registry matches compile', () => {
-    mkdirSync(work, { recursive: true });
+    const refsPath = join(work.path, 'refs.json');
     const text = '# A\n\n## B\n';
     genRefsFromCompiled(text, refsPath);
     const ok = checkRefsRegistry(text, refsPath);
     expect(ok.ok).toBe(true);
     expect(readFileSync(refsPath, 'utf-8')).toContain('"slug": "b"');
-    rmSync(work, { recursive: true, force: true });
   });
 });

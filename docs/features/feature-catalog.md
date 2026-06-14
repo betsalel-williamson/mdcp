@@ -1,5 +1,7 @@
 # Feature catalog
 
+Command and capability reference. For the end-to-end mental model (shards, monolith vs publish outputs, validation pipeline, code map), read [Overview](./overview.md) first.
+
 ## Compile (P0.1)
 
 Stitch shard directories into canonical monoliths or publish outputs. Demotes headings, strips `about-this-guide` preamble, optional per-guide titles and publish paths.
@@ -64,9 +66,14 @@ Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host rep
 
 ## Compile hooks (P2.2)
 
-Per-shard transforms via `guides[].compile.hooks`. **`stripAnchors`** is fully implemented (also runs by default via `compile.stripAnchors` on the assembled guide). **`codeEvidence`** and **`inlineDiagrams`** are registered placeholders for consumer hook packs — they pass content through unchanged today.
+Per-shard transforms via `guides[].compile.hooks`. Built-in hooks:
 
-**Link rewriting at assembly time:** every compile rewrites same-guide `./section.md` links to in-document `#anchor` links. When `compile.publishPathRewrite` is set (repo dogfood: `developer` → `DEVELOPERS.md`), shard-relative `../` and `../../` paths are rewritten for publish targets. The **`reviewLinks`** hook name is reserved for consumer extensions; built-in rewriting runs in `assembleGuide` regardless of whether `reviewLinks` is listed in `hooks`.
+- **`stripAnchors`** — removes `{#anchor}` markers (also default via `compile.stripAnchors`)
+- **`codeEvidence`** — rewrites repo source links to `#L` line fragments (symbol or line range in link text)
+- **`inlineDiagrams`** — inlines `<!-- mdcp:diagram path.md -->` and diagram shard links
+- **`reviewLinks`** — rewrites `FIND-*.md` and cross-guide links when `hooksConfig.reviewLinks.targetMonolith` is set
+
+**Link rewriting at assembly time:** every compile rewrites same-guide `./section.md` links to in-document `#anchor` links. When `compile.publishPathRewrite` is set (repo dogfood: `developer` → `DEVELOPERS.md`), shard-relative `../` and `../../` paths are rewritten for publish targets.
 
 ## Agent integration (consumer repo)
 

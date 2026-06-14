@@ -1,0 +1,213 @@
+# Overview
+
+**mdcp** (Markdown Command Line Interface Processor) is a docs-as-code pipeline for repositories where documentation is **authored in small shard files**, **compiled into canonical outputs**, and **validated before merge**. It is designed for teams that use LLMs to draft shards, humans to review them, and compiled monoliths for agents and end-user readers.
+
+This page is the **mental model** for the whole system. Use it to orient yourself before diving into command details, API modules, or config fields.
+
+## What problem it solves
+
+Large Markdown guides are hard to edit, diff, and link correctly. A single `README.md` or `guides.md` with dozens of headings invites merge conflicts, broken cross-references, and orphan sections that no longer appear in the table of contents.
+
+MDCP inverts the workflow:
+
+1. **Authors edit shards** — one file per section, listed in `sections.txt` (or derived from `index.md`).
+2. **Compile stitches shards** — heading levels are normalized, preambles stripped, links rewritten.
+3. **Validation catches drift** — orphans, stale refs, bare cross-references, optional prose/style linters.
+4. **Export serves consumers** — full monolith for humans, token-stripped output for LLM context.
+
+You never hand-maintain the compiled file. Shards are the source of truth; `guides.md` (or a publish target like `README.md`) is generated.
+
+## Core vocabulary
+
+| Term               | Meaning                                                                                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Shard**          | A single `.md` file that becomes part of a guide (for example `01-intro.md`).                                                                    |
+| **Guide**          | A directory of shards plus a manifest (`index.md` or `shards.md`) and `sections.txt`. Named in `compileOrder`.                                   |
+| **Monolith**       | The default compiled output (`outputFile`, usually `guides.md`) — all guides without their own `compile.outputFile`, stitched in `compileOrder`. |
+| **Publish output** | A per-guide compiled file (for example `packages/mdcp-cli/README.md`) written instead of being included in the monolith.                         |
+| **Refs registry**  | `refs.json` — GitHub-style slugs and semantic keys from compiled headings, used by `mdcp refs lookup`.                                           |
+| **`--cwd`**        | Docs root: guide paths, `compile.outputFile`, and default output paths resolve relative to this directory.                                       |
+| **`--config`**     | Config file path, resolved relative to the **invocation** directory (where you run the command), not `--cwd`.                                    |
+
+### Path resolution (`--config` vs `--cwd`)
+
+The CLI uses two separate path bases. This matters for npm scripts run from the repository root:
+
+```bash
+# From repo root — config at docs/mdcp.config.json, shards under docs/
+mdcp compile --config docs/mdcp.config.json --cwd docs
+```
+
+| Path                                 | Resolved from            | Resolves to (example)         |
+| ------------------------------------ | ------------------------ | ----------------------------- |
+| `--config docs/mdcp.config.json`     | Invocation dir (`/repo`) | `/repo/docs/mdcp.config.json` |
+| Guide `features/`                    | `--cwd` (`docs`)         | `/repo/docs/features/`        |
+| `compile.outputFile: "../README.md"` | `--cwd`                  | `/repo/README.md`             |
+
+When your shell is already in the docs directory, use `--config mdcp.config.json` (or the default) and omit `--cwd` unless you need a different docs root.
+
+Consumer details: [Config essentials](../client-cli/config-essentials.md). API: `loadConfig(path, configBase)` uses the same `configBase` rule as the CLI.
+
+## How the pieces fit together
+
+```mermaid
+flowchart TB
+  subgraph author["Authoring layer"]
+    shards["Shard .md files"]
+    index["index.md / sections.txt"]
+  end
+
+  subgraph mdcp["MDCP"]
+    cli["@bwilliamson/mdcp-cli"]
+    core["@bwilliamson/mdcp-core"]
+    presets["@bwilliamson/mdcp-presets"]
+    config["mdcp.config.json"]
+  end
+
+  subgraph outputs["Generated outputs"]
+    monolith["guides.md monolith"]
+    publish["Per-guide publish files"]
+    refs["refs.json"]
+    llm["LLM export .llm.md"]
+  end
+
+  subgraph validate["Validation"]
+    orphans["Orphan / manifest checks"]
+    xrefs["Xref lint"]
+    peers["Peer linters optional"]
+  end
+
+  config --> cli
+  cli --> core
+  presets -.-> peers
+  shards --> core
+  index --> core
+  core --> monolith
+  core --> publish
+  core --> refs
+  core --> llm
+  monolith --> validate
+  shards --> validate
+```
+
+| Package                         | Role                                                                                                       |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `sections`, `shard`, `refs`, `export`, peer linter wrappers. |
+| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.                    |
+| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs for shard and compiled trees (not bundled; opt-in via config).                |
+
+The CLI is a thin wrapper over core. Integrators (CI, editors, agents) can call core directly or shell out to the CLI.
+
+## The pipeline in order
+
+Understanding this sequence explains why most commands exist:
+
+```text
+  [optional] mdcp shard          Split a monolith into guide shards (md-tree)
+           ↓
+  Edit shards + index.md
+           ↓
+  mdcp sections                Regenerate sections.txt from manifest link order
+           ↓
+  mdcp compile                 Assemble monolith + publish outputs; rewrite links
+           ↓
+  mdcp refs generate           Write refs.json from compiled headings
+           ↓
+  mdcp check                   Orphans → compile → refs → xrefs → optional linters
+           ↓
+  mdcp export --llm            Token-stripped context for agents (optional)
+```
+
+**Split** (`mdcp shard`) is the inverse path — used when bootstrapping shards from an existing monolith, not on every edit cycle.
+
+## What compile actually does
+
+For each guide in `compileOrder`, core:
+
+1. **Reads section files** — from `sections.txt`, or from link order in the manifest (`index.md` / `shards.md`). Optional `compile.sectionsHeading` limits which manifest links count.
+2. **Transforms each shard** — demotes headings to fit the guide level; strips `about-this-guide` preamble; runs named **compile hooks** (`stripAnchors`, `codeEvidence`, `inlineDiagrams`, `reviewLinks`, …).
+3. **Assembles the guide body** — injects optional `compile.title`; concatenates sections in order.
+4. **Rewrites links** — same-guide `./section.md` → in-document `#anchor`; optional `publishPathRewrite` for repo-root paths on publish outputs.
+5. **Writes outputs** — monolith file and/or per-guide `compile.outputFile`.
+
+Guides with `compile.outputFile` are **excluded from the monolith** so you can publish npm READMEs, `DEVELOPERS.md`, or review monoliths side by side.
+
+## What validation checks
+
+`mdcp check` runs a fixed core pipeline, then optional peer tools:
+
+| Stage   | Module                  | Catches                                        |
+| ------- | ----------------------- | ---------------------------------------------- |
+| Orphans | `validate/orphans.ts`   | Shard/manifest mismatches                      |
+| Compile | `compile/`              | Assembly failures                              |
+| Refs    | `refs/registry.ts`      | Stale `refs.json`                              |
+| Xrefs   | `xrefs/lint.ts`         | Unlinked chapter-style references              |
+| Linters | `peers/` + host install | markdownlint, Vale, link-check when configured |
+
+Peer linters are **not bundled**. CI uses `--require-lint` / `--require-vale` to fail when tools are missing.
+
+## Config as the wiring layer
+
+`mdcp.config.json` is the single contract between your repo layout and every command:
+
+- **`compileOrder`** — which guides exist and in what order they appear in the monolith.
+- **`guides[].compile`** — per-guide manifest name, hooks, publish path, title, scope root, etc.
+- **`refs`** — where `refs.json` lives and slug algorithm.
+- **`lint` / `vale`** — peer linter config paths and scan globs.
+- **`export.llm`** — what to strip for agent context.
+
+This repository dogfoods under `docs/`: the features guide compiles into `docs/guides.md`; developer, CLI, and core guides publish to `DEVELOPERS.md` and package READMEs. See `docs/mdcp.config.json` for a multi-output layout.
+
+## Code map (where to read implementation)
+
+| Concern                         | Core path                   | CLI command                     |
+| ------------------------------- | --------------------------- | ------------------------------- |
+| Config load / path resolution   | `src/config/`               | all commands                    |
+| Section list + assemble + write | `src/compile/assemble.ts`   | `compile`                       |
+| Per-shard hooks                 | `src/compile/hooks/`        | (config-driven)                 |
+| Sections manifest               | `src/manifest/sections.ts`  | `sections`                      |
+| Shard split orchestration       | `src/shard/orchestrator.ts` | `shard`                         |
+| Slugs + refs registry           | `src/refs/`                 | `refs`                          |
+| Orphan validation               | `src/validate/orphans.ts`   | `check`                         |
+| Xref lint                       | `src/xrefs/lint.ts`         | `check`                         |
+| LLM export                      | `src/export/llm.ts`         | `export --llm`                  |
+| Peer binary resolution          | `src/peers/resolve.ts`      | `lint`, `prose`, `links`, `fix` |
+
+Start with `assemble.ts` and `cli.ts` if you are tracing a compile from config to disk.
+
+## Typical workflows
+
+### LLM authoring a new section
+
+Edit a shard → `mdcp sections` (if manifest links changed) → `mdcp refs lookup "topic"` while writing links → `mdcp check`.
+
+### Human PR review
+
+`mdcp check --require-lint` in CI; optional `mdcp prose` locally.
+
+### Agent reading repo docs
+
+`mdcp export --llm --stdout` or read the compiled monolith; `mdcp refs lookup` for stable anchor targets.
+
+### Publishing package README from shards
+
+Set `guides[].compile.outputFile` to the README path; run `mdcp compile`; README is generated, not hand-edited.
+
+## Design boundaries (intentional limits)
+
+- **GFM only** — no Pandoc, wikilinks, or required `{#heading-ids}`.
+- **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used.
+- **GitHub slugs** — computed from compiled headings, not from author-supplied IDs.
+- **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.
+
+Details: [Design constraints](./design-constraints.md).
+
+## Where to go next
+
+- **Commands and priority tiers** — [Feature catalog](./feature-catalog.md), [Personas and priority tiers](./personas-and-priority-tiers.md)
+- **Install and daily commands** — [Client CLI guide](../client-cli/index.md)
+- **Programmatic API** — [Client core guide](../client-core/index.md)
+- **Config fields** — [API — Config](../client-core/api-config.md)
+- **Compile hooks** — [Compile hooks](../client-core/compile-hooks.md)
+- **Contributing to this repo** — [Developer guide](../developer/index.md)
+- **Migrating from legacy scripts** — [Legacy migration](./legacy-migration.md)

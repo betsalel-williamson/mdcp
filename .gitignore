@@ -24,6 +24,8 @@ coverage/
 # VS Code (keep shared workspace config)
 .vscode/*
 
+.tmp/
+
 # Legacy generated reports
 legacy/.cache/
 legacy/anchors.json

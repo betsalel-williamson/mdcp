@@ -1,5 +1,22 @@
 # Commands reference
 
+## Global options
+
+Every command accepts:
+
+| Option                | Default            | Purpose                                                                    |
+| --------------------- | ------------------ | -------------------------------------------------------------------------- |
+| `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--cwd`) |
+| `--cwd <path>`        | current directory  | Docs root — guide directories and compile outputs are relative to this     |
+
+**Repo-root npm scripts** typically use both flags:
+
+```bash
+mdcp compile --config docs/mdcp.config.json --cwd docs
+```
+
+`--config` locates the file from where the command runs; `--cwd` sets the shard tree root. These bases are independent — see [Config essentials](./config-essentials.md#--config-vs---cwd-path-resolution).
+
 ## Daily workflow
 
 ```bash

@@ -44,18 +44,28 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 3. Run:
 
 ```bash
+# When your shell is in the docs directory
 mdcp compile --config mdcp.config.json
 mdcp check --config mdcp.config.json
 ```
+
+From the **repository root** (typical npm scripts), pass both `--config` and `--cwd`:
+
+```bash
+mdcp compile --config docs/mdcp.config.json --cwd docs
+mdcp check --config docs/mdcp.config.json --cwd docs
+```
+
+`--config` is resolved from where you run the command; `--cwd` sets the docs root. Details: [Config essentials](#--config-vs---cwd-path-resolution).
 
 Collaborating with an LLM? See [LLM collaboration](#llm-collaboration) for bootstrap prompts and toolchain integration (Cursor, Composer, Gemini CLI).
 
 Global options (apply to every command):
 
-| Option                | Default            | Purpose                                                      |
-| --------------------- | ------------------ | ------------------------------------------------------------ |
-| `-c, --config <path>` | `mdcp.config.json` | Path to config file                                          |
-| `--cwd <path>`        | current directory  | Docs root (guide dirs and output paths are relative to this) |
+| Option                | Default            | Purpose                                                                 |
+| --------------------- | ------------------ | ----------------------------------------------------------------------- |
+| `-c, --config <path>` | `mdcp.config.json` | Path to config file (relative to the invocation directory, not `--cwd`) |
+| `--cwd <path>`        | current directory  | Docs root (guide dirs and output paths are relative to this)            |
 
 ## Project layout
 
@@ -76,6 +86,55 @@ Shards use `#` headings so each file reads well on its own. During compile, mdcp
 Guides can also set `compile.outputFile` to publish a standalone document (for example an npm `README.md`) excluded from the monolith.
 
 ## Config essentials
+
+### `--config` vs `--cwd` (path resolution)
+
+These two global options answer different questions:
+
+| Option         | Resolved from                                                                        | Purpose                                                         |
+| -------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| **`--config`** | **Invocation directory** — where you run the command (repo root in most npm scripts) | Locates `mdcp.config.json` on disk                              |
+| **`--cwd`**    | N/A (you pass the docs root explicitly)                                              | Guide directories, compile outputs, and paths inside the config |
+
+`--config` and `--cwd` use independent path bases — the config path is not prefixed with `--cwd`.
+
+#### Repo-root npm scripts
+
+From the repository root, point at the config file and set the docs root separately:
+
+```json
+{
+  "scripts": {
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --cwd docs",
+    "docs:check": "mdcp check --config docs/mdcp.config.json --cwd docs --require-lint"
+  }
+}
+```
+
+```bash
+# Equivalent manual invocation from repo root
+mdcp sections --config docs/mdcp.config.json --cwd docs
+```
+
+This resolves the config as `<repo>/docs/mdcp.config.json` and treats `docs/` as the shard tree root.
+
+#### When you are already inside `docs/`
+
+If your shell working directory **is** the docs folder, omit the `docs/` prefix on `--config` (or rely on the default `mdcp.config.json`):
+
+```bash
+cd docs
+mdcp compile
+mdcp compile --config mdcp.config.json
+```
+
+Here `--cwd` defaults to `docs/` (the invocation directory), which matches the shard layout.
+
+#### Programmatic API
+
+`loadConfig(configPath, configBase)` in `@bwilliamson/mdcp-core` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root separately when resolving guide paths (`resolveGuideDir`, `resolveOutputPath`, etc.). See [API — Config](../client-core/api-config.md).
+
+---
 
 Minimal `mdcp.config.json`:
 
@@ -102,20 +161,31 @@ Per-guide `compile.outputFile` writes a publish target (relative to `--cwd`) and
 
 ### Schema-only fields
 
-These keys validate in `mdcp.config.json` but are **not wired** in the current CLI implementation:
-
-| Field                              | Notes                                                       |
-| ---------------------------------- | ----------------------------------------------------------- |
-| `guides[].splitLevel`              | Reserved for shard split; compile uses directory shards     |
-| `guides[].compile.preambleSection` | Default exists; preamble handling is convention-based today |
-| `guides[].source.type: directory`  | Alternative source model — not used by compile/check        |
-| `refs.slugAlgorithm`               | Only `github` is supported; field is informational          |
-| `vale.strictMinAlertLevel`         | Vale CLI flags are not driven from config yet               |
-| `export.llm.skipIndexFiles`        | LLM export always skips `index.md` today                    |
+| Field                       | Notes                                                      |
+| --------------------------- | ---------------------------------------------------------- |
+| `refs.slugAlgorithm`        | Informational only — only `github` is implemented          |
+| `export.llm.skipIndexFiles` | No-op — compile output never includes `index.md` manifests |
 
 Full schema and examples: [mdcp.config.json in sample-guides](https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json).
 
 ## Commands reference
+
+### Global options
+
+Every command accepts:
+
+| Option                | Default            | Purpose                                                                    |
+| --------------------- | ------------------ | -------------------------------------------------------------------------- |
+| `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--cwd`) |
+| `--cwd <path>`        | current directory  | Docs root — guide directories and compile outputs are relative to this     |
+
+**Repo-root npm scripts** typically use both flags:
+
+```bash
+mdcp compile --config docs/mdcp.config.json --cwd docs
+```
+
+`--config` locates the file from where the command runs; `--cwd` sets the shard tree root. These bases are independent — see [Config essentials](#--config-vs---cwd-path-resolution).
 
 ### Daily workflow
 
@@ -192,7 +262,7 @@ mdcp check
 ### Steps for a new consumer repo
 
 1. Add `mdcp.config.json` to your docs shard directory
-2. Replace local compile scripts with `npx @bwilliamson/mdcp-cli compile`
+2. Replace local compile scripts with repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --cwd docs` (see [Config essentials](#--config-vs---cwd-path-resolution))
 3. Replace validate scripts with `npx @bwilliamson/mdcp-cli check --require-lint`
 4. Use `mdcp refs lookup` for cross-link slugs (no ``)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`

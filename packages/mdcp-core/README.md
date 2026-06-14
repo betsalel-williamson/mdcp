@@ -62,12 +62,31 @@ Use `writeCompiledGuides` when you need to write the monolith and per-guide publ
 
 ## API — Config
 
-| Export                                                                                 | Purpose                              |
-| -------------------------------------------------------------------------------------- | ------------------------------------ |
-| `loadConfig(path, cwd)`                                                                | Load and validate `mdcp.config.json` |
-| `resolveOutputPath`, `resolveGuidesRoot`, `resolveGuideDir`                            | Resolve paths from config            |
-| `getGuideConfig`, `xrefScanDirs`                                                       | Per-guide and xref scan helpers      |
-| `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput` | Zod schema and types                 |
+| Export                                                                                 | Purpose                                                                     |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `loadConfig(path, configBase)`                                                         | Load and validate `mdcp.config.json` (`path` is resolved from `configBase`) |
+| `resolveOutputPath`, `resolveGuidesRoot`, `resolveGuideDir`                            | Resolve paths from config (relative to docs root / `--cwd`)                 |
+| `getGuideConfig`, `xrefScanDirs`                                                       | Per-guide and xref scan helpers                                             |
+| `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput` | Zod schema and types                                                        |
+
+### Path resolution: `configBase` vs docs root
+
+The CLI and core library use **two different base directories**:
+
+| Concern                    | Base directory                                            | Example                                                                          |
+| -------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Finding `mdcp.config.json` | `configBase` — invocation `process.cwd()` in the CLI      | `--config docs/mdcp.config.json` from repo root → `<repo>/docs/mdcp.config.json` |
+| Guide dirs, outputs, refs  | Docs root — `--cwd` argument (defaults to invocation cwd) | `resolveGuideDir('features', config, cwd)` → `<cwd>/features`                    |
+
+```typescript
+import { loadConfig, resolveGuideDir } from '@bwilliamson/mdcp-core';
+
+// Repo-root script: config at docs/mdcp.config.json, shards under docs/
+const config = loadConfig('docs/mdcp.config.json', process.cwd());
+const featuresDir = resolveGuideDir('features', config, join(process.cwd(), 'docs'));
+```
+
+Pass `process.cwd()` (or the invocation directory) as `configBase` for `loadConfig`. Pass the docs root as the `cwd` argument to `resolveGuideDir`, `resolveOutputPath`, and `resolveGuidesRoot`.
 
 Per-guide `compile.outputFile` writes a publish target and excludes that guide from the monolith. `compile.includeBanner` controls whether the global banner is prepended (defaults to `false` when `outputFile` is set).
 
@@ -145,10 +164,11 @@ registerCompileHook('myHook', (ctx) => {
 Built-in hook names are configured in `mdcp.config.json` under `guides[].compile.hooks`:
 
 - **`stripAnchors`** — removes explicit `` markers per shard
-- **`codeEvidence`**, **`inlineDiagrams`** — reserved names (passthrough placeholders today; extend via `registerCompileHook` in your repo)
-- **`reviewLinks`** — reserved name for consumer extensions; built-in intra-guide and `publishPathRewrite` link rewriting runs at assembly time in `assembleGuide`
+- **`codeEvidence`** — rewrites Evidence / source-file links to `#L` fragments
+- **`inlineDiagrams`** — inlines diagram markdown via directive or diagram-path links
+- **`reviewLinks`** — rewrites finding and cross-guide links for monolith cohesion (`hooksConfig.reviewLinks.targetMonolith`)
 
-Default `compile.stripAnchors: true` also strips anchors on the full assembled guide without naming the hook.
+Optional hook config under `guides[].compile.hooksConfig`. Use `compile.sectionsHeading` (e.g. `"Sections"`) so `mdcp sections` only picks links under that `##` heading.
 
 Details in the [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).
 

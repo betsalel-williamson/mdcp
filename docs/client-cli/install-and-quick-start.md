@@ -42,15 +42,25 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 3. Run:
 
 ```bash
+# When your shell is in the docs directory
 mdcp compile --config mdcp.config.json
 mdcp check --config mdcp.config.json
 ```
+
+From the **repository root** (typical npm scripts), pass both `--config` and `--cwd`:
+
+```bash
+mdcp compile --config docs/mdcp.config.json --cwd docs
+mdcp check --config docs/mdcp.config.json --cwd docs
+```
+
+`--config` is resolved from where you run the command; `--cwd` sets the docs root. Details: [Config essentials](./config-essentials.md#--config-vs---cwd-path-resolution).
 
 Collaborating with an LLM? See [LLM collaboration](./llm-collaboration.md) for bootstrap prompts and toolchain integration (Cursor, Composer, Gemini CLI).
 
 Global options (apply to every command):
 
-| Option                | Default            | Purpose                                                      |
-| --------------------- | ------------------ | ------------------------------------------------------------ |
-| `-c, --config <path>` | `mdcp.config.json` | Path to config file                                          |
-| `--cwd <path>`        | current directory  | Docs root (guide dirs and output paths are relative to this) |
+| Option                | Default            | Purpose                                                                 |
+| --------------------- | ------------------ | ----------------------------------------------------------------------- |
+| `-c, --config <path>` | `mdcp.config.json` | Path to config file (relative to the invocation directory, not `--cwd`) |
+| `--cwd <path>`        | current directory  | Docs root (guide dirs and output paths are relative to this)            |

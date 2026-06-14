@@ -6,12 +6,13 @@ export function writeSectionsManifest(
   guideDir: string,
   _guideName?: string,
   manifest?: string,
+  sectionsHeading?: string,
 ): number {
   const manifestPath = join(guideDir, 'sections.txt');
   if (existsSync(manifestPath)) {
     unlinkSync(manifestPath);
   }
-  const files = sectionFiles(guideDir, { manifest });
+  const files = sectionFiles(guideDir, { manifest, sectionsHeading });
   const lines = files.map((file) => relative(guideDir, file));
   writeFileSync(manifestPath, lines.join('\n') + '\n', 'utf-8');
   return files.length;
@@ -21,13 +22,14 @@ export interface SectionsManifestEntry {
   name: string;
   dir: string;
   manifest?: string;
+  sectionsHeading?: string;
 }
 
 export function writeAllSectionsManifests(
   entries: SectionsManifestEntry[],
 ): { name: string; count: number }[] {
-  return entries.map(({ name, dir, manifest }) => {
-    const count = writeSectionsManifest(dir, name, manifest);
+  return entries.map(({ name, dir, manifest, sectionsHeading }) => {
+    const count = writeSectionsManifest(dir, name, manifest, sectionsHeading);
     return { name, count };
   });
 }

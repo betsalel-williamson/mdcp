@@ -1,13 +1,16 @@
-import { mkdirSync, rmSync, writeFileSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdirSync, rmSync, writeFileSync, readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { tmpdir } from 'node:os';
+import { createTmpDir, removeTmpDir } from '../tmp-dir.js';
 
 export interface ShardGuideMapping {
   name: string;
   h1Index?: number;
   mergeH1Indices?: number[];
   demoteFirstH1InMerge?: boolean[];
+  /** Existing shard directory — skip md-tree explode. */
+  directoryPath?: string;
+  splitLevel?: number;
 }
 
 function promotePreambleToH2(text: string, heading = 'About this guide'): string {
@@ -57,8 +60,7 @@ export interface ShardOptions {
 }
 
 export function shardFromMonolith(options: ShardOptions): void {
-  const work = join(tmpdir(), `mdcp-shard-${Date.now()}`);
-  mkdirSync(work, { recursive: true });
+  const work = createTmpDir('mdcp-shard-');
 
   try {
     const h1Out = join(work, 'h1');
@@ -68,6 +70,24 @@ export function shardFromMonolith(options: ShardOptions): void {
     const extracted = readdirSync(h1Out).sort();
 
     for (const mapping of options.mappings) {
+      const splitLevel = String(mapping.splitLevel ?? 2);
+
+      if (mapping.directoryPath) {
+        const dest = join(options.guidesRoot, mapping.name);
+        const src = resolve(options.guidesRoot, mapping.directoryPath);
+        if (!existsSync(src)) {
+          throw new Error(`Directory source missing for ${mapping.name}: ${src}`);
+        }
+        rmSync(dest, { recursive: true, force: true });
+        mkdirSync(dest, { recursive: true });
+        for (const file of readdirSync(src)) {
+          if (file.endsWith('.md')) {
+            writeFileSync(join(dest, file), readFileSync(join(src, file), 'utf-8'), 'utf-8');
+          }
+        }
+        continue;
+      }
+
       let sourceText = '';
 
       if (mapping.mergeH1Indices) {
@@ -97,7 +117,7 @@ export function shardFromMonolith(options: ShardOptions): void {
       const dest = join(options.guidesRoot, mapping.name);
       rmSync(dest, { recursive: true, force: true });
       mkdirSync(dest, { recursive: true });
-      runMdTree(['explode', srcPath, dest]);
+      runMdTree(['explode', srcPath, dest, splitLevel]);
     }
 
     writeFileSync(
@@ -106,6 +126,6 @@ export function shardFromMonolith(options: ShardOptions): void {
       'utf-8',
     );
   } finally {
-    rmSync(work, { recursive: true, force: true });
+    removeTmpDir(work);
   }
 }

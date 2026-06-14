@@ -1,32 +1,26 @@
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { tmpdir } from 'node:os';
 import { lintXrefs } from '../src/xrefs/lint.js';
+import { useTmpDir } from './helpers/tmp-dir.js';
 
 describe('lintXrefs', () => {
-  const work = join(tmpdir(), `mdcp-xrefs-${Date.now()}`);
+  const work = useTmpDir('mdcp-xrefs-');
 
   it('flags bare See Section N', () => {
-    mkdirSync(work, { recursive: true });
-    writeFileSync(join(work, 'bad.md'), 'See Section 2 for details.\n');
-    const issues = lintXrefs([work]);
+    writeFileSync(join(work.path, 'bad.md'), 'See Section 2 for details.\n');
+    const issues = lintXrefs([work.path]);
     expect(issues.length).toBeGreaterThan(0);
     expect(issues[0]).toMatch(/bare cross-ref|unlinked/i);
-    rmSync(work, { recursive: true, force: true });
   });
 
   it('allows markdown links', () => {
-    mkdirSync(work, { recursive: true });
-    writeFileSync(join(work, 'ok.md'), 'See [Section 2](./other.md#section-2) for details.\n');
-    expect(lintXrefs([work])).toEqual([]);
-    rmSync(work, { recursive: true, force: true });
+    writeFileSync(join(work.path, 'ok.md'), 'See [Section 2](./other.md#section-2) for details.\n');
+    expect(lintXrefs([work.path])).toEqual([]);
   });
 
   it('ignores bare refs inside fenced code', () => {
-    mkdirSync(work, { recursive: true });
-    writeFileSync(join(work, 'ok.md'), '```\nSee Section 2\n```\n');
-    expect(lintXrefs([work])).toEqual([]);
-    rmSync(work, { recursive: true, force: true });
+    writeFileSync(join(work.path, 'ok.md'), '```\nSee Section 2\n```\n');
+    expect(lintXrefs([work.path])).toEqual([]);
   });
 });
