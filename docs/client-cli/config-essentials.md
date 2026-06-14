@@ -1,86 +1,81 @@
 # Config essentials
 
-## `--config` vs `--cwd` (path resolution)
+## `--config` vs `--docs-root`
 
 These two global options answer different questions:
 
-| Option         | Resolved from                                                                        | Purpose                                                       |
-| -------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| **`--config`** | **Invocation directory** — where you run the command (repo root in most npm scripts) | Locates `mdcp.config.json` on disk                            |
-| **`--cwd`**    | N/A (you pass the docs root explicitly)                                              | Docs root — see [Config path bases](#config-path-bases) below |
+| Option            | Resolved from                                                                        | Purpose                                                     |
+| ----------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| **`--config`**    | **Invocation directory** — where you run the command (repo root in most npm scripts) | Locates `mdcp.config.json` on disk                          |
+| **`--docs-root`** | N/A (you pass the shard tree root explicitly)                                        | Root of guide directories — see [Path layout](#path-layout) |
 
-`--config` and `--cwd` use independent path bases — the config path is not prefixed with `--cwd`.
+`--cwd` is a **deprecated alias** for `--docs-root`. `--config` is never prefixed with `--docs-root`.
 
 ### Repo-root npm scripts
-
-From the repository root, point at the config file and set the docs root separately:
 
 ```json
 {
   "scripts": {
-    "docs:compile": "mdcp compile --config docs/mdcp.config.json --cwd docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --cwd docs --require-lint"
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint"
   }
 }
 ```
 
-```bash
-# Equivalent manual invocation from repo root
-mdcp compile --config docs/mdcp.config.json --cwd docs
-```
-
-This resolves the config as `<repo>/docs/mdcp.config.json` and treats `docs/` as the shard tree root.
-
 ### When you are already inside `docs/`
-
-If your shell working directory **is** the docs folder, omit the `docs/` prefix on `--config` (or rely on the default `mdcp.config.json`):
 
 ```bash
 cd docs
 mdcp compile
-mdcp compile --config mdcp.config.json
+mdcp compile --config mdcp.config.json --docs-root .
 ```
-
-Here `--cwd` defaults to `docs/` (the invocation directory), which matches the shard layout.
 
 ### Programmatic API
 
-`loadConfig(configPath, configBase)` in `@bwilliamson/mdcp-core` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root separately when resolving guide paths (`resolveGuideDir`, `resolveOutputPath`, `resolveRefsPath`, etc.). See [API — Config](../client-core/api-config.md).
+`loadConfig(configPath, configBase)` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root as `docsRoot` when resolving guide paths. See [API — Config](../client-core/api-config.md).
 
-### Config path bases
+## Path layout
 
-Config path fields use **three bases**. Mixing them up is the most common path bug.
+Two roots (NPM-style):
 
-| Base                    | Set by                                     | Example (`--cwd docs`)                                                           |
-| ----------------------- | ------------------------------------------ | -------------------------------------------------------------------------------- |
-| **Invocation dir**      | where you run the command                  | `--config docs/mdcp.config.json` from repo root → `<repo>/docs/mdcp.config.json` |
-| **Docs root** (`--cwd`) | explicit flag (defaults to invocation dir) | `guides/features/` → `docs/features/`                                            |
-| **`outputDir`**         | config field under `--cwd`                 | `_build/compiled` → `docs/_build/compiled/`                                      |
+| Root            | CLI / config                   | Role                                             |
+| --------------- | ------------------------------ | ------------------------------------------------ |
+| **Docs root**   | `--docs-root`                  | Human shard trees — one subdirectory = one guide |
+| **Output root** | `outputDir` (default `_build`) | Generated markdown and cache — safe to delete    |
 
-| Config field         | Resolved from                                | Example value     | Resolves to (`--cwd docs`)         |
-| -------------------- | -------------------------------------------- | ----------------- | ---------------------------------- |
-| `guides[].path`      | `--cwd`                                      | `features`        | `docs/features/`                   |
-| Default guide dir    | `outputDir` + guide name                     | (omit `path`)     | `docs/<outputDir>/<name>/`         |
-| `compile.outputFile` | `outputDir` (or `--cwd` when path uses `..`) | `glossary.md`     | `docs/_build/compiled/glossary.md` |
-| `outputDir`          | `--cwd`                                      | `_build/compiled` | `docs/_build/compiled/`            |
-| `outputFile`         | `outputDir`                                  | `guides.md`       | `docs/_build/compiled/guides.md`   |
-| `refs.registryFile`  | `outputDir`                                  | `refs.json`       | `docs/_build/compiled/refs.json`   |
+**One rule for all generated paths:** values are **relative to `outputDir`**, unless **absolute**.
 
-Monolith `outputFile` and `refs.registryFile` share the same rule: **relative to `outputDir`**, not `--cwd`.
+```text
+docs/                          ← --docs-root
+  mdcp.config.json
+  features/                    ← guide "features" (shards)
+  client-cli/                  ← guide "client-cli"
+  styles/                      ← support dir (not in compileOrder)
+  _build/                      ← outputDir (generated)
+    features.md
+    client-cli.md
+    guides.md                  ← optional monolith (when outputFile set)
+    .caches/
+      refs.json
+```
 
-### Per-guide `compile.outputFile`
+### Guide = one subdirectory
 
-Per-guide publish paths use a **different rule** from the monolith filename:
+Each guide is a **folder** directly under the docs root. The guide **`name`** matches the **directory name**. Omit `guides[].path` unless shards live elsewhere.
 
-| `compile.outputFile` shape             | Resolved from               | Example (`--cwd docs`, `outputDir: "_build/compiled"`)          |
-| -------------------------------------- | --------------------------- | --------------------------------------------------------------- |
-| Simple name or subpath (no `..`)       | `outputDir` under `--cwd`   | `"glossary.md"` → `docs/_build/compiled/glossary.md`            |
-| Path with `..` (repo publish)          | `--cwd`                     | `"../packages/foo/README.md"` → `<repo>/packages/foo/README.md` |
-| Already cwd-relative under `outputDir` | Normalized (no double join) | `"_build/compiled/glossary.md"` → same as `"glossary.md"`       |
+Only directories listed in `compileOrder` are compiled and linted. Support folders (for example `styles/`) stay on disk but are out of scope.
 
-**Common mistake:** expecting a bare filename to land next to the monolith when `outputDir` is nested. MDCP joins bare names under `outputDir`; use a `..` path only when publishing outside the docs tree (npm READMEs, repo-root `DEVELOPERS.md`).
+| Config field          | Resolved from | Example (`--docs-root docs`)              |
+| --------------------- | ------------- | ----------------------------------------- |
+| Default guide shards  | `docsRoot`    | `docs/features/`                          |
+| `guides[].path`       | `docsRoot`    | `docs/features/`                          |
+| `outputDir`           | `docsRoot`    | `docs/_build/`                            |
+| Per-guide output      | `outputDir`   | `docs/_build/features.md`                 |
+| Monolith `outputFile` | `outputDir`   | `docs/_build/guides.md` (opt-in)          |
+| `refs.registryFile`   | `outputDir`   | `docs/_build/.caches/refs.json`           |
+| `compile.outputFile`  | `outputDir`   | `../packages/foo/README.md` from `_build` |
 
-If you accidentally give a cwd-relative path for monolith `outputFile` or `refs.registryFile` that already lies under `outputDir` (for example `"_build/compiled/refs.json"` when `outputDir` is `"_build/compiled"`), MDCP normalizes it. Prefer outputDir-relative values in config (`"refs.json"`, `"guides.md"`).
+Delete `_build/` to clean all generated output. `.caches/` holds derived state (refs registry) only.
 
 ---
 
@@ -88,47 +83,44 @@ Minimal `mdcp.config.json`:
 
 ```json
 {
-  "outputFile": "guides.md",
   "compileOrder": ["overview", "admin-guide"],
-  "guides": [{ "name": "overview" }, { "name": "admin-guide" }],
-  "refs": { "registryFile": "refs.json" }
+  "guides": [{ "name": "overview" }, { "name": "admin-guide" }]
 }
 ```
 
-| Field                           | Purpose                                                                            |
-| ------------------------------- | ---------------------------------------------------------------------------------- |
-| `compileOrder`                  | Order of guide directories in the compiled monolith                                |
-| `guides`                        | Per-guide options (hooks, manifests, separate outputs)                             |
-| `outputDir`                     | Compile output root (relative to `--cwd`)                                          |
-| `outputFile`                    | Monolith filename (relative to `outputDir`)                                        |
-| `refs.registryFile`             | Cross-link lookup table (relative to `outputDir`)                                  |
-| `lint`                          | markdownlint configs, xref checks, link checking                                   |
-| `lint.markdownlint.shardsGlobs` | Optional shard lint paths relative to `--cwd` (default: `compileOrder` guide dirs) |
-| `vale`                          | Prose lint and `.vale.ini` location                                                |
-| `vale.scanGlobs`                | Optional Vale paths relative to `--cwd` (default: same guide dirs as shard lint)   |
-| `source`                        | Monolith path — required only for `mdcp shard`                                     |
+Defaults: `outputDir` `_build`, per-guide outputs `overview.md` and `admin-guide.md`, refs at `.caches/refs.json`. No monolith unless you set top-level `outputFile`.
 
-**Nested `outputDir` example** — use outputDir-relative filenames:
+| Field                | Purpose                                                              |
+| -------------------- | -------------------------------------------------------------------- |
+| `compileOrder`       | Guide directories to compile, in stitch order for optional monolith  |
+| `guides`             | Per-guide options (hooks, manifests, publish paths)                  |
+| `outputDir`          | Generated output root (relative to `--docs-root`)                    |
+| `outputFile`         | Optional stitched monolith (relative to `outputDir`)                 |
+| `refs.registryFile`  | Cross-link lookup table (default `.caches/refs.json`)                |
+| `compile.outputFile` | Override per-guide output path (relative to `outputDir` or absolute) |
 
-```json
-{
-  "outputDir": "_build/compiled",
-  "outputFile": "guides.md",
-  "compileOrder": ["overview"],
-  "refs": { "registryFile": "refs.json" }
-}
-```
+### Default per-guide outputs
 
-Per-guide `compile.outputFile` writes a publish target and excludes that guide from the monolith. With nested `outputDir`, a bare filename resolves under `outputDir` (path bases table). Use `compile.includeBanner: false` for npm README outputs.
+When `compile.outputFile` is omitted:
+
+| Guides in `compileOrder` | Default file under `outputDir` |
+| ------------------------ | ------------------------------ |
+| 1                        | `guide.md`                     |
+| 2+                       | `{name}.md` per guide          |
+
+When `compile.outputFile` is set, that guide writes only to that path (for example npm README publish via `../packages/foo/README.md`) and is excluded from an optional monolith.
+
+### Optional monolith
+
+Set top-level `outputFile` (for example `"guides.md"`) to also stitch guides **without** explicit `compile.outputFile` into one file under `outputDir`.
 
 ### `sectionsHeading`
 
-When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading` to that heading. See [Manifest compile order](../features/manifest-compile-order.md) for behavior, examples, and when it is required.
+When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading`. See [Manifest compile order](../features/manifest-compile-order.md).
 
 ```json
 {
   "name": "glossary",
-  "path": "glossary",
   "compile": {
     "title": "Compound glossary",
     "sectionsHeading": "Sections",
