@@ -171,16 +171,18 @@ Minimal `mdcp.config.json`:
 }
 ```
 
-| Field               | Purpose                                                |
-| ------------------- | ------------------------------------------------------ |
-| `compileOrder`      | Order of guide directories in the compiled monolith    |
-| `guides`            | Per-guide options (hooks, manifests, separate outputs) |
-| `outputDir`         | Compile output root (relative to `--cwd`)              |
-| `outputFile`        | Monolith filename (relative to `outputDir`)            |
-| `refs.registryFile` | Cross-link lookup table (relative to `outputDir`)      |
-| `lint`              | markdownlint configs, xref checks, link checking       |
-| `vale`              | Prose lint paths and `.vale.ini` location              |
-| `source`            | Monolith path — required only for `mdcp shard`         |
+| Field                           | Purpose                                                                            |
+| ------------------------------- | ---------------------------------------------------------------------------------- |
+| `compileOrder`                  | Order of guide directories in the compiled monolith                                |
+| `guides`                        | Per-guide options (hooks, manifests, separate outputs)                             |
+| `outputDir`                     | Compile output root (relative to `--cwd`)                                          |
+| `outputFile`                    | Monolith filename (relative to `outputDir`)                                        |
+| `refs.registryFile`             | Cross-link lookup table (relative to `outputDir`)                                  |
+| `lint`                          | markdownlint configs, xref checks, link checking                                   |
+| `lint.markdownlint.shardsGlobs` | Optional shard lint paths relative to `--cwd` (default: `compileOrder` guide dirs) |
+| `vale`                          | Prose lint and `.vale.ini` location                                                |
+| `vale.scanGlobs`                | Optional Vale paths relative to `--cwd` (default: same guide dirs as shard lint)   |
+| `source`                        | Monolith path — required only for `mdcp shard`                                     |
 
 **Nested `outputDir` example** — use outputDir-relative filenames:
 
@@ -554,3 +556,25 @@ npm install -D prettier markdownlint-cli2 @bwilliamson/mdcp-presets
 Install **Vale** separately so `vale` is on your `PATH` — see [Vale installation](https://vale.sh/docs/vale-cli/installation/) (Homebrew, Chocolatey, Snap, or GitHub release). After adding a `.vale.ini`, run `vale sync` in that directory.
 
 Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.
+
+### In-scope guide fileset
+
+MDCP knows the **full fileset** it manages: registered guides in `compileOrder`, resolved via `guides[].path` or `outputDir/<name>`. Shard markdownlint and Vale prose **only touch documents in that scope** — never legacy flat `.md` files, unregistered sibling folders, or other markdown under `--cwd` that mdcp does not compile.
+
+| Command                                        | Default scope                                   | Out of scope (skipped)                            |
+| ---------------------------------------------- | ----------------------------------------------- | ------------------------------------------------- |
+| Shard markdownlint (`mdcp lint`, `mdcp check`) | `compileOrder` guide directories                | Legacy flat docs, unrelated subdirs under `--cwd` |
+| Vale prose (`mdcp prose`, `mdcp check`)        | Same guide directories                          | Same                                              |
+| Xref lint (`mdcp check`)                       | Same guide directories                          | Same                                              |
+| Compiled markdownlint                          | Monolith and publish outputs (`compiledConfig`) | Separate pass — not shard trees                   |
+
+Optional overrides **narrow** scope further; they never widen it beyond what you explicitly list:
+
+| Config field                    | Purpose                                                                         |
+| ------------------------------- | ------------------------------------------------------------------------------- |
+| `lint.markdownlint.shardsGlobs` | Shard markdownlint paths relative to `--cwd` (default: compileOrder guide dirs) |
+| `vale.scanGlobs`                | Vale prose paths relative to `--cwd` (default: same guide dirs)                 |
+
+The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (`!**/index.md`, `!guides.md`). **Scope always comes from the CLI** — not from preset globs.
+
+`mdcp fix` is out of band: it runs unscoped `prettier --write .` and `markdownlint-cli2 --fix` across the repo and is not part of mdcp's guide fileset gate.
