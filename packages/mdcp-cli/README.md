@@ -273,7 +273,7 @@ Install and wire:
 
 4. **Vale** — Add `.vale.ini` under `docs/`. Ask me for 3 examples of ambiguous domain terms, then write custom Vale rules that warn when authors confuse them.
 
-5. **Do not create** `shard.sh`, `compile_sections.py`, `lint-xrefs.py`, `validate.sh`, or hand-maintained ``headings. Use`mdcp shard`, `mdcp compile`, `mdcp check`, and `mdcp refs lookup` instead.
+5. **Do not create** `shard.sh`, `compile_sections.py`, `lint-xrefs.py`, `validate.sh`, or hand-maintained explicit heading-id markers. Use `mdcp shard`, `mdcp compile`, `mdcp check`, and `mdcp refs lookup` instead.
 
 6. **Write the docs** — After shards exist:
    - `mdcp sections --config docs/mdcp.config.json --cwd docs`
