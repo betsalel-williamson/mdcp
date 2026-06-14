@@ -6,6 +6,11 @@ import { stripExplicitAnchorMarkers } from './anchors.js';
 import { extractFirstHeading, stripFirstHeadingLine, formatCompileTitle } from './compile-title.js';
 import { applyCompileHooks } from './hooks.js';
 import './hooks/builtin.js';
+import {
+  buildSectionSlugMap,
+  rewriteIntraGuideFileLinks,
+  rewritePublishPathLinks,
+} from './publish-links.js';
 import type { GuideConfig, MdcpConfig } from '../config/schema.js';
 
 const FILE_LINK_RE = /\[[^\]]*\]\(([^)]+\.md)(?:#[^)]*)?\)/g;
@@ -154,6 +159,12 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
 
   if (options.stripAnchors !== false) {
     compiled = stripExplicitAnchorMarkers(compiled);
+  }
+
+  if (options.outputBasename) {
+    const slugByBasename = buildSectionSlugMap(files);
+    compiled = rewriteIntraGuideFileLinks(compiled, slugByBasename);
+    compiled = rewritePublishPathLinks(compiled);
   }
 
   return compiled;

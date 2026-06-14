@@ -124,6 +124,43 @@ describe('compileGuides', () => {
 
     rmSync(work, { recursive: true, force: true });
   });
+
+  it('rewrites intra-guide .md links to anchors in publish output', () => {
+    const work = join(tmpdir(), `mdcp-publish-links-${Date.now()}`);
+    const guideDir = join(work, 'guide');
+    mkdirSync(guideDir, { recursive: true });
+
+    writeFileSync(join(guideDir, 'index.md'), '# @example/mdcp-cli\n\n');
+    writeFileSync(
+      join(guideDir, 'install-and-quick-start.md'),
+      '# Install and quick start\n\nCollaborating with an LLM? See [LLM collaboration](./llm-collaboration.md) for details.\n',
+    );
+    writeFileSync(join(guideDir, 'llm-collaboration.md'), '# LLM collaboration\n\nContent.\n');
+    writeFileSync(
+      join(guideDir, 'sections.txt'),
+      'install-and-quick-start.md\nllm-collaboration.md\n',
+    );
+
+    const publishOut = join(work, 'README.md');
+    const opts = {
+      guidesRoot: work,
+      compileOrder: ['guide'],
+      cwd: work,
+      guides: [
+        {
+          name: 'guide',
+          compile: { outputFile: 'README.md', includeBanner: false },
+        },
+      ],
+    } satisfies Parameters<typeof writeCompiledGuides>[0];
+
+    writeCompiledGuides(opts, join(work, 'guides.md'));
+    const text = readFileSync(publishOut, 'utf-8');
+    expect(text).toContain('[LLM collaboration](#llm-collaboration)');
+    expect(text).not.toMatch(/\]\(\.\/llm-collaboration\.md\)/);
+
+    rmSync(work, { recursive: true, force: true });
+  });
 });
 
 describe('cli e2e', () => {
