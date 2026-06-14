@@ -46,7 +46,7 @@ mdcp compile --config mdcp.config.json
 mdcp check --config mdcp.config.json
 ```
 
-Collaborating with an LLM? See [LLM collaboration](./llm-collaboration.md) for bootstrap prompts and toolchain integration (Cursor, Composer, Gemini CLI).
+Collaborating with an LLM? See [LLM collaboration](#llm-collaboration) for bootstrap prompts and toolchain integration (Cursor, Composer, Gemini CLI).
 
 Global options (apply to every command):
 
@@ -205,15 +205,15 @@ This workflow is how the mdcp project itself was bootstrapped: an early prompt a
 
 ### Original prompt → mdcp
 
-| Original ask                    | Use mdcp instead                                                       |
-| ------------------------------- | ---------------------------------------------------------------------- |
-| `shard.sh` + BMAD / md-tree     | `mdcp shard` (split only; requires `source` in config)                 |
-| `compile_sections.py`           | `mdcp compile` (heading demotion, preamble strip)                      |
-| Two `.markdownlint.jsonc` files | `@bwilliamson/mdcp-presets` shard + compiled configs                   |
-| `lint-xrefs.py`                 | `mdcp check` (built-in xref lint)                                      |
-| Anchor registry JSON + ``       | `mdcp refs lookup` / `refs.json` (GitHub slugs on **compiled** output) |
-| Vale ambiguous-term rules       | `.vale.ini` + custom YAML in your repo (you define the terms)          |
-| `validate.sh`                   | `mdcp check --require-lint` (+ optional `--require-vale`)              |
+| Original ask                       | Use mdcp instead                                                       |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| `shard.sh` + BMAD / md-tree        | `mdcp shard` (split only; requires `source` in config)                 |
+| `compile_sections.py`              | `mdcp compile` (heading demotion, preamble strip)                      |
+| Two `.markdownlint.jsonc` files    | `@bwilliamson/mdcp-presets` shard + compiled configs                   |
+| `lint-xrefs.py`                    | `mdcp check` (built-in xref lint)                                      |
+| Anchor registry JSON + heading ids | `mdcp refs lookup` / `refs.json` (GitHub slugs on **compiled** output) |
+| Vale ambiguous-term rules          | `.vale.ini` + custom YAML in your repo (you define the terms)          |
+| `validate.sh`                      | `mdcp check --require-lint` (+ optional `--require-vale`)              |
 
 Full port map: [Legacy migration](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/legacy-migration.md).
 
@@ -306,7 +306,7 @@ mdcp exposes a **tool-agnostic contract**: agents need shell access and the abil
 | **Generic CI / headless agents**             | Same npm scripts. `mdcp check` exit code is the quality gate.                                                                                                                                                                                                                                                                                                                |
 | **Any agent writing links**                  | `npm run docs:refs -- "topic"` or `mdcp refs lookup "topic" --format json` before inserting cross-links.                                                                                                                                                                                                                                                                     |
 
-For npm script stubs only, see [Agent integration](./agent-integration.md).
+For npm script stubs only, see [Agent integration](#agent-integration).
 
 ### Follow-up prompts
 
@@ -345,14 +345,14 @@ When reviewing an agent's documentation PR:
 
 ### See also
 
-- [Agent integration](./agent-integration.md) — npm scripts quick reference
-- [Project layout](./project-layout.md) — shard directory structure
-- [Cross-links and refs](./cross-links-and-refs.md) — slug lookup while authoring
-- [Optional linters](./optional-linters.md) — markdownlint, Vale, link check peers
+- [Agent integration](#agent-integration) — npm scripts quick reference
+- [Project layout](#project-layout) — shard directory structure
+- [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
+- [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
 
 ## Agent integration
 
-npm script stubs for wiring mdcp into any coding agent. For bootstrap prompts, multi-tool workflows (Cursor, Composer, Gemini CLI), and human review checklists, see [LLM collaboration](./llm-collaboration.md).
+npm script stubs for wiring mdcp into any coding agent. For bootstrap prompts, multi-tool workflows (Cursor, Composer, Gemini CLI), and human review checklists, see [LLM collaboration](#llm-collaboration).
 
 Add npm scripts in your consumer repo:
 
@@ -387,7 +387,7 @@ mdcp check --require-lint
 
 ### Further reading
 
-- [LLM collaboration](./llm-collaboration.md) — bootstrap prompt, toolchain integration, follow-up templates
+- [LLM collaboration](#llm-collaboration) — bootstrap prompt, toolchain integration, follow-up templates
 - [Project README](https://github.com/betsalel-williamson/mdcp#readme) — concepts and design rationale
 - [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md) — full maintainer docs
 - [Sample guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides)

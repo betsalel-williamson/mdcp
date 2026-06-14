@@ -6,15 +6,15 @@ This workflow is how the mdcp project itself was bootstrapped: an early prompt a
 
 ## Original prompt → mdcp
 
-| Original ask                    | Use mdcp instead                                                       |
-| ------------------------------- | ---------------------------------------------------------------------- |
-| `shard.sh` + BMAD / md-tree     | `mdcp shard` (split only; requires `source` in config)                 |
-| `compile_sections.py`           | `mdcp compile` (heading demotion, preamble strip)                      |
-| Two `.markdownlint.jsonc` files | `@bwilliamson/mdcp-presets` shard + compiled configs                   |
-| `lint-xrefs.py`                 | `mdcp check` (built-in xref lint)                                      |
-| Anchor registry JSON + `{#ids}` | `mdcp refs lookup` / `refs.json` (GitHub slugs on **compiled** output) |
-| Vale ambiguous-term rules       | `.vale.ini` + custom YAML in your repo (you define the terms)          |
-| `validate.sh`                   | `mdcp check --require-lint` (+ optional `--require-vale`)              |
+| Original ask                       | Use mdcp instead                                                       |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| `shard.sh` + BMAD / md-tree        | `mdcp shard` (split only; requires `source` in config)                 |
+| `compile_sections.py`              | `mdcp compile` (heading demotion, preamble strip)                      |
+| Two `.markdownlint.jsonc` files    | `@bwilliamson/mdcp-presets` shard + compiled configs                   |
+| `lint-xrefs.py`                    | `mdcp check` (built-in xref lint)                                      |
+| Anchor registry JSON + heading ids | `mdcp refs lookup` / `refs.json` (GitHub slugs on **compiled** output) |
+| Vale ambiguous-term rules          | `.vale.ini` + custom YAML in your repo (you define the terms)          |
+| `validate.sh`                      | `mdcp check --require-lint` (+ optional `--require-vale`)              |
 
 Full port map: [Legacy migration](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/legacy-migration.md).
 
