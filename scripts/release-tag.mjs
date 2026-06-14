@@ -141,7 +141,7 @@ function prependChangelog(version, summaries) {
 
   for (const name of PACKAGES) {
     const path = join(root, 'packages', name, 'CHANGELOG.md');
-    let existing = '';
+    let existing;
     try {
       existing = readFileSync(path, 'utf-8');
     } catch {
