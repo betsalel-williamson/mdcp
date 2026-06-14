@@ -1,12 +1,10 @@
 import { registerCompileHook } from '../hooks.js';
 import { stripExplicitAnchorMarkers } from '../anchors.js';
+import { codeEvidenceHook } from './code-evidence.js';
+import { inlineDiagramsHook } from './inline-diagrams.js';
+import { reviewLinksHook } from './review-links.js';
 
 registerCompileHook('stripAnchors', (ctx) => stripExplicitAnchorMarkers(ctx.body));
-
-/** Passthrough placeholder; full port in consumer hook packs. */
-registerCompileHook('codeEvidence', (ctx) => ctx.body);
-
-/** Passthrough; intra-guide and publish path link rewriting run at assembly time in assembleGuide. */
-registerCompileHook('reviewLinks', (ctx) => ctx.body);
-
-registerCompileHook('inlineDiagrams', (ctx) => ctx.body);
+registerCompileHook('codeEvidence', codeEvidenceHook);
+registerCompileHook('reviewLinks', reviewLinksHook);
+registerCompileHook('inlineDiagrams', inlineDiagramsHook);

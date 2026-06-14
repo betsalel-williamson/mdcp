@@ -33,6 +33,8 @@ const GuideSchema = z.object({
       preambleSection: z.string().default('about-this-guide.md'),
       /** Manifest file name (default index.md; use shards.md for review trees). */
       manifest: z.string().default('index.md'),
+      /** When set, only links after this ## heading are used for sections.txt / compile order. */
+      sectionsHeading: z.string().optional(),
       /** Injected compile title as ## heading. */
       title: z.string().optional(),
       scopeRoot: z.string().optional(),
@@ -42,6 +44,20 @@ const GuideSchema = z.object({
       includeBanner: z.boolean().optional(),
       /** Named compile hooks (see compile/hooks.ts). */
       hooks: z.array(z.string()).optional(),
+      hooksConfig: z
+        .object({
+          codeEvidence: z
+            .object({
+              searchRoots: z.array(z.string()).optional(),
+            })
+            .optional(),
+          reviewLinks: z
+            .object({
+              targetMonolith: z.string().optional(),
+            })
+            .optional(),
+        })
+        .optional(),
       stripAnchors: z.boolean().default(true),
       /** Rewrite shard-relative repo paths for publish outputs (e.g. DEVELOPERS.md). */
       publishPathRewrite: z
