@@ -1,6 +1,6 @@
 /** GitHub-style heading slug (matches common GFM renderers). */
 export function githubSlugify(text: string): string {
-  let s = text
+  const s = text
     .trim()
     .toLowerCase()
     .replace(/\{#.*?\}/g, '')
@@ -59,14 +59,17 @@ export function buildSlugRegistry(
     if (!m) continue;
 
     const level = m[1].length;
-    const rawTitle = m[2].replace(/\{#.*?\}/g, '').replace(/\*\*/g, '').trim();
+    const rawTitle = m[2]
+      .replace(/\{#.*?\}/g, '')
+      .replace(/\*\*/g, '')
+      .trim();
     if (!rawTitle) continue;
 
     if (level === 1) {
       currentGuide = githubSlugify(rawTitle).slice(0, 32) || 'guide';
     }
 
-    let base = githubSlugify(rawTitle);
+    const base = githubSlugify(rawTitle);
     const count = slugCounts.get(base) ?? 0;
     slugCounts.set(base, count + 1);
     const slug = count === 0 ? base : `${base}-${count}`;
@@ -90,10 +93,7 @@ export function buildSlugRegistry(
   return { generatedFrom: 'compiled', headings, slugs };
 }
 
-export function lookupHeadings(
-  registry: RefsRegistry,
-  query: string,
-): HeadingEntry[] {
+export function lookupHeadings(registry: RefsRegistry, query: string): HeadingEntry[] {
   const q = query.toLowerCase();
   return registry.headings.filter(
     (h) =>

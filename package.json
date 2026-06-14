@@ -2,12 +2,51 @@
   "name": "mdcp-monorepo",
   "private": true,
   "description": "MDCP — Markdown Command Line Interface Processor",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betsalel-williamson/mdcp.git"
+  },
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "build": "pnpm -r run build",
     "test": "pnpm -r run test",
-    "typecheck": "pnpm -r run typecheck"
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vale:sync": "mkdir -p examples/sample-guides/styles && cd examples/sample-guides && ../../node_modules/@vvago/vale/bin/vale sync",
+    "docs:lint": "node packages/mdcp-cli/dist/cli.js lint --config mdcp.config.json --cwd examples/sample-guides --require-lint",
+    "docs:prose": "node packages/mdcp-cli/dist/cli.js prose --config mdcp.config.json --cwd examples/sample-guides --require-vale",
+    "docs:check": "node packages/mdcp-cli/dist/cli.js check --config mdcp.config.json --cwd examples/sample-guides --require-lint --require-vale",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run docs:check",
+    "changeset": "changeset",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=18"
+  },
+  "lint-staged": {
+    "packages/**/*.{ts,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.2",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@eslint/js": "^9.23.0",
+    "@vvago/vale": "^3.4.2",
+    "eslint": "^9.23.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "markdownlint-cli2": "^0.17.2",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.28.0"
   }
 }

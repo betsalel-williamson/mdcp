@@ -1,0 +1,4 @@
+title = "mdcp gitleaks config"
+
+[extend]
+useDefault = true

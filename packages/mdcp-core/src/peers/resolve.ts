@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 
 export interface PeerTool {
@@ -9,12 +9,21 @@ export interface PeerTool {
   source: 'local' | 'path' | 'none';
 }
 
-export function findPeerBinary(
-  name: string,
-  cwd: string,
-): PeerTool {
-  const local = join(cwd, 'node_modules', '.bin', name);
-  if (existsSync(local)) {
+function findLocalBin(name: string, cwd: string): string | null {
+  let dir = resolve(cwd);
+  for (;;) {
+    const candidate = join(dir, 'node_modules', '.bin', name);
+    if (existsSync(candidate)) return candidate;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}
+
+export function findPeerBinary(name: string, cwd: string): PeerTool {
+  const local = findLocalBin(name, cwd);
+  if (local) {
     return { name, bin: local, found: true, source: 'local' };
   }
 

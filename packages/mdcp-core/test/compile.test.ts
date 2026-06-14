@@ -19,7 +19,13 @@ describe('compileGuides', () => {
       guides: [
         {
           name: 'overview',
-          compile: { keepSecondH1: ['coverage-and-where-to-look'] },
+          splitLevel: 2,
+          compile: {
+            keepSecondH1: ['coverage-and-where-to-look'],
+            preambleSection: 'about-this-guide.md',
+            manifest: 'index.md',
+            stripAnchors: true,
+          },
         },
       ],
     });
@@ -42,14 +48,8 @@ describe('compileGuides', () => {
   it('strips explicit anchor markers from compiled output', () => {
     const work = join(tmpdir(), `mdcp-compile-${Date.now()}`);
     mkdirSync(work, { recursive: true });
-    writeFileSync(
-      join(work, 'index.md'),
-      '# Example\n\n- [Section](section.md)\n',
-    );
-    writeFileSync(
-      join(work, 'section.md'),
-      '## Term {#my-anchor}\n\nDefinition.\n',
-    );
+    writeFileSync(join(work, 'index.md'), '# Example\n\n- [Section](section.md)\n');
+    writeFileSync(join(work, 'section.md'), '## Term {#my-anchor}\n\nDefinition.\n');
     writeFileSync(join(work, 'sections.txt'), 'section.md\n');
 
     const out = assembleGuide(work, {
@@ -86,15 +86,7 @@ describe('cli e2e', () => {
   it('mdcp check passes on sample-guides (core, no peer require)', () => {
     const out = execFileSync(
       'node',
-      [
-        CLI,
-        'check',
-        '--config',
-        'mdcp.config.json',
-        '--cwd',
-        FIXTURE,
-        '--skip-vale',
-      ],
+      [CLI, 'check', '--config', 'mdcp.config.json', '--cwd', FIXTURE, '--skip-vale'],
       { encoding: 'utf-8' },
     );
     expect(out).toContain('mdcp check passed');

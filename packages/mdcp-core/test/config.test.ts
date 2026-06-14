@@ -44,10 +44,7 @@ describe('loadConfig', () => {
 
   it('loads config from disk', () => {
     mkdirSync(work, { recursive: true });
-    writeFileSync(
-      join(work, 'mdcp.config.json'),
-      JSON.stringify({ compileOrder: ['a'] }),
-    );
+    writeFileSync(join(work, 'mdcp.config.json'), JSON.stringify({ compileOrder: ['a'] }));
     const cfg = loadConfig('mdcp.config.json', work);
     expect(cfg.compileOrder).toEqual(['a']);
     rmSync(work, { recursive: true, force: true });

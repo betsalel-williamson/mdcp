@@ -1,16 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
+import { mkdirSync, rmSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import {
-  githubSlugify,
-  buildSlugRegistry,
-  lookupHeadings,
-} from '../src/refs/slugs.js';
-import {
-  genRefsFromCompiled,
-  checkRefsRegistry,
-} from '../src/refs/registry.js';
+import { githubSlugify, buildSlugRegistry, lookupHeadings } from '../src/refs/slugs.js';
+import { genRefsFromCompiled, checkRefsRegistry } from '../src/refs/registry.js';
 
 describe('githubSlugify', () => {
   it('strips brace ids and punctuation', () => {

@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { extractFirstHeading, stripFirstHeadingLine, formatCompileTitle } from '../src/compile/compile-title.js';
+import {
+  extractFirstHeading,
+  stripFirstHeadingLine,
+  formatCompileTitle,
+} from '../src/compile/compile-title.js';
 
 describe('compile-title', () => {
   it('extracts heading text and anchor', () => {

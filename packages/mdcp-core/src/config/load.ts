@@ -19,20 +19,13 @@ export function resolveGuidesRoot(config: MdcpConfig, cwd: string): string {
   return resolve(cwd, config.outputDir);
 }
 
-export function resolveGuideDir(
-  name: string,
-  config: MdcpConfig,
-  cwd: string,
-): string {
+export function resolveGuideDir(name: string, config: MdcpConfig, cwd: string): string {
   const guide = config.guides?.find((g) => g.name === name);
   if (guide?.path) return resolve(cwd, guide.path);
   return join(resolveGuidesRoot(config, cwd), name);
 }
 
-export function getGuideConfig(
-  config: MdcpConfig,
-  name: string,
-): GuideConfig | undefined {
+export function getGuideConfig(config: MdcpConfig, name: string): GuideConfig | undefined {
   return config.guides?.find((g) => g.name === name);
 }
 

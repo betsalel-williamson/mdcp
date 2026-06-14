@@ -2,10 +2,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { buildSlugRegistry, type RefsRegistry } from './slugs.js';
 
-export function writeRefsRegistry(
-  registry: RefsRegistry,
-  outputPath: string,
-): void {
+export function writeRefsRegistry(registry: RefsRegistry, outputPath: string): void {
   writeFileSync(outputPath, JSON.stringify(registry, null, 2) + '\n', 'utf-8');
 }
 
@@ -31,10 +28,7 @@ export function checkRefsRegistry(
   return { ok: true, message: 'refs.json is up to date' };
 }
 
-export function genRefsFromCompiled(
-  compiledText: string,
-  registryPath: string,
-): RefsRegistry {
+export function genRefsFromCompiled(compiledText: string, registryPath: string): RefsRegistry {
   const registry = buildSlugRegistry(compiledText);
   writeRefsRegistry(registry, registryPath);
   return registry;

@@ -2,13 +2,32 @@
   "name": "@mdcp/core",
   "version": "0.1.0",
   "description": "MDCP core library — compile, refs, validation",
+  "license": "MIT",
   "type": "module",
+  "sideEffects": [
+    "./src/compile/hooks/builtin.ts",
+    "./dist/index.js"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/betsalel-williamson/mdcp.git",
     "directory": "packages/mdcp-core"
+  },
+  "bugs": {
+    "url": "https://github.com/betsalel-williamson/mdcp/issues"
+  },
+  "homepage": "https://github.com/betsalel-williamson/mdcp/tree/main/packages/mdcp-core#readme",
+  "keywords": [
+    "markdown",
+    "documentation",
+    "compile",
+    "refs",
+    "validation"
+  ],
+  "engines": {
+    "node": ">=18"
   },
   "publishConfig": {
     "access": "public",
@@ -20,7 +39,9 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean",
     "test": "vitest run",

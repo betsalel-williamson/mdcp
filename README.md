@@ -25,7 +25,7 @@ mdcp/
 pnpm install
 pnpm build
 node packages/mdcp-cli/dist/cli.js compile --config examples/sample-guides/mdcp.config.json --cwd examples/sample-guides
-node packages/mdcp-cli/dist/cli.js check --config examples/sample-guides/mdcp.config.json --cwd examples/sample-guides --skip-vale
+node packages/mdcp-cli/dist/cli.js check --config examples/sample-guides/mdcp.config.json --cwd examples/sample-guides
 ```
 
 ### Agent workflow (consumer repo)
@@ -45,33 +45,47 @@ Or after publish: `npx @mdcp/cli check --config mdcp.config.json`
 
 See [docs/FEATURES.md](./docs/FEATURES.md) for the value-first feature catalog.
 
+## Development
+
+```bash
+pnpm install
+pnpm build
+pnpm vale:sync          # once — fetches Vale styles for examples/sample-guides
+pnpm run check            # typecheck, eslint, prettier, build, test, docs:check
+pnpm run lint:fix
+pnpm run format
+brew install gitleaks     # optional locally; CI always scans
+```
+
+This repo installs `markdownlint-cli2` and `@vvago/vale` as **devDependencies** for dogfooding. Published `@mdcp/cli` still treats them as optional peers in consumer repos.
+
 ## Commands
 
-| Command | Purpose |
-|---|---|
-| `mdcp check` | Compile, orphan check, refs, xrefs; peer linters if installed |
-| `mdcp compile` | Shards → monolith |
-| `mdcp shard` | Monolith → shards (md-tree) |
-| `mdcp sections` | Regenerate `sections.txt` from `index.md` |
-| `mdcp refs list` | JSON heading slug registry |
-| `mdcp refs lookup <query>` | JSON fuzzy heading search |
-| `mdcp export --llm` | Token-optimized output for LLM context |
-| `mdcp lint` | markdownlint-cli2 (peer, if installed) |
-| `mdcp prose` | Vale (peer, if installed) |
-| `mdcp fix` | Prettier + markdownlint --fix (peer) |
+| Command                    | Purpose                                                       |
+| -------------------------- | ------------------------------------------------------------- |
+| `mdcp check`               | Compile, orphan check, refs, xrefs; peer linters if installed |
+| `mdcp compile`             | Shards → monolith                                             |
+| `mdcp shard`               | Monolith → shards (md-tree)                                   |
+| `mdcp sections`            | Regenerate `sections.txt` from `index.md`                     |
+| `mdcp refs list`           | JSON heading slug registry                                    |
+| `mdcp refs lookup <query>` | JSON fuzzy heading search                                     |
+| `mdcp export --llm`        | Token-optimized output for LLM context                        |
+| `mdcp lint`                | markdownlint-cli2 (peer, if installed)                        |
+| `mdcp prose`               | Vale (peer, if installed)                                     |
+| `mdcp fix`                 | Prettier + markdownlint --fix (peer)                          |
 
 ## Legacy file inventory
 
-| File | Role |
-|---|---|
-| `legacy/shard.sh` | Split monolith via md-tree explode |
-| `legacy/compile.sh` | Stitch shards → guides.md |
-| `legacy/compile_sections.py` | Heading demotion / preamble logic |
-| `legacy/write-sections-manifest.py` | `sections.txt` from `index.md` |
-| `legacy/validate.sh` | Full validation gate |
-| `legacy/scripts/lint-xrefs.py` | Bare chapter-ref lint |
+| File                                         | Role                                                  |
+| -------------------------------------------- | ----------------------------------------------------- |
+| `legacy/shard.sh`                            | Split monolith via md-tree explode                    |
+| `legacy/compile.sh`                          | Stitch shards → guides.md                             |
+| `legacy/compile_sections.py`                 | Heading demotion / preamble logic                     |
+| `legacy/write-sections-manifest.py`          | `sections.txt` from `index.md`                        |
+| `legacy/validate.sh`                         | Full validation gate                                  |
+| `legacy/scripts/lint-xrefs.py`               | Bare chapter-ref lint                                 |
 | `legacy/scripts/generate-anchor-registry.py` | Legacy `{#anchor}` registry (superseded by refs.json) |
-| `legacy/configs/` | markdownlint, Vale, Prettier configs |
+| `legacy/configs/`                            | markdownlint, Vale, Prettier configs                  |
 
 ## Phase 2 migration checklist
 

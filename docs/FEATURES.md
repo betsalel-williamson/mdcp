@@ -4,52 +4,52 @@ mdcp splits, compiles, validates, and exports sharded Markdown for repos where *
 
 ## Personas
 
-| Persona | Job | Features |
-|---|---|---|
-| **LLM doc author** | Edit shards, insert cross-links | `shard`, `sections`, `refs lookup`, `compile`, `check` |
-| **LLM feature agent** | Read compact doc context while coding | `export --llm`, `refs list`, compiled monolith |
-| **Human doc reviewer** | PR quality gate | `check`, `prose`, `lint`, `xrefs`, `links` |
-| **End-user reader** | Read glossary, guides, reviews | `compile` output |
+| Persona                | Job                                   | Features                                               |
+| ---------------------- | ------------------------------------- | ------------------------------------------------------ |
+| **LLM doc author**     | Edit shards, insert cross-links       | `shard`, `sections`, `refs lookup`, `compile`, `check` |
+| **LLM feature agent**  | Read compact doc context while coding | `export --llm`, `refs list`, compiled monolith         |
+| **Human doc reviewer** | PR quality gate                       | `check`, `prose`, `lint`, `xrefs`, `links`             |
+| **End-user reader**    | Read glossary, guides, reviews        | `compile` output                                       |
 
 ## Priority tiers
 
 ### P0 — LLM can read docs and write correct links
 
-| Feature | CLI | Core module | Status |
-|---|---|---|---|
-| Compile | `mdcp compile` | `compile/` | Implemented |
-| Refs + lookup | `mdcp refs *` | `refs/` | Implemented |
-| LLM export | `mdcp export --llm` | `export/llm.ts` | Implemented |
-| Check (core) | `mdcp check` | orphans, refs, xrefs | Implemented |
+| Feature       | CLI                 | Core module          | Status      |
+| ------------- | ------------------- | -------------------- | ----------- |
+| Compile       | `mdcp compile`      | `compile/`           | Implemented |
+| Refs + lookup | `mdcp refs *`       | `refs/`              | Implemented |
+| LLM export    | `mdcp export --llm` | `export/llm.ts`      | Implemented |
+| Check (core)  | `mdcp check`        | orphans, refs, xrefs | Implemented |
 
 **Dogfood:** `mdcp export --llm` + `mdcp refs lookup` + `mdcp check` on `examples/sample-guides`.
 
 ### P1 — LLM can write docs in shards safely
 
-| Feature | CLI | Core module | Status |
-|---|---|---|---|
-| Sections manifest | `mdcp sections` | `manifest/` | Implemented |
-| Shard split | `mdcp shard` | `shard/` | Implemented |
-| Orphan check | `mdcp check` | `validate/orphans.ts` | Implemented |
-| Xref lint | `mdcp check` | `xrefs/lint.ts` | Implemented |
+| Feature           | CLI             | Core module           | Status      |
+| ----------------- | --------------- | --------------------- | ----------- |
+| Sections manifest | `mdcp sections` | `manifest/`           | Implemented |
+| Shard split       | `mdcp shard`    | `shard/`              | Implemented |
+| Orphan check      | `mdcp check`    | `validate/orphans.ts` | Implemented |
+| Xref lint         | `mdcp check`    | `xrefs/lint.ts`       | Implemented |
 
 **Dogfood:** Edit sample guide shard → `mdcp sections` → `mdcp check` in `examples/sample-guides`.
 
 ### P2 — Human reviewers trust the output
 
-| Feature | CLI | Core module | Status |
-|---|---|---|---|
-| Peer linters | `mdcp lint`, `prose`, `links`, `fix` | `peers/` | Implemented |
-| Compile hooks | config `compile.hooks` | `compile/hooks.ts` | Extension point |
+| Feature       | CLI                                  | Core module        | Status          |
+| ------------- | ------------------------------------ | ------------------ | --------------- |
+| Peer linters  | `mdcp lint`, `prose`, `links`, `fix` | `peers/`           | Implemented     |
+| Compile hooks | config `compile.hooks`               | `compile/hooks.ts` | Extension point |
 
-**Dogfood:** `mdcp check --require-lint --require-vale` on review targets.
+**Dogfood:** `pnpm docs:check` on `examples/sample-guides` (markdownlint + Vale via root devDependencies).
 
 ### P3 — Enabler
 
-| Feature | Role |
-|---|---|
-| Config | `mdcp.config.json` wires all commands |
-| Presets | `@mdcp/presets` starter lint configs |
+| Feature | Role                                  |
+| ------- | ------------------------------------- |
+| Config  | `mdcp.config.json` wires all commands |
+| Presets | `@mdcp/presets` starter lint configs  |
 
 ---
 

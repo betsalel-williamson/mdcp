@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { demoteHeadings, demoteExceptFirstH1, stripAboutThisGuideHeading, extractGuideH1 } from '../src/compile/headings.js';
+import {
+  demoteHeadings,
+  demoteExceptFirstH1,
+  stripAboutThisGuideHeading,
+  extractGuideH1,
+} from '../src/compile/headings.js';
 
 describe('demoteHeadings', () => {
   it('demotes ATX headings by one level', () => {

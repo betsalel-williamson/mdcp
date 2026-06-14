@@ -8,10 +8,7 @@ function demoteLine(line: string, levels: number): string {
   return '#'.repeat(depth) + m[2] + m[3];
 }
 
-function mapLinesPreservingFences(
-  text: string,
-  mapFn: (line: string) => string,
-): string {
+function mapLinesPreservingFences(text: string, mapFn: (line: string) => string): string {
   const lines = text.split('\n');
   const endsWithNewline = text.endsWith('\n');
   const out: string[] = [];

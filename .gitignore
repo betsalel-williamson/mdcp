@@ -24,5 +24,9 @@ legacy/.cache/
 legacy/anchors.json
 legacy/vale-report.json
 
+examples/sample-guides/styles/*
+!examples/sample-guides/styles/.gitkeep
+
 # OS
 .DS_Store
+

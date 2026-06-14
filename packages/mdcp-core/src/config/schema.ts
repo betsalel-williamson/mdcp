@@ -4,9 +4,7 @@ const GuideSourceSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('h1Extract'),
     index: z.number().int().positive(),
-    preamble: z
-      .object({ promoteToH2: z.string().default('About this guide') })
-      .optional(),
+    preamble: z.object({ promoteToH2: z.string().default('About this guide') }).optional(),
   }),
   z.object({
     type: z.literal('merge'),
@@ -16,9 +14,7 @@ const GuideSourceSchema = z.discriminatedUnion('type', [
         demoteFirstH1: z.boolean().optional(),
       }),
     ),
-    preamble: z
-      .object({ promoteToH2: z.string().default('About this guide') })
-      .optional(),
+    preamble: z.object({ promoteToH2: z.string().default('About this guide') }).optional(),
   }),
   z.object({
     type: z.literal('directory'),

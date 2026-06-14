@@ -1,14 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import {
-  registerCompileHook,
-  applyCompileHooks,
-  identityHook,
-} from '../src/compile/hooks.js';
+import { registerCompileHook, applyCompileHooks, identityHook } from '../src/compile/hooks.js';
 import '../src/compile/hooks/builtin.js';
 
 describe('compile hooks', () => {
   it('identity hook returns body unchanged', () => {
-    expect(identityHook({ body: 'x', guideName: 'g', filename: 'f.md', config: {} as never, sourceFile: '/f' })).toBe('x');
+    expect(
+      identityHook({
+        body: 'x',
+        guideName: 'g',
+        filename: 'f.md',
+        config: {} as never,
+        sourceFile: '/f',
+      }),
+    ).toBe('x');
   });
 
   it('applyCompileHooks runs registered hooks in order', () => {

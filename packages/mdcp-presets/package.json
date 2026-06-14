@@ -2,22 +2,40 @@
   "name": "@mdcp/presets",
   "version": "0.1.0",
   "description": "Starter markdownlint configs for MDCP consumers",
+  "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/betsalel-williamson/mdcp.git",
     "directory": "packages/mdcp-presets"
   },
+  "bugs": {
+    "url": "https://github.com/betsalel-williamson/mdcp/issues"
+  },
+  "homepage": "https://github.com/betsalel-williamson/mdcp/tree/main/packages/mdcp-presets#readme",
+  "keywords": [
+    "markdown",
+    "markdownlint",
+    "mdcp",
+    "presets"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "files": ["*.jsonc"],
+  "files": [
+    "*.jsonc"
+  ],
   "exports": {
-    "./markdownlint-shards.jsonc": "./markdownlint-shards.jsonc",
-    "./markdownlint-compiled.jsonc": "./markdownlint-compiled.jsonc"
+    "./markdownlint-shards.markdownlint-cli2.jsonc": "./markdownlint-shards.markdownlint-cli2.jsonc",
+    "./markdownlint-compiled.markdownlint-cli2.jsonc": "./markdownlint-compiled.markdownlint-cli2.jsonc"
   },
   "scripts": {
+    "typecheck": "node -e \"console.log('no typecheck')\"",
     "prepublishOnly": "node -e \"console.log('presets ready')\""
   }
 }

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+pnpm-lock.yaml
+.specstory/
+.cursor/
+legacy/
+examples/sample-guides/guides.md
+examples/sample-guides/refs.json

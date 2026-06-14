@@ -8,11 +8,7 @@ import {
   extractGuideH1,
 } from './headings.js';
 import { stripExplicitAnchorMarkers } from './anchors.js';
-import {
-  extractFirstHeading,
-  stripFirstHeadingLine,
-  formatCompileTitle,
-} from './compile-title.js';
+import { extractFirstHeading, stripFirstHeadingLine, formatCompileTitle } from './compile-title.js';
 import { applyCompileHooks } from './hooks.js';
 import './hooks/builtin.js';
 import type { GuideConfig, MdcpConfig } from '../config/schema.js';
@@ -55,10 +51,7 @@ function resolveManifestPaths(
   return files;
 }
 
-export function sectionFiles(
-  guideDir: string,
-  options: SectionFilesOptions = {},
-): string[] {
+export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}): string[] {
   const manifestName = options.manifest ?? 'index.md';
   const indexPath = join(guideDir, manifestName);
   if (!existsSync(indexPath)) {
@@ -73,7 +66,9 @@ export function sectionFiles(
       .split('\n')
       .map((l) => l.trim())
       .filter((l) => l && !l.startsWith('#'))
-      .map((l) => (l.startsWith('/') || l.includes('/') ? resolve(guideDir, l) : join(guideDir, l)));
+      .map((l) =>
+        l.startsWith('/') || l.includes('/') ? resolve(guideDir, l) : join(guideDir, l),
+      );
   }
 
   const resolved = resolveManifestPaths(guideDir, text, options);
@@ -96,10 +91,7 @@ export function processSection(
     return body.trim() ? demoteHeadings(body, 1) : body;
   }
 
-  if (
-    guideName === 'overview' &&
-    keepSecondH1?.some((s) => filename.includes(s))
-  ) {
+  if (guideName === 'overview' && keepSecondH1?.some((s) => filename.includes(s))) {
     return demoteExceptFirstH1(content);
   }
 
@@ -121,10 +113,7 @@ export interface AssembleGuideOptions {
   config?: MdcpConfig;
 }
 
-export function assembleGuide(
-  guideDir: string,
-  options: AssembleGuideOptions = {},
-): string {
+export function assembleGuide(guideDir: string, options: AssembleGuideOptions = {}): string {
   const guideName = basename(guideDir);
   const manifestName = options.manifest ?? 'index.md';
   const indexPath = join(guideDir, manifestName);
@@ -215,25 +204,19 @@ function resolveGuideDir(
 }
 
 export function compileGuideResults(options: CompileOptions): CompileGuideResult[] {
-  const guideConfigMap = new Map(
-    (options.guides ?? []).map((g) => [g.name, g]),
-  );
+  const guideConfigMap = new Map((options.guides ?? []).map((g) => [g.name, g]));
   const cwd = options.cwd ?? process.cwd();
 
   return options.compileOrder.map((name) => {
     const cfg = guideConfigMap.get(name);
     const guideDir = resolveGuideDir(name, options.guidesRoot, cfg, cwd);
     const compile = cfg?.compile;
-    const outputBasename = compile?.outputFile
-      ? basename(compile.outputFile)
-      : undefined;
+    const outputBasename = compile?.outputFile ? basename(compile.outputFile) : undefined;
 
     const text = assembleGuide(guideDir, {
       keepSecondH1: compile?.keepSecondH1,
       manifest: compile?.manifest,
-      scopeRoot: compile?.scopeRoot
-        ? resolve(cwd, compile.scopeRoot)
-        : undefined,
+      scopeRoot: compile?.scopeRoot ? resolve(cwd, compile.scopeRoot) : undefined,
       title: compile?.title,
       hooks: compile?.hooks,
       stripAnchors: compile?.stripAnchors,

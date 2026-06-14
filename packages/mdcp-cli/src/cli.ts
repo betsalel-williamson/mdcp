@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   loadConfig,
   resolveOutputPath,
@@ -45,9 +46,7 @@ function guideEntries(config: MdcpConfig, cwd: string) {
       name,
       dir: resolveGuideDir(name, config, cwd),
       manifest: cfg?.compile?.manifest,
-      scopeRoot: cfg?.compile?.scopeRoot
-        ? resolve(cwd, cfg.compile.scopeRoot)
-        : undefined,
+      scopeRoot: cfg?.compile?.scopeRoot ? resolve(cwd, cfg.compile.scopeRoot) : undefined,
     };
   });
 }
@@ -75,16 +74,24 @@ function writeCompiled(config: MdcpConfig, cwd: string): string {
   }
   const separate = compileGuideResults(opts).some((r) => r.outputFile);
   if (separate) {
-    return compileGuideResults(opts).map((r) => r.text).join('\n');
+    return compileGuideResults(opts)
+      .map((r) => r.text)
+      .join('\n');
   }
   return compileToString(config, cwd);
 }
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf-8')) as {
+  version: string;
+};
 
 const program = new Command();
 
 program
   .name('mdcp')
   .description('Markdown Command Line Interface Processor')
+  .version(pkg.version)
   .option('-c, --config <path>', 'config file', 'mdcp.config.json')
   .option('--cwd <path>', 'working directory', process.cwd());
 
@@ -235,12 +242,11 @@ program
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
     const tool = findPeerBinary('vale', opts.cwd);
-    const scanPaths =
-      config.vale?.scanGlobs ??
-      guideEntries(config, opts.cwd).map((g) => g.dir);
+    const scanPaths = config.vale?.scanGlobs ?? guideEntries(config, opts.cwd).map((g) => g.dir);
+    const valeConfig = config.vale?.config ?? '.vale.ini';
     const args = proseOpts.strict
-      ? ['--minAlertLevel=error', ...scanPaths]
-      : scanPaths;
+      ? ['--config', valeConfig, '--minAlertLevel=error', ...scanPaths]
+      : ['--config', valeConfig, ...scanPaths];
     const r = runPeer(tool, { require: proseOpts.requireVale, cwd: opts.cwd, args });
     if (r.exitCode !== 0) process.exit(r.exitCode);
   });
@@ -298,12 +304,18 @@ program
       throw new Error(`Guide ${g.name} needs h1Extract or merge source for shard`);
     });
 
+    const firstSource = config.guides?.[0]?.source;
+    const preambleHeading =
+      firstSource && firstSource.type !== 'directory'
+        ? firstSource.preamble?.promoteToH2
+        : undefined;
+
     shardFromMonolith({
       sourceFile,
       guidesRoot,
       mappings,
       compileOrder: config.compileOrder,
-      preambleHeading: config.guides?.[0]?.source?.preamble?.promoteToH2,
+      preambleHeading,
     });
 
     writeAllSectionsManifests(guideEntries(config, opts.cwd));
@@ -377,13 +389,12 @@ program
 
     if (!checkOpts.skipVale) {
       const vale = findPeerBinary('vale', opts.cwd);
-      const scanPaths =
-        config.vale?.scanGlobs ??
-        guideEntries(config, opts.cwd).map((g) => g.dir);
+      const scanPaths = config.vale?.scanGlobs ?? guideEntries(config, opts.cwd).map((g) => g.dir);
+      const valeConfig = config.vale?.config ?? '.vale.ini';
       const r = runPeer(vale, {
         require: checkOpts.requireVale,
         cwd: opts.cwd,
-        args: ['--minAlertLevel=error', ...scanPaths],
+        args: ['--config', valeConfig, '--minAlertLevel=error', ...scanPaths],
       });
       if (r.exitCode !== 0) failed = true;
     }

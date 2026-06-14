@@ -1,0 +1,7 @@
+pnpm exec lint-staged
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact --verbose
+else
+  echo "warning: gitleaks not installed — run: brew install gitleaks" >&2
+fi

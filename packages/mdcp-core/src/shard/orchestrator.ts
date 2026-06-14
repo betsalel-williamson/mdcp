@@ -20,7 +20,10 @@ function promotePreambleToH2(text: string, heading = 'About this guide'): string
   );
   if (h2Idx === -1) return text;
 
-  const preamble = lines.slice(h1Idx + 1, h2Idx).join('\n').trim();
+  const preamble = lines
+    .slice(h1Idx + 1, h2Idx)
+    .join('\n')
+    .trim();
   if (!preamble || preamble.startsWith('## ')) return text;
 
   const out = [

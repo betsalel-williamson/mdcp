@@ -2,7 +2,9 @@
   "name": "@mdcp/cli",
   "version": "0.1.0",
   "description": "MDCP CLI — Markdown Command Line Interface Processor",
+  "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "bin": {
     "mdcp": "./dist/cli.js"
   },
@@ -11,11 +13,26 @@
     "url": "git+https://github.com/betsalel-williamson/mdcp.git",
     "directory": "packages/mdcp-cli"
   },
+  "bugs": {
+    "url": "https://github.com/betsalel-williamson/mdcp/issues"
+  },
+  "homepage": "https://github.com/betsalel-williamson/mdcp/tree/main/packages/mdcp-cli#readme",
+  "keywords": [
+    "markdown",
+    "documentation",
+    "cli",
+    "mdcp"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/cli.ts --format esm --clean",
     "typecheck": "tsc --noEmit",

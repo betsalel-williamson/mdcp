@@ -17,10 +17,7 @@ describe('sectionFiles', () => {
     writeFileSync(join(work, '02-two.md'), '# Two\n');
 
     const files = sectionFiles(work);
-    expect(files).toEqual([
-      resolve(work, '01-one.md'),
-      resolve(work, '02-two.md'),
-    ]);
+    expect(files).toEqual([resolve(work, '01-one.md'), resolve(work, '02-two.md')]);
     rmSync(work, { recursive: true, force: true });
   });
 
@@ -37,15 +34,10 @@ describe('sectionFiles', () => {
 
   it('supports shards.md manifest name', () => {
     mkdirSync(work, { recursive: true });
-    writeFileSync(
-      join(work, 'shards.md'),
-      '# Shards\n\n- [Alpha](./alpha.md)\n',
-    );
+    writeFileSync(join(work, 'shards.md'), '# Shards\n\n- [Alpha](./alpha.md)\n');
     writeFileSync(join(work, 'alpha.md'), '# Alpha\n');
 
-    expect(sectionFiles(work, { manifest: 'shards.md' })).toEqual([
-      resolve(work, 'alpha.md'),
-    ]);
+    expect(sectionFiles(work, { manifest: 'shards.md' })).toEqual([resolve(work, 'alpha.md')]);
     rmSync(work, { recursive: true, force: true });
   });
 
@@ -55,10 +47,7 @@ describe('sectionFiles', () => {
     const sibling = join(work, 'sibling');
     mkdirSync(child, { recursive: true });
     mkdirSync(sibling, { recursive: true });
-    writeFileSync(
-      join(child, 'shards.md'),
-      '# M\n\n- [Doc](../sibling/doc.md)\n',
-    );
+    writeFileSync(join(child, 'shards.md'), '# M\n\n- [Doc](../sibling/doc.md)\n');
     writeFileSync(join(sibling, 'doc.md'), '# Doc\n');
 
     const files = sectionFiles(child, {

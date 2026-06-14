@@ -34,9 +34,7 @@ describe('checkOrphansForGuides', () => {
   });
 
   it('detects missing guide directory', () => {
-    const issues = checkOrphansForGuides([
-      { name: 'missing', dir: join(work, 'nope') },
-    ]);
+    const issues = checkOrphansForGuides([{ name: 'missing', dir: join(work, 'nope') }]);
     expect(issues.some((i) => i.type === 'missing_guide')).toBe(true);
   });
 

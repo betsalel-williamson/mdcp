@@ -1,8 +1,0 @@
-{
-  "globs": ["guides.md"],
-  "config": {
-    "MD051": true,
-    "MD052": true,
-    "MD053": true
-  }
-}

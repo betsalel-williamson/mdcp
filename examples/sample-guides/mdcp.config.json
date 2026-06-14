@@ -19,10 +19,14 @@
   },
   "lint": {
     "markdownlint": {
-      "shardsConfig": "../../packages/mdcp-presets/markdownlint-shards.jsonc",
-      "compiledConfig": "../../packages/mdcp-presets/markdownlint-compiled.jsonc"
+      "shardsConfig": "../../packages/mdcp-presets/markdownlint-shards.markdownlint-cli2.jsonc",
+      "compiledConfig": "../../packages/mdcp-presets/markdownlint-compiled.markdownlint-cli2.jsonc"
     },
     "xrefs": { "enabled": true }
+  },
+  "vale": {
+    "config": ".vale.ini",
+    "scanGlobs": ["overview", "admin-guide", "developer-guide"]
   },
   "export": {
     "llm": {

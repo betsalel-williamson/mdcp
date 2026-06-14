@@ -4,12 +4,11 @@ import { sectionFiles } from '../compile/assemble.js';
 
 export function writeSectionsManifest(
   guideDir: string,
-  guideName?: string,
+  _guideName?: string,
   manifest?: string,
 ): number {
   const files = sectionFiles(guideDir, { manifest });
   writeFileSync(join(guideDir, 'sections.txt'), files.join('\n') + '\n', 'utf-8');
-  const name = guideName ?? guideDir.split(/[/\\]/).pop() ?? guideDir;
   return files.length;
 }
 

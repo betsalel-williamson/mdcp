@@ -18,20 +18,14 @@ describe('lintXrefs', () => {
 
   it('allows markdown links', () => {
     mkdirSync(work, { recursive: true });
-    writeFileSync(
-      join(work, 'ok.md'),
-      'See [Section 2](./other.md#section-2) for details.\n',
-    );
+    writeFileSync(join(work, 'ok.md'), 'See [Section 2](./other.md#section-2) for details.\n');
     expect(lintXrefs([work])).toEqual([]);
     rmSync(work, { recursive: true, force: true });
   });
 
   it('ignores bare refs inside fenced code', () => {
     mkdirSync(work, { recursive: true });
-    writeFileSync(
-      join(work, 'ok.md'),
-      '```\nSee Section 2\n```\n',
-    );
+    writeFileSync(join(work, 'ok.md'), '```\nSee Section 2\n```\n');
     expect(lintXrefs([work])).toEqual([]);
     rmSync(work, { recursive: true, force: true });
   });
