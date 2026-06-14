@@ -14,6 +14,8 @@ pnpm docs:check           # repo docs + examples/sample-guides
 
 Try the minimal fixture: [examples/sample-guides/](examples/sample-guides/).
 
+**LLM collaboration:** copy the [bootstrap prompt](examples/prompts/docs-as-code-with-mdcp.prompt.md) and read the [LLM collaboration guide](docs/client-cli/llm-collaboration.md) for workflows with Cursor, Composer, Gemini CLI, and other agents.
+
 ## Documentation (sharded)
 
 This repo dogfoods mdcp under [`docs/`](docs/):
@@ -33,6 +35,7 @@ Key shards:
 - [Design constraints](docs/features/design-constraints.md) — md-tree, GFM, peer linters
 - [Developer guide](docs/developer/local-setup.md) — setup, tests, docs dogfooding, releases
 - [CLI quick start](docs/client-cli/install-and-quick-start.md) — install and first compile
+- [LLM collaboration](docs/client-cli/llm-collaboration.md) — bootstrap prompt and agent workflows
 
 ## Contributing
 
