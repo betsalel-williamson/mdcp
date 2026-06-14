@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# MDCP temp / cache
+.compile-build/
+.shard-work/
+*.llm.md
+
+# Tooling auto-save / local state
+.specstory/
+
+# Test / typecheck artifacts
+coverage/
+*.tsbuildinfo
+
+# OS
+.DS_Store
