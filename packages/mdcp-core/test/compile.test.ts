@@ -288,9 +288,115 @@ describe('compileGuides', () => {
       expect(securityPos).toBe(-1);
     });
   });
+
+  it('assembleGuide inlines diagram catalog tables via inlineInserts hook', () => {
+    withTmpDir('mdcp-diagrams-', (work) => {
+      const guideDir = join(work, 'review');
+      const diagramsDir = join(work, 'diagrams');
+      mkdirSync(guideDir, { recursive: true });
+      mkdirSync(diagramsDir, { recursive: true });
+      writeFileSync(
+        join(diagramsDir, 'request-flow.md'),
+        '| Step | Actor |\n|------|-------|\n| 1 | Client |\n',
+      );
+      writeFileSync(
+        join(guideDir, 'index.md'),
+        '# Architecture review\n\n- [Diagram catalog](./diagram-catalog.md)\n- [Claim](./claim.md)\n',
+      );
+      writeFileSync(
+        join(guideDir, 'diagram-catalog.md'),
+        [
+          '## Diagram catalog',
+          '',
+          '| Diagram | Summary |',
+          '| --- | --- |',
+          '| [Request flow](../diagrams/request-flow.md) | Main path |',
+        ].join('\n'),
+      );
+      writeFileSync(
+        join(guideDir, 'claim.md'),
+        'See [Request flow again](../diagrams/request-flow.md) in the claim shard.',
+      );
+
+      const out = assembleGuide(guideDir, {
+        manifest: 'index.md',
+        hooks: ['inlineInserts'],
+      });
+
+      expect(out.match(/\| Step \| Actor \|/g)?.length).toBe(1);
+      expect(out).toContain('#### Diagram 1. Request flow');
+      expect(out).toContain('[Request flow again](#diagram-1-request-flow)');
+      expect(out).not.toMatch(/<a id=/);
+      expect(out).not.toContain('](../diagrams/request-flow.md)');
+    });
+  });
+
+  it('each guide inlines the first diagram mention independently', () => {
+    withTmpDir('mdcp-diagram-guides-', (work) => {
+      const sharedDiagrams = join(work, 'diagrams');
+      mkdirSync(sharedDiagrams, { recursive: true });
+      writeFileSync(
+        join(sharedDiagrams, 'platform.md'),
+        '| Layer | Role |\n|-------|------|\n| API | Gateway |\n',
+      );
+
+      const guideA = join(work, 'guide-a');
+      const guideB = join(work, 'guide-b');
+      mkdirSync(guideA, { recursive: true });
+      mkdirSync(guideB, { recursive: true });
+
+      writeFileSync(join(guideA, 'index.md'), '# Guide A\n\n- [Claim](./claim.md)\n');
+      writeFileSync(
+        join(guideA, 'claim.md'),
+        'Uses [platform](../diagrams/platform.md) twice: [platform](../diagrams/platform.md).',
+      );
+      writeFileSync(join(guideB, 'index.md'), '# Guide B\n\n- [Claim](./claim.md)\n');
+      writeFileSync(join(guideB, 'claim.md'), 'Also [platform](../diagrams/platform.md).');
+
+      const outA = assembleGuide(guideA, {
+        manifest: 'index.md',
+        hooks: ['inlineInserts'],
+      });
+      const outB = assembleGuide(guideB, {
+        manifest: 'index.md',
+        hooks: ['inlineInserts'],
+      });
+
+      expect(outA.match(/\| Layer \| Role \|/g)?.length).toBe(1);
+      expect(outA).toContain('[platform](#diagram-1-platform)');
+      expect(outB).toContain('#### Diagram 1. platform');
+      expect(outB).toContain('| Layer | Role |');
+      expect(outB).not.toMatch(/<a id=/);
+    });
+  });
 });
 
 describe('cli e2e', () => {
+  it('compileGuides inlines captioned inserts from sample fixture guide', () => {
+    const output = compileGuides({
+      guidesRoot: FIXTURE,
+      compileOrder: ['inserts-demo'],
+      guides: [
+        {
+          name: 'inserts-demo',
+          compile: { hooks: ['inlineInserts'], manifest: 'index.md' },
+        },
+      ],
+    });
+
+    expect(output).toContain('| Step  | Actor  |');
+    expect(output).toContain('| Code | Meaning     |');
+    expect(output).toContain('[Request flow](#diagram-1-request-flow)');
+    expect(output).toContain('[Status codes](#table-1-status-codes)');
+    expect(output).toContain('#### Media 1. Walkthrough');
+    expect(output).toContain('[Walkthrough](#media-1-walkthrough)');
+    expect(output.match(/\| Step {2}\| Actor {2}\|/g)?.length).toBe(1);
+    expect(output.match(/\| Code \| Meaning {5}\|/g)?.length).toBe(1);
+    expect(output).not.toContain('](../diagrams/request-flow.md)');
+    expect(output).not.toContain('](../tables/status-codes.md)');
+    expect(output).not.toContain('](../media/walkthrough.md)');
+  });
+
   it('mdcp compile exits 0 on sample-guides', () => {
     const out = execFileSync(
       'node',
