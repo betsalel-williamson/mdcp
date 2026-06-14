@@ -63,7 +63,7 @@ export function checkOrphansForGuides(guides: GuideDirEntry[]): OrphanIssue[] {
     if (!existsSync(dir)) continue;
 
     const skip = new Set([manifest, 'shards.md', 'sections.txt']);
-    const onDisk = readdirSync(dir).filter((n) => n.endsWith('.md') && !skip.has(n));
+    const onDisk = readdirSync(dir).filter((n: string) => n.endsWith('.md') && !skip.has(n));
     for (const f of onDisk) {
       const rel = join(name, f);
       if (!registered.has(rel)) {

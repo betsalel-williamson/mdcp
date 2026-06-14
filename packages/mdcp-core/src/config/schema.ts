@@ -59,7 +59,10 @@ export const MdcpConfigSchema = z.object({
       registryFile: z.string().default('refs.json'),
       slugAlgorithm: z.enum(['github']).default('github'),
     })
-    .default({}),
+    .default({
+      registryFile: 'refs.json',
+      slugAlgorithm: 'github',
+    }),
 
   lint: z
     .object({
@@ -97,7 +100,13 @@ export const MdcpConfigSchema = z.object({
           skipIndexFiles: z.boolean().default(true),
           collapseBlankLines: z.boolean().default(true),
         })
-        .default({}),
+        .default({
+          stripHtmlComments: true,
+          stripFrontmatter: true,
+          stripBanner: true,
+          skipIndexFiles: true,
+          collapseBlankLines: true,
+        }),
     })
     .optional(),
 });

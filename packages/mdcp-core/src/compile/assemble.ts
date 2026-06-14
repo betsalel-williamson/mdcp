@@ -64,9 +64,9 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
   if (existsSync(manifestPath)) {
     return readFileSync(manifestPath, 'utf-8')
       .split('\n')
-      .map((l) => l.trim())
-      .filter((l) => l && !l.startsWith('#'))
-      .map((l) =>
+      .map((l: string) => l.trim())
+      .filter((l: string) => l && !l.startsWith('#'))
+      .map((l: string) =>
         l.startsWith('/') || l.includes('/') ? resolve(guideDir, l) : join(guideDir, l),
       );
   }
@@ -75,9 +75,9 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
   if (resolved.length > 0) return resolved;
 
   return readdirSync(guideDir)
-    .filter((n) => n.endsWith('.md') && n !== manifestName && n !== 'shards.md')
+    .filter((n: string) => n.endsWith('.md') && n !== manifestName && n !== 'shards.md')
     .sort()
-    .map((n) => join(guideDir, n));
+    .map((n: string) => join(guideDir, n));
 }
 
 export function processSection(
