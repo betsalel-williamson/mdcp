@@ -1,5 +1,13 @@
 # @bwilliamson/mdcp-cli
 
+## 0.1.3
+
+### Patch Changes
+
+- fc5719b: Add LLM collaboration guide for agent workflows, bootstrap prompt, and Cursor agent rule. Recompile repository docs and package READMEs.
+- Updated dependencies [fc5719b]
+  - @bwilliamson/mdcp-core@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes
