@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, relative } from 'node:path';
 import type { CompileHook } from '../hooks.js';
 import { hookSearchRoots, resolveRelativeFile } from './path-resolve.js';
 
@@ -11,7 +11,9 @@ const LINE_RANGE_RE =
 const SOURCE_EXT_RE =
   /\.(ts|tsx|js|jsx|mjs|cjs|py|go|rs|java|kt|rb|php|cs|swift|rules|yaml|yml|json|toml|sh|bash|zsh|sql|graphql|proto|vue|svelte)$/i;
 
-function isSourcePath(path: string): boolean {
+const IDENT_RE = /^[\w$]+$/;
+
+export function isSourcePath(path: string): boolean {
   if (!path || path.startsWith('http://') || path.startsWith('https://') || path.startsWith('#')) {
     return false;
   }
@@ -20,12 +22,12 @@ function isSourcePath(path: string): boolean {
   return SOURCE_EXT_RE.test(base) || !base.includes('.');
 }
 
-function formatLineFragment(start: string, end?: string): string {
+export function formatLineFragment(start: string, end?: string): string {
   if (end && end !== start) return `L${start}-L${end}`;
   return `L${start}`;
 }
 
-function lineRangeFromText(text: string): string | null {
+export function lineRangeFromText(text: string): string | null {
   LINE_RANGE_RE.lastIndex = 0;
   const m = LINE_RANGE_RE.exec(text);
   if (!m) return null;
@@ -36,14 +38,23 @@ function lineRangeFromText(text: string): string | null {
   return null;
 }
 
+export function symbolFromLabel(label: string): string | null {
+  const stripped = label.replace(/^`+|`+$/g, '').trim();
+  if (!stripped || lineRangeFromText(stripped)) return null;
+  if (!IDENT_RE.test(stripped)) return null;
+  return stripped;
+}
+
 function lineForSymbol(filePath: string, symbol: string): string | null {
   const text = readFileSync(filePath, 'utf-8');
   const lines = text.split('\n');
+  const escaped = symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const patterns = [
-    new RegExp(`\\b${symbol}\\b`),
-    new RegExp(`\\bfunction\\s+${symbol}\\b`),
-    new RegExp(`\\bclass\\s+${symbol}\\b`),
-    new RegExp(`\\b${symbol}\\s*\\(`),
+    new RegExp(`\\b${escaped}\\b`),
+    new RegExp(`\\bfunction\\s+${escaped}\\b`),
+    new RegExp(`\\bclass\\s+${escaped}\\b`),
+    new RegExp(`\\b(?:const|let|var|export)\\s+${escaped}\\b`),
+    new RegExp(`\\b${escaped}\\s*\\(`),
   ];
   for (let i = 0; i < lines.length; i++) {
     if (patterns.some((re) => re.test(lines[i]))) {
@@ -53,11 +64,21 @@ function lineForSymbol(filePath: string, symbol: string): string | null {
   return null;
 }
 
+function posixRelative(fromDir: string, toFile: string): string {
+  return relative(fromDir, toFile).replace(/\\/g, '/');
+}
+
+function outputPathForLink(pathPart: string, resolved: string | null, outputFile?: string): string {
+  if (!resolved || !outputFile) return pathPart;
+  return posixRelative(dirname(outputFile), resolved);
+}
+
 function rewriteEvidenceLink(
   label: string,
   target: string,
   guideDir: string,
   searchRoots: string[],
+  outputFile?: string,
 ): string {
   const [pathPart, fragment] = target.split('#');
   if (!isSourcePath(pathPart)) return `[${label}](${target})`;
@@ -65,27 +86,35 @@ function rewriteEvidenceLink(
   const existingLine = fragment?.match(/^L\d+(?:-L\d+)?$/i);
   if (existingLine) {
     const normalized = fragment.replace(/^l/i, 'L');
-    return `[${label}](${pathPart}#${normalized})`;
+    const resolved = resolveRelativeFile(pathPart, guideDir, searchRoots);
+    const outPath = outputPathForLink(pathPart, resolved, outputFile);
+    return `[${label}](${outPath}#${normalized})`;
   }
 
+  const resolved = resolveRelativeFile(pathPart, guideDir, searchRoots);
+
   let lineFrag = lineRangeFromText(label) ?? lineRangeFromText(pathPart);
-  if (!lineFrag && fragment && !fragment.match(/^L\d/i)) {
-    const resolved = resolveRelativeFile(pathPart, guideDir, searchRoots);
-    if (resolved) {
-      lineFrag = lineForSymbol(resolved, fragment) ?? null;
-    }
+  if (!lineFrag && fragment && !fragment.match(/^L\d/i) && resolved) {
+    lineFrag = lineForSymbol(resolved, fragment);
+  }
+  if (!lineFrag && resolved) {
+    const symbol = symbolFromLabel(label);
+    if (symbol) lineFrag = lineForSymbol(resolved, symbol);
   }
 
   if (!lineFrag) return `[${label}](${target})`;
-  return `[${label}](${pathPart}#${lineFrag})`;
+
+  const outPath = outputPathForLink(pathPart, resolved, outputFile);
+  return `[${label}](${outPath}#${lineFrag})`;
 }
 
 export const codeEvidenceHook: CompileHook = (ctx) => {
   const guideDir = dirname(ctx.sourceFile);
   const searchRoots = hookSearchRoots(ctx, 'codeEvidence');
+  if (ctx.scopeRoot) searchRoots.push(ctx.scopeRoot);
 
   return ctx.body.replace(MD_LINK_RE, (match, label: string, target: string) => {
     if (!isSourcePath(target.split('#')[0])) return match;
-    return rewriteEvidenceLink(label, target, guideDir, searchRoots);
+    return rewriteEvidenceLink(label, target, guideDir, searchRoots, ctx.outputFile);
   });
 };

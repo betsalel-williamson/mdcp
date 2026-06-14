@@ -21,7 +21,11 @@ export interface CompileHookContext {
   body: string;
   config: MdcpConfigInput;
   outputBasename?: string;
+  /** Absolute path to compiled guide output when compile.outputFile is set. */
+  outputFile?: string;
   sourceFile: string;
+  /** Absolute repo / scope root for resolving evidence paths (compile.scopeRoot). */
+  scopeRoot?: string;
   /** Mutable per-guide state shared across shard hook invocations during assemble. */
   hookState?: CompileHookState;
 }

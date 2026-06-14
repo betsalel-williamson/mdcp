@@ -104,6 +104,8 @@ export interface AssembleGuideOptions {
   hooks?: string[];
   stripAnchors?: boolean;
   outputBasename?: string;
+  /** Absolute path to compiled guide output when compile.outputFile is set. */
+  outputFile?: string;
   publishPathRewrite?: PublishPathRewriteOptions;
   config?: MdcpConfigInput;
 }
@@ -155,6 +157,8 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
         filename: name,
         config: options.config ?? ({} as MdcpConfigInput),
         outputBasename: options.outputBasename,
+        outputFile: options.outputFile,
+        scopeRoot: options.scopeRoot,
         sourceFile: filePath,
         hookState,
       },
@@ -232,6 +236,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       hooks: compile?.hooks,
       stripAnchors: compile?.stripAnchors,
       outputBasename,
+      outputFile: compile?.outputFile ? resolve(cwd, compile.outputFile) : undefined,
       publishPathRewrite: compile?.publishPathRewrite,
       config: options.config,
     });

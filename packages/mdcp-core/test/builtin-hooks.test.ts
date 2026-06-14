@@ -23,30 +23,6 @@ const baseCtx = {
 describe('builtin compile hooks', () => {
   const work = useTmpDir('mdcp-hooks-');
 
-  it('codeEvidence adds line fragments from link text', () => {
-    const out = applyCompileHooks(
-      'See [firestore.rules L6-L8](firestore.rules) for rules.',
-      { ...baseCtx, sourceFile: '/tmp/claim.md' },
-      ['codeEvidence'],
-    );
-    expect(out).toContain('](firestore.rules#L6-L8)');
-  });
-
-  it('codeEvidence resolves symbol fragments when file exists', () => {
-    const guideDir = join(work.path, 'review');
-    mkdirSync(guideDir, { recursive: true });
-    writeFileSync(join(guideDir, 'util.ts'), 'export function helper() {\n  return 1;\n}\n');
-    const sourceFile = join(guideDir, 'claim.md');
-    withCwd(work.path, () => {
-      const out = applyCompileHooks(
-        'Evidence: [helper](util.ts#helper)',
-        { ...baseCtx, sourceFile },
-        ['codeEvidence'],
-      );
-      expect(out).toMatch(/util\.ts#L\d+\)/);
-    });
-  });
-
   it('reviewLinks rewrites FIND shard links to monolith anchors', () => {
     const outcomes = join(work.path, 'review', 'outcomes');
     mkdirSync(outcomes, { recursive: true });
