@@ -6,8 +6,8 @@ import '../src/compile/hooks/builtin.js';
 import { useTmpDir, withCwd } from './helpers/tmp-dir.js';
 
 const baseCtx = {
-  guideName: 'review',
-  filename: 'claim.md',
+  guideName: 'glossary',
+  filename: 'terms.md',
   config: {
     guides: [
       {
@@ -29,6 +29,12 @@ describe('builtin compile hooks', () => {
     writeFileSync(join(outcomes, 'FIND-004.md'), '# FIND-004 — Example finding\n');
     const sourceFile = join(work.path, 'glossary', 'terms.md');
     mkdirSync(join(work.path, 'glossary'), { recursive: true });
+    const linkIndex = new Map([
+      [
+        join(outcomes, 'FIND-004.md'),
+        { outputBasename: 'architecture-review.md', slug: 'find-004' },
+      ],
+    ]);
     withCwd(work.path, () => {
       const out = applyCompileHooks(
         'See [FIND-004](../review/outcomes/FIND-004.md).',
@@ -37,6 +43,9 @@ describe('builtin compile hooks', () => {
           filename: 'terms.md',
           config: baseCtx.config,
           sourceFile,
+          outputBasename: 'glossary.md',
+          scopeRoot: work.path,
+          linkIndex,
         },
         ['reviewLinks'],
       );

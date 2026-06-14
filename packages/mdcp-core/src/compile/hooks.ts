@@ -1,4 +1,5 @@
 import type { MdcpConfigInput } from '../config/schema.js';
+import type { GuideLinkIndex } from './guide-link-index.js';
 
 export interface InlineInsertsHookState {
   /** Resolved absolute insert shard path → anchor slug for first inline in this guide. */
@@ -28,6 +29,8 @@ export interface CompileHookContext {
   scopeRoot?: string;
   /** Mutable per-guide state shared across shard hook invocations during assemble. */
   hookState?: CompileHookState;
+  /** Cross-guide shard index built once per compileGuideResults invocation. */
+  linkIndex?: GuideLinkIndex;
 }
 
 export type CompileHook = (ctx: CompileHookContext) => string;

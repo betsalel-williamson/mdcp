@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join, resolve, basename, dirname } from 'node:path';
 import { demoteHeadings, stripAboutThisGuideHeading, extractGuideH1 } from './headings.js';
 import { stripExplicitAnchorMarkers } from './anchors.js';
@@ -8,79 +8,22 @@ import { applyCompileHooks, createCompileHookState } from './hooks.js';
 import './hooks/builtin.js';
 import {
   buildSectionSlugMap,
+  rewriteCrossGuideFileLinks,
   rewriteIntraGuideFileLinks,
   rewritePublishPathLinks,
 } from './publish-links.js';
+import { buildGuideLinkIndex, type GuideLinkIndex } from './guide-link-index.js';
+import { sectionFiles } from './section-manifest.js';
 import type { GuideConfig, GuideConfigInput, MdcpConfigInput } from '../config/schema.js';
 import { resolveGuideLinkBase } from '../config/load.js';
 import type { PublishPathRewriteOptions } from './publish-links.js';
 
-const FILE_LINK_RE = /\[[^\]]*\]\(([^)]+\.md)(?:#[^)]*)?\)/g;
-const SLUG_LINK_RE = /\]\(#([^)]+)\)/g;
-
-export interface SectionFilesOptions {
-  manifest?: string;
-  scopeRoot?: string;
-  sectionsHeading?: string;
-}
-
-function manifestTextForSections(text: string, sectionsHeading?: string): string {
-  if (!sectionsHeading) return text;
-  const escaped = sectionsHeading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const re = new RegExp(`^##\\s+${escaped}\\s*$`, 'im');
-  const match = re.exec(text);
-  if (!match || match.index === undefined) return text;
-  return text.slice(match.index);
-}
-
-function resolveManifestPaths(
-  guideDir: string,
-  text: string,
-  options: SectionFilesOptions,
-): string[] {
-  const scope = options.scopeRoot ? resolve(options.scopeRoot) : null;
-  const files: string[] = [];
-
-  for (const match of text.matchAll(FILE_LINK_RE)) {
-    const rel = match[1].split('#')[0];
-    const resolved = resolve(guideDir, rel);
-    if (scope && !resolved.startsWith(scope + '/') && resolved !== scope) {
-      continue;
-    }
-    if (!files.includes(resolved)) files.push(resolved);
-  }
-
-  for (const match of text.matchAll(SLUG_LINK_RE)) {
-    const slug = match[1];
-    if (slug === 'table-of-contents') continue;
-    const name = `${slug}.md`;
-    const local = join(guideDir, name);
-    if (existsSync(local) && !files.includes(local)) {
-      files.push(local);
-    }
-  }
-
-  return files;
-}
-
-export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}): string[] {
-  const manifestName = options.manifest ?? 'index.md';
-  const indexPath = join(guideDir, manifestName);
-  if (!existsSync(indexPath)) {
-    throw new Error(`No ${manifestName} in ${guideDir}`);
-  }
-
-  const text = readFileSync(indexPath, 'utf-8');
-  const scopedText = manifestTextForSections(text, options.sectionsHeading);
-
-  const resolved = resolveManifestPaths(guideDir, scopedText, options);
-  if (resolved.length > 0) return resolved;
-
-  return readdirSync(guideDir)
-    .filter((n: string) => n.endsWith('.md') && n !== manifestName && n !== 'shards.md')
-    .sort()
-    .map((n: string) => join(guideDir, n));
-}
+export { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
+export {
+  buildGuideLinkIndex,
+  type GuideLinkIndex,
+  type GuideLinkEntry,
+} from './guide-link-index.js';
 
 export function processSection(
   guideName: string,
@@ -109,6 +52,7 @@ export interface AssembleGuideOptions {
   outputFile?: string;
   publishPathRewrite?: PublishPathRewriteOptions;
   config?: MdcpConfigInput;
+  linkIndex?: GuideLinkIndex;
 }
 
 export function assembleGuide(guideDir: string, options: AssembleGuideOptions = {}): string {
@@ -162,9 +106,20 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
         scopeRoot: options.scopeRoot,
         sourceFile: filePath,
         hookState,
+        linkIndex: options.linkIndex,
       },
       options.hooks,
     );
+
+    if (options.linkIndex) {
+      body = rewriteCrossGuideFileLinks(body, {
+        sourceFile: filePath,
+        guideDir,
+        scopeRoot: options.scopeRoot,
+        currentOutputBasename: options.outputBasename,
+        linkIndex: options.linkIndex,
+      });
+    }
 
     parts.push(body + '\n\n');
   }
@@ -221,6 +176,7 @@ function resolveGuideDir(
 export function compileGuideResults(options: CompileOptions): CompileGuideResult[] {
   const guideConfigMap = new Map((options.guides ?? []).map((g) => [g.name, g]));
   const cwd = options.cwd ?? process.cwd();
+  const linkIndex = buildGuideLinkIndex(options, cwd);
 
   return options.compileOrder.map((name) => {
     const cfg = guideConfigMap.get(name) as GuideConfig | undefined;
@@ -242,6 +198,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       outputFile: linkBase,
       publishPathRewrite: compile?.publishPathRewrite,
       config: options.config,
+      linkIndex,
     });
 
     const outputFile = compile?.outputFile;
