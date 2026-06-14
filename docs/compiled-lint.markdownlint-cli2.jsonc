@@ -3,7 +3,7 @@
     "guides.md",
     "../DEVELOPERS.md",
     "../packages/mdcp-cli/README.md",
-    "../packages/mdcp-core/README.md"
+    "../packages/mdcp-core/README.md",
   ],
   "config": {
     "MD012": false,

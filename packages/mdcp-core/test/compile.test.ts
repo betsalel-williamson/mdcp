@@ -4,7 +4,12 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
-import { compileGuides, assembleGuide, writeCompiledGuides } from '../src/compile/assemble.js';
+import {
+  compileGuides,
+  assembleGuide,
+  writeCompiledGuides,
+  type CompileOptionsInput,
+} from '../src/compile/assemble.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURE = join(__dirname, '../../../examples/sample-guides');
@@ -107,7 +112,7 @@ describe('compileGuides', () => {
           },
         },
       ],
-    } satisfies Parameters<typeof writeCompiledGuides>[0];
+    } satisfies CompileOptionsInput;
 
     const written = writeCompiledGuides(opts, monolithOut);
     expect(written.map((w) => w.path).sort()).toEqual([monolithOut, publishOut].sort());
@@ -159,12 +164,92 @@ describe('compileGuides', () => {
           },
         },
       ],
-    } satisfies Parameters<typeof writeCompiledGuides>[0];
+    } satisfies CompileOptionsInput;
 
     writeCompiledGuides(opts, join(work, 'guides.md'));
     const text = readFileSync(publishOut, 'utf-8');
     expect(text).toContain('[LLM collaboration](#llm-collaboration)');
     expect(text).not.toMatch(/\]\(\.\/llm-collaboration\.md\)/);
+
+    rmSync(work, { recursive: true, force: true });
+  });
+
+  it('rewrites intra-guide .md links in monolith output without outputFile', () => {
+    const work = join(tmpdir(), `mdcp-monolith-links-${Date.now()}`);
+    const guideDir = join(work, 'guide');
+    mkdirSync(guideDir, { recursive: true });
+
+    writeFileSync(join(guideDir, 'index.md'), '# Feature Guide\n\n');
+    writeFileSync(join(guideDir, 'intro.md'), '# Intro\n\nSee [Details](./details.md) for more.\n');
+    writeFileSync(join(guideDir, 'details.md'), '# Details\n\nBody.\n');
+    writeFileSync(join(guideDir, 'sections.txt'), 'intro.md\ndetails.md\n');
+
+    const out = compileGuides({
+      guidesRoot: work,
+      compileOrder: ['guide'],
+    });
+    expect(out).toContain('[Details](#details)');
+    expect(out).not.toMatch(/\]\(\.\/details\.md\)/);
+
+    rmSync(work, { recursive: true, force: true });
+  });
+
+  it('does not rewrite publish path links without publishPathRewrite config', () => {
+    const work = join(tmpdir(), `mdcp-no-path-rewrite-${Date.now()}`);
+    const guideDir = join(work, 'guide');
+    mkdirSync(guideDir, { recursive: true });
+
+    writeFileSync(join(guideDir, 'index.md'), '# @example/pkg\n\n');
+    writeFileSync(
+      join(guideDir, 'section.md'),
+      '# Section\n\nSee [Config](../mdcp.config.json).\n',
+    );
+    writeFileSync(join(guideDir, 'sections.txt'), 'section.md\n');
+
+    const publishOut = join(work, 'README.md');
+    const opts = {
+      guidesRoot: work,
+      compileOrder: ['guide'],
+      cwd: work,
+      guides: [
+        {
+          name: 'guide',
+          compile: {
+            outputFile: 'README.md',
+            includeBanner: false,
+          },
+        },
+      ],
+    } satisfies CompileOptionsInput;
+
+    writeCompiledGuides(opts, join(work, 'guides.md'));
+    const text = readFileSync(publishOut, 'utf-8');
+    expect(text).toContain('[Config](../mdcp.config.json)');
+
+    rmSync(work, { recursive: true, force: true });
+  });
+
+  it('returns empty string when all guides have publish outputs', () => {
+    const work = join(tmpdir(), `mdcp-all-publish-${Date.now()}`);
+    const guideDir = join(work, 'guide');
+    mkdirSync(guideDir, { recursive: true });
+
+    writeFileSync(join(guideDir, 'index.md'), '# Publish\n\n- [Body](body.md)\n');
+    writeFileSync(join(guideDir, 'body.md'), '# Body\n\nContent.\n');
+    writeFileSync(join(guideDir, 'sections.txt'), 'body.md\n');
+
+    const out = compileGuides({
+      guidesRoot: work,
+      compileOrder: ['guide'],
+      cwd: work,
+      guides: [
+        {
+          name: 'guide',
+          compile: { outputFile: 'README.md' },
+        },
+      ],
+    });
+    expect(out).toBe('');
 
     rmSync(work, { recursive: true, force: true });
   });

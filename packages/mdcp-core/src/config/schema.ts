@@ -43,6 +43,13 @@ const GuideSchema = z.object({
       /** Named compile hooks (see compile/hooks.ts). */
       hooks: z.array(z.string()).optional(),
       stripAnchors: z.boolean().default(true),
+      /** Rewrite shard-relative repo paths for publish outputs (e.g. DEVELOPERS.md). */
+      publishPathRewrite: z
+        .object({
+          stripParentSegments: z.number().int().min(1).max(4),
+          oneLevelPrefix: z.string(),
+        })
+        .optional(),
     })
     .optional(),
 });
@@ -113,4 +120,6 @@ export const MdcpConfigSchema = z.object({
 });
 
 export type MdcpConfig = z.infer<typeof MdcpConfigSchema>;
+export type MdcpConfigInput = z.input<typeof MdcpConfigSchema>;
 export type GuideConfig = z.infer<typeof GuideSchema>;
+export type GuideConfigInput = z.input<typeof GuideSchema>;

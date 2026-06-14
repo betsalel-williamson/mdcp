@@ -50,7 +50,11 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{json,md,yml,yaml}": [
+    "*.{json,jsonc,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "eslint.config.mjs": [
+      "eslint --fix",
       "prettier --write"
     ]
   },

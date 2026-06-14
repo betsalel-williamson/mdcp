@@ -13,7 +13,8 @@ registerCompileHook('myHook', (ctx) => {
 Built-in hook names are configured in `mdcp.config.json` under `guides[].compile.hooks`:
 
 - **`stripAnchors`** — removes explicit `{#anchor}` markers per shard
-- **`codeEvidence`**, **`reviewLinks`**, **`inlineDiagrams`** — reserved names (passthrough placeholders today; extend via `registerCompileHook` in your repo)
+- **`codeEvidence`**, **`inlineDiagrams`** — reserved names (passthrough placeholders today; extend via `registerCompileHook` in your repo)
+- **`reviewLinks`** — reserved name for consumer extensions; built-in intra-guide and `publishPathRewrite` link rewriting runs at assembly time in `assembleGuide`
 
 Default `compile.stripAnchors: true` also strips anchors on the full assembled guide without naming the hook.
 

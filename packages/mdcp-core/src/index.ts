@@ -1,4 +1,10 @@
-export { MdcpConfigSchema, type MdcpConfig, type GuideConfig } from './config/schema.js';
+export {
+  MdcpConfigSchema,
+  type MdcpConfig,
+  type MdcpConfigInput,
+  type GuideConfig,
+  type GuideConfigInput,
+} from './config/schema.js';
 export {
   loadConfig,
   resolveOutputPath,
@@ -32,6 +38,7 @@ export {
   compileGuides,
   compileGuideResults,
   writeCompiledGuides,
+  type CompileOptionsInput,
 } from './compile/assemble.js';
 export {
   writeSectionsManifest,
