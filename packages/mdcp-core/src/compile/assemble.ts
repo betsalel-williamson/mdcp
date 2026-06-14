@@ -4,7 +4,7 @@ import { join, resolve, basename, dirname } from 'node:path';
 import { demoteHeadings, stripAboutThisGuideHeading, extractGuideH1 } from './headings.js';
 import { stripExplicitAnchorMarkers } from './anchors.js';
 import { extractFirstHeading, stripFirstHeadingLine, formatCompileTitle } from './compile-title.js';
-import { applyCompileHooks } from './hooks.js';
+import { applyCompileHooks, createCompileHookState } from './hooks.js';
 import './hooks/builtin.js';
 import {
   buildSectionSlugMap,
@@ -129,6 +129,8 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
     if (h1) parts.push(h1);
   }
 
+  const hookState = createCompileHookState();
+
   for (let i = 0; i < files.length; i++) {
     const filePath = files[i];
     const name = basename(filePath);
@@ -154,6 +156,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
         config: options.config ?? ({} as MdcpConfigInput),
         outputBasename: options.outputBasename,
         sourceFile: filePath,
+        hookState,
       },
       options.hooks,
     );
