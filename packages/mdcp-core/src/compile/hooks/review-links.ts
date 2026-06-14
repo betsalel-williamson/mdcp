@@ -1,34 +1,18 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { githubSlugify } from '../../refs/slugs.js';
 import { extractFirstHeading } from '../compile-title.js';
 import type { CompileHook } from '../hooks.js';
+import { hookSearchRoots, resolveRelativeFile } from './path-resolve.js';
 
 const MD_LINK_RE = /\[([^\]]*)\]\(([^)]+)\)/g;
 const FIND_FILE_RE = /FIND-\d+\.md$/i;
 
 function slugForMarkdownFile(filePath: string): string | null {
-  if (!existsSync(filePath)) return null;
   const text = readFileSync(filePath, 'utf-8');
   const heading = extractFirstHeading(text);
   if (!heading.text) return null;
   return heading.anchor ?? githubSlugify(heading.text);
-}
-
-function resolveLinkTarget(
-  rawTarget: string,
-  guideDir: string,
-  searchRoots: string[],
-): string | null {
-  const withoutFragment = rawTarget.split('#')[0];
-  const candidates = [
-    resolve(guideDir, withoutFragment),
-    ...searchRoots.map((root) => resolve(root, withoutFragment)),
-  ];
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) return candidate;
-  }
-  return null;
 }
 
 function rewriteFindingLink(
@@ -41,7 +25,7 @@ function rewriteFindingLink(
   const pathOnly = target.split('#')[0];
   if (!FIND_FILE_RE.test(pathOnly)) return `[${label}](${target})`;
 
-  const resolved = resolveLinkTarget(target, guideDir, searchRoots);
+  const resolved = resolveRelativeFile(target, guideDir, searchRoots);
   if (!resolved) return `[${label}](${target})`;
 
   const slug = slugForMarkdownFile(resolved);
@@ -72,7 +56,7 @@ function rewriteCrossMonolithLink(
     return `[${label}](${target})`;
   }
 
-  const resolved = resolveLinkTarget(target, guideDir, searchRoots);
+  const resolved = resolveRelativeFile(target, guideDir, searchRoots);
   if (!resolved) return `[${label}](${target})`;
 
   const fragment = target.includes('#') ? target.split('#')[1] : slugForMarkdownFile(resolved);
@@ -83,7 +67,7 @@ function rewriteCrossMonolithLink(
 
 export const reviewLinksHook: CompileHook = (ctx) => {
   const guideDir = dirname(ctx.sourceFile);
-  const searchRoots = [process.cwd(), resolve(process.cwd(), '..')];
+  const searchRoots = hookSearchRoots(ctx, 'reviewLinks');
   const guideCfg = ctx.config.guides?.find((g) => g.name === ctx.guideName);
   const targetMonolith = guideCfg?.compile?.hooksConfig?.reviewLinks?.targetMonolith;
 
