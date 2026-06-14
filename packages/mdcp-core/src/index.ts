@@ -13,6 +13,8 @@ export {
   resolveGuidesRoot,
   resolveGuideDir,
   getGuideConfig,
+  guideScanDirs,
+  shardLintPaths,
   xrefScanDirs,
 } from './config/load.js';
 export {

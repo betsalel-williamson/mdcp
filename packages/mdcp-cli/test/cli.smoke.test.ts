@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
@@ -10,6 +10,44 @@ const CLI = join(__dirname, '../dist/cli.js');
 const REPO_ROOT = join(__dirname, '../../..');
 const FIXTURE = join(REPO_ROOT, 'examples/sample-guides');
 const SAMPLE_CONFIG = 'examples/sample-guides/mdcp.config.json';
+const SHARDS_PRESET = join(
+  REPO_ROOT,
+  'packages/mdcp-presets/markdownlint-shards.markdownlint-cli2.jsonc',
+);
+
+function valeInstalled(): boolean {
+  return spawnSync('vale', ['--version'], { encoding: 'utf-8' }).status === 0;
+}
+
+function writeInScopeLintFixture(docs: string, configExtra: Record<string, unknown> = {}): void {
+  mkdirSync(join(docs, 'guide'), { recursive: true });
+  mkdirSync(join(docs, 'other-guide'), { recursive: true });
+  writeFileSync(
+    join(docs, 'getting-started.md'),
+    'This legacy flat doc has no top-level heading.\n',
+  );
+  writeFileSync(
+    join(docs, 'other-guide', 'stray.md'),
+    'Unregistered guide content without a heading.\n',
+  );
+  writeFileSync(join(docs, 'guide', 'index.md'), '# Guide\n\n- [section](section.md)\n');
+  writeFileSync(join(docs, 'guide', 'section.md'), '# Guide\n\n## Hello\n');
+  writeFileSync(
+    join(docs, 'mdcp.config.json'),
+    JSON.stringify({
+      outputDir: '.',
+      outputFile: 'guides.md',
+      compileOrder: ['guide'],
+      guides: [{ name: 'guide', path: 'guide' }],
+      refs: { registryFile: 'refs.json' },
+      lint: {
+        xrefs: { enabled: false },
+        markdownlint: { shardsConfig: SHARDS_PRESET },
+      },
+      ...configExtra,
+    }),
+  );
+}
 
 describe('cli smoke', () => {
   it('prints version', () => {
@@ -70,6 +108,101 @@ describe('cli smoke', () => {
         { encoding: 'utf-8', cwd: docs },
       );
       expect(existsSync(join(docs, '_build/compiled/refs.json'))).toBe(true);
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
+  it('skips out-of-scope markdown for shard lint (#17)', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-scope-'));
+    try {
+      writeInScopeLintFixture(docs);
+      const out = execFileSync(
+        'node',
+        [
+          CLI,
+          'check',
+          '--config',
+          'mdcp.config.json',
+          '--cwd',
+          docs,
+          '--skip-vale',
+          '--require-lint',
+        ],
+        { encoding: 'utf-8', cwd: docs },
+      );
+      expect(out).toContain('mdcp check passed');
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
+  it('honors shardsGlobs override for shard lint (#17)', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-shards-globs-'));
+    try {
+      mkdirSync(join(docs, 'narrow'), { recursive: true });
+      mkdirSync(join(docs, 'wide'), { recursive: true });
+      writeFileSync(join(docs, 'narrow', 'index.md'), '# Narrow\n\n- [a](a.md)\n');
+      writeFileSync(join(docs, 'narrow', 'a.md'), '# Narrow\n\n## A\n');
+      writeFileSync(join(docs, 'wide', 'index.md'), '# Wide\n\n- [b](b.md)\n');
+      writeFileSync(join(docs, 'wide', 'b.md'), 'No heading — would fail MD041 if linted.\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['narrow', 'wide'],
+          guides: [
+            { name: 'narrow', path: 'narrow' },
+            { name: 'wide', path: 'wide' },
+          ],
+          refs: { registryFile: 'refs.json' },
+          lint: {
+            xrefs: { enabled: false },
+            markdownlint: {
+              shardsConfig: SHARDS_PRESET,
+              shardsGlobs: ['narrow'],
+            },
+          },
+        }),
+      );
+
+      const out = execFileSync(
+        'node',
+        [
+          CLI,
+          'check',
+          '--config',
+          'mdcp.config.json',
+          '--cwd',
+          docs,
+          '--skip-vale',
+          '--require-lint',
+        ],
+        { encoding: 'utf-8', cwd: docs },
+      );
+      expect(out).toContain('mdcp check passed');
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
+  it('skips out-of-scope markdown for Vale prose (#17)', () => {
+    if (!valeInstalled()) return;
+
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-vale-scope-'));
+    try {
+      writeInScopeLintFixture(docs);
+      writeFileSync(
+        join(docs, '.vale.ini'),
+        `StylesPath = ${join(REPO_ROOT, 'docs/styles')}\nMinAlertLevel = error\n`,
+      );
+
+      execFileSync(
+        'node',
+        [CLI, 'check', '--config', 'mdcp.config.json', '--cwd', docs, '--require-lint'],
+        { encoding: 'utf-8', cwd: docs },
+      );
     } finally {
       rmSync(docs, { recursive: true, force: true });
     }

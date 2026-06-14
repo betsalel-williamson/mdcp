@@ -97,6 +97,8 @@ export const MdcpConfigSchema = z.object({
         .object({
           shardsConfig: z.string().optional(),
           compiledConfig: z.string().optional(),
+          /** Shard lint paths relative to --cwd (default: compileOrder guide dirs). */
+          shardsGlobs: z.array(z.string()).optional(),
         })
         .optional(),
       links: z
