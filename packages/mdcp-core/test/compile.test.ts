@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync, existsSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
-import { compileGuides, assembleGuide } from '../src/compile/assemble.js';
+import { compileGuides, assembleGuide, writeCompiledGuides } from '../src/compile/assemble.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURE = join(__dirname, '../../../examples/sample-guides');
@@ -68,6 +68,60 @@ describe('compileGuides', () => {
       manifest: 'index.md',
     });
     expect(out).not.toMatch(/\{#[a-z0-9-]+\}/i);
+    rmSync(work, { recursive: true, force: true });
+  });
+
+  it('writes monolith and publish outputs in mixed mode', () => {
+    const work = join(tmpdir(), `mdcp-mixed-${Date.now()}`);
+    const monolithDir = join(work, 'main');
+    const publishDir = join(work, 'publish');
+    mkdirSync(monolithDir, { recursive: true });
+    mkdirSync(publishDir, { recursive: true });
+
+    writeFileSync(join(monolithDir, 'index.md'), '# Main Guide\n\n- [Intro](intro.md)\n');
+    writeFileSync(join(monolithDir, 'intro.md'), '# Intro\n\nMonolith content.\n');
+    writeFileSync(join(monolithDir, 'sections.txt'), 'intro.md\n');
+
+    writeFileSync(join(publishDir, 'index.md'), '# Publish Guide\n\n- [Readme](readme.md)\n');
+    writeFileSync(join(publishDir, 'readme.md'), '# @example/pkg\n\nPublish content.\n');
+    writeFileSync(join(publishDir, 'sections.txt'), 'readme.md\n');
+
+    const publishOut = join(work, 'out', 'README.md');
+    const monolithOut = join(work, 'guides.md');
+    const opts = {
+      guidesRoot: work,
+      compileOrder: ['main', 'publish'],
+      banner: '<!-- banner -->\n\n',
+      cwd: work,
+      guides: [
+        { name: 'main', splitLevel: 2 as const },
+        {
+          name: 'publish',
+          splitLevel: 2 as const,
+          compile: {
+            outputFile: 'out/README.md',
+            includeBanner: false,
+            preambleSection: 'about-this-guide.md',
+            manifest: 'index.md',
+            stripAnchors: true,
+          },
+        },
+      ],
+    } satisfies Parameters<typeof writeCompiledGuides>[0];
+
+    const written = writeCompiledGuides(opts, monolithOut);
+    expect(written.map((w) => w.path).sort()).toEqual([monolithOut, publishOut].sort());
+
+    const monolith = compileGuides(opts);
+    expect(monolith).toContain('<!-- banner -->');
+    expect(monolith).toContain('Main Guide');
+    expect(monolith).toContain('Intro');
+    expect(monolith).not.toContain('@example/pkg');
+
+    const publishText = readFileSync(publishOut, 'utf-8');
+    expect(publishText).toContain('@example/pkg');
+    expect(publishText).not.toContain('<!-- banner -->');
+
     rmSync(work, { recursive: true, force: true });
   });
 });

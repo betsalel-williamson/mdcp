@@ -11,7 +11,6 @@ import {
   getGuideConfig,
   xrefScanDirs,
   compileGuides,
-  compileGuideResults,
   writeCompiledGuides,
   writeAllSectionsManifests,
   checkOrphansForGuides,
@@ -71,12 +70,6 @@ function writeCompiled(config: MdcpConfig, cwd: string): string {
   const results = writeCompiledGuides(opts, resolveOutputPath(config, cwd));
   for (const r of results) {
     console.log(`→ ${r.path} (${r.lines} lines)`);
-  }
-  const separate = compileGuideResults(opts).some((r) => r.outputFile);
-  if (separate) {
-    return compileGuideResults(opts)
-      .map((r) => r.text)
-      .join('\n');
   }
   return compileToString(config, cwd);
 }

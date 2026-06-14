@@ -163,6 +163,7 @@ export interface CompileGuideResult {
   name: string;
   text: string;
   outputFile?: string;
+  includeBanner: boolean;
 }
 
 export interface CompileOptions {
@@ -204,30 +205,61 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       config: options.config,
     });
 
+    const outputFile = compile?.outputFile;
+    const includeBanner = compile?.includeBanner ?? (outputFile === undefined ? true : false);
+
     return {
       name,
       text,
-      outputFile: compile?.outputFile,
+      outputFile,
+      includeBanner,
     };
   });
 }
 
+function monolithResults(results: CompileGuideResult[]): CompileGuideResult[] {
+  return results.filter((r) => !r.outputFile);
+}
+
+function buildMonolithBody(results: CompileGuideResult[]): string {
+  const monolith = monolithResults(results);
+  if (monolith.length === 0) return '';
+
+  const parts: string[] = [];
+  for (let i = 0; i < monolith.length; i++) {
+    const text = i === 0 ? monolith[i].text : demoteHeadings(monolith[i].text, 1);
+    parts.push(text, '\n');
+  }
+  return parts.join('');
+}
+
+function applyMonolithBanner(options: CompileOptions, results: CompileGuideResult[]): string {
+  const body = buildMonolithBody(results);
+  if (!body) return '';
+
+  const monolith = monolithResults(results);
+  const bannerGuide = monolith.find((r) => r.includeBanner);
+  if (options.banner && bannerGuide) {
+    return options.banner + body;
+  }
+  return body;
+}
+
 export function compileGuides(options: CompileOptions): string {
   const results = compileGuideResults(options);
-  const separateOutputs = results.some((r) => r.outputFile);
+  const hasPublishOutputs = results.some((r) => r.outputFile);
+  const monolith = monolithResults(results);
 
-  if (separateOutputs) {
+  if (!hasPublishOutputs) {
+    const body = buildMonolithBody(results);
+    return options.banner ? options.banner + body : body;
+  }
+
+  if (monolith.length === 0) {
     return results.map((r) => r.text).join('\n');
   }
 
-  const parts: string[] = [];
-  for (let i = 0; i < results.length; i++) {
-    const text = i === 0 ? results[i].text : demoteHeadings(results[i].text, 1);
-    parts.push(text, '\n');
-  }
-
-  const body = parts.join('');
-  return options.banner ? options.banner + body : body;
+  return applyMonolithBanner(options, results);
 }
 
 export function writeCompiledGuides(
@@ -235,30 +267,29 @@ export function writeCompiledGuides(
   defaultOutputPath: string,
 ): { path: string; lines: number }[] {
   const results = compileGuideResults(options);
-  const separateOutputs = results.some((r) => r.outputFile);
   const cwd = options.cwd ?? process.cwd();
   const written: { path: string; lines: number }[] = [];
 
-  if (separateOutputs) {
-    for (let i = 0; i < results.length; i++) {
-      const r = results[i];
-      if (!r.outputFile) continue;
-      const outPath = resolve(cwd, r.outputFile);
-      let text = r.text;
-      if (options.banner && i === 0) text = options.banner + text;
-      mkdirSync(dirname(outPath), { recursive: true });
-      writeFileSync(outPath, text, 'utf-8');
-      written.push({ path: outPath, lines: text.split('\n').length });
-    }
-    return written;
+  for (const r of results) {
+    if (!r.outputFile) continue;
+    const outPath = resolve(cwd, r.outputFile);
+    let text = r.text;
+    if (options.banner && r.includeBanner) text = options.banner + text;
+    mkdirSync(dirname(outPath), { recursive: true });
+    writeFileSync(outPath, text, 'utf-8');
+    written.push({ path: outPath, lines: text.split('\n').length });
   }
 
-  const combined = compileGuides(options);
-  mkdirSync(dirname(defaultOutputPath), { recursive: true });
-  writeFileSync(defaultOutputPath, combined, 'utf-8');
-  written.push({
-    path: defaultOutputPath,
-    lines: combined.split('\n').length,
-  });
+  const monolith = monolithResults(results);
+  if (monolith.length > 0) {
+    const combined = applyMonolithBanner(options, results);
+    mkdirSync(dirname(defaultOutputPath), { recursive: true });
+    writeFileSync(defaultOutputPath, combined, 'utf-8');
+    written.push({
+      path: defaultOutputPath,
+      lines: combined.split('\n').length,
+    });
+  }
+
   return written;
 }
