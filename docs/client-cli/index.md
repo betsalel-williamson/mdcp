@@ -7,5 +7,6 @@
   - [Commands reference](./commands-reference.md)
   - [Cross-links and refs](./cross-links-and-refs.md)
   - [Consumer migration](./consumer-migration.md)
+  - [LLM collaboration](./llm-collaboration.md)
   - [Agent integration](./agent-integration.md)
   - [Optional linters](./optional-linters.md)

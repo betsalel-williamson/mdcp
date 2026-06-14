@@ -44,6 +44,8 @@ mdcp compile --config mdcp.config.json
 mdcp check --config mdcp.config.json
 ```
 
+Collaborating with an LLM? See [LLM collaboration](./llm-collaboration.md) for bootstrap prompts and toolchain integration (Cursor, Composer, Gemini CLI).
+
 Global options (apply to every command):
 
 | Option                | Default            | Purpose                                                      |
