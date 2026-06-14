@@ -48,4 +48,4 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Require changeset when packages change
-        run: pnpm changeset:status --since=${{ github.event.pull_request.base.sha }}
+        run: pnpm exec changeset status --since=${{ github.event.pull_request.base.sha }}
