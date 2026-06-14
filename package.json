@@ -16,7 +16,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "vale:sync": "mkdir -p examples/sample-guides/styles && cd examples/sample-guides && ../../node_modules/@vvago/vale/bin/vale sync",
+    "vale:sync": "mkdir -p examples/sample-guides/styles && cd examples/sample-guides && ../../node_modules/.bin/vale sync",
     "docs:lint": "node packages/mdcp-cli/dist/cli.js lint --config mdcp.config.json --cwd examples/sample-guides --require-lint",
     "docs:prose": "node packages/mdcp-cli/dist/cli.js prose --config mdcp.config.json --cwd examples/sample-guides --require-vale",
     "docs:check": "node packages/mdcp-cli/dist/cli.js check --config mdcp.config.json --cwd examples/sample-guides --require-lint --require-vale",
@@ -30,6 +30,9 @@
   "pnpm": {
     "overrides": {
       "esbuild": ">=0.28.1"
+    },
+    "patchedDependencies": {
+      "@vvago/vale@3.15.1": "patches/@vvago__vale@3.15.1.patch"
     }
   },
   "lint-staged": {
