@@ -23,6 +23,20 @@ Port map from `legacy/` bash/Python to TypeScript packages.
 
 This repository dogfoods the pattern under `docs/` — see [examples/sample-guides](../../examples/sample-guides/) for a minimal fixture.
 
+## Config path bases (monolith vs per-guide output)
+
+Three path bases appear in every config. Mixing them up is the most common migration bug after switching from hand-rolled compile scripts.
+
+| Field                             | Base                                                      | Notes                                                                           |
+| --------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `outputDir`                       | `--cwd`                                                   | Compile output root; default guide shard dirs live here too                     |
+| `outputFile`, `refs.registryFile` | `outputDir`                                               | Monolith and refs registry — not `--cwd`                                        |
+| `compile.outputFile`              | `outputDir` when the value has no `..`; otherwise `--cwd` | Publish targets outside the docs tree use `..` (for example `../DEVELOPERS.md`) |
+
+**Nested `outputDir`:** use outputDir-relative monolith names (`"guides.md"`, `"refs.json"`). Per-guide outputs can use a bare filename (`"glossary.md"`) — MDCP writes `docs/_build/compiled/glossary.md`, not `docs/glossary.md`. Explicit cwd paths like `"_build/compiled/glossary.md"` still work and normalize to the same location.
+
+Full tables and examples: [Config essentials — path bases](../client-cli/config-essentials.md#config-path-bases).
+
 ## md-tree fork criteria
 
 Document in [Design constraints](./design-constraints.md) when:
