@@ -32,10 +32,9 @@ Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, th
    - `docs/features/` — product capabilities, design, and API surface
    - `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
    - `docs/client/` — end-user guide; open with `about-this-guide.md` stating the persona above
-     Each guide: `index.md`, `sections.txt`, and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
+     Each guide: `index.md` and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
 
 5. **Write and validate** — After shards exist:
-   - `mdcp sections --config docs/mdcp.config.json --cwd docs`
    - `npm run docs:compile`
    - `npm run docs:check`
      Fix xref, orphan, and lint errors before finishing.

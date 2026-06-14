@@ -39,7 +39,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 1. Copy a starter config from the [mdcp repo](https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
-2. Lay out shards under guide directories (each with `index.md`, `sections.txt`, and chapter files). See [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
+2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
 
 3. Run:
 
@@ -69,19 +69,20 @@ Global options (apply to every command):
 
 ## Project layout
 
-| Piece                                            | Role                                                                        |
-| ------------------------------------------------ | --------------------------------------------------------------------------- |
-| Guide directory (`overview/`, `admin-guide/`, …) | One logical guide                                                           |
-| `index.md`                                       | Human table of contents — links to shard files                              |
-| `sections.txt`                                   | Machine compile order — **guide-relative** filenames (from `mdcp sections`) |
-| `chapter-*.md` (typical)                         | One topic or chapter per file — naming is conventional, not required        |
-| `about-this-guide.md`                            | Optional preamble shard                                                     |
-| `guides.md`                                      | Compiled monolith (generated — do not edit by hand)                         |
-| `refs.json`                                      | Section link lookup table (written by `mdcp check` or `mdcp refs gen`)      |
+| Piece                                            | Role                                                                   |
+| ------------------------------------------------ | ---------------------------------------------------------------------- |
+| Guide directory (`overview/`, `admin-guide/`, …) | One logical guide                                                      |
+| `index.md` (or `shards.md`)                      | Human table of contents — **compile order** comes from link order here |
+| `chapter-*.md` (typical)                         | One topic or chapter per file — naming is conventional, not required   |
+| `about-this-guide.md`                            | Optional preamble shard                                                |
+| `guides.md`                                      | Compiled monolith (generated — do not edit by hand)                    |
+| `refs.json`                                      | Section link lookup table (written by `mdcp check` or `mdcp refs gen`) |
 
 Shards use `#` headings so each file reads well on its own. During compile, mdcp demotes headings under the guide title in the monolith.
 
-`sections.txt` lists shard paths **relative to the guide directory** (for example `introduction.md`). Never commit absolute machine paths.
+**Guide directories are human source only.** Generated outputs (`guides.md`, `refs.json`, per-guide `compile.outputFile`) live under `outputDir` (for example `_build/compiled/`).
+
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` (for example `"Sections"`) so only links under that `##` heading count toward compile order.
 
 Guides can also set `compile.outputFile` to publish a standalone document (for example an npm `README.md`) excluded from the monolith.
 
@@ -113,7 +114,7 @@ From the repository root, point at the config file and set the docs root separat
 
 ```bash
 # Equivalent manual invocation from repo root
-mdcp sections --config docs/mdcp.config.json --cwd docs
+mdcp compile --config docs/mdcp.config.json --cwd docs
 ```
 
 This resolves the config as `<repo>/docs/mdcp.config.json` and treats `docs/` as the shard tree root.
@@ -194,6 +195,24 @@ Minimal `mdcp.config.json`:
 
 Per-guide `compile.outputFile` writes a publish target (relative to `--cwd`) and excludes that guide from the monolith. Use `compile.includeBanner: false` for npm README outputs.
 
+#### Glossary pattern (`sectionsHeading`)
+
+When `index.md` has policy prose with example inline links before an ordered `## Sections` list, set `sectionsHeading` so preamble links are not compiled as shards:
+
+```json
+{
+  "name": "glossary",
+  "path": "glossary",
+  "compile": {
+    "title": "Compound glossary",
+    "sectionsHeading": "Sections",
+    "outputFile": "_build/compiled/glossary.md"
+  }
+}
+```
+
+Only links at or after `## Sections` are used for compile order.
+
 ### Schema-only fields
 
 | Field                       | Notes                                                      |
@@ -225,14 +244,11 @@ mdcp compile --config docs/mdcp.config.json --cwd docs
 ### Daily workflow
 
 ```bash
-# Regenerate the monolith from shards
+# Regenerate the monolith from shards (link order from each guide's index.md / shards.md)
 mdcp compile
 
 # Full validation gate (orphans → compile → refs → xrefs; optional linters)
 mdcp check
-
-# Regenerate sections.txt after changing a guide's index.md
-mdcp sections
 ```
 
 ### Command summary
@@ -242,7 +258,6 @@ mdcp sections
 | `mdcp compile`             | Regenerate the monolith from shards                                  |
 | `mdcp check`               | Full gate: orphans → compile → refs → xrefs; optional peer linters   |
 | `mdcp shard`               | Split a monolith into shards (requires `config.source`)              |
-| `mdcp sections`            | Regenerate `sections.txt` after changing a guide's `index.md`        |
 | `mdcp refs list`           | List heading slugs from `refs.json` as JSON                          |
 | `mdcp refs lookup <query>` | Search compiled section titles while writing cross-links             |
 | `mdcp export --llm`        | Token-stripped compiled output for LLM context                       |
@@ -289,10 +304,34 @@ Add `source` to your config pointing at your existing monolith, then:
 
 ```bash
 mdcp shard
-mdcp sections
 mdcp compile
 mdcp check
 ```
+
+### Upgrading to v0.1.6+ (sections.txt removed)
+
+**Breaking:** `sections.txt` and `mdcp sections` are removed. Compile order is read from each guide's `index.md` or `shards.md` link order.
+
+1. **Delete** every `sections.txt` under guide directories.
+2. **Ensure** each guide's manifest lists shards in compile order (bullet list or TOC links).
+3. **Add** `compile.sectionsHeading` when the manifest has preamble inline links that are not section shards. Example — glossary with policy prose before `## Sections`:
+
+```json
+{
+  "name": "glossary",
+  "path": "glossary",
+  "compile": {
+    "title": "Compound glossary",
+    "sectionsHeading": "Sections",
+    "outputFile": "_build/compiled/glossary.md"
+  }
+}
+```
+
+Then:
+
+1. Remove `mdcp sections` from npm scripts and agent prompts.
+2. Run `mdcp compile` and `mdcp check` — no separate sync step after editing `index.md`.
 
 ### Steps for a new consumer repo
 
@@ -336,12 +375,13 @@ Split documentation into three guides:
 
 Each guide directory needs:
 
-- `index.md` — human table of contents (links to shard files)
-- `sections.txt` — machine compile order (from `mdcp sections`)
+- `index.md` — human table of contents (links to shard files; compile order comes from link order here)
 - Topic shards — one file per section (for example `authentication.md`)
 - Optional `about-this-guide.md` — preamble shard (persona, scope)
 
-After changing a guide's `index.md`, run `mdcp sections`. Never hand-edit generated `guides.md` or `refs.json`.
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Config essentials](#glossary-pattern-sectionsheading)).
+
+Never hand-edit generated `guides.md` or `refs.json`.
 
 **Worked example:** this repository dogfoods under [`docs/features/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/features) (tool capabilities), [`docs/developer/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/developer) (repo development), and [`docs/client-cli/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/client-cli) (consumer adoption), wired by [`docs/mdcp.config.json`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.config.json). For a minimal fixture, see [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
 
@@ -380,10 +420,9 @@ Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, th
    - `docs/features/` — product capabilities, design, and API surface
    - `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
    - `docs/client/` — end-user guide; open with `about-this-guide.md` stating the persona above
-     Each guide: `index.md`, `sections.txt`, and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
+     Each guide: `index.md` and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
 
 5. **Write and validate** — After shards exist:
-   - `mdcp sections --config docs/mdcp.config.json --cwd docs`
    - `npm run docs:compile`
    - `npm run docs:check`
      Fix xref, orphan, and lint errors before finishing.
@@ -423,29 +462,29 @@ Use these after the pipeline exists.
 
 ```markdown
 Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
-Update each guide's `index.md`, run `mdcp sections`, then `mdcp compile` and `mdcp check --require-lint`.
+Update each guide's `index.md`, then `mdcp compile` and `mdcp check --require-lint`.
 Use `mdcp refs lookup` for every cross-link. Do not edit `guides.md` by hand.
 ```
 
 **Fix validation failures:**
 
 ```markdown
-`npm run docs:check` failed. Read the error output, fix only shard `.md` files and `sections.txt` if needed, then re-run until check passes.
+`npm run docs:check` failed. Read the error output, fix only shard `.md` files and config if needed, then re-run until check passes.
 Use `mdcp refs lookup` to correct broken fragment links.
 ```
 
 **Regenerate manifest after TOC change:**
 
 ```markdown
-I updated `index.md` in guide `{{GUIDE_NAME}}`. Run `mdcp sections`, then `mdcp compile` and `mdcp check`.
+I updated `index.md` in guide `{{GUIDE_NAME}}`. Run `mdcp compile` and `mdcp check`.
 ```
 
 ### Human review checklist
 
 When reviewing an agent's documentation PR:
 
-- Only shard `.md` files (and `sections.txt` / config) changed — not hand-edited `guides.md` or `refs.json`
-- `sections.txt` updated if any `index.md` link order changed
+- Only shard `.md` files and config changed — not hand-edited `guides.md` or `refs.json`
+- `index.md` link order matches intended compile order (use `compile.sectionsHeading` when the manifest has preamble example links)
 - `npm run docs:check` passes locally and in CI
 - Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`

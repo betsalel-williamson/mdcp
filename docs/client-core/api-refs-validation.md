@@ -34,9 +34,9 @@ Prefer outputDir-relative values in config (for example `"refs.json"` when `outp
 
 ## Manifest
 
-| Export                                               | Purpose                                   |
-| ---------------------------------------------------- | ----------------------------------------- |
-| `writeSectionsManifest`, `writeAllSectionsManifests` | Regenerate `sections.txt` from `index.md` |
+| Export                          | Purpose                                        |
+| ------------------------------- | ---------------------------------------------- |
+| `sectionFiles`, `assembleGuide` | Resolve compile order from manifest link order |
 
 ## Validation
 

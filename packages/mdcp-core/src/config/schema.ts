@@ -33,7 +33,7 @@ const GuideSchema = z.object({
       preambleSection: z.string().default('about-this-guide.md'),
       /** Manifest file name (default index.md; use shards.md for review trees). */
       manifest: z.string().default('index.md'),
-      /** When set, only links after this ## heading are used for sections.txt / compile order. */
+      /** When set, only links after this ## heading are used for compile order from the manifest. */
       sectionsHeading: z.string().optional(),
       /** Injected compile title as ## heading, followed by a blank line before the first section. */
       title: z.string().optional(),

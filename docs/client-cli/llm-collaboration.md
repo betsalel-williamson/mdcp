@@ -30,12 +30,13 @@ Split documentation into three guides:
 
 Each guide directory needs:
 
-- `index.md` — human table of contents (links to shard files)
-- `sections.txt` — machine compile order (from `mdcp sections`)
+- `index.md` — human table of contents (links to shard files; compile order comes from link order here)
 - Topic shards — one file per section (for example `authentication.md`)
 - Optional `about-this-guide.md` — preamble shard (persona, scope)
 
-After changing a guide's `index.md`, run `mdcp sections`. Never hand-edit generated `guides.md` or `refs.json`.
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Config essentials](./config-essentials.md#glossary-pattern-sectionsheading)).
+
+Never hand-edit generated `guides.md` or `refs.json`.
 
 **Worked example:** this repository dogfoods under [`docs/features/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/features) (tool capabilities), [`docs/developer/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/developer) (repo development), and [`docs/client-cli/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/client-cli) (consumer adoption), wired by [`docs/mdcp.config.json`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.config.json). For a minimal fixture, see [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
 
@@ -74,10 +75,9 @@ Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, th
    - `docs/features/` — product capabilities, design, and API surface
    - `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
    - `docs/client/` — end-user guide; open with `about-this-guide.md` stating the persona above
-     Each guide: `index.md`, `sections.txt`, and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
+     Each guide: `index.md` and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
 
 5. **Write and validate** — After shards exist:
-   - `mdcp sections --config docs/mdcp.config.json --cwd docs`
    - `npm run docs:compile`
    - `npm run docs:check`
      Fix xref, orphan, and lint errors before finishing.
@@ -117,29 +117,29 @@ Use these after the pipeline exists.
 
 ```markdown
 Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
-Update each guide's `index.md`, run `mdcp sections`, then `mdcp compile` and `mdcp check --require-lint`.
+Update each guide's `index.md`, then `mdcp compile` and `mdcp check --require-lint`.
 Use `mdcp refs lookup` for every cross-link. Do not edit `guides.md` by hand.
 ```
 
 **Fix validation failures:**
 
 ```markdown
-`npm run docs:check` failed. Read the error output, fix only shard `.md` files and `sections.txt` if needed, then re-run until check passes.
+`npm run docs:check` failed. Read the error output, fix only shard `.md` files and config if needed, then re-run until check passes.
 Use `mdcp refs lookup` to correct broken fragment links.
 ```
 
 **Regenerate manifest after TOC change:**
 
 ```markdown
-I updated `index.md` in guide `{{GUIDE_NAME}}`. Run `mdcp sections`, then `mdcp compile` and `mdcp check`.
+I updated `index.md` in guide `{{GUIDE_NAME}}`. Run `mdcp compile` and `mdcp check`.
 ```
 
 ## Human review checklist
 
 When reviewing an agent's documentation PR:
 
-- Only shard `.md` files (and `sections.txt` / config) changed — not hand-edited `guides.md` or `refs.json`
-- `sections.txt` updated if any `index.md` link order changed
+- Only shard `.md` files and config changed — not hand-edited `guides.md` or `refs.json`
+- `index.md` link order matches intended compile order (use `compile.sectionsHeading` when the manifest has preamble example links)
 - `npm run docs:check` passes locally and in CI
 - Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`

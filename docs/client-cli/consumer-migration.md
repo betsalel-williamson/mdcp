@@ -4,10 +4,34 @@ Add `source` to your config pointing at your existing monolith, then:
 
 ```bash
 mdcp shard
-mdcp sections
 mdcp compile
 mdcp check
 ```
+
+## Upgrading to v0.1.6+ (sections.txt removed)
+
+**Breaking:** `sections.txt` and `mdcp sections` are removed. Compile order is read from each guide's `index.md` or `shards.md` link order.
+
+1. **Delete** every `sections.txt` under guide directories.
+2. **Ensure** each guide's manifest lists shards in compile order (bullet list or TOC links).
+3. **Add** `compile.sectionsHeading` when the manifest has preamble inline links that are not section shards. Example — glossary with policy prose before `## Sections`:
+
+```json
+{
+  "name": "glossary",
+  "path": "glossary",
+  "compile": {
+    "title": "Compound glossary",
+    "sectionsHeading": "Sections",
+    "outputFile": "_build/compiled/glossary.md"
+  }
+}
+```
+
+Then:
+
+1. Remove `mdcp sections` from npm scripts and agent prompts.
+2. Run `mdcp compile` and `mdcp check` — no separate sync step after editing `index.md`.
 
 ## Steps for a new consumer repo
 

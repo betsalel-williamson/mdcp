@@ -7,13 +7,12 @@ import { useTmpDir } from './helpers/tmp-dir.js';
 describe('shard round-trip', () => {
   const work = useTmpDir('mdcp-roundtrip-');
 
-  it('sections.txt order survives compile', () => {
+  it('manifest link order survives compile', () => {
     const guide = join(work.path, 'mini');
     mkdirSync(guide, { recursive: true });
     writeFileSync(join(guide, 'index.md'), '# Mini\n\n- [a](./a.md)\n- [b](./b.md)\n');
     writeFileSync(join(guide, 'a.md'), '# Part A\n\nAlpha.\n');
     writeFileSync(join(guide, 'b.md'), '# Part B\n\nBeta.\n');
-    writeFileSync(join(guide, 'sections.txt'), 'a.md\nb.md\n');
 
     expect(sectionFiles(guide)).toEqual([resolve(guide, 'a.md'), resolve(guide, 'b.md')]);
     const compiled = assembleGuide(guide);

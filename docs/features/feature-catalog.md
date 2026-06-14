@@ -36,13 +36,9 @@ Structural validation: orphans → compile → refs → xrefs; peer linters opti
 mdcp check --require-lint
 ```
 
-## Sections manifest (P1.1)
+## Manifest link order (P1.1)
 
-Regenerate `sections.txt` from index link order.
-
-```bash
-mdcp sections
-```
+Compile order is derived from each guide's `index.md` or `shards.md` link order. Use `compile.sectionsHeading` when the manifest has preamble links outside the section list.
 
 ## Shard split (P1.2)
 

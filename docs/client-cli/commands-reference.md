@@ -20,14 +20,11 @@ mdcp compile --config docs/mdcp.config.json --cwd docs
 ## Daily workflow
 
 ```bash
-# Regenerate the monolith from shards
+# Regenerate the monolith from shards (link order from each guide's index.md / shards.md)
 mdcp compile
 
 # Full validation gate (orphans → compile → refs → xrefs; optional linters)
 mdcp check
-
-# Regenerate sections.txt after changing a guide's index.md
-mdcp sections
 ```
 
 ## Command summary
@@ -37,7 +34,6 @@ mdcp sections
 | `mdcp compile`             | Regenerate the monolith from shards                                  |
 | `mdcp check`               | Full gate: orphans → compile → refs → xrefs; optional peer linters   |
 | `mdcp shard`               | Split a monolith into shards (requires `config.source`)              |
-| `mdcp sections`            | Regenerate `sections.txt` after changing a guide's `index.md`        |
 | `mdcp refs list`           | List heading slugs from `refs.json` as JSON                          |
 | `mdcp refs lookup <query>` | Search compiled section titles while writing cross-links             |
 | `mdcp export --llm`        | Token-stripped compiled output for LLM context                       |

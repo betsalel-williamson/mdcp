@@ -10,7 +10,7 @@ Shards under `docs/**/` are the source of truth. Do not hand-edit generated `gui
 ## Authoring
 
 - Edit shard `.md` files inside guide directories (`docs/features/`, `docs/developer/`, `docs/client/`, etc.).
-- After changing a guide's `index.md`, run `mdcp sections --config docs/mdcp.config.json --cwd docs`.
+- After changing a guide's `index.md` link order, run `mdcp compile` — no separate manifest sync step.
 - Before inserting `[text](#slug)` cross-links, run `mdcp refs lookup "<topic>" --format json` (or `npm run docs:refs -- "<topic>"`).
 - Use `#` headings in shards; mdcp demotes them during compile.
 

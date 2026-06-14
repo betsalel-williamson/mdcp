@@ -67,7 +67,6 @@ describe('compileGuides', () => {
     withTmpDir('mdcp-compile-title-', (work) => {
       writeFileSync(join(work, 'index.md'), '# Guide\n\n- [Section](section.md)\n');
       writeFileSync(join(work, 'section.md'), '### Product surfaces\n\nContent.\n');
-      writeFileSync(join(work, 'sections.txt'), 'section.md\n');
 
       const out = assembleGuide(work, {
         title: 'Compound glossary',
@@ -83,7 +82,6 @@ describe('compileGuides', () => {
     withTmpDir('mdcp-compile-', (work) => {
       writeFileSync(join(work, 'index.md'), '# Example\n\n- [Section](section.md)\n');
       writeFileSync(join(work, 'section.md'), '## Term {#my-anchor}\n\nDefinition.\n');
-      writeFileSync(join(work, 'sections.txt'), 'section.md\n');
 
       const out = assembleGuide(work, {
         title: 'Example glossary',
@@ -102,11 +100,9 @@ describe('compileGuides', () => {
 
       writeFileSync(join(monolithDir, 'index.md'), '# Main Guide\n\n- [Intro](intro.md)\n');
       writeFileSync(join(monolithDir, 'intro.md'), '# Intro\n\nMonolith content.\n');
-      writeFileSync(join(monolithDir, 'sections.txt'), 'intro.md\n');
 
       writeFileSync(join(publishDir, 'index.md'), '# Publish Guide\n\n- [Readme](readme.md)\n');
       writeFileSync(join(publishDir, 'readme.md'), '# @example/pkg\n\nPublish content.\n');
-      writeFileSync(join(publishDir, 'sections.txt'), 'readme.md\n');
 
       const publishOut = join(work, 'out', 'README.md');
       const monolithOut = join(work, 'guides.md');
@@ -151,16 +147,15 @@ describe('compileGuides', () => {
       const guideDir = join(work, 'guide');
       mkdirSync(guideDir, { recursive: true });
 
-      writeFileSync(join(guideDir, 'index.md'), '# @example/mdcp-cli\n\n');
+      writeFileSync(
+        join(guideDir, 'index.md'),
+        '# @example/mdcp-cli\n\n- [Install and quick start](install-and-quick-start.md)\n- [LLM collaboration](llm-collaboration.md)\n',
+      );
       writeFileSync(
         join(guideDir, 'install-and-quick-start.md'),
         '# Install and quick start\n\nCollaborating with an LLM? See [LLM collaboration](./llm-collaboration.md) for details.\n',
       );
       writeFileSync(join(guideDir, 'llm-collaboration.md'), '# LLM collaboration\n\nContent.\n');
-      writeFileSync(
-        join(guideDir, 'sections.txt'),
-        'install-and-quick-start.md\nllm-collaboration.md\n',
-      );
 
       const publishOut = join(work, 'README.md');
       const opts = {
@@ -194,13 +189,15 @@ describe('compileGuides', () => {
       const guideDir = join(work, 'guide');
       mkdirSync(guideDir, { recursive: true });
 
-      writeFileSync(join(guideDir, 'index.md'), '# Feature Guide\n\n');
+      writeFileSync(
+        join(guideDir, 'index.md'),
+        '# Feature Guide\n\n- [Intro](intro.md)\n- [Details](details.md)\n',
+      );
       writeFileSync(
         join(guideDir, 'intro.md'),
         '# Intro\n\nSee [Details](./details.md) for more.\n',
       );
       writeFileSync(join(guideDir, 'details.md'), '# Details\n\nBody.\n');
-      writeFileSync(join(guideDir, 'sections.txt'), 'intro.md\ndetails.md\n');
 
       const out = compileGuides({
         guidesRoot: work,
@@ -216,12 +213,11 @@ describe('compileGuides', () => {
       const guideDir = join(work, 'guide');
       mkdirSync(guideDir, { recursive: true });
 
-      writeFileSync(join(guideDir, 'index.md'), '# @example/pkg\n\n');
+      writeFileSync(join(guideDir, 'index.md'), '# @example/pkg\n\n- [Section](section.md)\n');
       writeFileSync(
         join(guideDir, 'section.md'),
         '# Section\n\nSee [Config](../mdcp.config.json).\n',
       );
-      writeFileSync(join(guideDir, 'sections.txt'), 'section.md\n');
 
       const publishOut = join(work, 'README.md');
       const opts = {
@@ -252,7 +248,6 @@ describe('compileGuides', () => {
 
       writeFileSync(join(guideDir, 'index.md'), '# Publish\n\n- [Body](body.md)\n');
       writeFileSync(join(guideDir, 'body.md'), '# Body\n\nContent.\n');
-      writeFileSync(join(guideDir, 'sections.txt'), 'body.md\n');
 
       const out = compileGuides({
         guidesRoot: work,
@@ -266,6 +261,31 @@ describe('compileGuides', () => {
         ],
       });
       expect(out).toBe('');
+    });
+  });
+
+  it('respects sectionsHeading for glossary-style preamble links', () => {
+    withTmpDir('mdcp-glossary-', (work) => {
+      writeFileSync(
+        join(work, 'index.md'),
+        '# Glossary\n\nSee [CSP](./04-security.md).\n\n## Sections\n\n- [One](./01-one.md)\n- [Two](./02-two.md)\n',
+      );
+      writeFileSync(join(work, '04-security.md'), '## Security\n\nCSP.\n');
+      writeFileSync(join(work, '01-one.md'), '## One\n\nFirst.\n');
+      writeFileSync(join(work, '02-two.md'), '## Two\n\nSecond.\n');
+
+      const out = assembleGuide(work, {
+        title: 'Compound glossary',
+        manifest: 'index.md',
+        sectionsHeading: 'Sections',
+      });
+
+      const onePos = out.indexOf('One');
+      const twoPos = out.indexOf('Two');
+      const securityPos = out.indexOf('Security');
+      expect(onePos).toBeGreaterThan(-1);
+      expect(twoPos).toBeGreaterThan(onePos);
+      expect(securityPos).toBe(-1);
     });
   });
 });

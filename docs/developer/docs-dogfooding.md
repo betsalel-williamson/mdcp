@@ -20,7 +20,7 @@ The **features** compile (`docs/guides.md`) is for reading through the stitched 
 ## Edit workflow
 
 1. Edit shard `.md` files under the relevant guide directory.
-2. If you changed a guide's `index.md` links, run `mdcp sections --config mdcp.config.json --cwd docs`. This writes `sections.txt` with **guide-relative** shard filenames (for example `local-setup.md`) — never absolute paths.
+2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest (use `compile.sectionsHeading` when the manifest has preamble links outside the section list).
 3. Run `pnpm docs:compile:repo` then `pnpm docs:check:repo`.
 4. Commit shard changes. Regenerated `docs/guides.md` and `docs/refs.json` are gitignored — CI and `pnpm docs:check` compile them locally. Commit [`DEVELOPERS.md`](../../DEVELOPERS.md) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
 

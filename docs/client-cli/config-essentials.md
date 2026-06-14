@@ -26,7 +26,7 @@ From the repository root, point at the config file and set the docs root separat
 
 ```bash
 # Equivalent manual invocation from repo root
-mdcp sections --config docs/mdcp.config.json --cwd docs
+mdcp compile --config docs/mdcp.config.json --cwd docs
 ```
 
 This resolves the config as `<repo>/docs/mdcp.config.json` and treats `docs/` as the shard tree root.
@@ -106,6 +106,24 @@ Minimal `mdcp.config.json`:
 ```
 
 Per-guide `compile.outputFile` writes a publish target (relative to `--cwd`) and excludes that guide from the monolith. Use `compile.includeBanner: false` for npm README outputs.
+
+### Glossary pattern (`sectionsHeading`)
+
+When `index.md` has policy prose with example inline links before an ordered `## Sections` list, set `sectionsHeading` so preamble links are not compiled as shards:
+
+```json
+{
+  "name": "glossary",
+  "path": "glossary",
+  "compile": {
+    "title": "Compound glossary",
+    "sectionsHeading": "Sections",
+    "outputFile": "_build/compiled/glossary.md"
+  }
+}
+```
+
+Only links at or after `## Sections` are used for compile order.
 
 ## Schema-only fields
 
