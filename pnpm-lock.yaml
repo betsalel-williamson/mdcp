@@ -47,7 +47,7 @@ importers:
 
   packages/mdcp-cli:
     dependencies:
-      '@mdcp/core':
+      '@bwilliamson/mdcp-core':
         specifier: workspace:*
         version: link:../mdcp-core
       commander:

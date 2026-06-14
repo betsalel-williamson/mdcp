@@ -1,10 +1,10 @@
-# Phase 2 migration — legacy → @mdcp/\*
+# Phase 2 migration — legacy → @bwilliamson/mdcp-\*
 
 Port map from `legacy/` bash/Python to TypeScript packages.
 
 ## Modules
 
-| Legacy                        | `@mdcp/core`                                                   |
+| Legacy                        | `@bwilliamson/mdcp-core`                                       |
 | ----------------------------- | -------------------------------------------------------------- |
 | `compile_sections.py`         | `src/compile/`                                                 |
 | `write-sections-manifest.py`  | `src/manifest/`                                                |
@@ -16,10 +16,10 @@ Port map from `legacy/` bash/Python to TypeScript packages.
 ## Consumer migration
 
 1. Add `mdcp.config.json` to your docs shard directory
-2. Replace local compile scripts with `npx @mdcp/cli compile`
-3. Replace validate scripts with `npx @mdcp/cli check --require-lint`
+2. Replace local compile scripts with `npx @bwilliamson/mdcp-cli compile`
+3. Replace validate scripts with `npx @bwilliamson/mdcp-cli check --require-lint`
 4. Use `mdcp refs lookup` for cross-link slugs (no `{#heading-ids}`)
-5. Update CI to build and invoke `@mdcp/cli`
+5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
 ## md-tree fork criteria
 

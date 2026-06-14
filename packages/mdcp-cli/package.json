@@ -1,5 +1,5 @@
 {
-  "name": "@mdcp/cli",
+  "name": "@bwilliamson/mdcp-cli",
   "version": "0.1.0",
   "description": "MDCP CLI — Markdown Command Line Interface Processor",
   "license": "MIT",
@@ -39,7 +39,7 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@mdcp/core": "workspace:*",
+    "@bwilliamson/mdcp-core": "workspace:*",
     "commander": "^15.0.0"
   },
   "devDependencies": {

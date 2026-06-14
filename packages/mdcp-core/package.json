@@ -1,5 +1,5 @@
 {
-  "name": "@mdcp/core",
+  "name": "@bwilliamson/mdcp-core",
   "version": "0.1.0",
   "description": "MDCP core library — compile, refs, validation",
   "license": "MIT",

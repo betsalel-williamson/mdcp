@@ -46,10 +46,10 @@ mdcp splits, compiles, validates, and exports sharded Markdown for repos where *
 
 ### P3 — Enabler
 
-| Feature | Role                                  |
-| ------- | ------------------------------------- |
-| Config  | `mdcp.config.json` wires all commands |
-| Presets | `@mdcp/presets` starter lint configs  |
+| Feature | Role                                             |
+| ------- | ------------------------------------------------ |
+| Config  | `mdcp.config.json` wires all commands            |
+| Presets | `@bwilliamson/mdcp-presets` starter lint configs |
 
 ---
 

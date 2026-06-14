@@ -66,7 +66,7 @@ Welcome to the sample documentation set.
 
 You cannot get this by concatenating files. That is one reason mdcp exists.
 
-During weave, mdcp also enforces structural rules on the compiled monolith — for example, one top-level `#` title for the whole document, with later guides demoted under it. Optional linters in `mdcp check` (markdownlint, Vale) add further formatting expectations on shards and compiled output. See `@mdcp/presets` and your `mdcp.config.json` `lint` section to tune what runs in your repo.
+During weave, mdcp also enforces structural rules on the compiled monolith — for example, one top-level `#` title for the whole document, with later guides demoted under it. Optional linters in `mdcp check` (markdownlint, Vale) add further formatting expectations on shards and compiled output. See `@bwilliamson/mdcp-presets` and your `mdcp.config.json` `lint` section to tune what runs in your repo.
 
 ## Why you need a utility (not just split the file)
 
@@ -135,7 +135,7 @@ Open `examples/sample-guides/guides.md` to see compiled output from the shards.
 After publish:
 
 ```bash
-npx @mdcp/cli check --config mdcp.config.json
+npx @bwilliamson/mdcp-cli check --config mdcp.config.json
 ```
 
 Copy [examples/sample-guides/mdcp.config.json](examples/sample-guides/mdcp.config.json) as a starting point. Key fields:
@@ -207,9 +207,9 @@ See [docs/FEATURES.md](docs/FEATURES.md) for the full feature catalog.
 ```
 mdcp/
 ├── packages/
-│   ├── mdcp-core/          # @mdcp/core — library
-│   ├── mdcp-cli/           # @mdcp/cli — npx binary
-│   └── mdcp-presets/       # @mdcp/presets — starter lint configs
+│   ├── mdcp-core/          # @bwilliamson/mdcp-core — library
+│   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — npx binary
+│   └── mdcp-presets/       # @bwilliamson/mdcp-presets — starter lint configs
 ├── examples/
 │   └── sample-guides/      # Minimal sharded docs fixture
 ├── legacy/                 # Original bash/Python reference
@@ -226,7 +226,7 @@ pnpm run format
 brew install gitleaks   # optional locally; CI always scans
 ```
 
-This repo installs `markdownlint-cli2` and `@vvago/vale` as **devDependencies** for dogfooding. Published `@mdcp/cli` treats them as optional peers in consumer repos.
+This repo installs `markdownlint-cli2` and `@vvago/vale` as **devDependencies** for dogfooding. Published `@bwilliamson/mdcp-cli` treats them as optional peers in consumer repos.
 
 Further reading:
 

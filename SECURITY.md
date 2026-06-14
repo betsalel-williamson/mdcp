@@ -18,7 +18,7 @@ We follow coordinated disclosure: we will confirm receipt, work on a fix, and pu
 
 ## Maintainer practices
 
-- npm account 2FA (auth-and-writes) for `@mdcp/*` publishers
+- npm account 2FA (auth-and-writes) for `@bwilliamson/mdcp-*` publishers
 - Trusted Publishing (OIDC) for releases — no long-lived publish tokens in CI
 - Gitleaks on commit and in CI
 - `pnpm audit --audit-level=high` in CI

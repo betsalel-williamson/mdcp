@@ -28,7 +28,7 @@ import {
   shardFromMonolith,
   buildSlugRegistry,
   type MdcpConfig,
-} from '@mdcp/core';
+} from '@bwilliamson/mdcp-core';
 
 interface GlobalOpts {
   config: string;

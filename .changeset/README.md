@@ -1,6 +1,6 @@
 # Changesets
 
-This repository uses [Changesets](https://github.com/changesets/changesets) for versioning `@mdcp/core`, `@mdcp/cli`, and `@mdcp/presets` together.
+This repository uses [Changesets](https://github.com/changesets/changesets) for versioning `@bwilliamson/mdcp-core`, `@bwilliamson/mdcp-cli`, and `@bwilliamson/mdcp-presets` together.
 
 ## Adding a changeset
 
