@@ -61,7 +61,7 @@ Set `guides[].compile.sectionsHeading` to the `##` heading that starts the real 
   "compile": {
     "title": "Compound glossary",
     "sectionsHeading": "Sections",
-    "outputFile": "_build/compiled/glossary.md"
+    "outputFile": "glossary.md"
   }
 }
 ```

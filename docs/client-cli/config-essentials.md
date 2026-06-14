@@ -57,14 +57,14 @@ Config path fields use **three bases**. Mixing them up is the most common path b
 | **Docs root** (`--cwd`) | explicit flag (defaults to invocation dir) | `guides/features/` → `docs/features/`                                            |
 | **`outputDir`**         | config field under `--cwd`                 | `_build/compiled` → `docs/_build/compiled/`                                      |
 
-| Config field         | Resolved from            | Example value               | Resolves to (`--cwd docs`)       |
-| -------------------- | ------------------------ | --------------------------- | -------------------------------- |
-| `guides[].path`      | `--cwd`                  | `features`                  | `docs/features/`                 |
-| Default guide dir    | `outputDir` + guide name | (omit `path`)               | `docs/<outputDir>/<name>/`       |
-| `compile.outputFile` | `--cwd`                  | `../packages/foo/README.md` | `<repo>/packages/foo/README.md`  |
-| `outputDir`          | `--cwd`                  | `_build/compiled`           | `docs/_build/compiled/`          |
-| `outputFile`         | `outputDir`              | `guides.md`                 | `docs/_build/compiled/guides.md` |
-| `refs.registryFile`  | `outputDir`              | `refs.json`                 | `docs/_build/compiled/refs.json` |
+| Config field         | Resolved from                                | Example value     | Resolves to (`--cwd docs`)         |
+| -------------------- | -------------------------------------------- | ----------------- | ---------------------------------- |
+| `guides[].path`      | `--cwd`                                      | `features`        | `docs/features/`                   |
+| Default guide dir    | `outputDir` + guide name                     | (omit `path`)     | `docs/<outputDir>/<name>/`         |
+| `compile.outputFile` | `outputDir` (or `--cwd` when path uses `..`) | `glossary.md`     | `docs/_build/compiled/glossary.md` |
+| `outputDir`          | `--cwd`                                      | `_build/compiled` | `docs/_build/compiled/`            |
+| `outputFile`         | `outputDir`                                  | `guides.md`       | `docs/_build/compiled/guides.md`   |
+| `refs.registryFile`  | `outputDir`                                  | `refs.json`       | `docs/_build/compiled/refs.json`   |
 
 Monolith `outputFile` and `refs.registryFile` share the same rule: **relative to `outputDir`**, not `--cwd`.
 
@@ -78,7 +78,7 @@ Per-guide publish paths use a **different rule** from the monolith filename:
 | Path with `..` (repo publish)          | `--cwd`                     | `"../packages/foo/README.md"` → `<repo>/packages/foo/README.md` |
 | Already cwd-relative under `outputDir` | Normalized (no double join) | `"_build/compiled/glossary.md"` → same as `"glossary.md"`       |
 
-**Common mistake:** expecting a bare filename to land next to the monolith when `outputDir` is nested. Before vNext, `"glossary.md"` wrote to `docs/glossary.md`. MDCP now joins bare names under `outputDir`; use a `..` path only when publishing outside the docs tree (npm READMEs, repo-root `DEVELOPERS.md`).
+**Common mistake:** expecting a bare filename to land next to the monolith when `outputDir` is nested. MDCP joins bare names under `outputDir`; use a `..` path only when publishing outside the docs tree (npm READMEs, repo-root `DEVELOPERS.md`).
 
 If you accidentally give a cwd-relative path for monolith `outputFile` or `refs.registryFile` that already lies under `outputDir` (for example `"_build/compiled/refs.json"` when `outputDir` is `"_build/compiled"`), MDCP normalizes it. Prefer outputDir-relative values in config (`"refs.json"`, `"guides.md"`).
 
@@ -132,7 +132,7 @@ When a manifest has preamble prose with example inline links before an ordered `
   "compile": {
     "title": "Compound glossary",
     "sectionsHeading": "Sections",
-    "outputFile": "_build/compiled/glossary.md"
+    "outputFile": "glossary.md"
   }
 }
 ```
