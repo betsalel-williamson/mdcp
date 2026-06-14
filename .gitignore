@@ -17,6 +17,7 @@ coverage/
 *.tsbuildinfo
 
 # Local IDE / indexing
+.cursor/
 .cursorindexingignore
 
 # Legacy generated reports
