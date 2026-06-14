@@ -35,10 +35,10 @@ mdcp splits, compiles, validates, and exports sharded Markdown for repos where *
 
 ## P2 — Human reviewers trust the output
 
-| Feature       | CLI                                  | Core module        | Status          |
-| ------------- | ------------------------------------ | ------------------ | --------------- |
-| Peer linters  | `mdcp lint`, `prose`, `links`, `fix` | `peers/`           | Implemented     |
-| Compile hooks | config `compile.hooks`               | `compile/hooks.ts` | Extension point |
+| Feature       | CLI                                  | Core module        | Status                       |
+| ------------- | ------------------------------------ | ------------------ | ---------------------------- |
+| Peer linters  | `mdcp lint`, `prose`, `links`, `fix` | `peers/`           | Implemented                  |
+| Compile hooks | config `compile.hooks`               | `compile/hooks.ts` | Implemented (built-in hooks) |
 
 **Dogfood:** `pnpm docs:check` (markdownlint + Vale on `PATH`).
 

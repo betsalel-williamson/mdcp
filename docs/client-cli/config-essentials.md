@@ -25,15 +25,9 @@ Per-guide `compile.outputFile` writes a publish target (relative to `--cwd`) and
 
 ## Schema-only fields
 
-These keys validate in `mdcp.config.json` but are **not wired** in the current CLI implementation:
-
-| Field                              | Notes                                                       |
-| ---------------------------------- | ----------------------------------------------------------- |
-| `guides[].splitLevel`              | Reserved for shard split; compile uses directory shards     |
-| `guides[].compile.preambleSection` | Default exists; preamble handling is convention-based today |
-| `guides[].source.type: directory`  | Alternative source model — not used by compile/check        |
-| `refs.slugAlgorithm`               | Only `github` is supported; field is informational          |
-| `vale.strictMinAlertLevel`         | Vale CLI flags are not driven from config yet               |
-| `export.llm.skipIndexFiles`        | LLM export always skips `index.md` today                    |
+| Field                       | Notes                                                      |
+| --------------------------- | ---------------------------------------------------------- |
+| `refs.slugAlgorithm`        | Informational only — only `github` is implemented          |
+| `export.llm.skipIndexFiles` | No-op — compile output never includes `index.md` manifests |
 
 Full schema and examples: [mdcp.config.json in sample-guides](https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json).
