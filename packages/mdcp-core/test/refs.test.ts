@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { githubSlugify, buildSlugRegistry, lookupHeadings } from '../src/refs/slugs.js';
 import { genRefsFromCompiled, checkRefsRegistry } from '../src/refs/registry.js';
+import { resolveRefsPath } from '../src/config/load.js';
 import { useTmpDir } from './helpers/tmp-dir.js';
 
 describe('githubSlugify', () => {
@@ -36,6 +37,40 @@ describe('semantic chapter keys', () => {
     const entry = reg.headings.find((h) => h.title.includes('ADM Chapter 1'));
     expect(entry?.key).toBe('adm.ch1');
     expect(reg.slugs[entry!.slug]).toBe('adm.ch1');
+  });
+});
+
+describe('resolveRefsPath', () => {
+  it('resolves registryFile relative to outputDir (#11)', () => {
+    const cwd = '/docs';
+    expect(resolveRefsPath(cwd, '_build/compiled', 'refs.json')).toBe(
+      '/docs/_build/compiled/refs.json',
+    );
+  });
+
+  it('normalizes cwd-relative registryFile under outputDir (#11)', () => {
+    const cwd = '/docs';
+    expect(resolveRefsPath(cwd, '_build/compiled', '_build/compiled/refs.json')).toBe(
+      '/docs/_build/compiled/refs.json',
+    );
+  });
+
+  it('keeps nested paths relative to outputDir', () => {
+    const cwd = '/docs';
+    expect(resolveRefsPath(cwd, '_build/compiled', 'meta/refs.json')).toBe(
+      '/docs/_build/compiled/meta/refs.json',
+    );
+  });
+
+  it('resolves registryFile when outputDir is "."', () => {
+    expect(resolveRefsPath('/docs', '.', 'refs.json')).toBe('/docs/refs.json');
+  });
+
+  it('does not treat outputDir-relative refs.json as cwd-relative', () => {
+    const cwd = '/docs';
+    expect(resolveRefsPath(cwd, '_build/compiled', 'refs.json')).toBe(
+      '/docs/_build/compiled/refs.json',
+    );
   });
 });
 

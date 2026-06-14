@@ -19,15 +19,15 @@ You never hand-maintain the compiled file. Shards are the source of truth; `guid
 
 ## Core vocabulary
 
-| Term               | Meaning                                                                                                                                          |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Shard**          | A single `.md` file that becomes part of a guide (for example `01-intro.md`).                                                                    |
-| **Guide**          | A directory of shards plus a manifest (`index.md` or `shards.md`) and `sections.txt`. Named in `compileOrder`.                                   |
-| **Monolith**       | The default compiled output (`outputFile`, usually `guides.md`) — all guides without their own `compile.outputFile`, stitched in `compileOrder`. |
-| **Publish output** | A per-guide compiled file (for example `packages/mdcp-cli/README.md`) written instead of being included in the monolith.                         |
-| **Refs registry**  | `refs.json` — GitHub-style slugs and semantic keys from compiled headings, used by `mdcp refs lookup`.                                           |
-| **`--cwd`**        | Docs root: guide paths, `compile.outputFile`, and default output paths resolve relative to this directory.                                       |
-| **`--config`**     | Config file path, resolved relative to the **invocation** directory (where you run the command), not `--cwd`.                                    |
+| Term               | Meaning                                                                                                                                                       |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Shard**          | A single `.md` file that becomes part of a guide (for example `01-intro.md`).                                                                                 |
+| **Guide**          | A directory of shards plus a manifest (`index.md` or `shards.md`) and `sections.txt`. Named in `compileOrder`.                                                |
+| **Monolith**       | The default compiled output (`outputFile`, usually `guides.md`) — all guides without their own `compile.outputFile`, stitched in `compileOrder`.              |
+| **Publish output** | A per-guide compiled file (for example `packages/mdcp-cli/README.md`) written instead of being included in the monolith.                                      |
+| **Refs registry**  | `refs.json` — GitHub-style slugs and semantic keys from compiled headings, used by `mdcp refs lookup`.                                                        |
+| **`--cwd`**        | Docs root (`--cwd`): shard paths, `outputDir`, and per-guide `compile.outputFile`. Monolith `outputFile` and `refs.registryFile` are relative to `outputDir`. |
+| **`--config`**     | Config file path, resolved relative to the **invocation** directory (where you run the command), not `--cwd`.                                                 |
 
 ### Path resolution (`--config` vs `--cwd`)
 
@@ -38,11 +38,14 @@ The CLI uses two separate path bases. This matters for npm scripts run from the 
 mdcp compile --config docs/mdcp.config.json --cwd docs
 ```
 
-| Path                                 | Resolved from            | Resolves to (example)         |
-| ------------------------------------ | ------------------------ | ----------------------------- |
-| `--config docs/mdcp.config.json`     | Invocation dir (`/repo`) | `/repo/docs/mdcp.config.json` |
-| Guide `features/`                    | `--cwd` (`docs`)         | `/repo/docs/features/`        |
-| `compile.outputFile: "../README.md"` | `--cwd`                  | `/repo/README.md`             |
+| Path                                 | Resolved from            | Resolves to (example)                  |
+| ------------------------------------ | ------------------------ | -------------------------------------- |
+| `--config docs/mdcp.config.json`     | Invocation dir (`/repo`) | `/repo/docs/mdcp.config.json`          |
+| Guide `features/`                    | `--cwd` (`docs`)         | `/repo/docs/features/`                 |
+| `outputDir: "_build/compiled"`       | `--cwd`                  | `/repo/docs/_build/compiled/`          |
+| `outputFile: "guides.md"`            | `outputDir`              | `/repo/docs/_build/compiled/guides.md` |
+| `refs.registryFile: "refs.json"`     | `outputDir`              | `/repo/docs/_build/compiled/refs.json` |
+| `compile.outputFile: "../README.md"` | `--cwd`                  | `/repo/README.md`                      |
 
 When your shell is already in the docs directory, use `--config mdcp.config.json` (or the default) and omit `--cwd` unless you need a different docs root.
 
@@ -152,7 +155,7 @@ Peer linters are **not bundled**. CI uses `--require-lint` / `--require-vale` to
 
 - **`compileOrder`** — which guides exist and in what order they appear in the monolith.
 - **`guides[].compile`** — per-guide manifest name, hooks, publish path, title, scope root, etc.
-- **`refs`** — where `refs.json` lives and slug algorithm.
+- **`refs`** — `registryFile` and monolith `outputFile` paths (relative to `outputDir`) and slug algorithm.
 - **`lint` / `vale`** — peer linter config paths and scan globs.
 - **`export.llm`** — what to strip for agent context.
 

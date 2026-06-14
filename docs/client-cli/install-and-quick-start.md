@@ -63,4 +63,4 @@ Global options (apply to every command):
 | Option                | Default            | Purpose                                                                 |
 | --------------------- | ------------------ | ----------------------------------------------------------------------- |
 | `-c, --config <path>` | `mdcp.config.json` | Path to config file (relative to the invocation directory, not `--cwd`) |
-| `--cwd <path>`        | current directory  | Docs root (guide dirs and output paths are relative to this)            |
+| `--cwd <path>`        | current directory  | Docs root for shard trees and config path fields                        |

@@ -8,6 +8,7 @@ export {
 export {
   loadConfig,
   resolveOutputPath,
+  resolveRefsPath,
   resolveGuidesRoot,
   resolveGuideDir,
   getGuideConfig,
@@ -57,7 +58,6 @@ export {
   readRefsRegistry,
   checkRefsRegistry,
   genRefsFromCompiled,
-  resolveRefsPath,
 } from './refs/registry.js';
 export { lintXrefs } from './xrefs/lint.js';
 export {
