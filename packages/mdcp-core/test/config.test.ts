@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { MdcpConfigSchema } from '../src/config/schema.js';
 import { loadConfig } from '../src/config/load.js';
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { useTmpDir, withTmpDir } from './helpers/tmp-dir.js';
 
 describe('MdcpConfigSchema', () => {
   it('parses minimal config', () => {
@@ -40,27 +40,25 @@ describe('MdcpConfigSchema', () => {
 });
 
 describe('loadConfig', () => {
-  const work = join(tmpdir(), `mdcp-config-${Date.now()}`);
+  const work = useTmpDir('mdcp-config-');
 
   it('loads config from disk', () => {
-    mkdirSync(work, { recursive: true });
-    writeFileSync(join(work, 'mdcp.config.json'), JSON.stringify({ compileOrder: ['a'] }));
-    const cfg = loadConfig('mdcp.config.json', work);
+    writeFileSync(join(work.path, 'mdcp.config.json'), JSON.stringify({ compileOrder: ['a'] }));
+    const cfg = loadConfig('mdcp.config.json', work.path);
     expect(cfg.compileOrder).toEqual(['a']);
-    rmSync(work, { recursive: true, force: true });
   });
 
   it('throws when config missing', () => {
-    expect(() => loadConfig('missing.json', work)).toThrow(/Config not found/);
+    expect(() => loadConfig('missing.json', work.path)).toThrow(/Config not found/);
   });
 
   it('resolves config path from configBase, not docs cwd', () => {
-    const repo = join(tmpdir(), `mdcp-config-${Date.now()}`);
-    const docs = join(repo, 'docs');
-    mkdirSync(docs, { recursive: true });
-    writeFileSync(join(docs, 'mdcp.config.json'), JSON.stringify({ compileOrder: ['a'] }));
-    const cfg = loadConfig('docs/mdcp.config.json', repo);
-    expect(cfg.compileOrder).toEqual(['a']);
-    rmSync(repo, { recursive: true, force: true });
+    withTmpDir('mdcp-config-', (repo) => {
+      const docs = join(repo, 'docs');
+      mkdirSync(docs, { recursive: true });
+      writeFileSync(join(docs, 'mdcp.config.json'), JSON.stringify({ compileOrder: ['a'] }));
+      const cfg = loadConfig('docs/mdcp.config.json', repo);
+      expect(cfg.compileOrder).toEqual(['a']);
+    });
   });
 });

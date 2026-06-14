@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { tmpdir } from 'node:os';
 import { applyCompileHooks } from '../src/compile/hooks.js';
 import '../src/compile/hooks/builtin.js';
+import { useTmpDir, withCwd } from './helpers/tmp-dir.js';
 
 const baseCtx = {
   guideName: 'review',
@@ -21,7 +21,7 @@ const baseCtx = {
 };
 
 describe('builtin compile hooks', () => {
-  const work = join(tmpdir(), `mdcp-hooks-${Date.now()}`);
+  const work = useTmpDir('mdcp-hooks-');
 
   it('codeEvidence adds line fragments from link text', () => {
     const out = applyCompileHooks(
@@ -33,29 +33,22 @@ describe('builtin compile hooks', () => {
   });
 
   it('codeEvidence resolves symbol fragments when file exists', () => {
-    mkdirSync(work, { recursive: true });
-    const guideDir = join(work, 'review');
+    const guideDir = join(work.path, 'review');
     mkdirSync(guideDir, { recursive: true });
     writeFileSync(join(guideDir, 'util.ts'), 'export function helper() {\n  return 1;\n}\n');
     const sourceFile = join(guideDir, 'claim.md');
-    const prev = process.cwd();
-    process.chdir(work);
-    try {
+    withCwd(work.path, () => {
       const out = applyCompileHooks(
         'Evidence: [helper](util.ts#helper)',
         { ...baseCtx, sourceFile },
         ['codeEvidence'],
       );
       expect(out).toMatch(/util\.ts#L\d+\)/);
-    } finally {
-      process.chdir(prev);
-      rmSync(work, { recursive: true, force: true });
-    }
+    });
   });
 
   it('inlineDiagrams expands diagram directive', () => {
-    mkdirSync(work, { recursive: true });
-    const guideDir = join(work, 'review');
+    const guideDir = join(work.path, 'review');
     mkdirSync(guideDir, { recursive: true });
     mkdirSync(join(guideDir, 'diagrams'), { recursive: true });
     writeFileSync(join(guideDir, 'diagrams', 'flow.md'), '| A | B |\n|---|---|\n| 1 | 2 |\n');
@@ -66,19 +59,15 @@ describe('builtin compile hooks', () => {
       ['inlineDiagrams'],
     );
     expect(out).toContain('| A | B |');
-    rmSync(work, { recursive: true, force: true });
   });
 
   it('reviewLinks rewrites FIND shard links to monolith anchors', () => {
-    mkdirSync(work, { recursive: true });
-    const outcomes = join(work, 'review', 'outcomes');
+    const outcomes = join(work.path, 'review', 'outcomes');
     mkdirSync(outcomes, { recursive: true });
     writeFileSync(join(outcomes, 'FIND-004.md'), '# FIND-004 — Example finding\n');
-    const sourceFile = join(work, 'glossary', 'terms.md');
-    mkdirSync(join(work, 'glossary'), { recursive: true });
-    const prev = process.cwd();
-    process.chdir(work);
-    try {
+    const sourceFile = join(work.path, 'glossary', 'terms.md');
+    mkdirSync(join(work.path, 'glossary'), { recursive: true });
+    withCwd(work.path, () => {
       const out = applyCompileHooks(
         'See [FIND-004](../review/outcomes/FIND-004.md).',
         {
@@ -90,9 +79,6 @@ describe('builtin compile hooks', () => {
         ['reviewLinks'],
       );
       expect(out).toContain('](architecture-review.md#find-004');
-    } finally {
-      process.chdir(prev);
-      rmSync(work, { recursive: true, force: true });
-    }
+    });
   });
 });

@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { tmpdir } from 'node:os';
 import { sectionFiles, assembleGuide, compileGuides } from '../src/compile/assemble.js';
+import { useTmpDir } from './helpers/tmp-dir.js';
 
 describe('shard round-trip', () => {
-  const work = join(tmpdir(), `mdcp-roundtrip-${Date.now()}`);
+  const work = useTmpDir('mdcp-roundtrip-');
 
   it('sections.txt order survives compile', () => {
-    const guide = join(work, 'mini');
+    const guide = join(work.path, 'mini');
     mkdirSync(guide, { recursive: true });
     writeFileSync(join(guide, 'index.md'), '# Mini\n\n- [a](./a.md)\n- [b](./b.md)\n');
     writeFileSync(join(guide, 'a.md'), '# Part A\n\nAlpha.\n');
@@ -20,12 +20,10 @@ describe('shard round-trip', () => {
     expect(compiled).toContain('Part A');
     expect(compiled).toContain('Part B');
     expect(compiled).toMatch(/^# Mini/m);
-
-    rmSync(work, { recursive: true, force: true });
   });
 
   it('compileGuides writes expected structure for multi-guide fixture', () => {
-    const fixture = join(work, 'fixture');
+    const fixture = join(work.path, 'fixture');
     const overview = join(fixture, 'overview');
     mkdirSync(overview, { recursive: true });
     writeFileSync(join(overview, 'index.md'), '# Overview\n\n- [intro](./intro.md)\n');
@@ -37,7 +35,6 @@ describe('shard round-trip', () => {
     });
     expect(out).toContain('# Overview');
     expect(out).toContain('Intro');
-    rmSync(work, { recursive: true, force: true });
   });
 });
 

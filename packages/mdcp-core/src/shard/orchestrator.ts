@@ -1,7 +1,7 @@
 import { mkdirSync, rmSync, writeFileSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { tmpdir } from 'node:os';
+import { createTmpDir, removeTmpDir } from '../tmp-dir.js';
 
 export interface ShardGuideMapping {
   name: string;
@@ -60,8 +60,7 @@ export interface ShardOptions {
 }
 
 export function shardFromMonolith(options: ShardOptions): void {
-  const work = join(tmpdir(), `mdcp-shard-${Date.now()}`);
-  mkdirSync(work, { recursive: true });
+  const work = createTmpDir('mdcp-shard-');
 
   try {
     const h1Out = join(work, 'h1');
@@ -127,6 +126,6 @@ export function shardFromMonolith(options: ShardOptions): void {
       'utf-8',
     );
   } finally {
-    rmSync(work, { recursive: true, force: true });
+    removeTmpDir(work);
   }
 }
