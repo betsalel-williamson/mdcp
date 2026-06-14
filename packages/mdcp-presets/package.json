@@ -1,0 +1,23 @@
+{
+  "name": "@mdcp/presets",
+  "version": "0.1.0",
+  "description": "Starter markdownlint configs for MDCP consumers",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betsalel-williamson/mdcp.git",
+    "directory": "packages/mdcp-presets"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": ["*.jsonc"],
+  "exports": {
+    "./markdownlint-shards.jsonc": "./markdownlint-shards.jsonc",
+    "./markdownlint-compiled.jsonc": "./markdownlint-compiled.jsonc"
+  },
+  "scripts": {
+    "prepublishOnly": "node -e \"console.log('presets ready')\""
+  }
+}

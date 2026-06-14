@@ -16,5 +16,13 @@ dist/
 coverage/
 *.tsbuildinfo
 
+# Local IDE / indexing
+.cursorindexingignore
+
+# Legacy generated reports
+legacy/.cache/
+legacy/anchors.json
+legacy/vale-report.json
+
 # OS
 .DS_Store

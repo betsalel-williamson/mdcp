@@ -1,0 +1,20 @@
+{
+  // Shard files: style + structure. Cross-guide #anchors are checked on compiled guides.md only.
+  "default": true,
+  "MD001": false,
+  "MD003": { "style": "atx" },
+  "MD004": false,
+  "MD007": { "indent": 2 },
+  "MD012": false,
+  "MD013": false,
+  "MD024": false,
+  "MD025": { "front_matter_title": "" },
+  "MD033": false,
+  "MD036": false,
+  "MD040": false,
+  "MD041": false,
+  "MD042": false,
+  "MD051": false,
+  "MD052": false,
+  "MD053": false
+}

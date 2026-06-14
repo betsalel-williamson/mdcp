@@ -1,0 +1,6 @@
+# About this guide
+
+**Prepared For:** Example Client
+**Prepared By:** Example Consulting
+
+This package demonstrates the mdcp sharded documentation workflow.

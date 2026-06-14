@@ -1,0 +1,11 @@
+{
+  "config": ".markdownlint.jsonc",
+  "globs": [
+    "**/*.md",
+    "!../guides.md",
+    "!**/index.md",
+    "!node_modules",
+    "!.shard-work",
+    "!.compile-build"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "mdcp-monorepo",
+  "private": true,
+  "description": "MDCP — Markdown Command Line Interface Processor",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

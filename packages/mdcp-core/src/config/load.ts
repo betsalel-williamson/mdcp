@@ -1,0 +1,50 @@
+import { readFileSync, existsSync } from 'node:fs';
+import { resolve, join } from 'node:path';
+import { MdcpConfigSchema, type MdcpConfig, type GuideConfig } from './schema.js';
+
+export function loadConfig(configPath: string, cwd: string): MdcpConfig {
+  const abs = resolve(cwd, configPath);
+  if (!existsSync(abs)) {
+    throw new Error(`Config not found: ${abs}`);
+  }
+  const raw = JSON.parse(readFileSync(abs, 'utf-8'));
+  return MdcpConfigSchema.parse(raw);
+}
+
+export function resolveOutputPath(config: MdcpConfig, cwd: string): string {
+  return resolve(cwd, config.outputDir, config.outputFile);
+}
+
+export function resolveGuidesRoot(config: MdcpConfig, cwd: string): string {
+  return resolve(cwd, config.outputDir);
+}
+
+export function resolveGuideDir(
+  name: string,
+  config: MdcpConfig,
+  cwd: string,
+): string {
+  const guide = config.guides?.find((g) => g.name === name);
+  if (guide?.path) return resolve(cwd, guide.path);
+  return join(resolveGuidesRoot(config, cwd), name);
+}
+
+export function getGuideConfig(
+  config: MdcpConfig,
+  name: string,
+): GuideConfig | undefined {
+  return config.guides?.find((g) => g.name === name);
+}
+
+export function xrefScanDirs(config: MdcpConfig, cwd: string): string[] {
+  const dirs = new Set<string>();
+  for (const name of config.compileOrder) {
+    const guide = getGuideConfig(config, name);
+    if (guide?.path) {
+      dirs.add(resolve(cwd, guide.path));
+    } else {
+      dirs.add(join(resolveGuidesRoot(config, cwd), name));
+    }
+  }
+  return [...dirs];
+}

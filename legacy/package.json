@@ -1,0 +1,29 @@
+{
+  "name": "mdcp-legacy-example",
+  "private": true,
+  "description": "Lint, format, and link-check sharded markdown guides",
+  "scripts": {
+    "compile": "./compile.sh",
+    "lint": "markdownlint-cli2 --config shards.markdownlint-cli2.jsonc",
+    "lint:compiled": "markdownlint-cli2 --config compiled.markdownlint-cli2.jsonc",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "links": "markdown-link-check ../guides.md --config .markdown-link-check.json",
+    "anchors:gen": "python3 scripts/generate-anchor-registry.py",
+    "anchors:check": "python3 scripts/generate-anchor-registry.py --check",
+    "xrefs": "python3 scripts/lint-xrefs.py",
+    "vale:sync": "vale sync",
+    "vale": "npm run vale:sync && vale overview admin-guide developer-guide",
+    "vale:strict": "vale --minAlertLevel=error overview admin-guide developer-guide",
+    "vale:report": "python3 scripts/vale-report.py",
+    "vale:compiled": "vale ../guides.md",
+    "validate": "npm run lint && npm run lint:compiled && npm run links && npm run anchors:check && npm run xrefs",
+    "validate:all": "npm run validate && npm run format:check",
+    "fix": "npm run format && markdownlint-cli2 --fix"
+  },
+  "devDependencies": {
+    "markdown-link-check": "^3.13.0",
+    "markdownlint-cli2": "^0.17.2",
+    "prettier": "^3.5.3"
+  }
+}
