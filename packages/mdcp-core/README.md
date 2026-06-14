@@ -203,7 +203,7 @@ Built-in hook names are configured in `mdcp.config.json` under `guides[].compile
 - **`inlineDiagrams`** — inlines diagram markdown via directive or diagram-path links
 - **`reviewLinks`** — rewrites finding and cross-guide links for monolith cohesion (`hooksConfig.reviewLinks.targetMonolith`)
 
-Optional hook config under `guides[].compile.hooksConfig`. Use `compile.sectionsHeading` (e.g. `"Sections"`) so only links under that `##` heading count toward compile order when the manifest has preamble prose with example links.
+Optional hook config under `guides[].compile.hooksConfig`. For manifest compile order and `compile.sectionsHeading`, see [Manifest compile order](../features/manifest-compile-order.md).
 
 Details in the [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).
 

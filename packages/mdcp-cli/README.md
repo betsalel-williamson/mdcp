@@ -82,7 +82,7 @@ Shards use `#` headings so each file reads well on its own. During compile, mdcp
 
 **Guide directories are human source only.** Generated outputs (`guides.md`, `refs.json`, per-guide `compile.outputFile`) live under `outputDir` (for example `_build/compiled/`).
 
-When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` (for example `"Sections"`) so only links under that `##` heading count toward compile order.
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` (for example `"Sections"`) so only links under that `##` heading count toward compile order. See [Manifest compile order](../features/manifest-compile-order.md).
 
 Guides can also set `compile.outputFile` to publish a standalone document (for example an npm `README.md`) excluded from the monolith.
 
@@ -195,9 +195,9 @@ Minimal `mdcp.config.json`:
 
 Per-guide `compile.outputFile` writes a publish target (relative to `--cwd`) and excludes that guide from the monolith. Use `compile.includeBanner: false` for npm README outputs.
 
-#### Glossary pattern (`sectionsHeading`)
+#### `sectionsHeading`
 
-When `index.md` has policy prose with example inline links before an ordered `## Sections` list, set `sectionsHeading` so preamble links are not compiled as shards:
+When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading` to that heading. See [Manifest compile order](../features/manifest-compile-order.md) for behavior, examples, and when it is required.
 
 ```json
 {
@@ -210,8 +210,6 @@ When `index.md` has policy prose with example inline links before an ordered `##
   }
 }
 ```
-
-Only links at or after `## Sections` are used for compile order.
 
 ### Schema-only fields
 
@@ -312,7 +310,7 @@ mdcp check
 
 Compile order comes from link order in each guide's `index.md` or `shards.md`. List shards in the manifest in the order you want them stitched.
 
-When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` so only links under that `##` heading count. See [Config essentials — glossary pattern](#glossary-pattern-sectionsheading).
+When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` — see [Manifest compile order](../features/manifest-compile-order.md).
 
 After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — there is no separate manifest sync step.
 
@@ -362,7 +360,7 @@ Each guide directory needs:
 - Topic shards — one file per section (for example `authentication.md`)
 - Optional `about-this-guide.md` — preamble shard (persona, scope)
 
-When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Config essentials](#glossary-pattern-sectionsheading)).
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](../features/manifest-compile-order.md)).
 
 Never hand-edit generated `guides.md` or `refs.json`.
 

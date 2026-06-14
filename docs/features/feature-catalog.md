@@ -38,7 +38,7 @@ mdcp check --require-lint
 
 ## Manifest link order (P1.1)
 
-Compile order is derived from each guide's `index.md` or `shards.md` link order. Use `compile.sectionsHeading` when the manifest has preamble links outside the section list.
+Compile order is derived from each guide's `index.md` or `shards.md` link order. When a manifest has policy prose with example links before an ordered section list, use `compile.sectionsHeading` — see [Manifest compile order](./manifest-compile-order.md).
 
 ## Shard split (P1.2)
 

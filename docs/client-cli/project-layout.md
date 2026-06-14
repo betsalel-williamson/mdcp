@@ -13,6 +13,6 @@ Shards use `#` headings so each file reads well on its own. During compile, mdcp
 
 **Guide directories are human source only.** Generated outputs (`guides.md`, `refs.json`, per-guide `compile.outputFile`) live under `outputDir` (for example `_build/compiled/`).
 
-When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` (for example `"Sections"`) so only links under that `##` heading count toward compile order.
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` (for example `"Sections"`) so only links under that `##` heading count toward compile order. See [Manifest compile order](../features/manifest-compile-order.md).
 
 Guides can also set `compile.outputFile` to publish a standalone document (for example an npm `README.md`) excluded from the monolith.

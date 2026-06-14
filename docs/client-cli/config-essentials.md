@@ -107,9 +107,9 @@ Minimal `mdcp.config.json`:
 
 Per-guide `compile.outputFile` writes a publish target (relative to `--cwd`) and excludes that guide from the monolith. Use `compile.includeBanner: false` for npm README outputs.
 
-### Glossary pattern (`sectionsHeading`)
+### `sectionsHeading`
 
-When `index.md` has policy prose with example inline links before an ordered `## Sections` list, set `sectionsHeading` so preamble links are not compiled as shards:
+When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading` to that heading. See [Manifest compile order](../features/manifest-compile-order.md) for behavior, examples, and when it is required.
 
 ```json
 {
@@ -122,8 +122,6 @@ When `index.md` has policy prose with example inline links before an ordered `##
   }
 }
 ```
-
-Only links at or after `## Sections` are used for compile order.
 
 ## Schema-only fields
 

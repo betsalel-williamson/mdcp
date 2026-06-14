@@ -34,7 +34,7 @@ Each guide directory needs:
 - Topic shards — one file per section (for example `authentication.md`)
 - Optional `about-this-guide.md` — preamble shard (persona, scope)
 
-When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Config essentials](./config-essentials.md#glossary-pattern-sectionsheading)).
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](../features/manifest-compile-order.md)).
 
 Never hand-edit generated `guides.md` or `refs.json`.
 
