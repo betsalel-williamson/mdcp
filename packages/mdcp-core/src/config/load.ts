@@ -1,6 +1,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { MdcpConfigSchema, type MdcpConfig, type GuideConfig } from './schema.js';
+import { resolveUnderOutputDir } from './paths.js';
 
 export function loadConfig(configPath: string, configBase: string): MdcpConfig {
   const abs = resolve(configBase, configPath);
@@ -12,7 +13,11 @@ export function loadConfig(configPath: string, configBase: string): MdcpConfig {
 }
 
 export function resolveOutputPath(config: MdcpConfig, cwd: string): string {
-  return resolve(cwd, config.outputDir, config.outputFile);
+  return resolveUnderOutputDir(cwd, config.outputDir, config.outputFile);
+}
+
+export function resolveRefsPath(cwd: string, outputDir: string, file: string): string {
+  return resolveUnderOutputDir(cwd, outputDir, file);
 }
 
 export function resolveGuidesRoot(config: MdcpConfig, cwd: string): string {

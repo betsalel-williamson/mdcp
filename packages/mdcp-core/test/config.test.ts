@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { MdcpConfigSchema } from '../src/config/schema.js';
-import { loadConfig } from '../src/config/load.js';
+import { loadConfig, resolveOutputPath, resolveRefsPath } from '../src/config/load.js';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { useTmpDir, withTmpDir } from './helpers/tmp-dir.js';
@@ -60,5 +60,29 @@ describe('loadConfig', () => {
       const cfg = loadConfig('docs/mdcp.config.json', repo);
       expect(cfg.compileOrder).toEqual(['a']);
     });
+  });
+});
+
+describe('resolveUnderOutputDir paths', () => {
+  it('resolves outputFile relative to outputDir', () => {
+    const config = MdcpConfigSchema.parse({
+      compileOrder: ['a'],
+      outputDir: '_build/compiled',
+      outputFile: 'guides.md',
+    });
+    expect(resolveOutputPath(config, '/docs')).toBe('/docs/_build/compiled/guides.md');
+  });
+
+  it('normalizes cwd-relative outputFile under outputDir', () => {
+    const config = MdcpConfigSchema.parse({
+      compileOrder: ['a'],
+      outputDir: '_build/compiled',
+      outputFile: '_build/compiled/guides.md',
+    });
+    expect(resolveOutputPath(config, '/docs')).toBe('/docs/_build/compiled/guides.md');
+  });
+
+  it('resolves refs.registryFile via resolveRefsPath', () => {
+    expect(resolveRefsPath('/docs', '.', 'refs.json')).toBe('/docs/refs.json');
   });
 });

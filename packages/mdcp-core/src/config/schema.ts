@@ -72,7 +72,9 @@ const GuideSchema = z.object({
 
 export const MdcpConfigSchema = z.object({
   source: z.string().optional(),
+  /** Compile output root relative to --cwd (default guide shard dirs live here too). */
   outputDir: z.string().default('.'),
+  /** Monolith filename relative to outputDir (not --cwd). */
   outputFile: z.string().default('guides.md'),
   compileOrder: z.array(z.string()).min(1),
   banner: z.string().optional(),
@@ -80,6 +82,7 @@ export const MdcpConfigSchema = z.object({
 
   refs: z
     .object({
+      /** Registry path relative to outputDir (not --cwd). */
       registryFile: z.string().default('refs.json'),
       slugAlgorithm: z.enum(['github']).default('github'),
     })

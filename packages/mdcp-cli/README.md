@@ -65,7 +65,7 @@ Global options (apply to every command):
 | Option                | Default            | Purpose                                                                 |
 | --------------------- | ------------------ | ----------------------------------------------------------------------- |
 | `-c, --config <path>` | `mdcp.config.json` | Path to config file (relative to the invocation directory, not `--cwd`) |
-| `--cwd <path>`        | current directory  | Docs root (guide dirs and output paths are relative to this)            |
+| `--cwd <path>`        | current directory  | Docs root for shard trees and config path fields                        |
 
 ## Project layout
 
@@ -91,10 +91,10 @@ Guides can also set `compile.outputFile` to publish a standalone document (for e
 
 These two global options answer different questions:
 
-| Option         | Resolved from                                                                        | Purpose                                                         |
-| -------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| **`--config`** | **Invocation directory** — where you run the command (repo root in most npm scripts) | Locates `mdcp.config.json` on disk                              |
-| **`--cwd`**    | N/A (you pass the docs root explicitly)                                              | Guide directories, compile outputs, and paths inside the config |
+| Option         | Resolved from                                                                        | Purpose                                                       |
+| -------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| **`--config`** | **Invocation directory** — where you run the command (repo root in most npm scripts) | Locates `mdcp.config.json` on disk                            |
+| **`--cwd`**    | N/A (you pass the docs root explicitly)                                              | Docs root — see [Config path bases](#config-path-bases) below |
 
 `--config` and `--cwd` use independent path bases — the config path is not prefixed with `--cwd`.
 
@@ -132,7 +132,30 @@ Here `--cwd` defaults to `docs/` (the invocation directory), which matches the s
 
 #### Programmatic API
 
-`loadConfig(configPath, configBase)` in `@bwilliamson/mdcp-core` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root separately when resolving guide paths (`resolveGuideDir`, `resolveOutputPath`, etc.). See [API — Config](../client-core/api-config.md).
+`loadConfig(configPath, configBase)` in `@bwilliamson/mdcp-core` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root separately when resolving guide paths (`resolveGuideDir`, `resolveOutputPath`, `resolveRefsPath`, etc.). See [API — Config](../client-core/api-config.md).
+
+#### Config path bases
+
+Config path fields use **three bases**. Mixing them up is the most common path bug.
+
+| Base                    | Set by                                     | Example (`--cwd docs`)                                                           |
+| ----------------------- | ------------------------------------------ | -------------------------------------------------------------------------------- |
+| **Invocation dir**      | where you run the command                  | `--config docs/mdcp.config.json` from repo root → `<repo>/docs/mdcp.config.json` |
+| **Docs root** (`--cwd`) | explicit flag (defaults to invocation dir) | `guides/features/` → `docs/features/`                                            |
+| **`outputDir`**         | config field under `--cwd`                 | `_build/compiled` → `docs/_build/compiled/`                                      |
+
+| Config field         | Resolved from            | Example value               | Resolves to (`--cwd docs`)       |
+| -------------------- | ------------------------ | --------------------------- | -------------------------------- |
+| `guides[].path`      | `--cwd`                  | `features`                  | `docs/features/`                 |
+| Default guide dir    | `outputDir` + guide name | (omit `path`)               | `docs/<outputDir>/<name>/`       |
+| `compile.outputFile` | `--cwd`                  | `../packages/foo/README.md` | `<repo>/packages/foo/README.md`  |
+| `outputDir`          | `--cwd`                  | `_build/compiled`           | `docs/_build/compiled/`          |
+| `outputFile`         | `outputDir`              | `guides.md`                 | `docs/_build/compiled/guides.md` |
+| `refs.registryFile`  | `outputDir`              | `refs.json`                 | `docs/_build/compiled/refs.json` |
+
+Monolith `outputFile` and `refs.registryFile` share the same rule: **relative to `outputDir`**, not `--cwd`. Per-guide `compile.outputFile` is always **relative to `--cwd`**.
+
+If you accidentally give a cwd-relative path for `outputFile` or `refs.registryFile` that already lies under `outputDir` (for example `"_build/compiled/refs.json"` when `outputDir` is `"_build/compiled"`), MDCP normalizes it. Prefer outputDir-relative values in config (`"refs.json"`, `"guides.md"`).
 
 ---
 
@@ -151,11 +174,23 @@ Minimal `mdcp.config.json`:
 | ------------------- | ------------------------------------------------------ |
 | `compileOrder`      | Order of guide directories in the compiled monolith    |
 | `guides`            | Per-guide options (hooks, manifests, separate outputs) |
-| `outputFile`        | Compiled monolith path                                 |
-| `refs.registryFile` | Cross-link lookup table path                           |
+| `outputDir`         | Compile output root (relative to `--cwd`)              |
+| `outputFile`        | Monolith filename (relative to `outputDir`)            |
+| `refs.registryFile` | Cross-link lookup table (relative to `outputDir`)      |
 | `lint`              | markdownlint configs, xref checks, link checking       |
 | `vale`              | Prose lint paths and `.vale.ini` location              |
 | `source`            | Monolith path — required only for `mdcp shard`         |
+
+**Nested `outputDir` example** — use outputDir-relative filenames:
+
+```json
+{
+  "outputDir": "_build/compiled",
+  "outputFile": "guides.md",
+  "compileOrder": ["overview"],
+  "refs": { "registryFile": "refs.json" }
+}
+```
 
 Per-guide `compile.outputFile` writes a publish target (relative to `--cwd`) and excludes that guide from the monolith. Use `compile.includeBanner: false` for npm README outputs.
 
@@ -177,7 +212,7 @@ Every command accepts:
 | Option                | Default            | Purpose                                                                    |
 | --------------------- | ------------------ | -------------------------------------------------------------------------- |
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--cwd`) |
-| `--cwd <path>`        | current directory  | Docs root — guide directories and compile outputs are relative to this     |
+| `--cwd <path>`        | current directory  | Docs root for shard trees and config path fields                           |
 
 **Repo-root npm scripts** typically use both flags:
 

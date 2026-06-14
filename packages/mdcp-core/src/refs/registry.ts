@@ -1,5 +1,4 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { buildSlugRegistry, type RefsRegistry } from './slugs.js';
 
 export function writeRefsRegistry(registry: RefsRegistry, outputPath: string): void {
@@ -32,8 +31,4 @@ export function genRefsFromCompiled(compiledText: string, registryPath: string):
   const registry = buildSlugRegistry(compiledText);
   writeRefsRegistry(registry, registryPath);
   return registry;
-}
-
-export function resolveRefsPath(cwd: string, outputDir: string, file: string): string {
-  return resolve(cwd, outputDir, file);
 }

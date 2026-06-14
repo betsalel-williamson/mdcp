@@ -7,7 +7,7 @@ Every command accepts:
 | Option                | Default            | Purpose                                                                    |
 | --------------------- | ------------------ | -------------------------------------------------------------------------- |
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--cwd`) |
-| `--cwd <path>`        | current directory  | Docs root — guide directories and compile outputs are relative to this     |
+| `--cwd <path>`        | current directory  | Docs root for shard trees and config path fields                           |
 
 **Repo-root npm scripts** typically use both flags:
 
