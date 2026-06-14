@@ -1,20 +1,26 @@
 # @bwilliamson/mdcp-core
 
+## Overview
+
 Core library for **mdcp** — compile sharded Markdown guides, build section link registries, validate structure, and export LLM-friendly output.
 
 Use this package when you need mdcp behavior in scripts, CI pipelines, editors, or other tools without shelling out to the CLI.
 
-## Requirements
+### Requirements
 
 - Node.js **>= 22.12.0**
 
-## Install
+### Install
 
 ```bash
 npm install @bwilliamson/mdcp-core
 ```
 
 The CLI (`@bwilliamson/mdcp-cli`) depends on this package. Install `@bwilliamson/mdcp-core` directly only when you need the programmatic API.
+
+### Stability
+
+**Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Pin a specific version and read package changelogs before upgrading.
 
 ## Quick example
 
@@ -52,9 +58,9 @@ const matches = lookupHeadings(registry, 'authentication');
 const llmText = stripForLlm(compiled, getLlmExportOptions(config));
 ```
 
-## API overview
+Use `writeCompiledGuides` when you need to write the monolith and per-guide publish outputs to disk.
 
-### Config
+## API — Config
 
 | Export                                                      | Purpose                              |
 | ----------------------------------------------------------- | ------------------------------------ |
@@ -63,21 +69,21 @@ const llmText = stripForLlm(compiled, getLlmExportOptions(config));
 | `getGuideConfig`, `xrefScanDirs`                            | Per-guide and xref scan helpers      |
 | `MdcpConfigSchema`, `MdcpConfig`, `GuideConfig`             | Zod schema and types                 |
 
-### Compile
+Per-guide `compile.outputFile` writes a publish target and excludes that guide from the monolith. `compile.includeBanner` controls whether the global banner is prepended (defaults to `false` when `outputFile` is set).
+
+## API — Compile
 
 | Export                                            | Purpose                                               |
 | ------------------------------------------------- | ----------------------------------------------------- |
 | `compileGuides`, `compileGuideResults`            | Stitch shards into monolith text                      |
-| `writeCompiledGuides`                             | Write compiled output to disk                         |
+| `writeCompiledGuides`                             | Write monolith and publish outputs to disk            |
 | `sectionFiles`, `processSection`, `assembleGuide` | Lower-level assemble pipeline                         |
 | `demoteHeadings`, `stripAboutThisGuideHeading`, … | Heading transforms                                    |
 | `registerCompileHook`, `applyCompileHooks`        | Extension hooks (`stripAnchors`, `inlineDiagrams`, …) |
 
-### Manifest
+`compileGuides` returns monolith text only — guides with `compile.outputFile` are excluded. `writeCompiledGuides` writes both the monolith and any publish targets.
 
-| Export                                               | Purpose                                   |
-| ---------------------------------------------------- | ----------------------------------------- |
-| `writeSectionsManifest`, `writeAllSectionsManifests` | Regenerate `sections.txt` from `index.md` |
+## API — Refs and validation
 
 ### Refs (cross-links)
 
@@ -87,12 +93,20 @@ const llmText = stripForLlm(compiled, getLlmExportOptions(config));
 | `genRefsFromCompiled`, `readRefsRegistry`, `checkRefsRegistry` | `refs.json` lifecycle      |
 | `resolveRefsPath`, `writeRefsRegistry`                         | Path and I/O helpers       |
 
+### Manifest
+
+| Export                                               | Purpose                                   |
+| ---------------------------------------------------- | ----------------------------------------- |
+| `writeSectionsManifest`, `writeAllSectionsManifests` | Regenerate `sections.txt` from `index.md` |
+
 ### Validation
 
-| Export                                  | Purpose                                  |
-| --------------------------------------- | ---------------------------------------- |
-| `checkOrphans`, `checkOrphansForGuides` | Detect unlinked or missing shard files   |
-| `lintXrefs`                             | Bare `Ch. N` / `See Chapter N` detection |
+| Export                                  | Purpose                                 |
+| --------------------------------------- | --------------------------------------- |
+| `checkOrphans`, `checkOrphansForGuides` | Detect unlinked or missing shard files  |
+| `lintXrefs`                             | Chapter-style cross-reference detection |
+
+## API — Export, shard, and peers
 
 ### Export
 
@@ -112,6 +126,8 @@ const llmText = stripForLlm(compiled, getLlmExportOptions(config));
 | --------------------------- | ----------------------------------------------------------------- |
 | `findPeerBinary`, `runPeer` | Locate and run host-repo linters (`markdownlint-cli2`, `vale`, …) |
 
+Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → skip with info.
+
 ## Compile hooks
 
 Register custom per-shard transforms:
@@ -124,7 +140,14 @@ registerCompileHook('myHook', (ctx) => {
 });
 ```
 
-Built-in hook names are configured in `mdcp.config.json` under `guides[].compile.hooks`. See [docs/FEATURES.md](https://github.com/betsalel-williamson/mdcp/blob/main/docs/FEATURES.md) for the built-in set.
+Built-in hook names are configured in `mdcp.config.json` under `guides[].compile.hooks`:
+
+- **`stripAnchors`** — removes explicit `` markers per shard
+- **`codeEvidence`**, **`reviewLinks`**, **`inlineDiagrams`** — reserved names (passthrough placeholders today; extend via `registerCompileHook` in your repo)
+
+Default `compile.stripAnchors: true` also strips anchors on the full assembled guide without naming the hook.
+
+Details in the [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).
 
 ## Related packages
 
@@ -133,11 +156,12 @@ Built-in hook names are configured in `mdcp.config.json` under `guides[].compile
 | [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)         | `mdcp` command-line interface |
 | [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) | Starter markdownlint configs  |
 
-## Further reading
+### Further reading
 
 - [Project README](https://github.com/betsalel-williamson/mdcp#readme)
-- [Design constraints](https://github.com/betsalel-williamson/mdcp/blob/main/docs/design.md)
+- [Design constraints](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints.md)
+- [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
 
-## License
+### License
 
 MIT

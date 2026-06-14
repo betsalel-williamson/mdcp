@@ -8,7 +8,7 @@ mdcp uses [Semantic Versioning 2.0.0](https://semver.org/) and [Changesets](http
 | Core library | `@bwilliamson/mdcp-core`    |
 | Lint presets | `@bwilliamson/mdcp-presets` |
 
-Fixed versioning is configured in [`.changeset/config.json`](../.changeset/config.json) — bump one, bump all.
+Fixed versioning is configured in [`.changeset/config.json`](../../.changeset/config.json) — bump one, bump all.
 
 ## Release schedule (lightweight)
 
@@ -21,18 +21,11 @@ There is **no calendar cadence**. Releases are **event-driven**:
 
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
-```mermaid
-flowchart LR
-  pr[Feature PR + changeset] --> main[main]
-  main --> tagScript["pnpm release:tag:push"]
-  tagScript --> gitTag["git tag vX.Y.Z"]
-  gitTag --> ci[CI on tag push]
-  ci --> publish[npm publish + GitHub release]
-```
-
 ## Pre-1.0 policy (`0.x.y`)
 
-The project is **pre-1.0**. Treat versions as:
+The project is **pre-1.0**. Until **1.0.0**, there is **no API stability guarantee** — exported library APIs, CLI commands and flags, `mdcp.config.json` schema, and compile output shape may change in any `0.x.y` release without a semver-major bump.
+
+Treat versions as:
 
 | Bump                     | When                                                                                | Examples                                                 |
 | ------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
@@ -104,9 +97,7 @@ pnpm release:tag:push       # same prompts, then push main + tag
 
 Preview without writes: `pnpm release:tag --dry-run`
 
-#### Bump types (chosen at release time)
-
-The script shows a preview of each option from the current version:
+### Bump types (chosen at release time)
 
 | Choice | Bump      | Use for                                                  |
 | ------ | --------- | -------------------------------------------------------- |
@@ -115,7 +106,7 @@ The script shows a preview of each option from the current version:
 | 3      | **major** | Breaking CLI, config, or compile output                  |
 | 4      | **build** | Republish same API (`0.1.0-build.1`, `0.1.0-build.2`, …) |
 
-#### Human confirmation gate
+### Human confirmation gate
 
 1. Select bump type `1`–`4`
 2. Type the exact tag (e.g. `v0.2.0`) to confirm
@@ -123,7 +114,7 @@ The script shows a preview of each option from the current version:
 
 Without a TTY, the script exits immediately.
 
-The [release workflow](../.github/workflows/release.yml) runs on **`v*` tag push**, verifies the tag matches `packages/mdcp-cli/package.json` version, builds, runs `changeset publish`, and opens a GitHub Release.
+The [release workflow](../../.github/workflows/release.yml) runs on **`v*` tag push**, verifies the tag matches `packages/mdcp-cli/package.json` version, builds, runs `changeset publish`, and opens a GitHub Release.
 
 ### Automated (after tag push)
 
@@ -133,7 +124,7 @@ The [release workflow](../.github/workflows/release.yml) runs on **`v*` tag push
 
 ### Manual fallback
 
-See [PUBLISH.md](../PUBLISH.md).
+See [Publishing](./publishing.md).
 
 ## Changelogs
 
@@ -144,9 +135,9 @@ Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you 
 
 ## Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](../SECURITY.md) for the supported-versions table — update that table when cutting a new minor line.
+Security fixes target the **latest minor** on npm. See [SECURITY.md](../../SECURITY.md) for the supported-versions table — update that table when cutting a new minor line.
 
 ## Related docs
 
-- [PUBLISH.md](../PUBLISH.md) — first publish, Trusted Publishing, npm commands
-- [.changeset/README.md](../.changeset/README.md) — quick changeset reference
+- [Publishing](./publishing.md) — first publish, Trusted Publishing, npm commands
+- [.changeset/README.md](../../.changeset/README.md) — quick changeset reference

@@ -1,0 +1,8 @@
+install-and-quick-start.md
+project-layout.md
+config-essentials.md
+commands-reference.md
+cross-links-and-refs.md
+consumer-migration.md
+agent-integration.md
+optional-linters.md

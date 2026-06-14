@@ -6,7 +6,7 @@
 | ------- | --------- |
 | 0.1.x   | Yes       |
 
-Update this table when a new minor line is published. Versioning policy: [docs/VERSIONING.md](docs/VERSIONING.md).
+Update this table when a new minor line is published. Versioning policy: [docs/developer/versioning-and-releases.md](docs/developer/versioning-and-releases.md).
 
 ## Reporting a vulnerability
 

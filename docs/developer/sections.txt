@@ -1,0 +1,7 @@
+about-this-guide.md
+local-setup.md
+repository-layout.md
+packages-and-tests.md
+docs-dogfooding.md
+versioning-and-releases.md
+publishing.md

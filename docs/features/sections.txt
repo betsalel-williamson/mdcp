@@ -1,0 +1,5 @@
+about-this-guide.md
+personas-and-priority-tiers.md
+feature-catalog.md
+design-constraints.md
+legacy-migration.md

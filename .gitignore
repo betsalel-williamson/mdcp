@@ -29,6 +29,13 @@ legacy/vale-report.json
 examples/sample-guides/styles/*
 !examples/sample-guides/styles/.gitkeep
 
+docs/styles/*
+!docs/styles/.gitkeep
+
+# MDCP compiled output (repo docs — regenerate with pnpm docs:compile:repo)
+docs/guides.md
+docs/refs.json
+
 # OS
 .DS_Store
 

@@ -18,7 +18,7 @@ Describe your change and select the bump type (**patch**, **minor**, or **major*
 | New command, config field, or hook      | minor |
 | Breaking CLI, config, or compile output | major |
 
-Full policy: [docs/VERSIONING.md](../docs/VERSIONING.md).
+Full policy: [docs/developer/versioning-and-releases.md](../docs/developer/versioning-and-releases.md).
 
 ## Verify before opening a PR
 
@@ -32,6 +32,6 @@ Fails if you changed package code since `origin/main` without a changeset.
 
 1. Merge feature PRs (with changesets) to `main`.
 2. In a terminal on `main`, run **`pnpm release:tag:push`** — pick bump type, confirm, tag, push; CI publishes to npm.
-3. See [PUBLISH.md](../PUBLISH.md) and [docs/VERSIONING.md](../docs/VERSIONING.md).
+3. See [PUBLISH.md](../PUBLISH.md) and [docs/developer/versioning-and-releases.md](../docs/developer/versioning-and-releases.md).
 
 Human-only: the release script requires a TTY and typed confirmation. LLM agents cannot bump versions.
