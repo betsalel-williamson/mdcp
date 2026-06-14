@@ -32,6 +32,20 @@ describe('sectionFiles', () => {
     rmSync(work, { recursive: true, force: true });
   });
 
+  it('limits manifest links to text after sectionsHeading', () => {
+    mkdirSync(work, { recursive: true });
+    writeFileSync(
+      join(work, 'index.md'),
+      '# Glossary\n\nSee [Preamble](./00-preamble.md).\n\n## Sections\n\n- [One](./01-one.md)\n',
+    );
+    writeFileSync(join(work, '00-preamble.md'), '# P\n');
+    writeFileSync(join(work, '01-one.md'), '# One\n');
+
+    const files = sectionFiles(work, { sectionsHeading: 'Sections' });
+    expect(files).toEqual([resolve(work, '01-one.md')]);
+    rmSync(work, { recursive: true, force: true });
+  });
+
   it('supports shards.md manifest name', () => {
     mkdirSync(work, { recursive: true });
     writeFileSync(join(work, 'shards.md'), '# Shards\n\n- [Alpha](./alpha.md)\n');

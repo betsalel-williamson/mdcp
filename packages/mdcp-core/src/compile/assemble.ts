@@ -20,6 +20,16 @@ const SLUG_LINK_RE = /\]\(#([^)]+)\)/g;
 export interface SectionFilesOptions {
   manifest?: string;
   scopeRoot?: string;
+  sectionsHeading?: string;
+}
+
+function manifestTextForSections(text: string, sectionsHeading?: string): string {
+  if (!sectionsHeading) return text;
+  const escaped = sectionsHeading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`^##\\s+${escaped}\\s*$`, 'im');
+  const match = re.exec(text);
+  if (!match || match.index === undefined) return text;
+  return text.slice(match.index);
 }
 
 function resolveManifestPaths(
@@ -61,6 +71,7 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
 
   const text = readFileSync(indexPath, 'utf-8');
   const manifestPath = join(guideDir, 'sections.txt');
+  const scopedText = manifestTextForSections(text, options.sectionsHeading);
 
   if (existsSync(manifestPath)) {
     return readFileSync(manifestPath, 'utf-8')
@@ -72,7 +83,7 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
       );
   }
 
-  const resolved = resolveManifestPaths(guideDir, text, options);
+  const resolved = resolveManifestPaths(guideDir, scopedText, options);
   if (resolved.length > 0) return resolved;
 
   return readdirSync(guideDir)
@@ -81,8 +92,13 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
     .map((n: string) => join(guideDir, n));
 }
 
-export function processSection(guideName: string, filename: string, content: string): string {
-  if (filename === 'about-this-guide.md') {
+export function processSection(
+  guideName: string,
+  filename: string,
+  content: string,
+  preambleSection = 'about-this-guide.md',
+): string {
+  if (filename === preambleSection) {
     const body = stripAboutThisGuideHeading(content);
     return body.trim() ? demoteHeadings(body, 1) : body;
   }
@@ -93,6 +109,8 @@ export function processSection(guideName: string, filename: string, content: str
 export interface AssembleGuideOptions {
   manifest?: string;
   scopeRoot?: string;
+  sectionsHeading?: string;
+  preambleSection?: string;
   title?: string;
   hooks?: string[];
   stripAnchors?: boolean;
@@ -112,6 +130,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
   const files = sectionFiles(guideDir, {
     manifest: manifestName,
     scopeRoot: options.scopeRoot,
+    sectionsHeading: options.sectionsHeading,
   });
 
   if (useTitle) {
@@ -136,7 +155,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
       }
     }
 
-    let body = processSection(guideName, name, raw).trimEnd();
+    let body = processSection(guideName, name, raw, options.preambleSection).trimEnd();
 
     body = applyCompileHooks(
       body,
@@ -215,6 +234,8 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
     const text = assembleGuide(guideDir, {
       manifest: compile?.manifest,
       scopeRoot: compile?.scopeRoot ? resolve(cwd, compile.scopeRoot) : undefined,
+      sectionsHeading: compile?.sectionsHeading,
+      preambleSection: compile?.preambleSection,
       title: compile?.title,
       hooks: compile?.hooks,
       stripAnchors: compile?.stripAnchors,
