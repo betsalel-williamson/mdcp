@@ -129,7 +129,7 @@ For each guide in `compileOrder`, core:
 
 1. **Reads section files** — from `sections.txt`, or from link order in the manifest (`index.md` / `shards.md`). Optional `compile.sectionsHeading` limits which manifest links count.
 2. **Transforms each shard** — demotes headings to fit the guide level; strips `about-this-guide` preamble; runs named **compile hooks** (`stripAnchors`, `codeEvidence`, `inlineDiagrams`, `reviewLinks`, …).
-3. **Assembles the guide body** — injects optional `compile.title`; concatenates sections in order.
+3. **Assembles the guide body** — injects optional `compile.title` as a `##` heading followed by a blank line, then concatenates sections in order. When the first shard’s top heading matches the title, that duplicate heading is stripped.
 4. **Rewrites links** — same-guide `./section.md` → in-document `#anchor`; optional `publishPathRewrite` for repo-root paths on publish outputs.
 5. **Writes outputs** — monolith file and/or per-guide `compile.outputFile`.
 

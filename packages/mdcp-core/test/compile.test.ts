@@ -63,6 +63,22 @@ describe('compileGuides', () => {
     expect(output).toContain('## Coverage and where to look');
   });
 
+  it('inserts a blank line after injected compile title before first section', () => {
+    withTmpDir('mdcp-compile-title-', (work) => {
+      writeFileSync(join(work, 'index.md'), '# Guide\n\n- [Section](section.md)\n');
+      writeFileSync(join(work, 'section.md'), '### Product surfaces\n\nContent.\n');
+      writeFileSync(join(work, 'sections.txt'), 'section.md\n');
+
+      const out = assembleGuide(work, {
+        title: 'Compound glossary',
+        manifest: 'index.md',
+      });
+
+      expect(out).toMatch(/^## Compound glossary\n\n#### Product surfaces/m);
+      expect(out).not.toMatch(/^## Compound glossary#{2,}/m);
+    });
+  });
+
   it('strips explicit anchor markers from compiled output', () => {
     withTmpDir('mdcp-compile-', (work) => {
       writeFileSync(join(work, 'index.md'), '# Example\n\n- [Section](section.md)\n');
