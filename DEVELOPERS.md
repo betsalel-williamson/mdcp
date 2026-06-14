@@ -36,6 +36,25 @@ pnpm vale:sync            # once — Vale styles for docs/ and examples/sample-g
 
 Optional locally: `brew install gitleaks` (CI always scans).
 
+### Git hooks
+
+Pre-commit runs in two phases:
+
+| Phase           | What runs                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| lint-staged     | Prettier and ESLint on staged files (including `.jsonc`)                                 |
+| affected checks | `scripts/pre-commit-affected.mjs` — build and test only packages touched by staged paths |
+
+| Staged paths                                            | Extra checks                                             |
+| ------------------------------------------------------- | -------------------------------------------------------- |
+| `packages/mdcp-core/**`                                 | typecheck, build, `vitest related` on changed files      |
+| `packages/mdcp-cli/**`                                  | core build (dependency), then cli typecheck, build, test |
+| `packages/mdcp-presets/**`                              | JSONC preset validation                                  |
+| `docs/**`, `DEVELOPERS.md`, package README shards       | `docs:compile:repo` + `docs:check:repo`                  |
+| Root config (`package.json`, lockfile, eslint/tsconfig) | repo-wide typecheck + `format:check`                     |
+
+CI runs the full gate: `pnpm run check`.
+
 ## Repository layout
 
 ```text
@@ -123,7 +142,7 @@ This repo's documentation is sharded under [`docs/`](docs/). Shards are the **so
 | Directory      | Audience                                          | Output                                       |
 | -------------- | ------------------------------------------------- | -------------------------------------------- |
 | `features/`    | Tool capabilities, design, consumer migration map | `docs/guides.md` (local review — gitignored) |
-| `developer/`   | Contributing to this repo (this guide)            | [`DEVELOPERS.md`](DEVELOPERS.md) (committed) |
+| `developer/`   | Contributing to this repo (this guide)            | `DEVELOPERS.md` (committed, repo root)       |
 | `client-cli/`  | npm CLI consumers                                 | `packages/mdcp-cli/README.md`                |
 | `client-core/` | Programmatic API consumers                        | `packages/mdcp-core/README.md`               |
 

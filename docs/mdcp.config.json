@@ -9,7 +9,8 @@
       "name": "developer",
       "compile": {
         "outputFile": "../DEVELOPERS.md",
-        "includeBanner": false
+        "includeBanner": false,
+        "publishPathRewrite": { "stripParentSegments": 2, "oneLevelPrefix": "docs/" }
       }
     },
     {

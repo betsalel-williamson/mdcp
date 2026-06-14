@@ -76,7 +76,7 @@ function bumpVersion(current, bumpType) {
       return `${v.major}.${v.minor}.${v.patch + 1}`;
     case 'build': {
       const buildMatch = v.prerelease?.match(/^build\.(\d+)$/);
-      if (buildMatch && v.prerelease.startsWith('build.')) {
+      if (buildMatch) {
         return `${v.base}-build.${Number(buildMatch[1]) + 1}`;
       }
       return `${v.base}-build.1`;
@@ -257,6 +257,7 @@ async function main() {
 
   let bumpType = null;
   while (!bumpType) {
+    // --dry-run defaults to minor (2) for predictable non-interactive output.
     const choice = dryRun ? '2' : await prompt('Select bump type (1-4): ');
     const selected = BUMP_MENU.find((item) => item.key === choice);
     if (selected) {

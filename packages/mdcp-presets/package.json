@@ -36,7 +36,6 @@
     "./markdownlint-compiled.markdownlint-cli2.jsonc": "./markdownlint-compiled.markdownlint-cli2.jsonc"
   },
   "scripts": {
-    "typecheck": "node -e \"console.log('no typecheck')\"",
-    "prepublishOnly": "node -e \"console.log('presets ready')\""
+    "prepublishOnly": "node ../../scripts/validate-presets.mjs"
   }
 }

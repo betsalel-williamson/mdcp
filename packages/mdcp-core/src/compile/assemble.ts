@@ -11,7 +11,8 @@ import {
   rewriteIntraGuideFileLinks,
   rewritePublishPathLinks,
 } from './publish-links.js';
-import type { GuideConfig, MdcpConfig } from '../config/schema.js';
+import type { GuideConfig, GuideConfigInput, MdcpConfigInput } from '../config/schema.js';
+import type { PublishPathRewriteOptions } from './publish-links.js';
 
 const FILE_LINK_RE = /\[[^\]]*\]\(([^)]+\.md)(?:#[^)]*)?\)/g;
 const SLUG_LINK_RE = /\]\(#([^)]+)\)/g;
@@ -96,7 +97,8 @@ export interface AssembleGuideOptions {
   hooks?: string[];
   stripAnchors?: boolean;
   outputBasename?: string;
-  config?: MdcpConfig;
+  publishPathRewrite?: PublishPathRewriteOptions;
+  config?: MdcpConfigInput;
 }
 
 export function assembleGuide(guideDir: string, options: AssembleGuideOptions = {}): string {
@@ -141,7 +143,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
       {
         guideName,
         filename: name,
-        config: options.config ?? ({} as MdcpConfig),
+        config: options.config ?? ({} as MdcpConfigInput),
         outputBasename: options.outputBasename,
         sourceFile: filePath,
       },
@@ -161,10 +163,11 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
     compiled = stripExplicitAnchorMarkers(compiled);
   }
 
-  if (options.outputBasename) {
-    const slugByBasename = buildSectionSlugMap(files);
-    compiled = rewriteIntraGuideFileLinks(compiled, slugByBasename);
-    compiled = rewritePublishPathLinks(compiled);
+  const slugByBasename = buildSectionSlugMap(files);
+  compiled = rewriteIntraGuideFileLinks(compiled, slugByBasename);
+
+  if (options.publishPathRewrite) {
+    compiled = rewritePublishPathLinks(compiled, options.publishPathRewrite);
   }
 
   return compiled;
@@ -181,10 +184,13 @@ export interface CompileOptions {
   guidesRoot: string;
   compileOrder: string[];
   banner?: string;
-  guides?: GuideConfig[];
+  guides?: GuideConfigInput[];
   cwd?: string;
-  config?: MdcpConfig;
+  config?: MdcpConfigInput;
 }
+
+/** Alias for partial compile options in tests and callers that omit Zod defaults. */
+export type CompileOptionsInput = CompileOptions;
 
 function resolveGuideDir(
   name: string,
@@ -201,7 +207,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
   const cwd = options.cwd ?? process.cwd();
 
   return options.compileOrder.map((name) => {
-    const cfg = guideConfigMap.get(name);
+    const cfg = guideConfigMap.get(name) as GuideConfig | undefined;
     const guideDir = resolveGuideDir(name, options.guidesRoot, cfg, cwd);
     const compile = cfg?.compile;
     const outputBasename = compile?.outputFile ? basename(compile.outputFile) : undefined;
@@ -213,6 +219,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       hooks: compile?.hooks,
       stripAnchors: compile?.stripAnchors,
       outputBasename,
+      publishPathRewrite: compile?.publishPathRewrite,
       config: options.config,
     });
 
@@ -267,7 +274,7 @@ export function compileGuides(options: CompileOptions): string {
   }
 
   if (monolith.length === 0) {
-    return results.map((r) => r.text).join('\n');
+    return '';
   }
 
   return applyMonolithBanner(options, results);

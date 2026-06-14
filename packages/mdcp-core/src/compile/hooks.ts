@@ -1,10 +1,10 @@
-import type { MdcpConfig } from '../config/schema.js';
+import type { MdcpConfigInput } from '../config/schema.js';
 
 export interface CompileHookContext {
   guideName: string;
   filename: string;
   body: string;
-  config: MdcpConfig;
+  config: MdcpConfigInput;
   outputBasename?: string;
   sourceFile: string;
 }

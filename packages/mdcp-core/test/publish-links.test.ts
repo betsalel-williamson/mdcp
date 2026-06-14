@@ -31,7 +31,10 @@ describe('publish link rewriting', () => {
       'See [`package.json`](../../package.json) and [Feature Catalog](../features/feature-catalog.md).\n' +
       'Config: [`docs/mdcp.config.json`](../mdcp.config.json).\n';
 
-    const out = rewritePublishPathLinks(input);
+    const out = rewritePublishPathLinks(input, {
+      stripParentSegments: 2,
+      oneLevelPrefix: 'docs/',
+    });
     expect(out).toContain('[`package.json`](package.json)');
     expect(out).toContain('[Feature Catalog](docs/features/feature-catalog.md)');
     expect(out).toContain('[`docs/mdcp.config.json`](docs/mdcp.config.json)');

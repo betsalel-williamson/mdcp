@@ -62,14 +62,16 @@ Use `writeCompiledGuides` when you need to write the monolith and per-guide publ
 
 ## API — Config
 
-| Export                                                      | Purpose                              |
-| ----------------------------------------------------------- | ------------------------------------ |
-| `loadConfig(path, cwd)`                                     | Load and validate `mdcp.config.json` |
-| `resolveOutputPath`, `resolveGuidesRoot`, `resolveGuideDir` | Resolve paths from config            |
-| `getGuideConfig`, `xrefScanDirs`                            | Per-guide and xref scan helpers      |
-| `MdcpConfigSchema`, `MdcpConfig`, `GuideConfig`             | Zod schema and types                 |
+| Export                                                                                 | Purpose                              |
+| -------------------------------------------------------------------------------------- | ------------------------------------ |
+| `loadConfig(path, cwd)`                                                                | Load and validate `mdcp.config.json` |
+| `resolveOutputPath`, `resolveGuidesRoot`, `resolveGuideDir`                            | Resolve paths from config            |
+| `getGuideConfig`, `xrefScanDirs`                                                       | Per-guide and xref scan helpers      |
+| `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput` | Zod schema and types                 |
 
 Per-guide `compile.outputFile` writes a publish target and excludes that guide from the monolith. `compile.includeBanner` controls whether the global banner is prepended (defaults to `false` when `outputFile` is set).
+
+`compile.publishPathRewrite` optionally rewrites shard-relative repo paths in publish outputs (for example `../../package.json` → `package.json` and `../features/foo.md` → `docs/features/foo.md`). Intra-guide `./section.md` links are rewritten to in-document `#anchor` links on **every** compile, including monolith output.
 
 ## API — Compile
 
@@ -143,7 +145,8 @@ registerCompileHook('myHook', (ctx) => {
 Built-in hook names are configured in `mdcp.config.json` under `guides[].compile.hooks`:
 
 - **`stripAnchors`** — removes explicit `` markers per shard
-- **`codeEvidence`**, **`reviewLinks`**, **`inlineDiagrams`** — reserved names (passthrough placeholders today; extend via `registerCompileHook` in your repo)
+- **`codeEvidence`**, **`inlineDiagrams`** — reserved names (passthrough placeholders today; extend via `registerCompileHook` in your repo)
+- **`reviewLinks`** — reserved name for consumer extensions; built-in intra-guide and `publishPathRewrite` link rewriting runs at assembly time in `assembleGuide`
 
 Default `compile.stripAnchors: true` also strips anchors on the full assembled guide without naming the hook.
 

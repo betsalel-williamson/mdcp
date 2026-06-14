@@ -36,11 +36,24 @@ export function buildSectionSlugMap(sectionPaths: string[]): Map<string, string>
   return slugByBasename;
 }
 
+export interface PublishPathRewriteOptions {
+  stripParentSegments: number;
+  oneLevelPrefix: string;
+}
+
 /** Rewrite shard-relative paths for publish outputs outside the guide directory. */
-export function rewritePublishPathLinks(markdown: string): string {
-  return markdown
-    .replace(/(\[[^\]]*\]\()\.\.\/\.\.\//g, '$1')
-    .replace(/(\[[^\]]*\]\()\.\.\//g, '$1docs/');
+export function rewritePublishPathLinks(
+  markdown: string,
+  options: PublishPathRewriteOptions,
+): string {
+  let out = markdown;
+  if (options.stripParentSegments >= 2) {
+    out = out.replace(/(\[[^\]]*\]\()\.\.\/\.\.\//g, '$1');
+  }
+  if (options.stripParentSegments >= 1) {
+    out = out.replace(/(\[[^\]]*\]\()\.\.\//g, `$1${options.oneLevelPrefix}`);
+  }
+  return out;
 }
 
 /** Rewrite same-guide shard links to in-document anchors for publish outputs (npm READMEs). */
