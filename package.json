@@ -27,6 +27,11 @@
   "engines": {
     "node": ">=18"
   },
+  "pnpm": {
+    "overrides": {
+      "esbuild": ">=0.28.1"
+    }
+  },
   "lint-staged": {
     "packages/**/*.{ts,mjs}": [
       "eslint --fix",

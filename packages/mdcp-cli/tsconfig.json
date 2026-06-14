@@ -1,4 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@mdcp/core": ["../mdcp-core/src/index.ts"],
+      "@mdcp/core/*": ["../mdcp-core/src/*"]
+    }
+  },
   "include": ["src/**/*"]
 }
