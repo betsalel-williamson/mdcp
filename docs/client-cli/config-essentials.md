@@ -9,7 +9,7 @@ These two global options answer different questions:
 | **`--config`**    | **Invocation directory** — where you run the command (repo root in most npm scripts) | Locates `mdcp.config.json` on disk                          |
 | **`--docs-root`** | N/A (you pass the shard tree root explicitly)                                        | Root of guide directories — see [Path layout](#path-layout) |
 
-`--cwd` is a **deprecated alias** for `--docs-root`. `--config` is never prefixed with `--docs-root`.
+`--config` is never prefixed with `--docs-root`.
 
 ### Repo-root npm scripts
 
@@ -65,15 +65,15 @@ Each guide is a **folder** directly under the docs root. The guide **`name`** ma
 
 Only directories listed in `compileOrder` are compiled and linted. Support folders (for example `styles/`) stay on disk but are out of scope.
 
-| Config field          | Resolved from | Example (`--docs-root docs`)              |
-| --------------------- | ------------- | ----------------------------------------- |
-| Default guide shards  | `docsRoot`    | `docs/features/`                          |
-| `guides[].path`       | `docsRoot`    | `docs/features/`                          |
-| `outputDir`           | `docsRoot`    | `docs/_build/`                            |
-| Per-guide output      | `outputDir`   | `docs/_build/features.md`                 |
-| Monolith `outputFile` | `outputDir`   | `docs/_build/guides.md` (opt-in)          |
-| `refs.registryFile`   | `outputDir`   | `docs/_build/.caches/refs.json`           |
-| `compile.outputFile`  | `outputDir`   | `../packages/foo/README.md` from `_build` |
+| Config field          | Resolved from | Example (`--docs-root docs`)        |
+| --------------------- | ------------- | ----------------------------------- |
+| Default guide shards  | `docsRoot`    | `docs/features/`                    |
+| `guides[].path`       | `docsRoot`    | `docs/features/`                    |
+| `outputDir`           | `docsRoot`    | `docs/_build/`                      |
+| Per-guide output      | `outputDir`   | `docs/_build/features.md`           |
+| Monolith `outputFile` | `outputDir`   | `docs/_build/guides.md` (opt-in)    |
+| `refs.registryFile`   | `outputDir`   | `docs/_build/.caches/refs.json`     |
+| `compile.outputFile`  | `outputDir`   | `../../DEVELOPERS.md` from `_build` |
 
 Delete `_build/` to clean all generated output. `.caches/` holds derived state (refs registry) only.
 
@@ -108,7 +108,7 @@ When `compile.outputFile` is omitted:
 | 1                        | `guide.md`                     |
 | 2+                       | `{name}.md` per guide          |
 
-When `compile.outputFile` is set, that guide writes only to that path (for example npm README publish via `../packages/foo/README.md`) and is excluded from an optional monolith.
+When `compile.outputFile` is set, that guide writes only to that path (for example npm README publish via `../../packages/foo/README.md`) and is excluded from an optional monolith.
 
 ### Optional monolith
 

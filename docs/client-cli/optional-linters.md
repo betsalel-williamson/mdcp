@@ -32,21 +32,21 @@ Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwillia
 
 ## In-scope guide fileset
 
-MDCP knows the **full fileset** it manages: registered guides in `compileOrder`, resolved via `guides[].path` or `outputDir/<name>`. Shard markdownlint and Vale prose **only touch documents in that scope** — never legacy flat `.md` files, unregistered sibling folders, or other markdown under `--cwd` that mdcp does not compile.
+MDCP knows the **full fileset** it manages: registered guides in `compileOrder`, resolved via `guides[].path` or `{docsRoot}/{name}/`. Shard markdownlint and Vale prose **only touch documents in that scope** — never legacy flat `.md` files, unregistered sibling folders, or other markdown under `--docs-root` that mdcp does not compile.
 
-| Command                                        | Default scope                                   | Out of scope (skipped)                            |
-| ---------------------------------------------- | ----------------------------------------------- | ------------------------------------------------- |
-| Shard markdownlint (`mdcp lint`, `mdcp check`) | `compileOrder` guide directories                | Legacy flat docs, unrelated subdirs under `--cwd` |
-| Vale prose (`mdcp prose`, `mdcp check`)        | Same guide directories                          | Same                                              |
-| Xref lint (`mdcp check`)                       | Same guide directories                          | Same                                              |
-| Compiled markdownlint                          | Monolith and publish outputs (`compiledConfig`) | Separate pass — not shard trees                   |
+| Command                                        | Default scope                                   | Out of scope (skipped)                                  |
+| ---------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| Shard markdownlint (`mdcp lint`, `mdcp check`) | `compileOrder` guide directories                | Legacy flat docs, unrelated subdirs under `--docs-root` |
+| Vale prose (`mdcp prose`, `mdcp check`)        | Same guide directories                          | Same                                                    |
+| Xref lint (`mdcp check`)                       | Same guide directories                          | Same                                                    |
+| Compiled markdownlint                          | Monolith and publish outputs (`compiledConfig`) | Separate pass — not shard trees                         |
 
 Optional overrides **narrow** scope further; they never widen it beyond what you explicitly list:
 
-| Config field                    | Purpose                                                                         |
-| ------------------------------- | ------------------------------------------------------------------------------- |
-| `lint.markdownlint.shardsGlobs` | Shard markdownlint paths relative to `--cwd` (default: compileOrder guide dirs) |
-| `vale.scanGlobs`                | Vale prose paths relative to `--cwd` (default: same guide dirs)                 |
+| Config field                    | Purpose                                                                               |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| `lint.markdownlint.shardsGlobs` | Shard markdownlint paths relative to `--docs-root` (default: compileOrder guide dirs) |
+| `vale.scanGlobs`                | Vale prose paths relative to `--docs-root` (default: same guide dirs)                 |
 
 The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (`!**/index.md`, `!guides.md`). **Scope always comes from the CLI** — not from preset globs.
 

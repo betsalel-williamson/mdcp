@@ -27,7 +27,7 @@ This repository dogfoods the pattern under `docs/` — see [examples/sample-guid
 
 | Area                        | Previous                     | Now                                                |
 | --------------------------- | ---------------------------- | -------------------------------------------------- |
-| CLI docs root flag          | `--cwd`                      | **`--docs-root`** (`--cwd` deprecated alias)       |
+| CLI docs root flag          | `--cwd`                      | **`--docs-root`**                                  |
 | `outputDir` default         | `.`                          | **`_build`**                                       |
 | Guide shard dir (no `path`) | `{outputDir}/{name}/`        | **`{docsRoot}/{name}/`**                           |
 | Default compile output      | Monolith `guides.md`         | **Per-guide** `{name}.md` or `guide.md`            |

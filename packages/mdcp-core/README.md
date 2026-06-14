@@ -28,7 +28,7 @@ The CLI (`@bwilliamson/mdcp-cli`) depends on this package. Install `@bwilliamson
 import {
   loadConfig,
   compileGuides,
-  resolveGuidesRoot,
+  resolveDocsRoot,
   genRefsFromCompiled,
   resolveRefsPath,
   lookupHeadings,
@@ -37,19 +37,19 @@ import {
   getLlmExportOptions,
 } from '@bwilliamson/mdcp-core';
 
-const cwd = '/path/to/docs';
-const config = loadConfig('mdcp.config.json', cwd);
+const docsRoot = '/path/to/docs';
+const config = loadConfig('mdcp.config.json', docsRoot);
 
 const compiled = compileGuides({
-  guidesRoot: resolveGuidesRoot(config, cwd),
+  guidesRoot: resolveDocsRoot(config, docsRoot),
   compileOrder: config.compileOrder,
   banner: config.banner,
   guides: config.guides,
-  cwd,
+  docsRoot,
   config,
 });
 
-const refsPath = resolveRefsPath(cwd, config.outputDir, config.refs.registryFile);
+const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
 genRefsFromCompiled(compiled, refsPath);
 
 const registry = buildSlugRegistry(compiled);
@@ -62,44 +62,42 @@ Use `writeCompiledGuides` when you need to write the monolith and per-guide publ
 
 ## API — Config
 
-| Export                                                                                                   | Purpose                                                                     |
-| -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `loadConfig(path, configBase)`                                                                           | Load and validate `mdcp.config.json` (`path` is resolved from `configBase`) |
-| `resolveOutputPath`, `resolveRefsPath`, `resolveGuideOutputPath`, `resolveGuidesRoot`, `resolveGuideDir` | Path resolvers for config output paths                                      |
-| `getGuideConfig`, `guideScanDirs`, `shardLintPaths`, `xrefScanDirs`                                      | In-scope guide fileset and xref scan helpers                                |
-| `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput`                   | Zod schema and types                                                        |
+| Export                                                                                 | Purpose                                                                     |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `loadConfig(path, configBase)`                                                         | Load and validate `mdcp.config.json` (`path` is resolved from `configBase`) |
+| `resolveOutputPath`, `resolveRefsPath`, `resolveGuideDir`, `defaultGuideOutputFile`    | Path resolvers for docs root and `outputDir`                                |
+| `getGuideConfig`, `guideScanDirs`, `shardLintPaths`, `xrefScanDirs`                    | In-scope guide fileset and xref scan helpers                                |
+| `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput` | Zod schema and types                                                        |
 
 ### Path resolution: `configBase` vs docs root
 
-The CLI and core library use **separate path bases**:
+| Concern                    | Base                          | Example                                                                       |
+| -------------------------- | ----------------------------- | ----------------------------------------------------------------------------- |
+| Finding `mdcp.config.json` | `configBase` (invocation dir) | `--config docs/mdcp.config.json` → `<repo>/docs/mdcp.config.json`             |
+| Guide shards (default)     | Docs root (`--docs-root`)     | `resolveGuideDir('features', config, docsRoot)` → `<docsRoot>/features`       |
+| `outputDir`                | Docs root                     | `_build` → `<docsRoot>/_build`                                                |
+| All generated paths        | `outputDir`                   | `features.md` → `<docsRoot>/_build/features.md`; `.caches/refs.json` for refs |
 
-| Concern                           | Base directory                                       | Example                                                                          |
-| --------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Finding `mdcp.config.json`        | `configBase` — invocation `process.cwd()` in the CLI | `--config docs/mdcp.config.json` from repo root → `<repo>/docs/mdcp.config.json` |
-| `guides[].path`                   | Docs root — `--cwd`                                  | `resolveGuideDir('features', config, cwd)` → `<cwd>/features`                    |
-| `outputDir`                       | Docs root — `--cwd`                                  | `resolveGuidesRoot(config, cwd)` → `<cwd>/<outputDir>`                           |
-| `outputFile`, `refs.registryFile` | `outputDir` (under docs root)                        | `resolveOutputPath(config, cwd)` → `<cwd>/<outputDir>/guides.md`                 |
-| `compile.outputFile`              | `outputDir` when no `..`; else `--cwd` (publish)     | `resolveGuideOutputPath(cwd, outputDir, file)` → `<cwd>/<outputDir>/glossary.md` |
-
-`resolveOutputPath` and `resolveRefsPath` both use the same `outputDir`-relative rule and normalize cwd-relative values that already fall under `outputDir`. Per-guide outputs use `resolveGuideOutputPath` (same join/normalize helper; `..` paths skip the join for repo publish targets). Details: [API — Refs](#api-refs-and-validation).
+All generated paths use `resolveUnderOutputDir(docsRoot, outputDir, file)` — relative to `outputDir` unless `file` is absolute. Details: [API — Refs](#api-refs-and-validation).
 
 ```typescript
 import { loadConfig, resolveGuideDir } from '@bwilliamson/mdcp-core';
 
-// Repo-root script: config at docs/mdcp.config.json, shards under docs/
 const config = loadConfig('docs/mdcp.config.json', process.cwd());
 const featuresDir = resolveGuideDir('features', config, join(process.cwd(), 'docs'));
 ```
 
-Pass `process.cwd()` (or the invocation directory) as `configBase` for `loadConfig`. Pass the docs root as the `cwd` argument to `resolveGuideDir`, `resolveOutputPath`, `resolveGuidesRoot`, and `resolveRefsPath`.
+Pass `process.cwd()` as `configBase` for `loadConfig`. Pass the docs root as `docsRoot` to `resolveGuideDir`, `resolveOutputPath`, and `resolveRefsPath`.
 
-Consumer path table: [Config essentials — path bases](#config-path-bases).
+Consumer path table: [Config essentials — path layout](#path-layout).
 
-Per-guide `compile.outputFile` writes a publish target and excludes that guide from the monolith. Bare filenames resolve under `outputDir`; paths with `..` resolve from `--cwd` for npm READMEs and repo-root publish targets. `compile.includeBanner` controls whether the global banner is prepended (defaults to `false` when `outputFile` is set).
+**Defaults:** `outputDir` `_build`; per-guide outputs `{name}.md` (or `guide.md` when one guide); optional monolith when `outputFile` is set; refs at `.caches/refs.json`.
 
-`compile.title` injects a `##` heading at the start of the assembled guide, separated from the first section by a blank line. When the first shard’s top heading matches the title text, that duplicate heading is stripped before assembly.
+`compile.outputFile` overrides a guide's output path (relative to `outputDir` or absolute). Guides with an explicit `compile.outputFile` are excluded from an optional monolith.
 
-`compile.publishPathRewrite` optionally rewrites shard-relative repo paths in publish outputs (for example `../../package.json` → `package.json` and `../features/foo.md` → `docs/features/foo.md`). Intra-guide `./section.md` links are rewritten to in-document `#anchor` links on **every** compile, including monolith output.
+`compile.includeBanner` controls whether the global banner is prepended (defaults to `false` for per-guide outputs).
+
+`compile.publishPathRewrite` rewrites shard-relative repo paths in publish outputs. Intra-guide `./section.md` links rewrite to `#anchor` on every compile.
 
 ## API — Compile
 
@@ -126,29 +124,22 @@ When `compile.title` is set, `assembleGuide` injects a `##` heading followed by 
 | `genRefsFromCompiled`, `readRefsRegistry`, `checkRefsRegistry` | `refs.json` lifecycle      |
 | `resolveRefsPath`, `writeRefsRegistry`                         | Path and I/O helpers       |
 
-#### `resolveRefsPath(cwd, outputDir, registryFile)`
+#### `resolveRefsPath(docsRoot, outputDir, registryFile)`
 
-Resolves the on-disk path for the refs registry. Implemented via the same `outputDir`-relative helper as `resolveOutputPath`. Pass the docs root as `cwd` (the CLI `--cwd` value).
+Resolves the on-disk path for the refs registry. Implemented via the same `outputDir`-relative helper as `resolveOutputPath`. Pass the docs root (the CLI `--docs-root` value).
 
-- `outputDir` is relative to `cwd`.
-- `registryFile` is relative to `outputDir` (not `cwd`).
+- `outputDir` is relative to `docsRoot`.
+- `registryFile` is relative to `outputDir` (default `.caches/refs.json`).
 
 ```typescript
-resolveRefsPath('/docs', '_build/compiled', 'refs.json');
-// → /docs/_build/compiled/refs.json
+resolveRefsPath('/docs', '_build', '.caches/refs.json');
+// → /docs/_build/.caches/refs.json
 
 resolveRefsPath('/docs', '.', 'refs.json');
 // → /docs/refs.json
 ```
 
-If `registryFile` or monolith `outputFile` is accidentally given as a cwd-relative path that already falls under `outputDir`, MDCP uses the cwd-relative interpretation so the path is not joined twice:
-
-```typescript
-resolveRefsPath('/docs', '_build/compiled', '_build/compiled/refs.json');
-// → /docs/_build/compiled/refs.json (normalized)
-```
-
-Prefer outputDir-relative values in config (for example `"refs.json"` when `outputDir` is `"_build/compiled"`). See [Config essentials — path bases](#config-path-bases).
+Prefer outputDir-relative values in config (for example `".caches/refs.json"` when `outputDir` is `"_build"`). See [Config essentials — path layout](#path-layout).
 
 ### Manifest
 

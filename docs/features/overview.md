@@ -26,9 +26,9 @@ You never hand-maintain the compiled file. Shards are the source of truth; `guid
 | **Monolith**       | Optional stitched output when top-level `outputFile` is set — combines guides without explicit `compile.outputFile`. |
 | **Publish output** | Per-guide compiled file via `compile.outputFile` (or default `{name}.md` under `outputDir`).                         |
 | **Refs registry**  | `.caches/refs.json` by default — GitHub-style slugs from compiled headings.                                          |
-| **`--docs-root`**  | Root of guide shard directories (one subfolder = one guide). `--cwd` is a deprecated alias.                          |
+| **`--docs-root`**  | Root of guide shard directories (one subfolder = one guide).                                                         |
 | **`outputDir`**    | Generated output root (default `_build`) — safe to delete. All generated paths are relative here unless absolute.    |
-| **`--config`**     | Config file path, resolved relative to the **invocation** directory (where you run the command), not `--cwd`.        |
+| **`--config`**     | Config file path, resolved relative to the **invocation** directory (where you run the command), not `--docs-root`.  |
 
 ### Path resolution (`--config` vs `--docs-root`)
 
@@ -153,7 +153,7 @@ Peer linters are **not bundled**. CI uses `--require-lint` / `--require-vale` to
 - **`lint` / `vale`** — peer linter config paths and scan globs.
 - **`export.llm`** — what to strip for agent context.
 
-This repository dogfoods under `docs/`: the features guide compiles into `docs/guides.md`; developer, CLI, and core guides publish to `DEVELOPERS.md` and package READMEs. See `docs/mdcp.config.json` for a multi-output layout.
+This repository dogfoods under `docs/`: the features guide compiles into `docs/_build/guides.md`; developer, CLI, and core guides publish to `DEVELOPERS.md` and package READMEs. See `docs/mdcp.config.json` for a multi-output layout.
 
 ## Code map (where to read implementation)
 

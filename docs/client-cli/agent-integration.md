@@ -7,9 +7,9 @@ Add npm scripts in your consumer repo:
 ```json
 {
   "scripts": {
-    "docs:compile": "mdcp compile --config docs/mdcp.config.json --cwd docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --cwd docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --cwd docs",
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
     "docs:refs": "mdcp refs lookup"
   }
 }

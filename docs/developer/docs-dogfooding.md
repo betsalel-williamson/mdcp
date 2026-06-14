@@ -4,25 +4,25 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 ## Guide directories
 
-| Directory      | Audience                                          | Output                                       |
-| -------------- | ------------------------------------------------- | -------------------------------------------- |
-| `features/`    | Tool capabilities, design, consumer migration map | `docs/guides.md` (local review — gitignored) |
-| `developer/`   | Contributing to this repo (this guide)            | `DEVELOPERS.md` (committed, repo root)       |
-| `client-cli/`  | npm CLI consumers                                 | `packages/mdcp-cli/README.md`                |
-| `client-core/` | Programmatic API consumers                        | `packages/mdcp-core/README.md`               |
+| Directory      | Audience                         | Output                                            |
+| -------------- | -------------------------------- | ------------------------------------------------- |
+| `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review) |
+| `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
+| `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
+| `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
 
 Config: [`docs/mdcp.config.json`](../mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
-Repo scripts use `--config docs/mdcp.config.json --cwd docs`: the config path is resolved from the **repo root** (invocation directory), while `--cwd docs` sets the shard tree root. See [Config essentials — path resolution](../client-cli/config-essentials.md#--config-vs---cwd-path-resolution).
+Repo scripts use `--config docs/mdcp.config.json --docs-root docs`: the config path is resolved from the **repo root** (invocation directory), while `--docs-root docs` sets the shard tree root. See [Config essentials — path resolution](../client-cli/config-essentials.md#--docs-root-vs---config-path-resolution).
 
-The **features** compile (`docs/guides.md`) is for reading through the stitched doc during review — edit shards, not the generated file. It is not committed.
+The **features** compile (`docs/_build/guides.md`) is for reading through the stitched doc during review — edit shards, not the generated file. It is not committed.
 
 ## Edit workflow
 
 1. Edit shard `.md` files under the relevant guide directory.
 2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](../features/manifest-compile-order.md) when using `compile.sectionsHeading`.
 3. Run `pnpm docs:compile:repo` then `pnpm docs:check:repo`.
-4. Commit shard changes. Regenerated `docs/guides.md` and `docs/refs.json` are gitignored — CI and `pnpm docs:check` compile them locally. Commit [`DEVELOPERS.md`](../../DEVELOPERS.md) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
+4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](../../DEVELOPERS.md) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
 
 ## Agent context
 

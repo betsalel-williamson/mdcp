@@ -7,7 +7,7 @@ Command and capability reference. For the end-to-end mental model (shards, monol
 Stitch shard directories into canonical monoliths or publish outputs. Demotes headings, strips `about-this-guide` preamble, optional per-guide titles and publish paths.
 
 ```bash
-mdcp compile --config mdcp.config.json --cwd .
+mdcp compile --config mdcp.config.json --docs-root .
 ```
 
 Guides compile to per-guide files under `outputDir` by default (`{name}.md`, or `guide.md` when alone). Set top-level `outputFile` for an optional stitched monolith. Path layout: [Config essentials](../client-cli/config-essentials.md#path-layout).

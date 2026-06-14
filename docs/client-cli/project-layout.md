@@ -35,6 +35,6 @@ docs/
       refs.json
 ```
 
-Publish outside `_build` (npm READMEs, repo-root docs) via `compile.outputFile` paths relative to `outputDir` (for example `../packages/mdcp-cli/README.md`).
+Publish outside `_build` (npm READMEs, repo-root docs) via `compile.outputFile` paths relative to `outputDir` (for example `../../packages/mdcp-cli/README.md`).
 
 When a manifest has preamble prose with example links, set `compile.sectionsHeading`. See [Manifest compile order](../features/manifest-compile-order.md).

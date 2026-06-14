@@ -23,9 +23,9 @@ Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, th
 2. **Config** — Copy https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json to `docs/mdcp.config.json`. Update `compileOrder`, `guides`, and `vale.scanGlobs` for your guides. Set `lint.markdownlint` to the preset files in `node_modules/@bwilliamson/mdcp-presets/`. Copy `.vale.ini` from the same sample-guides directory.
 
 3. **npm scripts** — Add to `package.json`:
-   - `docs:compile` → `mdcp compile --config docs/mdcp.config.json --cwd docs`
-   - `docs:check` → `mdcp check --config docs/mdcp.config.json --cwd docs --require-lint`
-   - `docs:context` → `mdcp export --llm --stdout --config docs/mdcp.config.json --cwd docs`
+   - `docs:compile` → `mdcp compile --config docs/mdcp.config.json --docs-root docs`
+   - `docs:check` → `mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint`
+   - `docs:context` → `mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs`
    - `docs:refs` → `mdcp refs lookup`
 
 4. **Guide layout** — Under `docs/`:
