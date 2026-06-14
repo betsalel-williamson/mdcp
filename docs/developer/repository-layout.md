@@ -2,6 +2,7 @@
 
 ```text
 mdcp/
+├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library

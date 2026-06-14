@@ -4,6 +4,8 @@
 
 This guide covers local setup, package development, sharded documentation in `docs/`, changesets, and npm releases. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](docs/features/feature-catalog.md).
 
+Contributors are expected to follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Local setup
 
 ### Requirements
@@ -38,6 +40,7 @@ Optional locally: `brew install gitleaks` (CI always scans).
 
 ```text
 mdcp/
+├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
