@@ -1,5 +1,5 @@
-import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, unlinkSync, writeFileSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import { sectionFiles } from '../compile/assemble.js';
 
 export function writeSectionsManifest(
@@ -7,8 +7,13 @@ export function writeSectionsManifest(
   _guideName?: string,
   manifest?: string,
 ): number {
+  const manifestPath = join(guideDir, 'sections.txt');
+  if (existsSync(manifestPath)) {
+    unlinkSync(manifestPath);
+  }
   const files = sectionFiles(guideDir, { manifest });
-  writeFileSync(join(guideDir, 'sections.txt'), files.join('\n') + '\n', 'utf-8');
+  const lines = files.map((file) => relative(guideDir, file));
+  writeFileSync(manifestPath, lines.join('\n') + '\n', 'utf-8');
   return files.length;
 }
 
