@@ -147,7 +147,9 @@ function prependChangelog(version, summaries) {
     } catch {
       existing = `# ${NPM_NAMES[name]}\n\n`;
     }
-    const header = existing.startsWith('#') ? existing.split('\n\n')[0] + '\n\n' : `# ${NPM_NAMES[name]}\n\n`;
+    const header = existing.startsWith('#')
+      ? existing.split('\n\n')[0] + '\n\n'
+      : `# ${NPM_NAMES[name]}\n\n`;
     const rest = existing.startsWith('#') ? existing.slice(header.length) : existing;
     writeFileSync(path, `${header}${block}${rest}`);
   }
@@ -279,7 +281,9 @@ async function main() {
   console.log('');
 
   const expectedConfirm = tag;
-  const typed = dryRun ? expectedConfirm : await prompt(`Type ${expectedConfirm} to confirm release: `);
+  const typed = dryRun
+    ? expectedConfirm
+    : await prompt(`Type ${expectedConfirm} to confirm release: `);
 
   if (typed !== expectedConfirm) {
     console.error(`\nAborted. Expected "${expectedConfirm}", got "${typed}".`);
