@@ -15,7 +15,7 @@ import {
 import { buildGuideLinkIndex, type GuideLinkIndex } from './guide-link-index.js';
 import { sectionFiles } from './section-manifest.js';
 import type { GuideConfig, GuideConfigInput, MdcpConfigInput } from '../config/schema.js';
-import { resolveGuideLinkBase } from '../config/load.js';
+import { resolveGuideLinkBase, resolveGuideOutputPath } from '../config/load.js';
 import type { PublishPathRewriteOptions } from './publish-links.js';
 
 export { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
@@ -268,7 +268,8 @@ export function writeCompiledGuides(
 
   for (const r of results) {
     if (!r.outputFile) continue;
-    const outPath = resolve(cwd, r.outputFile);
+    const outputDir = options.config?.outputDir ?? '.';
+    const outPath = resolveGuideOutputPath(cwd, outputDir, r.outputFile);
     let text = r.text;
     if (options.banner && r.includeBanner) text = options.banner + text;
     mkdirSync(dirname(outPath), { recursive: true });

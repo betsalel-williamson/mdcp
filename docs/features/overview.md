@@ -38,14 +38,15 @@ The CLI uses two separate path bases. This matters for npm scripts run from the 
 mdcp compile --config docs/mdcp.config.json --cwd docs
 ```
 
-| Path                                 | Resolved from            | Resolves to (example)                  |
-| ------------------------------------ | ------------------------ | -------------------------------------- |
-| `--config docs/mdcp.config.json`     | Invocation dir (`/repo`) | `/repo/docs/mdcp.config.json`          |
-| Guide `features/`                    | `--cwd` (`docs`)         | `/repo/docs/features/`                 |
-| `outputDir: "_build/compiled"`       | `--cwd`                  | `/repo/docs/_build/compiled/`          |
-| `outputFile: "guides.md"`            | `outputDir`              | `/repo/docs/_build/compiled/guides.md` |
-| `refs.registryFile: "refs.json"`     | `outputDir`              | `/repo/docs/_build/compiled/refs.json` |
-| `compile.outputFile: "../README.md"` | `--cwd`                  | `/repo/README.md`                      |
+| Path                                 | Resolved from            | Resolves to (example)                    |
+| ------------------------------------ | ------------------------ | ---------------------------------------- |
+| `--config docs/mdcp.config.json`     | Invocation dir (`/repo`) | `/repo/docs/mdcp.config.json`            |
+| Guide `features/`                    | `--cwd` (`docs`)         | `/repo/docs/features/`                   |
+| `outputDir: "_build/compiled"`       | `--cwd`                  | `/repo/docs/_build/compiled/`            |
+| `outputFile: "guides.md"`            | `outputDir`              | `/repo/docs/_build/compiled/guides.md`   |
+| `refs.registryFile: "refs.json"`     | `outputDir`              | `/repo/docs/_build/compiled/refs.json`   |
+| `compile.outputFile: "glossary.md"`  | `outputDir` (nested)     | `/repo/docs/_build/compiled/glossary.md` |
+| `compile.outputFile: "../README.md"` | `--cwd` (publish)        | `/repo/README.md`                        |
 
 When your shell is already in the docs directory, use `--config mdcp.config.json` (or the default) and omit `--cwd` unless you need a different docs root.
 

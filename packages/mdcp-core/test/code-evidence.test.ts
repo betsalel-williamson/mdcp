@@ -151,7 +151,7 @@ describe('codeEvidence — path rewrite for rendered output', () => {
         resolveGuideLinkBase({ outputDir: 'docs', outputFile: 'guides.md' }, work.path, {
           outputFile: 'architecture-review.md',
         }),
-      ).toBe(join(work.path, 'architecture-review.md'));
+      ).toBe(join(work.path, 'docs', 'architecture-review.md'));
     });
   });
 

@@ -10,7 +10,7 @@ Stitch shard directories into canonical monoliths or publish outputs. Demotes he
 mdcp compile --config mdcp.config.json --cwd .
 ```
 
-Guides with `compile.outputFile` write to a separate path (for example npm READMEs) and are excluded from the monolith.
+Guides with `compile.outputFile` write to a separate path (for example npm READMEs or files under `outputDir`) and are excluded from the monolith. Path bases: [Config essentials — path bases](../client-cli/config-essentials.md#config-path-bases).
 
 ## Refs + lookup (P0.2)
 

@@ -38,7 +38,7 @@ const GuideSchema = z.object({
       /** Injected compile title as ## heading, followed by a blank line before the first section. */
       title: z.string().optional(),
       scopeRoot: z.string().optional(),
-      /** Per-guide output path relative to --cwd (excluded from monolith). */
+      /** Per-guide output path; joins under outputDir unless the path uses `..` (publish). */
       outputFile: z.string().optional(),
       /** Apply global banner to this guide's output (default: true for monolith, false when outputFile is set). */
       includeBanner: z.boolean().optional(),

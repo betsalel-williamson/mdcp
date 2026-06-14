@@ -113,6 +113,42 @@ describe('cli smoke', () => {
     }
   });
 
+  it('writes per-guide outputFile under nested outputDir (#18)', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-outfile-'));
+    try {
+      const guide = join(docs, 'glossary');
+      mkdirSync(guide, { recursive: true });
+      writeFileSync(join(guide, 'index.md'), '# Glossary\n\n- [term](term.md)\n');
+      writeFileSync(join(guide, 'term.md'), '# Glossary\n\n## Term\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '_build/compiled',
+          outputFile: 'guides.md',
+          compileOrder: ['glossary'],
+          guides: [
+            {
+              name: 'glossary',
+              path: 'glossary',
+              compile: { outputFile: 'glossary.md' },
+            },
+          ],
+          refs: { registryFile: 'refs.json' },
+          lint: { xrefs: { enabled: false } },
+        }),
+      );
+
+      execFileSync('node', [CLI, 'compile', '--config', 'mdcp.config.json', '--cwd', docs], {
+        encoding: 'utf-8',
+        cwd: docs,
+      });
+      expect(existsSync(join(docs, '_build/compiled/glossary.md'))).toBe(true);
+      expect(existsSync(join(docs, 'glossary.md'))).toBe(false);
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
   it('skips out-of-scope markdown for shard lint (#17)', () => {
     const docs = mkdtempSync(join(tmpdir(), 'mdcp-scope-'));
     try {

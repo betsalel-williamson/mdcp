@@ -59,6 +59,7 @@ Minimal multi-output setup — index and rewrite run automatically from `compile
 
 ```json
 {
+  "outputDir": "_build/compiled",
   "compileOrder": ["glossary", "architecture-review", "technical-guide"],
   "guides": [
     {
