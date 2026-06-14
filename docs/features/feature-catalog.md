@@ -67,9 +67,9 @@ Per-shard transforms via `guides[].compile.hooks`. Built-in hooks:
 - **`stripAnchors`** — removes `{#anchor}` markers (also default via `compile.stripAnchors`)
 - **`codeEvidence`** — rewrites repo source links to `#L` line fragments (symbol or line range in link text); rebases paths for the rendered output automatically. See [Compile hooks](../client-core/compile-hooks.md#codeevidence).
 - **`inlineInserts`** — inlines captioned insert shards from shared libraries (`diagrams/`, `tables/`, `figures/`, `media/`); shard bodies may include tables, prose, or media (images, video, audio); numbered `####` headings per kind (`Table 1. …`); first mention per guide inlines, later references back-link. Optional `hooksConfig.inlineInserts.searchRoots`. See [Compile hooks](../client-core/compile-hooks.md#inlineinserts).
-- **`reviewLinks`** — rewrites `FIND-*.md` and cross-guide links when `hooksConfig.reviewLinks.targetMonolith` is set
+- **`reviewLinks`** — optional override for cross-guide link targets (`hooksConfig.reviewLinks.targetMonolith`); see [Compile hooks](../client-core/compile-hooks.md#reviewlinks)
 
-**Link rewriting at assembly time:** every compile rewrites same-guide `./section.md` links to in-document `#anchor` links. When `compile.publishPathRewrite` is set (repo dogfood: `developer` → `DEVELOPERS.md`), shard-relative `../` and `../../` paths are rewritten for publish targets.
+**Link rewriting at assembly time:** every compile builds a cross-guide link index from `compileOrder`, rewrites inter-guide `.md` links per shard, then rewrites same-guide `./section.md` links to in-document `#anchor` links. When `compile.publishPathRewrite` is set (repo dogfood: `developer` → `DEVELOPERS.md`), shard-relative `../` and `../../` paths are rewritten for publish targets.
 
 ## Agent integration (consumer repo)
 
