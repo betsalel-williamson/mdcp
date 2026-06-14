@@ -46,8 +46,22 @@ function readVersion() {
 
 function pendingChangesets() {
   return readdirSync(join(root, '.changeset')).filter(
-    (name) => name.endsWith('.md') && name !== 'README.md',
+    (name) => name.endsWith('.md') && name !== 'README.md' && !name.startsWith('_'),
   );
+}
+
+function latestReleaseTag() {
+  try {
+    return capture('git describe --tags --match "v*" --abbrev=0');
+  } catch {
+    return null;
+  }
+}
+
+function commitsSinceTag(tag) {
+  const range = tag ? `${tag}..HEAD` : 'HEAD';
+  const log = capture(`git log ${range} --oneline --no-decorate`);
+  return log ? log.split('\n') : [];
 }
 
 function parseVersion(version) {
@@ -232,20 +246,39 @@ async function main() {
   }
 
   const pending = pendingChangesets();
-  if (pending.length === 0) {
-    console.error('No pending changesets. Run `pnpm changeset` and merge to main first.');
-    process.exit(1);
-  }
-
   const current = readVersion();
   const summaries = collectSummaries(pending);
+  const sinceTag = latestReleaseTag();
+  const recentCommits = commitsSinceTag(sinceTag);
 
   console.log('\n=== mdcp release (human confirmation required) ===\n');
   console.log(`Current version: ${current}`);
-  console.log(`Pending changesets (${pending.length}):`);
-  for (const file of pending) {
-    const summary = parseChangesetSummary(file);
-    console.log(`  • ${file}${summary ? `: ${summary.split('\n')[0]}` : ' (empty)'}`);
+  if (sinceTag) {
+    console.log(`Last release tag: ${sinceTag}`);
+  }
+  if (pending.length === 0) {
+    console.log('\nNo pending changesets.');
+    if (recentCommits.length > 0) {
+      console.log(`Commits on main since ${sinceTag ?? 'repo start'} (${recentCommits.length}):`);
+      for (const line of recentCommits.slice(0, 10)) {
+        console.log(`  • ${line}`);
+      }
+      if (recentCommits.length > 10) {
+        console.log(`  … and ${recentCommits.length - 10} more`);
+      }
+    } else {
+      console.log('No commits since the last release tag.');
+    }
+    console.log(
+      '\nProceeding without changesets — changelog will use a generic entry.\n' +
+        'Add one with `pnpm changeset` first if you want a descriptive release note.',
+    );
+  } else {
+    console.log(`Pending changesets (${pending.length}):`);
+    for (const file of pending) {
+      const summary = parseChangesetSummary(file);
+      console.log(`  • ${file}${summary ? `: ${summary.split('\n')[0]}` : ' (empty)'}`);
+    }
   }
   console.log('');
 
