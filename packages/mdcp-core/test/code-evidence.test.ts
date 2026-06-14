@@ -1,5 +1,5 @@
 /**
- * codeEvidence — tests driven by the spec in docs/client-core/compile-hooks.md.
+ * codeEvidence — tests driven by the spec in docs/client-core/compile-hooks/code-evidence.md.
  * Docs first, then TDD: each describe block maps to a spec section.
  */
 import { describe, it, expect } from 'vitest';

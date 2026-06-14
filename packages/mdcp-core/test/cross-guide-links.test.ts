@@ -1,3 +1,7 @@
+/**
+ * Cross-guide link rewriting — tests driven by the spec in
+ * docs/client-core/compile-hooks/cross-guide-links.md.
+ */
 import { describe, it, expect } from 'vitest';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
