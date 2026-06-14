@@ -40,7 +40,8 @@ function writeConsumerFixture(work: string): CompileOptionsInput {
   return {
     guidesRoot: work,
     compileOrder: ['glossary', 'architecture-review'],
-    cwd: work,
+    docsRoot: work,
+    config: { outputDir: '.', compileOrder: ['glossary', 'architecture-review'] },
     guides: [
       {
         name: 'glossary',
@@ -172,7 +173,7 @@ describe('cross-guide link rewriting', () => {
       const results = compileGuideResults({
         guidesRoot: work,
         compileOrder: ['glossary'],
-        cwd: work,
+        docsRoot: work,
         guides: [
           {
             name: 'glossary',

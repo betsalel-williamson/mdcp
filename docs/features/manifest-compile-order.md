@@ -2,7 +2,7 @@
 
 Each guide's **compile order** comes from markdown links in its manifest file — `index.md` by default, or `shards.md` when configured under `guides[].compile.manifest`. mdcp collects every link to a `.md` file in **document order** and stitches those shards in that sequence.
 
-Guide directories are **human source only** (`index.md`, shard files). Generated outputs (`guides.md`, `refs.json`, per-guide `compile.outputFile`) live under `outputDir`.
+Guide directories are **human source only** (`index.md`, shard files). Generated outputs (per-guide `{name}.md`, optional monolith, `.caches/refs.json`, explicit `compile.outputFile`) live under `outputDir`.
 
 ## Default behavior
 

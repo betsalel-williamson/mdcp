@@ -58,26 +58,26 @@ describe('cli smoke', () => {
   it('compiles sample guides', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'compile', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE],
+      [CLI, 'compile', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toMatch(/guides\.md/);
-    expect(existsSync(join(FIXTURE, 'guides.md'))).toBe(true);
+    expect(existsSync(join(FIXTURE, '_build', 'guides.md'))).toBe(true);
   });
 
   it('checks sample guides with vale skipped', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'check', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE, '--skip-vale'],
+      [CLI, 'check', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE, '--skip-vale'],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toContain('mdcp check passed');
   });
 
-  it('resolves --config from invocation cwd, not --cwd (#10)', () => {
+  it('resolves --config from invocation directory, not --docs-root (#10)', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'compile', '--config', 'docs/mdcp.config.json', '--cwd', 'docs'],
+      [CLI, 'compile', '--config', 'docs/mdcp.config.json', '--docs-root', 'docs'],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toMatch(/guides\.md|→/);
@@ -97,23 +97,23 @@ describe('cli smoke', () => {
           outputFile: 'guides.md',
           compileOrder: ['g'],
           guides: [{ name: 'g', path: 'g' }],
-          refs: { registryFile: '_build/compiled/refs.json' },
+          refs: { registryFile: '.caches/refs.json' },
           lint: { xrefs: { enabled: false } },
         }),
       );
 
       execFileSync(
         'node',
-        [CLI, 'check', '--config', 'mdcp.config.json', '--cwd', docs, '--skip-vale'],
+        [CLI, 'check', '--config', 'mdcp.config.json', '--docs-root', docs, '--skip-vale'],
         { encoding: 'utf-8', cwd: docs },
       );
-      expect(existsSync(join(docs, '_build/compiled/refs.json'))).toBe(true);
+      expect(existsSync(join(docs, '_build/compiled/.caches/refs.json'))).toBe(true);
     } finally {
       rmSync(docs, { recursive: true, force: true });
     }
   });
 
-  it('writes per-guide outputFile under nested outputDir (#18)', () => {
+  it('writes default per-guide output under outputDir', () => {
     const docs = mkdtempSync(join(tmpdir(), 'mdcp-outfile-'));
     try {
       const guide = join(docs, 'glossary');
@@ -124,25 +124,17 @@ describe('cli smoke', () => {
         join(docs, 'mdcp.config.json'),
         JSON.stringify({
           outputDir: '_build/compiled',
-          outputFile: 'guides.md',
           compileOrder: ['glossary'],
-          guides: [
-            {
-              name: 'glossary',
-              path: 'glossary',
-              compile: { outputFile: 'glossary.md' },
-            },
-          ],
-          refs: { registryFile: 'refs.json' },
+          guides: [{ name: 'glossary' }],
           lint: { xrefs: { enabled: false } },
         }),
       );
 
-      execFileSync('node', [CLI, 'compile', '--config', 'mdcp.config.json', '--cwd', docs], {
+      execFileSync('node', [CLI, 'compile', '--config', 'mdcp.config.json', '--docs-root', docs], {
         encoding: 'utf-8',
         cwd: docs,
       });
-      expect(existsSync(join(docs, '_build/compiled/glossary.md'))).toBe(true);
+      expect(existsSync(join(docs, '_build/compiled/guide.md'))).toBe(true);
       expect(existsSync(join(docs, 'glossary.md'))).toBe(false);
     } finally {
       rmSync(docs, { recursive: true, force: true });
@@ -160,7 +152,7 @@ describe('cli smoke', () => {
           'check',
           '--config',
           'mdcp.config.json',
-          '--cwd',
+          '--docs-root',
           docs,
           '--skip-vale',
           '--require-lint',
@@ -210,7 +202,7 @@ describe('cli smoke', () => {
           'check',
           '--config',
           'mdcp.config.json',
-          '--cwd',
+          '--docs-root',
           docs,
           '--skip-vale',
           '--require-lint',
@@ -236,7 +228,7 @@ describe('cli smoke', () => {
 
       execFileSync(
         'node',
-        [CLI, 'check', '--config', 'mdcp.config.json', '--cwd', docs, '--require-lint'],
+        [CLI, 'check', '--config', 'mdcp.config.json', '--docs-root', docs, '--require-lint'],
         { encoding: 'utf-8', cwd: docs },
       );
     } finally {

@@ -1,6 +1,6 @@
 {
   "globs": [
-    "guides.md",
+    "_build/guides.md",
     "../DEVELOPERS.md",
     "../packages/mdcp-cli/README.md",
     "../packages/mdcp-core/README.md",

@@ -10,13 +10,15 @@ export {
   resolveOutputPath,
   resolveGuideLinkBase,
   resolveRefsPath,
-  resolveGuidesRoot,
+  resolveDocsRoot,
   resolveGuideDir,
   getGuideConfig,
   guideScanDirs,
   shardLintPaths,
   xrefScanDirs,
-  resolveGuideOutputPath,
+  defaultGuideOutputFile,
+  effectiveGuideOutputFile,
+  resolveUnderOutputDir,
 } from './config/load.js';
 export {
   demoteHeadings,

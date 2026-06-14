@@ -4,18 +4,18 @@
 
 Every command accepts:
 
-| Option                | Default            | Purpose                                                                    |
-| --------------------- | ------------------ | -------------------------------------------------------------------------- |
-| `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--cwd`) |
-| `--cwd <path>`        | current directory  | Docs root for shard trees and config path fields                           |
+| Option                | Default            | Purpose                                                                          |
+| --------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
+| `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |
 
 **Repo-root npm scripts** typically use both flags:
 
 ```bash
-mdcp compile --config docs/mdcp.config.json --cwd docs
+mdcp compile --config docs/mdcp.config.json --docs-root docs
 ```
 
-`--config` locates the file from where the command runs; `--cwd` sets the shard tree root. These bases are independent — see [Config essentials](./config-essentials.md#--config-vs---cwd-path-resolution).
+`--config` locates the file from where the command runs; `--docs-root` sets the shard tree root. These bases are independent — see [Config essentials](./config-essentials.md#--config-vs---docs-root).
 
 ## Daily workflow
 

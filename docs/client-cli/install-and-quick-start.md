@@ -47,20 +47,20 @@ mdcp compile --config mdcp.config.json
 mdcp check --config mdcp.config.json
 ```
 
-From the **repository root** (typical npm scripts), pass both `--config` and `--cwd`:
+From the **repository root** (typical npm scripts), pass both `--config` and `--docs-root`:
 
 ```bash
-mdcp compile --config docs/mdcp.config.json --cwd docs
-mdcp check --config docs/mdcp.config.json --cwd docs
+mdcp compile --config docs/mdcp.config.json --docs-root docs
+mdcp check --config docs/mdcp.config.json --docs-root docs
 ```
 
-`--config` is resolved from where you run the command; `--cwd` sets the docs root. Details: [Config essentials](./config-essentials.md#--config-vs---cwd-path-resolution).
+`--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](./config-essentials.md#--config-vs---docs-root).
 
 Collaborating with an LLM? See [LLM collaboration](./llm-collaboration.md) for bootstrap prompts and toolchain integration (Cursor, Composer, Gemini CLI).
 
 Global options (apply to every command):
 
-| Option                | Default            | Purpose                                                                 |
-| --------------------- | ------------------ | ----------------------------------------------------------------------- |
-| `-c, --config <path>` | `mdcp.config.json` | Path to config file (relative to the invocation directory, not `--cwd`) |
-| `--cwd <path>`        | current directory  | Docs root for shard trees and config path fields                        |
+| Option                | Default            | Purpose                                                                          |
+| --------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
+| `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |

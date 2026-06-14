@@ -15,7 +15,11 @@ import {
 import { buildGuideLinkIndex, type GuideLinkIndex } from './guide-link-index.js';
 import { sectionFiles } from './section-manifest.js';
 import type { GuideConfig, GuideConfigInput, MdcpConfigInput } from '../config/schema.js';
-import { resolveGuideLinkBase, resolveGuideOutputPath } from '../config/load.js';
+import {
+  resolveGuideLinkBase,
+  resolveUnderOutputDir,
+  effectiveGuideOutputFile,
+} from '../config/load.js';
 import type { PublishPathRewriteOptions } from './publish-links.js';
 
 export { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
@@ -147,7 +151,9 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
 export interface CompileGuideResult {
   name: string;
   text: string;
-  outputFile?: string;
+  outputFile: string;
+  /** True when `compile.outputFile` was set explicitly (excluded from optional monolith). */
+  publishOnly: boolean;
   includeBanner: boolean;
 }
 
@@ -156,7 +162,7 @@ export interface CompileOptions {
   compileOrder: string[];
   banner?: string;
   guides?: GuideConfigInput[];
-  cwd?: string;
+  docsRoot?: string;
   config?: MdcpConfigInput;
 }
 
@@ -175,20 +181,23 @@ function resolveGuideDir(
 
 export function compileGuideResults(options: CompileOptions): CompileGuideResult[] {
   const guideConfigMap = new Map((options.guides ?? []).map((g) => [g.name, g]));
-  const cwd = options.cwd ?? process.cwd();
-  const linkIndex = buildGuideLinkIndex(options, cwd);
+  const docsRoot = options.docsRoot ?? process.cwd();
+  const orderLen = options.compileOrder.length;
+  const linkIndex = buildGuideLinkIndex(options, docsRoot);
 
   return options.compileOrder.map((name) => {
     const cfg = guideConfigMap.get(name) as GuideConfig | undefined;
-    const guideDir = resolveGuideDir(name, options.guidesRoot, cfg, cwd);
+    const guideDir = resolveGuideDir(name, options.guidesRoot, cfg, docsRoot);
     const compile = cfg?.compile;
-    const outputBasename = compile?.outputFile ? basename(compile.outputFile) : undefined;
+    const outputFile = effectiveGuideOutputFile(name, compile, orderLen);
+    const publishOnly = Boolean(compile?.outputFile);
+    const outputBasename = basename(outputFile);
 
-    const linkBase = resolveGuideLinkBase(options.config ?? {}, cwd, compile);
+    const linkBase = resolveGuideLinkBase(options.config ?? {}, docsRoot, name, orderLen, compile);
 
     const text = assembleGuide(guideDir, {
       manifest: compile?.manifest,
-      scopeRoot: compile?.scopeRoot ? resolve(cwd, compile.scopeRoot) : undefined,
+      scopeRoot: compile?.scopeRoot ? resolve(docsRoot, compile.scopeRoot) : undefined,
       sectionsHeading: compile?.sectionsHeading,
       preambleSection: compile?.preambleSection,
       title: compile?.title,
@@ -201,20 +210,20 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       linkIndex,
     });
 
-    const outputFile = compile?.outputFile;
-    const includeBanner = compile?.includeBanner ?? (outputFile === undefined ? true : false);
+    const includeBanner = compile?.includeBanner ?? false;
 
     return {
       name,
       text,
       outputFile,
+      publishOnly,
       includeBanner,
     };
   });
 }
 
 function monolithResults(results: CompileGuideResult[]): CompileGuideResult[] {
-  return results.filter((r) => !r.outputFile);
+  return results.filter((r) => !r.publishOnly);
 }
 
 function buildMonolithBody(results: CompileGuideResult[]): string {
@@ -232,10 +241,7 @@ function buildMonolithBody(results: CompileGuideResult[]): string {
 function applyMonolithBanner(options: CompileOptions, results: CompileGuideResult[]): string {
   const body = buildMonolithBody(results);
   if (!body) return '';
-
-  const monolith = monolithResults(results);
-  const bannerGuide = monolith.find((r) => r.includeBanner);
-  if (options.banner && bannerGuide) {
+  if (options.banner) {
     return options.banner + body;
   }
   return body;
@@ -243,33 +249,23 @@ function applyMonolithBanner(options: CompileOptions, results: CompileGuideResul
 
 export function compileGuides(options: CompileOptions): string {
   const results = compileGuideResults(options);
-  const hasPublishOutputs = results.some((r) => r.outputFile);
-  const monolith = monolithResults(results);
-
-  if (!hasPublishOutputs) {
-    const body = buildMonolithBody(results);
-    return options.banner ? options.banner + body : body;
+  if (options.config?.outputFile !== undefined) {
+    return applyMonolithBanner(options, results);
   }
-
-  if (monolith.length === 0) {
-    return '';
-  }
-
-  return applyMonolithBanner(options, results);
+  return results.map((r) => r.text).join('\n');
 }
 
 export function writeCompiledGuides(
   options: CompileOptions,
-  defaultOutputPath: string,
+  monolithOutputPath?: string,
 ): { path: string; lines: number }[] {
   const results = compileGuideResults(options);
-  const cwd = options.cwd ?? process.cwd();
+  const docsRoot = options.docsRoot ?? process.cwd();
+  const outputDir = options.config?.outputDir ?? '_build';
   const written: { path: string; lines: number }[] = [];
 
   for (const r of results) {
-    if (!r.outputFile) continue;
-    const outputDir = options.config?.outputDir ?? '.';
-    const outPath = resolveGuideOutputPath(cwd, outputDir, r.outputFile);
+    const outPath = resolveUnderOutputDir(docsRoot, outputDir, r.outputFile);
     let text = r.text;
     if (options.banner && r.includeBanner) text = options.banner + text;
     mkdirSync(dirname(outPath), { recursive: true });
@@ -278,12 +274,12 @@ export function writeCompiledGuides(
   }
 
   const monolith = monolithResults(results);
-  if (monolith.length > 0) {
+  if (monolithOutputPath && monolith.length > 0) {
     const combined = applyMonolithBanner(options, results);
-    mkdirSync(dirname(defaultOutputPath), { recursive: true });
-    writeFileSync(defaultOutputPath, combined, 'utf-8');
+    mkdirSync(dirname(monolithOutputPath), { recursive: true });
+    writeFileSync(monolithOutputPath, combined, 'utf-8');
     written.push({
-      path: defaultOutputPath,
+      path: monolithOutputPath,
       lines: combined.split('\n').length,
     });
   }

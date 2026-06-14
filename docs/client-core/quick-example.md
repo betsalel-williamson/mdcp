@@ -4,7 +4,7 @@
 import {
   loadConfig,
   compileGuides,
-  resolveGuidesRoot,
+  resolveDocsRoot,
   genRefsFromCompiled,
   resolveRefsPath,
   lookupHeadings,
@@ -13,19 +13,19 @@ import {
   getLlmExportOptions,
 } from '@bwilliamson/mdcp-core';
 
-const cwd = '/path/to/docs';
-const config = loadConfig('mdcp.config.json', cwd);
+const docsRoot = '/path/to/docs';
+const config = loadConfig('mdcp.config.json', docsRoot);
 
 const compiled = compileGuides({
-  guidesRoot: resolveGuidesRoot(config, cwd),
+  guidesRoot: resolveDocsRoot(config, docsRoot),
   compileOrder: config.compileOrder,
   banner: config.banner,
   guides: config.guides,
-  cwd,
+  docsRoot,
   config,
 });
 
-const refsPath = resolveRefsPath(cwd, config.outputDir, config.refs.registryFile);
+const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
 genRefsFromCompiled(compiled, refsPath);
 
 const registry = buildSlugRegistry(compiled);

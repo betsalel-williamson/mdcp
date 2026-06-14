@@ -38,9 +38,10 @@ docs/styles/*
 !docs/styles/.gitkeep
 
 # MDCP compiled output (repo docs — regenerate with pnpm docs:compile:repo)
-# features review compile + refs registry — not committed (see docs/developer/docs-dogfooding.md)
-docs/guides.md
-docs/refs.json
+docs/_build/
+
+# Sample guides fixture output
+examples/sample-guides/_build/
 
 # OS
 .DS_Store
