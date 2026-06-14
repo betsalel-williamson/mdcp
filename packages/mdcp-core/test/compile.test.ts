@@ -149,7 +149,14 @@ describe('compileGuides', () => {
       guides: [
         {
           name: 'guide',
-          compile: { outputFile: 'README.md', includeBanner: false },
+          splitLevel: 2 as const,
+          compile: {
+            outputFile: 'README.md',
+            includeBanner: false,
+            preambleSection: 'about-this-guide.md',
+            manifest: 'index.md',
+            stripAnchors: true,
+          },
         },
       ],
     } satisfies Parameters<typeof writeCompiledGuides>[0];
