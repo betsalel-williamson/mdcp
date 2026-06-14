@@ -35,7 +35,7 @@ interface GlobalOpts {
 }
 
 function getConfig(opts: GlobalOpts) {
-  return loadConfig(opts.config, opts.cwd);
+  return loadConfig(opts.config, process.cwd());
 }
 
 function guideEntries(config: MdcpConfig, cwd: string) {
@@ -91,7 +91,11 @@ program
   .name('mdcp')
   .description('Markdown Command Line Interface Processor')
   .version(pkg.version)
-  .option('-c, --config <path>', 'config file', 'mdcp.config.json')
+  .option(
+    '-c, --config <path>',
+    'config file (relative to invocation directory)',
+    'mdcp.config.json',
+  )
   .option('--cwd <path>', 'working directory', process.cwd());
 
 program

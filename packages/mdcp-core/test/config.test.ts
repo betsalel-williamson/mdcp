@@ -53,4 +53,14 @@ describe('loadConfig', () => {
   it('throws when config missing', () => {
     expect(() => loadConfig('missing.json', work)).toThrow(/Config not found/);
   });
+
+  it('resolves config path from configBase, not docs cwd', () => {
+    const repo = join(tmpdir(), `mdcp-config-${Date.now()}`);
+    const docs = join(repo, 'docs');
+    mkdirSync(docs, { recursive: true });
+    writeFileSync(join(docs, 'mdcp.config.json'), JSON.stringify({ compileOrder: ['a'] }));
+    const cfg = loadConfig('docs/mdcp.config.json', repo);
+    expect(cfg.compileOrder).toEqual(['a']);
+    rmSync(repo, { recursive: true, force: true });
+  });
 });

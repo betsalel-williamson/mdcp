@@ -52,10 +52,10 @@ Collaborating with an LLM? See [LLM collaboration](#llm-collaboration) for boots
 
 Global options (apply to every command):
 
-| Option                | Default            | Purpose                                                      |
-| --------------------- | ------------------ | ------------------------------------------------------------ |
-| `-c, --config <path>` | `mdcp.config.json` | Path to config file                                          |
-| `--cwd <path>`        | current directory  | Docs root (guide dirs and output paths are relative to this) |
+| Option                | Default            | Purpose                                                                 |
+| --------------------- | ------------------ | ----------------------------------------------------------------------- |
+| `-c, --config <path>` | `mdcp.config.json` | Path to config file (relative to the invocation directory, not `--cwd`) |
+| `--cwd <path>`        | current directory  | Docs root (guide dirs and output paths are relative to this)            |
 
 ## Project layout
 

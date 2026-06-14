@@ -12,7 +12,9 @@ import {
 } from '../src/compile/assemble.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const FIXTURE = join(__dirname, '../../../examples/sample-guides');
+const REPO_ROOT = join(__dirname, '../../..');
+const FIXTURE = join(REPO_ROOT, 'examples/sample-guides');
+const SAMPLE_CONFIG = 'examples/sample-guides/mdcp.config.json';
 const COMPILE_ORDER = ['overview', 'admin-guide', 'developer-guide'];
 const CLI = join(__dirname, '../../mdcp-cli/dist/cli.js');
 
@@ -259,8 +261,8 @@ describe('cli e2e', () => {
   it('mdcp compile exits 0 on sample-guides', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'compile', '--config', 'mdcp.config.json', '--cwd', FIXTURE],
-      { encoding: 'utf-8' },
+      [CLI, 'compile', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE],
+      { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toMatch(/guides\.md/);
     expect(existsSync(join(FIXTURE, 'guides.md'))).toBe(true);
@@ -269,8 +271,8 @@ describe('cli e2e', () => {
   it('mdcp refs lookup returns JSON matches', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'refs', 'lookup', 'admin', '--config', 'mdcp.config.json', '--cwd', FIXTURE],
-      { encoding: 'utf-8' },
+      [CLI, 'refs', 'lookup', 'admin', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE],
+      { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     const matches = JSON.parse(out);
     expect(Array.isArray(matches)).toBe(true);
@@ -280,8 +282,8 @@ describe('cli e2e', () => {
   it('mdcp check passes on sample-guides (core, no peer require)', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'check', '--config', 'mdcp.config.json', '--cwd', FIXTURE, '--skip-vale'],
-      { encoding: 'utf-8' },
+      [CLI, 'check', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE, '--skip-vale'],
+      { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toContain('mdcp check passed');
   });

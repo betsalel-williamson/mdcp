@@ -6,7 +6,9 @@ import { existsSync } from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLI = join(__dirname, '../dist/cli.js');
-const FIXTURE = join(__dirname, '../../../examples/sample-guides');
+const REPO_ROOT = join(__dirname, '../../..');
+const FIXTURE = join(REPO_ROOT, 'examples/sample-guides');
+const SAMPLE_CONFIG = 'examples/sample-guides/mdcp.config.json';
 
 describe('cli smoke', () => {
   it('prints version', () => {
@@ -17,8 +19,8 @@ describe('cli smoke', () => {
   it('compiles sample guides', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'compile', '--config', 'mdcp.config.json', '--cwd', FIXTURE],
-      { encoding: 'utf-8' },
+      [CLI, 'compile', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE],
+      { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toMatch(/guides\.md/);
     expect(existsSync(join(FIXTURE, 'guides.md'))).toBe(true);
@@ -27,9 +29,18 @@ describe('cli smoke', () => {
   it('checks sample guides with vale skipped', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'check', '--config', 'mdcp.config.json', '--cwd', FIXTURE, '--skip-vale'],
-      { encoding: 'utf-8' },
+      [CLI, 'check', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE, '--skip-vale'],
+      { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toContain('mdcp check passed');
+  });
+
+  it('resolves --config from invocation cwd, not --cwd (#10)', () => {
+    const out = execFileSync(
+      'node',
+      [CLI, 'sections', '--config', 'docs/mdcp.config.json', '--cwd', 'docs'],
+      { encoding: 'utf-8', cwd: REPO_ROOT },
+    );
+    expect(out).toMatch(/sections/);
   });
 });

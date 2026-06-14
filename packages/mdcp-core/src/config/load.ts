@@ -2,8 +2,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { MdcpConfigSchema, type MdcpConfig, type GuideConfig } from './schema.js';
 
-export function loadConfig(configPath: string, cwd: string): MdcpConfig {
-  const abs = resolve(cwd, configPath);
+export function loadConfig(configPath: string, configBase: string): MdcpConfig {
+  const abs = resolve(configBase, configPath);
   if (!existsSync(abs)) {
     throw new Error(`Config not found: ${abs}`);
   }
