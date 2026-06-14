@@ -21,6 +21,9 @@ coverage/
 .cursor/
 .cursorindexingignore
 
+# VS Code (keep shared workspace config)
+.vscode/*
+
 # Legacy generated reports
 legacy/.cache/
 legacy/anchors.json
