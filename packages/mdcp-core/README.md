@@ -66,7 +66,7 @@ Use `writeCompiledGuides` when you need to write the monolith and per-guide publ
 | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `loadConfig(path, configBase)`                                                         | Load and validate `mdcp.config.json` (`path` is resolved from `configBase`) |
 | `resolveOutputPath`, `resolveRefsPath`, `resolveGuidesRoot`, `resolveGuideDir`         | Path resolvers for outputDir-relative config fields                         |
-| `getGuideConfig`, `xrefScanDirs`                                                       | Per-guide and xref scan helpers                                             |
+| `getGuideConfig`, `guideScanDirs`, `shardLintPaths`, `xrefScanDirs`                    | In-scope guide fileset and xref scan helpers                                |
 | `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput` | Zod schema and types                                                        |
 
 ### Path resolution: `configBase` vs docs root

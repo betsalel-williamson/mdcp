@@ -46,15 +46,22 @@ export function getGuideConfig(config: MdcpConfig, name: string): GuideConfig | 
   return config.guides?.find((g) => g.name === name);
 }
 
-export function xrefScanDirs(config: MdcpConfig, cwd: string): string[] {
+/** Registered guide directories under cwd — the mdcp-managed fileset. */
+export function guideScanDirs(config: MdcpConfig, cwd: string): string[] {
   const dirs = new Set<string>();
   for (const name of config.compileOrder) {
-    const guide = getGuideConfig(config, name);
-    if (guide?.path) {
-      dirs.add(resolve(cwd, guide.path));
-    } else {
-      dirs.add(join(resolveGuidesRoot(config, cwd), name));
-    }
+    dirs.add(resolveGuideDir(name, config, cwd));
   }
   return [...dirs];
+}
+
+/** Shard markdownlint paths: optional shardsGlobs override, else guideScanDirs. */
+export function shardLintPaths(config: MdcpConfig, cwd: string): string[] {
+  const globs = config.lint?.markdownlint?.shardsGlobs;
+  if (globs?.length) return globs.map((g) => resolve(cwd, g));
+  return guideScanDirs(config, cwd);
+}
+
+export function xrefScanDirs(config: MdcpConfig, cwd: string): string[] {
+  return guideScanDirs(config, cwd);
 }

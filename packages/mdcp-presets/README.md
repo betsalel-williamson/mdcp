@@ -17,10 +17,10 @@ npm install -D @bwilliamson/mdcp-presets markdownlint-cli2 @bwilliamson/mdcp-cli
 
 ## Presets
 
-| File                                            | Targets                                                          | Intent                                                                                  |
-| ----------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `markdownlint-shards.markdownlint-cli2.jsonc`   | All `**/*.md` except `guides.md`, `index.md`, and `node_modules` | Relaxed rules for shard authoring — each shard starts with `#`, duplicates are expected |
-| `markdownlint-compiled.markdownlint-cli2.jsonc` | `guides.md` only                                                 | Stricter link rules (`MD052`, `MD053`) on the compiled monolith                         |
+| File                                            | Targets                                       | Intent                                                                                  |
+| ----------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `markdownlint-shards.markdownlint-cli2.jsonc`   | Registered guide shard trees (scope from CLI) | Relaxed rules for shard authoring — each shard starts with `#`, duplicates are expected |
+| `markdownlint-compiled.markdownlint-cli2.jsonc` | `guides.md` only                              | Stricter link rules (`MD052`, `MD053`) on the compiled monolith                         |
 
 ### Shard preset highlights
 
@@ -57,6 +57,8 @@ mdcp check --require-lint
 ```
 
 `mdcp lint` runs the shards config first, recompiles, then runs the compiled config.
+
+Shard lint scope comes from `compileOrder` guide directories (or `lint.markdownlint.shardsGlobs` in config) — the preset supplies rules and exclusions only, not file scope.
 
 ## Package exports
 

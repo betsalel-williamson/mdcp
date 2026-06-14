@@ -58,7 +58,7 @@ Fail on bare `Ch. N` and unlinked chapter-style references.
 
 ## Peer linters (P2.1)
 
-Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host repo.
+Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host repo. Shard markdownlint and Vale prose only touch registered guide shard trees (`compileOrder`); optional `shardsGlobs` / `vale.scanGlobs` narrow scope further.
 
 ## Compile hooks (P2.2)
 

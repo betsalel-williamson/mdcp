@@ -83,16 +83,18 @@ Minimal `mdcp.config.json`:
 }
 ```
 
-| Field               | Purpose                                                |
-| ------------------- | ------------------------------------------------------ |
-| `compileOrder`      | Order of guide directories in the compiled monolith    |
-| `guides`            | Per-guide options (hooks, manifests, separate outputs) |
-| `outputDir`         | Compile output root (relative to `--cwd`)              |
-| `outputFile`        | Monolith filename (relative to `outputDir`)            |
-| `refs.registryFile` | Cross-link lookup table (relative to `outputDir`)      |
-| `lint`              | markdownlint configs, xref checks, link checking       |
-| `vale`              | Prose lint paths and `.vale.ini` location              |
-| `source`            | Monolith path — required only for `mdcp shard`         |
+| Field                           | Purpose                                                                            |
+| ------------------------------- | ---------------------------------------------------------------------------------- |
+| `compileOrder`                  | Order of guide directories in the compiled monolith                                |
+| `guides`                        | Per-guide options (hooks, manifests, separate outputs)                             |
+| `outputDir`                     | Compile output root (relative to `--cwd`)                                          |
+| `outputFile`                    | Monolith filename (relative to `outputDir`)                                        |
+| `refs.registryFile`             | Cross-link lookup table (relative to `outputDir`)                                  |
+| `lint`                          | markdownlint configs, xref checks, link checking                                   |
+| `lint.markdownlint.shardsGlobs` | Optional shard lint paths relative to `--cwd` (default: `compileOrder` guide dirs) |
+| `vale`                          | Prose lint and `.vale.ini` location                                                |
+| `vale.scanGlobs`                | Optional Vale paths relative to `--cwd` (default: same guide dirs as shard lint)   |
+| `source`                        | Monolith path — required only for `mdcp shard`                                     |
 
 **Nested `outputDir` example** — use outputDir-relative filenames:
 

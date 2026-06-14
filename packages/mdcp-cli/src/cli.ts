@@ -9,6 +9,8 @@ import {
   resolveGuidesRoot,
   resolveGuideDir,
   getGuideConfig,
+  guideScanDirs,
+  shardLintPaths,
   xrefScanDirs,
   compileGuides,
   writeCompiledGuides,
@@ -35,6 +37,10 @@ interface GlobalOpts {
 
 function getConfig(opts: GlobalOpts) {
   return loadConfig(opts.config, process.cwd());
+}
+
+function valeScanPaths(config: MdcpConfig, cwd: string): string[] {
+  return config.vale?.scanGlobs?.map((g) => resolve(cwd, g)) ?? guideScanDirs(config, cwd);
 }
 
 function guideEntries(config: MdcpConfig, cwd: string) {
@@ -203,10 +209,11 @@ program
     const compiledCfg = config.lint?.markdownlint?.compiledConfig;
 
     if (shardsCfg) {
+      const shardPaths = shardLintPaths(config, opts.cwd);
       const r = runPeer(tool, {
         require: lintOpts.requireLint,
         cwd: opts.cwd,
-        args: ['--config', shardsCfg],
+        args: ['--config', shardsCfg, ...shardPaths],
       });
       if (r.exitCode !== 0) process.exit(r.exitCode);
     }
@@ -232,7 +239,7 @@ program
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
     const tool = findPeerBinary('vale', opts.cwd);
-    const scanPaths = config.vale?.scanGlobs ?? guideEntries(config, opts.cwd).map((g) => g.dir);
+    const scanPaths = valeScanPaths(config, opts.cwd);
     const valeConfig = config.vale?.config ?? '.vale.ini';
     const minLevel = valeMinAlertLevel(config, proseOpts.strict);
     const args = minLevel
@@ -354,10 +361,11 @@ program
     const shardsCfg = config.lint?.markdownlint?.shardsConfig;
     const compiledCfg = config.lint?.markdownlint?.compiledConfig;
     if (shardsCfg) {
+      const shardPaths = shardLintPaths(config, opts.cwd);
       const r = runPeer(mdlint, {
         require: checkOpts.requireLint,
         cwd: opts.cwd,
-        args: ['--config', shardsCfg],
+        args: ['--config', shardsCfg, ...shardPaths],
       });
       if (r.exitCode !== 0) failed = true;
     }
@@ -383,7 +391,7 @@ program
 
     if (!checkOpts.skipVale) {
       const vale = findPeerBinary('vale', opts.cwd);
-      const scanPaths = config.vale?.scanGlobs ?? guideEntries(config, opts.cwd).map((g) => g.dir);
+      const scanPaths = valeScanPaths(config, opts.cwd);
       const valeConfig = config.vale?.config ?? '.vale.ini';
       const minLevel = valeMinAlertLevel(config, true) ?? 'error';
       const r = runPeer(vale, {
