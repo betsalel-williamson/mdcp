@@ -1,5 +1,13 @@
 # @bwilliamson/mdcp-cli
 
+## 0.1.5
+
+### Patch Changes
+
+- Drop `@vvago/vale` from documented dev dependencies; install Vale separately so `vale` is on your `PATH`. Update bootstrap prompt, LLM collaboration guide, and compiled README for a three-tier docs layout (`docs/features/`, `docs/developer/`, `docs/client/`).
+- Updated dependencies
+  - @bwilliamson/mdcp-core@0.1.5
+
 ## 0.1.4
 
 ### Patch Changes

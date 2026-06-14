@@ -1,5 +1,11 @@
 # @bwilliamson/mdcp-presets
 
+## 0.1.5
+
+### Patch Changes
+
+- Version sync for release; no preset changes.
+
 ## 0.1.4
 
 ### Patch Changes

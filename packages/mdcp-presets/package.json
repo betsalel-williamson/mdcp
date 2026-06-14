@@ -1,6 +1,6 @@
 {
   "name": "@bwilliamson/mdcp-presets",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Starter markdownlint configs for MDCP consumers",
   "license": "MIT",
   "type": "module",
