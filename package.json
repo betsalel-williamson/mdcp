@@ -24,6 +24,7 @@
     "docs:check": "node packages/mdcp-cli/dist/cli.js check --config mdcp.config.json --cwd examples/sample-guides --require-lint --require-vale",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run docs:check",
     "changeset": "changeset",
+    "changeset:status": "changeset status --since=origin/main",
     "prepare": "husky"
   },
   "engines": {

@@ -29,3 +29,23 @@ jobs:
       - run: pnpm run test
       - run: pnpm run prepare:docs
       - run: pnpm run docs:check
+
+  changeset:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Require changeset when packages change
+        run: pnpm changeset:status --since=${{ github.event.pull_request.base.sha }}
