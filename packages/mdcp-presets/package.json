@@ -28,7 +28,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "files": [
-    "*.jsonc"
+    "*.jsonc",
+    "README.md"
   ],
   "exports": {
     "./markdownlint-shards.markdownlint-cli2.jsonc": "./markdownlint-shards.markdownlint-cli2.jsonc",
