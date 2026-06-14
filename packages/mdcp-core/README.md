@@ -209,7 +209,7 @@ Optional hook config under `guides[].compile.hooksConfig`. For manifest compile 
 
 Specification for the `inlineInserts` compile hook. Tests in `packages/mdcp-core/test/inline-inserts.test.ts` map to the sections below (docs first, then TDD).
 
-#### §1 Purpose
+#### Purpose
 
 Guides link to **captioned insert shards** (`.md` files) in typed libraries under the docs root. Shard bodies may be markdown tables, prose, or **media embeds** (images, video, audio). At compile time, the hook:
 
@@ -217,7 +217,7 @@ Guides link to **captioned insert shards** (`.md` files) in typed libraries unde
 2. Adds a numbered **`####` heading** (GFM only — no HTML, no directives)
 3. Rewrites **later** links to the same file as markdown back-links (`[label](#slug)`)
 
-#### §2 Layout
+#### Layout
 
 One library directory per insert type (library-science convention):
 
@@ -236,7 +236,7 @@ Link targets are always `.md` insert shards. Put binary assets alongside the sha
 
 Shards link with normal markdown — no `<!-- directives -->`.
 
-#### §3 Link matching
+#### Link matching
 
 A link is an insert reference when **all** of the following hold:
 
@@ -245,7 +245,7 @@ A link is an insert reference when **all** of the following hold:
 - Target ends in `.md` (optional `#fragment` suffix is ignored for file lookup)
 - Target is not `http://` or `https://`
 
-#### §4 Exclusions
+#### Exclusions
 
 The hook **does not** transform:
 
@@ -255,7 +255,7 @@ The hook **does not** transform:
 - Links to missing insert files (left unchanged)
 - Body text when `inlineInserts` is not in `compile.hooks`
 
-#### §5 First inline (GFM headings)
+#### First inline (GFM headings)
 
 The first reference to an insert file (document order across all shards in the guide) is replaced with:
 
@@ -266,13 +266,13 @@ The first reference to an insert file (document order across all shards in the g
 ```
 
 - **Kind** — `Diagram`, `Table`, `Figure`, `Media`, or `Insert` (from parent library directory)
-- **n** — serial number for that kind in this guide (see §6)
+- **n** — serial number for that kind in this guide (see **Numbered captions** below)
 - **caption** — link label, or a humanized basename when the label is empty
 - **Anchor slug** — GitHub-style slug of the full heading (for example `Table 1. Status codes` → `#table-1-status-codes`)
 
 Output uses GFM headings and back-links for captions. Inlined shard bodies pass through as written (markdown tables, `![images](…)`, or HTML `<video>` / `<audio>` when your renderer supports them).
 
-#### §6 Numbered captions
+#### Numbered captions
 
 Serial counters are **per insert kind** and **per guide compile**:
 
@@ -290,7 +290,7 @@ Rules:
 - Each guide starts at 1 for each kind (two guides sharing one insert file each get their own `Diagram 1`)
 - Repeat links to an **already inlined file** do not consume a new number (back-link only)
 
-#### §7 Deduplication
+#### Deduplication
 
 Within one guide:
 
@@ -298,7 +298,7 @@ Within one guide:
 - Later links to the same resolved file (any path spelling, with or without `#fragment`) → `[label](#diagram-1-…)`
 - Same basename in different libraries (`diagrams/overview.md` vs `tables/overview.md`) → separate headings and anchors
 
-#### §8 Path resolution
+#### Path resolution
 
 Lookup order for insert shard paths:
 
@@ -307,7 +307,7 @@ Lookup order for insert shard paths:
 3. `process.cwd()` and its parent
 4. Optional `hooksConfig.inlineInserts.searchRoots`
 
-#### §9 Config
+#### Config
 
 ```json
 {
@@ -321,7 +321,7 @@ Lookup order for insert shard paths:
 }
 ```
 
-#### §10 Compile output example
+#### Compile output example
 
 Shard input:
 

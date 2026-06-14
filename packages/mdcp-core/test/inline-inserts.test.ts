@@ -1,6 +1,6 @@
 /**
- * inlineInserts — tests driven by the spec in docs/client-core/compile-hooks.md
- * (§ sections). Docs first, then TDD: each describe block maps to a spec section.
+ * inlineInserts — tests driven by the spec in docs/client-core/compile-hooks.md.
+ * Docs first, then TDD: each describe block maps to a spec section.
  */
 import { describe, it, expect } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -24,7 +24,7 @@ function runInlineInserts(body: string, sourceFile: string, extra: object = {}) 
   return applyCompileHooks(body, { ...baseCtx, sourceFile, ...extra }, ['inlineInserts']);
 }
 
-describe('inlineInserts spec §3 link matching', () => {
+describe('inlineInserts — link matching', () => {
   it('matches typed insert library paths only', () => {
     expect(isInsertLibraryPath('../diagrams/flow.md')).toBe(true);
     expect(isInsertLibraryPath('../tables/codes.md')).toBe(true);
@@ -38,7 +38,7 @@ describe('inlineInserts spec §3 link matching', () => {
   });
 });
 
-describe('inlineInserts spec §5–§6 heading and slug helpers', () => {
+describe('inlineInserts — heading and slug helpers', () => {
   it('formats numbered captions and GFM slugs per kind', () => {
     expect(numberedInsertHeading('/docs/diagrams/request-flow.md', 'Request flow', 1)).toBe(
       'Diagram 1. Request flow',
@@ -59,7 +59,7 @@ describe('inlineInserts spec §5–§6 heading and slug helpers', () => {
   });
 });
 
-describe('inlineInserts spec §4 exclusions', () => {
+describe('inlineInserts — exclusions', () => {
   const work = useTmpDir('mdcp-inserts-');
 
   it('leaves regular shard links unchanged', () => {
@@ -104,7 +104,7 @@ describe('inlineInserts spec §4 exclusions', () => {
   });
 });
 
-describe('inlineInserts spec §5 first inline', () => {
+describe('inlineInserts — first inline', () => {
   const work = useTmpDir('mdcp-inserts-');
 
   it('inlines diagram from shared library with numbered GFM heading', () => {
@@ -210,7 +210,7 @@ describe('inlineInserts spec §5 first inline', () => {
   });
 });
 
-describe('inlineInserts spec §6 numbered captions', () => {
+describe('inlineInserts — numbered captions', () => {
   const work = useTmpDir('mdcp-inserts-');
 
   it('increments diagram, table, and figure counters independently', () => {
@@ -263,7 +263,7 @@ describe('inlineInserts spec §6 numbered captions', () => {
     expect(second).toContain('#### Table 2. Two');
   });
 
-  it('assigns Table 3 when two tables preceded by a diagram (§6 example)', () => {
+  it('assigns Table 3 when two tables preceded by a diagram', () => {
     const guideDir = join(work.path, 'review');
     mkdirSync(join(work.path, 'diagrams'), { recursive: true });
     mkdirSync(join(work.path, 'tables'), { recursive: true });
@@ -284,7 +284,7 @@ describe('inlineInserts spec §6 numbered captions', () => {
     expect(out).toContain('#### Table 3. T3');
   });
 
-  it('resets counters per guide compile (§6)', () => {
+  it('resets counters per guide compile', () => {
     mkdirSync(join(work.path, 'diagrams'), { recursive: true });
     writeFileSync(join(work.path, 'diagrams', 'shared.md'), 'Shared.\n');
     const body = '[Shared](../diagrams/shared.md)';
@@ -299,7 +299,7 @@ describe('inlineInserts spec §6 numbered captions', () => {
   });
 });
 
-describe('inlineInserts spec §7 deduplication', () => {
+describe('inlineInserts — deduplication', () => {
   const work = useTmpDir('mdcp-inserts-');
 
   it('back-links repeat references in the same shard', () => {
@@ -409,7 +409,7 @@ describe('inlineInserts spec §7 deduplication', () => {
   });
 });
 
-describe('inlineInserts spec §8–§9 config', () => {
+describe('inlineInserts — config', () => {
   const work = useTmpDir('mdcp-inserts-');
 
   it('resolves short paths via hooksConfig.inlineInserts.searchRoots', () => {
@@ -443,10 +443,10 @@ describe('inlineInserts spec §8–§9 config', () => {
   });
 });
 
-describe('inlineInserts spec §10 compile output', () => {
+describe('inlineInserts — compile output', () => {
   const work = useTmpDir('mdcp-inserts-');
 
-  it('matches §10 catalog + prose back-link shape', () => {
+  it('matches catalog + prose back-link shape', () => {
     const guideDir = join(work.path, 'review');
     mkdirSync(join(work.path, 'diagrams'), { recursive: true });
     writeFileSync(
