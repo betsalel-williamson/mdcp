@@ -2,13 +2,13 @@
 
 **mdcp** splits, compiles, validates, and exports sharded Markdown documentation for code repositories. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks.
 
-Shards are the **source of truth**. Generated output includes a local `docs/guides.md` (gitignored), `docs/refs.json` (gitignored), and npm package READMEs compiled from `docs/client-cli/` and `docs/client-core/`.
+Shards are the **source of truth**. Generated output includes a local `docs/guides.md` (features review — gitignored), `docs/refs.json` (gitignored), [`DEVELOPERS.md`](DEVELOPERS.md) (from `docs/developer/`), and npm package READMEs compiled from `docs/client-cli/` and `docs/client-core/`.
 
 ## Quick start
 
 ```bash
 pnpm install && pnpm build
-pnpm docs:compile:repo    # docs/guides.md + package READMEs
+pnpm docs:compile:repo    # docs/guides.md + DEVELOPERS.md + package READMEs
 pnpm docs:check           # repo docs + examples/sample-guides
 ```
 
@@ -22,8 +22,8 @@ This repo dogfoods mdcp under [`docs/`](docs/):
 
 | Guide             | Shards                                   | Compiled output                                                |
 | ----------------- | ---------------------------------------- | -------------------------------------------------------------- |
-| Tool capabilities | [`docs/features/`](docs/features/)       | `docs/guides.md` (local, gitignored)                           |
-| Repo development  | [`docs/developer/`](docs/developer/)     | `docs/guides.md` (local, gitignored)                           |
+| Tool capabilities | [`docs/features/`](docs/features/)       | `docs/guides.md` (local review — gitignored)                   |
+| Repo development  | [`docs/developer/`](docs/developer/)     | [`DEVELOPERS.md`](DEVELOPERS.md)                               |
 | CLI consumers     | [`docs/client-cli/`](docs/client-cli/)   | [`packages/mdcp-cli/README.md`](packages/mdcp-cli/README.md)   |
 | Core API          | [`docs/client-core/`](docs/client-core/) | [`packages/mdcp-core/README.md`](packages/mdcp-core/README.md) |
 
@@ -46,7 +46,7 @@ pnpm vale:sync
 pnpm run check
 ```
 
-Details: [docs/developer/local-setup.md](docs/developer/local-setup.md). Package changes need a changeset — [docs/developer/versioning-and-releases.md](docs/developer/versioning-and-releases.md).
+Details: [DEVELOPERS.md](DEVELOPERS.md) and [docs/developer/local-setup.md](docs/developer/local-setup.md). Package changes need a changeset — [docs/developer/versioning-and-releases.md](docs/developer/versioning-and-releases.md).
 
 ## License
 

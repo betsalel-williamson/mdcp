@@ -1,5 +1,10 @@
 {
-  "globs": ["guides.md", "../packages/mdcp-cli/README.md", "../packages/mdcp-core/README.md"],
+  "globs": [
+    "guides.md",
+    "../DEVELOPERS.md",
+    "../packages/mdcp-cli/README.md",
+    "../packages/mdcp-core/README.md"
+  ],
   "config": {
     "MD012": false,
     "MD013": false,

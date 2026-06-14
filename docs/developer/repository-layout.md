@@ -2,13 +2,14 @@
 
 ```text
 mdcp/
+├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
 │   └── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
-│   ├── features/           # Tool capabilities → docs/guides.md (monolith)
-│   ├── developer/          # This guide → docs/guides.md (monolith)
+│   ├── features/           # Tool capabilities → docs/guides.md (local review, gitignored)
+│   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
 │   └── client-core/        # → packages/mdcp-core/README.md
 ├── examples/sample-guides/ # Minimal consumer fixture for tests and tutorials
