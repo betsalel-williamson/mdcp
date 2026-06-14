@@ -10,8 +10,9 @@ describe('MdcpConfigSchema', () => {
     const cfg = MdcpConfigSchema.parse({
       compileOrder: ['glossary'],
     });
-    expect(cfg.outputFile).toBe('guides.md');
-    expect(cfg.refs.registryFile).toBe('refs.json');
+    expect(cfg.outputFile).toBeUndefined();
+    expect(cfg.outputDir).toBe('_build');
+    expect(cfg.refs.registryFile).toBe('.caches/refs.json');
   });
 
   it('parses per-guide compile options', () => {
@@ -83,6 +84,8 @@ describe('resolveUnderOutputDir paths', () => {
   });
 
   it('resolves refs.registryFile via resolveRefsPath', () => {
-    expect(resolveRefsPath('/docs', '.', 'refs.json')).toBe('/docs/refs.json');
+    expect(resolveRefsPath('/docs', '_build', '.caches/refs.json')).toBe(
+      '/docs/_build/.caches/refs.json',
+    );
   });
 });

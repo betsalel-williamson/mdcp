@@ -32,26 +32,38 @@ import {
 
 interface GlobalOpts {
   config: string;
-  cwd: string;
+  docsRoot?: string;
+  cwd?: string;
+}
+
+function getDocsRoot(opts: GlobalOpts): string {
+  const legacyCwd = opts.cwd;
+  if (legacyCwd && !opts.docsRoot) {
+    console.warn('mdcp: --cwd is deprecated; use --docs-root');
+    return legacyCwd;
+  }
+  return opts.docsRoot ?? legacyCwd ?? process.cwd();
 }
 
 function getConfig(opts: GlobalOpts) {
   return loadConfig(opts.config, process.cwd());
 }
 
-function valeScanPaths(config: MdcpConfig, cwd: string): string[] {
-  return config.vale?.scanGlobs?.map((g) => resolve(cwd, g)) ?? guideScanDirs(config, cwd);
+function valeScanPaths(config: MdcpConfig, docsRoot: string): string[] {
+  return (
+    config.vale?.scanGlobs?.map((g) => resolve(docsRoot, g)) ?? guideScanDirs(config, docsRoot)
+  );
 }
 
-function guideEntries(config: MdcpConfig, cwd: string) {
+function guideEntries(config: MdcpConfig, docsRoot: string) {
   return config.compileOrder.map((name) => {
     const cfg = getGuideConfig(config, name);
     return {
       name,
-      dir: resolveGuideDir(name, config, cwd),
+      dir: resolveGuideDir(name, config, docsRoot),
       manifest: cfg?.compile?.manifest,
       sectionsHeading: cfg?.compile?.sectionsHeading,
-      scopeRoot: cfg?.compile?.scopeRoot ? resolve(cwd, cfg.compile.scopeRoot) : undefined,
+      scopeRoot: cfg?.compile?.scopeRoot ? resolve(docsRoot, cfg.compile.scopeRoot) : undefined,
     };
   });
 }
@@ -61,28 +73,34 @@ function valeMinAlertLevel(config: MdcpConfig, strictFlag?: boolean): string | u
   return config.vale?.strictMinAlertLevel;
 }
 
-function compileOptions(config: MdcpConfig, cwd: string) {
+function resolveLinkTarget(config: MdcpConfig, docsRoot: string): string | undefined {
+  if (config.lint?.links?.target) return config.lint.links.target;
+  return resolveOutputPath(config, docsRoot);
+}
+
+function compileOptions(config: MdcpConfig, docsRoot: string) {
   return {
-    guidesRoot: resolveGuidesRoot(config, cwd),
+    guidesRoot: resolveGuidesRoot(config, docsRoot),
     compileOrder: config.compileOrder,
     banner: config.banner,
     guides: config.guides,
-    cwd,
+    cwd: docsRoot,
     config,
   };
 }
 
-function compileToString(config: MdcpConfig, cwd: string): string {
-  return compileGuides(compileOptions(config, cwd));
+function compileToString(config: MdcpConfig, docsRoot: string): string {
+  return compileGuides(compileOptions(config, docsRoot));
 }
 
-function writeCompiled(config: MdcpConfig, cwd: string): string {
-  const opts = compileOptions(config, cwd);
-  const results = writeCompiledGuides(opts, resolveOutputPath(config, cwd));
+function writeCompiled(config: MdcpConfig, docsRoot: string): string {
+  const opts = compileOptions(config, docsRoot);
+  const monolithPath = resolveOutputPath(config, docsRoot);
+  const results = writeCompiledGuides(opts, monolithPath);
   for (const r of results) {
     console.log(`→ ${r.path} (${r.lines} lines)`);
   }
-  return compileToString(config, cwd);
+  return compileToString(config, docsRoot);
 }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -101,7 +119,8 @@ program
     'config file (relative to invocation directory)',
     'mdcp.config.json',
   )
-  .option('--cwd <path>', 'working directory', process.cwd());
+  .option('--docs-root <path>', 'docs root (guide shard directories)')
+  .option('--cwd <path>', 'deprecated alias for --docs-root');
 
 program
   .command('compile')
@@ -109,7 +128,7 @@ program
   .action((_, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    writeCompiled(config, opts.cwd);
+    writeCompiled(config, getDocsRoot(opts));
   });
 
 const refs = program.command('refs').description('Heading slug registry (JSON default)');
@@ -120,8 +139,8 @@ refs
   .action((_, cmd) => {
     const opts = cmd.parent.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const compiled = writeCompiled(config, opts.cwd);
-    const refsPath = resolveRefsPath(opts.cwd, config.outputDir, config.refs.registryFile);
+    const compiled = writeCompiled(config, getDocsRoot(opts));
+    const refsPath = resolveRefsPath(getDocsRoot(opts), config.outputDir, config.refs.registryFile);
     genRefsFromCompiled(compiled, refsPath);
     console.log(`Wrote ${refsPath}`);
   });
@@ -132,8 +151,8 @@ refs
   .action((_, cmd) => {
     const opts = cmd.parent.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const compiled = compileToString(config, opts.cwd);
-    const refsPath = resolveRefsPath(opts.cwd, config.outputDir, config.refs.registryFile);
+    const compiled = compileToString(config, getDocsRoot(opts));
+    const refsPath = resolveRefsPath(getDocsRoot(opts), config.outputDir, config.refs.registryFile);
     const result = checkRefsRegistry(compiled, refsPath);
     console.log(result.message);
     if (!result.ok) process.exit(1);
@@ -146,7 +165,7 @@ refs
   .action((listOpts, cmd) => {
     const opts = cmd.parent.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const refsPath = resolveRefsPath(opts.cwd, config.outputDir, config.refs.registryFile);
+    const refsPath = resolveRefsPath(getDocsRoot(opts), config.outputDir, config.refs.registryFile);
     const registry = readRefsRegistry(refsPath);
     if (listOpts.format === 'table') {
       for (const h of registry.headings) {
@@ -164,7 +183,7 @@ refs
   .action((query, lookupOpts, cmd) => {
     const opts = cmd.parent.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const compiled = compileToString(config, opts.cwd);
+    const compiled = compileToString(config, getDocsRoot(opts));
     const registry = buildSlugRegistry(compiled);
     const matches = lookupHeadings(registry, query);
     if (lookupOpts.format === 'table') {
@@ -184,14 +203,17 @@ program
   .action((exportOpts, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    let text = compileToString(config, opts.cwd);
+    const docsRoot = getDocsRoot(opts);
+    let text = compileToString(config, docsRoot);
     if (exportOpts.llm) {
       text = stripForLlm(text, getLlmExportOptions(config));
     }
     if (exportOpts.stdout) {
       process.stdout.write(text);
     } else {
-      const outPath = resolveOutputPath(config, opts.cwd).replace(/\.md$/, '.llm.md');
+      const monolithPath = resolveOutputPath(config, docsRoot);
+      const base = monolithPath ?? resolve(docsRoot, config.outputDir, 'guide.md');
+      const outPath = base.replace(/\.md$/, '.llm.md');
       writeFileSync(outPath, text, 'utf-8');
       console.log(`→ ${outPath}`);
     }
@@ -204,26 +226,26 @@ program
   .action((lintOpts, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const tool = findPeerBinary('markdownlint-cli2', opts.cwd);
+    const tool = findPeerBinary('markdownlint-cli2', getDocsRoot(opts));
     const shardsCfg = config.lint?.markdownlint?.shardsConfig;
     const compiledCfg = config.lint?.markdownlint?.compiledConfig;
 
     if (shardsCfg) {
-      const shardPaths = shardLintPaths(config, opts.cwd);
+      const shardPaths = shardLintPaths(config, getDocsRoot(opts));
       const r = runPeer(tool, {
         require: lintOpts.requireLint,
-        cwd: opts.cwd,
+        cwd: getDocsRoot(opts),
         args: ['--config', shardsCfg, ...shardPaths],
       });
       if (r.exitCode !== 0) process.exit(r.exitCode);
     }
 
-    writeCompiled(config, opts.cwd);
+    writeCompiled(config, getDocsRoot(opts));
 
     if (compiledCfg) {
       const r = runPeer(tool, {
         require: lintOpts.requireLint,
-        cwd: opts.cwd,
+        cwd: getDocsRoot(opts),
         args: ['--config', compiledCfg],
       });
       if (r.exitCode !== 0) process.exit(r.exitCode);
@@ -238,14 +260,14 @@ program
   .action((proseOpts, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const tool = findPeerBinary('vale', opts.cwd);
-    const scanPaths = valeScanPaths(config, opts.cwd);
+    const tool = findPeerBinary('vale', getDocsRoot(opts));
+    const scanPaths = valeScanPaths(config, getDocsRoot(opts));
     const valeConfig = config.vale?.config ?? '.vale.ini';
     const minLevel = valeMinAlertLevel(config, proseOpts.strict);
     const args = minLevel
       ? ['--config', valeConfig, `--minAlertLevel=${minLevel}`, ...scanPaths]
       : ['--config', valeConfig, ...scanPaths];
-    const r = runPeer(tool, { require: proseOpts.requireVale, cwd: opts.cwd, args });
+    const r = runPeer(tool, { require: proseOpts.requireVale, cwd: getDocsRoot(opts), args });
     if (r.exitCode !== 0) process.exit(r.exitCode);
   });
 
@@ -255,12 +277,16 @@ program
   .action((_, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    writeCompiled(config, opts.cwd);
-    const tool = findPeerBinary('markdown-link-check', opts.cwd);
-    const target = config.lint?.links?.target ?? config.outputFile;
+    writeCompiled(config, getDocsRoot(opts));
+    const tool = findPeerBinary('markdown-link-check', getDocsRoot(opts));
+    const target = resolveLinkTarget(config, getDocsRoot(opts));
     const linkCfg = config.lint?.links?.config;
+    if (!target) {
+      console.error('mdcp links: set lint.links.target or outputFile in config');
+      process.exit(1);
+    }
     const args = linkCfg ? [target, '--config', linkCfg] : [target];
-    const r = runPeer(tool, { cwd: opts.cwd, args });
+    const r = runPeer(tool, { cwd: getDocsRoot(opts), args });
     if (r.exitCode !== 0) process.exit(r.exitCode);
   });
 
@@ -269,10 +295,10 @@ program
   .description('Auto-fix with Prettier + markdownlint (peer)')
   .action((_, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
-    const prettier = findPeerBinary('prettier', opts.cwd);
-    runPeer(prettier, { cwd: opts.cwd, args: ['--write', '.'] });
-    const mdlint = findPeerBinary('markdownlint-cli2', opts.cwd);
-    runPeer(mdlint, { cwd: opts.cwd, args: ['--fix'] });
+    const prettier = findPeerBinary('prettier', getDocsRoot(opts));
+    runPeer(prettier, { cwd: getDocsRoot(opts), args: ['--write', '.'] });
+    const mdlint = findPeerBinary('markdownlint-cli2', getDocsRoot(opts));
+    runPeer(mdlint, { cwd: getDocsRoot(opts), args: ['--fix'] });
   });
 
 program
@@ -285,8 +311,8 @@ program
       console.error('Config requires "source" for shard command');
       process.exit(1);
     }
-    const guidesRoot = resolveGuidesRoot(config, opts.cwd);
-    const sourceFile = resolve(opts.cwd, config.source);
+    const guidesRoot = resolveGuidesRoot(config, getDocsRoot(opts));
+    const sourceFile = resolve(getDocsRoot(opts), config.source);
 
     const mappings = (config.guides ?? []).map((g) => {
       if (g.source?.type === 'directory') {
@@ -334,37 +360,37 @@ program
     const config = getConfig(opts);
     let failed = false;
 
-    const orphans = checkOrphansForGuides(guideEntries(config, opts.cwd));
+    const orphans = checkOrphansForGuides(guideEntries(config, getDocsRoot(opts)));
     for (const o of orphans) {
       console.error(`orphan: ${o.message}`);
       failed = true;
     }
     if (failed) process.exit(1);
 
-    const compiled = writeCompiled(config, opts.cwd);
+    const compiled = writeCompiled(config, getDocsRoot(opts));
 
-    const refsPath = resolveRefsPath(opts.cwd, config.outputDir, config.refs.registryFile);
+    const refsPath = resolveRefsPath(getDocsRoot(opts), config.outputDir, config.refs.registryFile);
     genRefsFromCompiled(compiled, refsPath);
     const refsResult = checkRefsRegistry(compiled, refsPath);
     console.log(refsResult.message);
     if (!refsResult.ok) process.exit(1);
 
     if (config.lint?.xrefs?.enabled !== false) {
-      const xrefs = lintXrefs(xrefScanDirs(config, opts.cwd));
+      const xrefs = lintXrefs(xrefScanDirs(config, getDocsRoot(opts)));
       for (const x of xrefs) {
         console.error(`xref: ${x}`);
         failed = true;
       }
     }
 
-    const mdlint = findPeerBinary('markdownlint-cli2', opts.cwd);
+    const mdlint = findPeerBinary('markdownlint-cli2', getDocsRoot(opts));
     const shardsCfg = config.lint?.markdownlint?.shardsConfig;
     const compiledCfg = config.lint?.markdownlint?.compiledConfig;
     if (shardsCfg) {
-      const shardPaths = shardLintPaths(config, opts.cwd);
+      const shardPaths = shardLintPaths(config, getDocsRoot(opts));
       const r = runPeer(mdlint, {
         require: checkOpts.requireLint,
-        cwd: opts.cwd,
+        cwd: getDocsRoot(opts),
         args: ['--config', shardsCfg, ...shardPaths],
       });
       if (r.exitCode !== 0) failed = true;
@@ -372,31 +398,31 @@ program
     if (compiledCfg) {
       const r = runPeer(mdlint, {
         require: checkOpts.requireLint,
-        cwd: opts.cwd,
+        cwd: getDocsRoot(opts),
         args: ['--config', compiledCfg],
       });
       if (r.exitCode !== 0) failed = true;
     }
 
-    const linkTool = findPeerBinary('markdown-link-check', opts.cwd);
-    const linkTarget = config.lint?.links?.target ?? config.outputFile;
+    const linkTool = findPeerBinary('markdown-link-check', getDocsRoot(opts));
+    const linkTarget = resolveLinkTarget(config, getDocsRoot(opts));
     const linkCfg = config.lint?.links?.config;
-    if (linkTool.found && linkCfg) {
+    if (linkTool.found && linkCfg && linkTarget) {
       const r = runPeer(linkTool, {
-        cwd: opts.cwd,
+        cwd: getDocsRoot(opts),
         args: [linkTarget, '--config', linkCfg],
       });
       if (r.exitCode !== 0) failed = true;
     }
 
     if (!checkOpts.skipVale) {
-      const vale = findPeerBinary('vale', opts.cwd);
-      const scanPaths = valeScanPaths(config, opts.cwd);
+      const vale = findPeerBinary('vale', getDocsRoot(opts));
+      const scanPaths = valeScanPaths(config, getDocsRoot(opts));
       const valeConfig = config.vale?.config ?? '.vale.ini';
       const minLevel = valeMinAlertLevel(config, true) ?? 'error';
       const r = runPeer(vale, {
         require: checkOpts.requireVale,
-        cwd: opts.cwd,
+        cwd: getDocsRoot(opts),
         args: ['--config', valeConfig, `--minAlertLevel=${minLevel}`, ...scanPaths],
       });
       if (r.exitCode !== 0) failed = true;

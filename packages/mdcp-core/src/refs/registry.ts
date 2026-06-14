@@ -1,7 +1,9 @@
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { buildSlugRegistry, type RefsRegistry } from './slugs.js';
 
 export function writeRefsRegistry(registry: RefsRegistry, outputPath: string): void {
+  mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, JSON.stringify(registry, null, 2) + '\n', 'utf-8');
 }
 

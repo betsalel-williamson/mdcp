@@ -55,6 +55,7 @@ describe('compileGuides', () => {
     const output = compileGuides({
       guidesRoot: FIXTURE,
       compileOrder: COMPILE_ORDER,
+      config: { outputFile: 'guides.md', outputDir: '.', compileOrder: COMPILE_ORDER },
     });
     const h1Count = output.split('\n').filter((line) => /^# /.test(line)).length;
     expect(h1Count).toBe(1);
@@ -105,12 +106,14 @@ describe('compileGuides', () => {
       writeFileSync(join(publishDir, 'readme.md'), '# @example/pkg\n\nPublish content.\n');
 
       const publishOut = join(work, 'out', 'README.md');
+      const mainOut = join(work, 'main.md');
       const monolithOut = join(work, 'guides.md');
       const opts = {
         guidesRoot: work,
         compileOrder: ['main', 'publish'],
         banner: '<!-- banner -->\n\n',
         cwd: work,
+        config: { outputDir: '.', outputFile: 'guides.md', compileOrder: ['main', 'publish'] },
         guides: [
           { name: 'main', splitLevel: 2 as const },
           {
@@ -128,7 +131,7 @@ describe('compileGuides', () => {
       } satisfies CompileOptionsInput;
 
       const written = writeCompiledGuides(opts, monolithOut);
-      expect(written.map((w) => w.path).sort()).toEqual([monolithOut, publishOut].sort());
+      expect(written.map((w) => w.path).sort()).toEqual([monolithOut, publishOut, mainOut].sort());
 
       const monolith = compileGuides(opts);
       expect(monolith).toContain('<!-- banner -->');
@@ -162,6 +165,7 @@ describe('compileGuides', () => {
         guidesRoot: work,
         compileOrder: ['guide'],
         cwd: work,
+        config: { outputDir: '.', compileOrder: ['guide'] },
         guides: [
           {
             name: 'guide',
@@ -224,6 +228,7 @@ describe('compileGuides', () => {
         guidesRoot: work,
         compileOrder: ['guide'],
         cwd: work,
+        config: { outputDir: '.', compileOrder: ['guide'] },
         guides: [
           {
             name: 'guide',
@@ -260,7 +265,8 @@ describe('compileGuides', () => {
           },
         ],
       });
-      expect(out).toBe('');
+      expect(out).toContain('# Body');
+      expect(out).toContain('Content.');
     });
   });
 
@@ -410,7 +416,7 @@ describe('cli e2e', () => {
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toMatch(/guides\.md/);
-    expect(existsSync(join(FIXTURE, 'guides.md'))).toBe(true);
+    expect(existsSync(join(FIXTURE, '_build', 'guides.md'))).toBe(true);
   });
 
   it('mdcp refs lookup returns JSON matches', () => {

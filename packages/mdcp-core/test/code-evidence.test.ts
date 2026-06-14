@@ -148,9 +148,15 @@ describe('codeEvidence — path rewrite for rendered output', () => {
   it('resolveGuideLinkBase prefers per-guide output over monolith', () => {
     withCwd(work.path, () => {
       expect(
-        resolveGuideLinkBase({ outputDir: 'docs', outputFile: 'guides.md' }, work.path, {
-          outputFile: 'architecture-review.md',
-        }),
+        resolveGuideLinkBase(
+          { outputDir: 'docs', outputFile: 'guides.md' },
+          work.path,
+          'review',
+          1,
+          {
+            outputFile: 'architecture-review.md',
+          },
+        ),
       ).toBe(join(work.path, 'docs', 'architecture-review.md'));
     });
   });

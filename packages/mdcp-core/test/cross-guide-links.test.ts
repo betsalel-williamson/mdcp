@@ -41,6 +41,7 @@ function writeConsumerFixture(work: string): CompileOptionsInput {
     guidesRoot: work,
     compileOrder: ['glossary', 'architecture-review'],
     cwd: work,
+    config: { outputDir: '.', compileOrder: ['glossary', 'architecture-review'] },
     guides: [
       {
         name: 'glossary',

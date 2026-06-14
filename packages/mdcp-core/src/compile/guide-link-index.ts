@@ -2,6 +2,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve, basename, dirname } from 'node:path';
 import { buildSectionSlugMap } from './publish-links.js';
 import { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
+import { defaultGuideOutputFile } from '../config/paths.js';
 import type { CompileOptions } from './assemble.js';
 
 export interface GuideLinkEntry {
@@ -48,14 +49,14 @@ function resolveGuideDir(
 }
 
 function outputBasenameForGuide(
+  guideName: string,
   compile: { outputFile?: string } | undefined,
-  config: { outputDir?: string; outputFile?: string } | undefined,
-  cwd: string,
+  config: { outputFile?: string } | undefined,
+  compileOrderLength: number,
 ): string {
   if (compile?.outputFile) return basename(compile.outputFile);
-  const outputDir = config?.outputDir ?? '.';
-  const outputFile = config?.outputFile ?? 'guides.md';
-  return basename(resolve(cwd, outputDir, outputFile));
+  if (config?.outputFile !== undefined) return basename(config.outputFile);
+  return basename(defaultGuideOutputFile(guideName, compileOrderLength));
 }
 
 /** Build a cross-guide link index from every guide in compileOrder. */
@@ -78,7 +79,12 @@ export function buildGuideLinkIndex(
       sectionsHeading: compile?.sectionsHeading,
     });
     const slugByBasename = buildSectionSlugMap(files);
-    const outputBasename = outputBasenameForGuide(compile, options.config, cwd);
+    const outputBasename = outputBasenameForGuide(
+      name,
+      compile,
+      options.config,
+      options.compileOrder.length,
+    );
 
     for (const filePath of files) {
       const slug = slugByBasename.get(basename(filePath));

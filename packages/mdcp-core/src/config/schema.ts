@@ -24,7 +24,7 @@ const GuideSourceSchema = z.discriminatedUnion('type', [
 
 const GuideSchema = z.object({
   name: z.string(),
-  /** Shard directory relative to --cwd (default: outputDir/name). */
+  /** Shard directory relative to docs root (default: {docsRoot}/{name}/). */
   path: z.string().optional(),
   splitLevel: z.number().int().min(1).max(6).default(2),
   source: GuideSourceSchema.optional(),
@@ -38,7 +38,7 @@ const GuideSchema = z.object({
       /** Injected compile title as ## heading, followed by a blank line before the first section. */
       title: z.string().optional(),
       scopeRoot: z.string().optional(),
-      /** Per-guide output path; joins under outputDir unless the path uses `..` (publish). */
+      /** Per-guide output path relative to outputDir (absolute allowed). */
       outputFile: z.string().optional(),
       /** Apply global banner to this guide's output (default: true for monolith, false when outputFile is set). */
       includeBanner: z.boolean().optional(),
@@ -72,22 +72,22 @@ const GuideSchema = z.object({
 
 export const MdcpConfigSchema = z.object({
   source: z.string().optional(),
-  /** Compile output root relative to --cwd (default guide shard dirs live here too). */
-  outputDir: z.string().default('.'),
-  /** Monolith filename relative to outputDir (not --cwd). */
-  outputFile: z.string().default('guides.md'),
+  /** Generated output root relative to docs root (default `_build`). */
+  outputDir: z.string().default('_build'),
+  /** Optional stitched monolith filename relative to outputDir. */
+  outputFile: z.string().optional(),
   compileOrder: z.array(z.string()).min(1),
   banner: z.string().optional(),
   guides: z.array(GuideSchema).optional(),
 
   refs: z
     .object({
-      /** Registry path relative to outputDir (not --cwd). */
-      registryFile: z.string().default('refs.json'),
+      /** Registry path relative to outputDir. */
+      registryFile: z.string().default('.caches/refs.json'),
       slugAlgorithm: z.enum(['github']).default('github'),
     })
     .default({
-      registryFile: 'refs.json',
+      registryFile: '.caches/refs.json',
       slugAlgorithm: 'github',
     }),
 
@@ -97,7 +97,7 @@ export const MdcpConfigSchema = z.object({
         .object({
           shardsConfig: z.string().optional(),
           compiledConfig: z.string().optional(),
-          /** Shard lint paths relative to --cwd (default: compileOrder guide dirs). */
+          /** Shard lint paths relative to docs root (default: compileOrder guide dirs). */
           shardsGlobs: z.array(z.string()).optional(),
         })
         .optional(),
