@@ -5,7 +5,7 @@ These commands use tools installed in **your** repo (not bundled with mdcp):
 | Command      | Peer tool                       | Purpose                                                                        |
 | ------------ | ------------------------------- | ------------------------------------------------------------------------------ |
 | `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output                                                |
-| `mdcp prose` | `vale` (`@vvago/vale`)          | Prose style lint                                                               |
+| `mdcp prose` | `vale` (install separately)     | Prose style lint                                                               |
 | `mdcp links` | `markdown-link-check`           | Check links in compiled output (`lint.links` config required in `check`)       |
 | `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no mdcp config paths) |
 
@@ -20,10 +20,12 @@ mdcp check --skip-vale            # structural checks only
 
 `mdcp check` runs link checking only when **`lint.links.config`** is set in `mdcp.config.json` and `markdown-link-check` is installed. `mdcp links` always skips quietly if the peer is missing.
 
-Install peers with:
+Install npm peers with:
 
 ```bash
-npm install -D prettier markdownlint-cli2 @vvago/vale @bwilliamson/mdcp-presets
+npm install -D prettier markdownlint-cli2 @bwilliamson/mdcp-presets
 ```
+
+Install **Vale** separately so `vale` is on your `PATH` — see [Vale installation](https://vale.sh/docs/vale-cli/installation/) (Homebrew, Chocolatey, Snap, or GitHub release). After adding a `.vale.ini`, run `vale sync` in that directory.
 
 Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.

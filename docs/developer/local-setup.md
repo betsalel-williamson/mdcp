@@ -4,13 +4,14 @@
 
 - Node.js **>= 22.12.0** (see `engines` in root [`package.json`](../../package.json); [`.nvmrc`](../../.nvmrc) pins major version `22` for `nvm use`)
 - [pnpm](https://pnpm.io/) 9.x (see `packageManager` in root [`package.json`](../../package.json))
+- [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH` for prose lint (`pnpm docs:check` uses `--require-vale`). macOS: `brew install vale`; Linux: `snap install vale` or a [GitHub release](https://github.com/vale-cli/vale/releases) tarball. CI pins **3.15.1**.
 
 ## First-time bootstrap
 
 ```bash
 pnpm install
 pnpm build
-pnpm vale:sync            # once — Vale styles for docs/ and examples/sample-guides/
+pnpm vale:sync            # once — requires Vale on PATH; syncs styles for docs/ and examples/sample-guides/
 ```
 
 ## Daily commands

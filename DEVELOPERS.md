@@ -12,13 +12,14 @@ Contributors are expected to follow the [Contributor Covenant Code of Conduct](C
 
 - Node.js **>= 22.12.0** (see `engines` in root [`package.json`](package.json); [`.nvmrc`](.nvmrc) pins major version `22` for `nvm use`)
 - [pnpm](https://pnpm.io/) 9.x (see `packageManager` in root [`package.json`](package.json))
+- [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH` for prose lint (`pnpm docs:check` uses `--require-vale`). macOS: `brew install vale`; Linux: `snap install vale` or a [GitHub release](https://github.com/vale-cli/vale/releases) tarball. CI pins **3.15.1**.
 
 ### First-time bootstrap
 
 ```bash
 pnpm install
 pnpm build
-pnpm vale:sync            # once — Vale styles for docs/ and examples/sample-guides/
+pnpm vale:sync            # once — requires Vale on PATH; syncs styles for docs/ and examples/sample-guides/
 ```
 
 ### Daily commands
@@ -168,10 +169,10 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 ### Linting docs
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
-- **Vale** — prose lint on `features/`, `developer/`, `client-cli/`, `client-core/`
+- **Vale** — prose lint on `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
 - **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
 
-Run `pnpm vale:sync` after cloning or when `.vale.ini` changes.
+Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
 
 ## Versioning and releases
 

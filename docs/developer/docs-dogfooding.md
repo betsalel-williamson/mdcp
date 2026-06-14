@@ -33,7 +33,7 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 ## Linting docs
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
-- **Vale** — prose lint on `features/`, `developer/`, `client-cli/`, `client-core/`
+- **Vale** — prose lint on `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
 - **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
 
-Run `pnpm vale:sync` after cloning or when `.vale.ini` changes.
+Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).

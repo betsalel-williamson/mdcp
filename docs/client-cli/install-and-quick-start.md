@@ -28,8 +28,10 @@ npm install -g @bwilliamson/mdcp-cli
 Optional lint tooling (install in your repo when you want `mdcp lint`, `mdcp prose`, or `mdcp check --require-lint`):
 
 ```bash
-npm install -D markdownlint-cli2 @vvago/vale @bwilliamson/mdcp-presets
+npm install -D markdownlint-cli2 @bwilliamson/mdcp-presets
 ```
+
+For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https://vale.sh/docs/vale-cli/installation/) separately so `vale` is on your `PATH`.
 
 ## Quick start
 
