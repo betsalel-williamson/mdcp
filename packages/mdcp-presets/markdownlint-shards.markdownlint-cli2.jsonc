@@ -18,5 +18,5 @@
     "MD052": false,
     "MD053": false,
   },
-  "globs": ["**/*.md", "!guides.md", "!**/index.md", "!node_modules"],
+  "globs": ["!guides.md", "!**/index.md", "!node_modules"],
 }
