@@ -98,18 +98,19 @@ Per-guide `compile.outputFile` writes a publish target and excludes that guide f
 
 `compile.title` injects a `##` heading at the start of the assembled guide, separated from the first section by a blank line. When the first shard’s top heading matches the title text, that duplicate heading is stripped before assembly.
 
-`compile.publishPathRewrite` optionally rewrites shard-relative repo paths in publish outputs (for example `../../package.json` → `package.json` and `../features/foo.md` → `docs/features/foo.md`). Intra-guide `./section.md` links are rewritten to in-document `#anchor` links on **every** compile, including monolith output.
+`compile.publishPathRewrite` optionally rewrites shard-relative repo paths in publish outputs (for example `../../package.json` → `package.json` and `../features/foo.md` → `docs/features/foo.md`). Every compile builds a **guide link index** from `compileOrder`, rewrites cross-guide `.md` links per shard, then rewrites same-guide `./section.md` links to in-document `#anchor` targets (including monolith output).
 
 ## API — Compile
 
-| Export                                            | Purpose                                              |
-| ------------------------------------------------- | ---------------------------------------------------- |
-| `compileGuides`, `compileGuideResults`            | Stitch shards into monolith text                     |
-| `writeCompiledGuides`                             | Write monolith and publish outputs to disk           |
-| `sectionFiles`, `processSection`, `assembleGuide` | Lower-level assemble pipeline                        |
-| `formatCompileTitle`, `extractFirstHeading`, …    | Optional `compile.title` injection and deduplication |
-| `demoteHeadings`, `stripAboutThisGuideHeading`, … | Heading transforms                                   |
-| `registerCompileHook`, `applyCompileHooks`        | Extension hooks (`stripAnchors`, `inlineInserts`, …) |
+| Export                                                        | Purpose                                              |
+| ------------------------------------------------------------- | ---------------------------------------------------- |
+| `compileGuides`, `compileGuideResults`, `buildGuideLinkIndex` | Stitch shards; cross-guide link index                |
+| `writeCompiledGuides`                                         | Write monolith and publish outputs to disk           |
+| `rewriteCrossGuideFileLinks`, `rewriteIntraGuideFileLinks`    | Cross- and intra-guide link rewrite helpers          |
+| `sectionFiles`, `processSection`, `assembleGuide`             | Lower-level assemble pipeline                        |
+| `formatCompileTitle`, `extractFirstHeading`, …                | Optional `compile.title` injection and deduplication |
+| `demoteHeadings`, `stripAboutThisGuideHeading`, …             | Heading transforms                                   |
+| `registerCompileHook`, `applyCompileHooks`                    | Extension hooks (`stripAnchors`, `inlineInserts`, …) |
 
 `compileGuides` returns monolith text only — guides with `compile.outputFile` are excluded. `writeCompiledGuides` writes both the monolith and any publish targets.
 
@@ -481,6 +482,132 @@ Catalog link `[Component map](../figures/component-map.md)` compiles to a number
 Catalog link `[Walkthrough](../media/walkthrough.md)` compiles to `#### Media 1. Walkthrough` followed by the video embed.
 
 Details in the [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).
+
+### Cross-guide link rewriting
+
+Specification for assembly-time cross-shard and cross-guide link rewriting. Tests in `packages/mdcp-core/test/cross-guide-links.test.ts` map to the sections below (docs first, then TDD).
+
+Multi-output consumer repos compile separate monoliths (for example `glossary.md`, `architecture-review.md`, `technical-guide.md`) from shards that span `review/`, `security/`, `features/`, and sibling guide directories. Source shards link with relative `.md` paths; compiled output must use stable in-document or cross-monolith `#slug` targets so link-fragment lint passes.
+
+#### Cross-guide purpose
+
+At compile time, MDCP:
+
+1. Builds a **guide link index** from every guide in `compileOrder` — each manifest-listed shard maps to its compiled `{outputBasename, slug}` (slug from the demoted first heading, same rules as intra-guide rewrite)
+2. Rewrites **cross-guide** `.md` links per shard (using the shard path for relative resolution) before sections are stitched
+3. Rewrites **same-guide** `./section.md` links on the assembled body (existing intra-guide pass)
+
+Pair with `compile.publishPathRewrite` when publish outputs also need repo-root path normalization for non-markdown targets.
+
+#### Cross-guide link matching
+
+A link is rewritten when **all** of the following hold:
+
+- Standard markdown link syntax: `[label](path)`
+- Target path ends in `.md` (optional `#fragment`)
+- Target is not `http://`, `https://`, or `#…`
+- Target resolves to a shard registered in the guide link index
+
+Same-guide `./section.md` links are handled by the intra-guide pass after assembly; cross-guide rewrite handles `../` and repo-scoped paths that point at another guide's shards.
+
+#### Cross-guide resolution
+
+Path lookup order (relative to the **current shard** directory):
+
+1. Relative to the shard directory (`dirname(sourceFile)`)
+2. Relative to the shard parent directory
+3. `compile.scopeRoot` when set on the compiling guide
+4. `process.cwd()` and its parent
+
+When the resolved absolute path is in the guide link index:
+
+| Case                                             | Rewritten target                                                        |
+| ------------------------------------------------ | ----------------------------------------------------------------------- |
+| Same compiled output as the compiling guide      | `#slug` or `#fragment` when the link includes a fragment                |
+| Different compiled output (`compile.outputFile`) | `{outputBasename}#slug` (for example `architecture-review.md#find-004`) |
+| Monolith output (no per-guide `outputFile`)      | `#slug`                                                                 |
+
+Finding shards (`FIND-*.md`) use the demoted first heading slug (for example `#find-004`), not the parent outcomes section slug.
+
+#### Cross-guide exclusions
+
+The pass **does not** transform:
+
+- External URLs
+- Same-document `#fragment` links
+- Markdown links that do not resolve to an indexed shard
+- Non-markdown paths (handled by `codeEvidence` or left unchanged)
+
+#### Cross-guide config
+
+Minimal multi-output setup — index and rewrite run automatically from `compileOrder` and per-guide `compile.outputFile`:
+
+```json
+{
+  "compileOrder": ["glossary", "architecture-review", "technical-guide"],
+  "guides": [
+    {
+      "name": "glossary",
+      "path": "glossary",
+      "compile": {
+        "scopeRoot": ".",
+        "outputFile": "glossary.md"
+      }
+    },
+    {
+      "name": "architecture-review",
+      "path": "review",
+      "compile": {
+        "scopeRoot": ".",
+        "manifest": "shards.md",
+        "outputFile": "architecture-review.md"
+      }
+    }
+  ]
+}
+```
+
+Optional **`reviewLinks`** hook — same rewrite rules with an explicit override when every cross-guide link should target one monolith file (`hooksConfig.reviewLinks.targetMonolith`). Prefer assembly-time index rewrite when guides map to separate outputs; use `targetMonolith` for legacy single-file review layouts.
+
+#### Cross-guide compile example
+
+Glossary shard input (`glossary/terms.md`):
+
+```markdown
+See [FIND-004](../review/outcomes/FIND-004.md) in the architecture review.
+```
+
+Review shard (`review/outcomes/FIND-004.md`):
+
+```markdown
+# FIND-004 — Example finding
+
+Body.
+```
+
+Compiled glossary output:
+
+```markdown
+See [FIND-004](architecture-review.md#find-004) in the architecture review.
+```
+
+### reviewLinks
+
+Optional compile hook that delegates to the same cross-guide rewrite engine. Add to `compile.hooks` when you need **`hooksConfig.reviewLinks.targetMonolith`** to force all resolved cross-guide links onto one output file (legacy consumer monoliths).
+
+```json
+{
+  "name": "glossary",
+  "compile": {
+    "hooks": ["stripAnchors", "reviewLinks"],
+    "hooksConfig": {
+      "reviewLinks": { "targetMonolith": "architecture-review.md" }
+    }
+  }
+}
+```
+
+When `targetMonolith` is set, indexed targets in other outputs are rewritten to `{targetMonolith}#slug` instead of their native `outputFile`. When omitted, the hook uses the guide link index (same as the automatic assembly pass).
 
 ## Related packages
 

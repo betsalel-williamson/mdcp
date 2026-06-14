@@ -7,10 +7,11 @@ export function defaultSearchRoots(): string[] {
 }
 
 export function hookSearchRoots(
-  ctx: Pick<CompileHookContext, 'guideName' | 'config'>,
+  ctx: Pick<CompileHookContext, 'guideName' | 'config' | 'scopeRoot'>,
   configKey: 'inlineInserts' | 'reviewLinks',
 ): string[] {
   const roots = defaultSearchRoots();
+  if (ctx.scopeRoot) roots.push(ctx.scopeRoot);
   const guideCfg = ctx.config.guides?.find((g) => g.name === ctx.guideName);
   const hooksConfig = guideCfg?.compile?.hooksConfig;
   const extraRoots =
