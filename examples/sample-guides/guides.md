@@ -13,7 +13,7 @@ Welcome to the sample documentation set. Edit shard files under each guide direc
 
 See [Admin Guide Chapter 1](#admin-chapter-1-getting-started) for operational tasks.
 
-# Coverage and where to look
+## Coverage and where to look
 
 Use this router to pick the right guide.
 
@@ -22,19 +22,21 @@ Use this router to pick the right guide.
 | Day-to-day admin | [Admin Guide](#admin-chapter-1-getting-started) |
 | API integration  | [Developer Guide](#dev-chapter-1-overview)      |
 
-# Admin Guide
+## Admin Guide
 
-## Admin Chapter 1 — Getting started
+### Admin Chapter 1 — Getting started
 
 Operational steps for store administrators.
 
 Cross-link: [Developer Guide Chapter 1](#dev-chapter-1-overview).
 
-# Developer Guide
 
-## Dev Chapter 1 — Overview
+## Developer Guide
+
+### Dev Chapter 1 — Overview
 
 Technical reference for integrators and theme developers.
 
 See [Admin Chapter 1](#admin-chapter-1-getting-started) for staff workflows.
+
 

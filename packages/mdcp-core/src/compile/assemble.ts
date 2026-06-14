@@ -1,12 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, resolve, basename, dirname } from 'node:path';
-import {
-  demoteHeadings,
-  demoteExceptFirstH1,
-  stripAboutThisGuideHeading,
-  extractGuideH1,
-} from './headings.js';
+import { demoteHeadings, stripAboutThisGuideHeading, extractGuideH1 } from './headings.js';
 import { stripExplicitAnchorMarkers } from './anchors.js';
 import { extractFirstHeading, stripFirstHeadingLine, formatCompileTitle } from './compile-title.js';
 import { applyCompileHooks } from './hooks.js';
@@ -80,30 +75,16 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
     .map((n: string) => join(guideDir, n));
 }
 
-export function processSection(
-  guideName: string,
-  filename: string,
-  content: string,
-  keepSecondH1?: string[],
-): string {
+export function processSection(guideName: string, filename: string, content: string): string {
   if (filename === 'about-this-guide.md') {
     const body = stripAboutThisGuideHeading(content);
     return body.trim() ? demoteHeadings(body, 1) : body;
-  }
-
-  if (guideName === 'overview' && keepSecondH1?.some((s) => filename.includes(s))) {
-    return demoteExceptFirstH1(content);
-  }
-
-  if (guideName === 'overview' && filename.includes('coverage-and-where-to-look')) {
-    return demoteExceptFirstH1(content);
   }
 
   return demoteHeadings(content, 1);
 }
 
 export interface AssembleGuideOptions {
-  keepSecondH1?: string[];
   manifest?: string;
   scopeRoot?: string;
   title?: string;
@@ -148,7 +129,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
       }
     }
 
-    let body = processSection(guideName, name, raw, options.keepSecondH1).trimEnd();
+    let body = processSection(guideName, name, raw).trimEnd();
 
     body = applyCompileHooks(
       body,
@@ -214,7 +195,6 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
     const outputBasename = compile?.outputFile ? basename(compile.outputFile) : undefined;
 
     const text = assembleGuide(guideDir, {
-      keepSecondH1: compile?.keepSecondH1,
       manifest: compile?.manifest,
       scopeRoot: compile?.scopeRoot ? resolve(cwd, compile.scopeRoot) : undefined,
       title: compile?.title,
@@ -241,8 +221,9 @@ export function compileGuides(options: CompileOptions): string {
   }
 
   const parts: string[] = [];
-  for (const r of results) {
-    parts.push(r.text, '\n');
+  for (let i = 0; i < results.length; i++) {
+    const text = i === 0 ? results[i].text : demoteHeadings(results[i].text, 1);
+    parts.push(text, '\n');
   }
 
   const body = parts.join('');

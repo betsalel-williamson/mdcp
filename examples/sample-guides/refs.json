@@ -20,58 +20,58 @@
       "line": 10
     },
     {
-      "key": "coverage-and-where-to-look.coverage-and-where-to-look",
+      "key": "documentation-overview.coverage-and-where-to-look",
       "slug": "coverage-and-where-to-look",
       "title": "Coverage and where to look",
-      "guide": "coverage-and-where-to-look",
+      "guide": "documentation-overview",
       "sourceFile": null,
-      "level": 1,
+      "level": 2,
       "line": 16
     },
     {
-      "key": "admin-guide.admin-guide",
+      "key": "documentation-overview.admin-guide",
       "slug": "admin-guide",
       "title": "Admin Guide",
-      "guide": "admin-guide",
+      "guide": "documentation-overview",
       "sourceFile": null,
-      "level": 1,
+      "level": 2,
       "line": 25
     },
     {
-      "key": "admin-guide.admin-chapter-1-getting-started",
+      "key": "documentation-overview.admin-chapter-1-getting-started",
       "slug": "admin-chapter-1-getting-started",
       "title": "Admin Chapter 1 — Getting started",
-      "guide": "admin-guide",
+      "guide": "documentation-overview",
       "sourceFile": null,
-      "level": 2,
+      "level": 3,
       "line": 27
     },
     {
-      "key": "developer-guide.developer-guide",
+      "key": "documentation-overview.developer-guide",
       "slug": "developer-guide",
       "title": "Developer Guide",
-      "guide": "developer-guide",
+      "guide": "documentation-overview",
       "sourceFile": null,
-      "level": 1,
-      "line": 33
+      "level": 2,
+      "line": 34
     },
     {
       "key": "dev.ch1",
       "slug": "dev-chapter-1-overview",
       "title": "Dev Chapter 1 — Overview",
-      "guide": "developer-guide",
+      "guide": "documentation-overview",
       "sourceFile": null,
-      "level": 2,
-      "line": 35
+      "level": 3,
+      "line": 36
     }
   ],
   "slugs": {
     "documentation-overview": "documentation-overview.documentation-overview",
     "introduction": "documentation-overview.introduction",
-    "coverage-and-where-to-look": "coverage-and-where-to-look.coverage-and-where-to-look",
-    "admin-guide": "admin-guide.admin-guide",
-    "admin-chapter-1-getting-started": "admin-guide.admin-chapter-1-getting-started",
-    "developer-guide": "developer-guide.developer-guide",
+    "coverage-and-where-to-look": "documentation-overview.coverage-and-where-to-look",
+    "admin-guide": "documentation-overview.admin-guide",
+    "admin-chapter-1-getting-started": "documentation-overview.admin-chapter-1-getting-started",
+    "developer-guide": "documentation-overview.developer-guide",
     "dev-chapter-1-overview": "dev.ch1"
   }
 }

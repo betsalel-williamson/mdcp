@@ -31,7 +31,6 @@ const GuideSchema = z.object({
   compile: z
     .object({
       preambleSection: z.string().default('about-this-guide.md'),
-      keepSecondH1: z.array(z.string()).optional(),
       /** Manifest file name (default index.md; use shards.md for review trees). */
       manifest: z.string().default('index.md'),
       /** Injected compile title as ## heading. */

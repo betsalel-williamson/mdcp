@@ -21,7 +21,6 @@ describe('compileGuides', () => {
           name: 'overview',
           splitLevel: 2,
           compile: {
-            keepSecondH1: ['coverage-and-where-to-look'],
             preambleSection: 'about-this-guide.md',
             manifest: 'index.md',
             stripAnchors: true,
@@ -43,6 +42,18 @@ describe('compileGuides', () => {
     });
     expect(output).toMatch(/^# Admin Guide/m);
     expect(output).toContain('Admin Chapter 1');
+  });
+
+  it('keeps a single document H1 when merging multiple guides', () => {
+    const output = compileGuides({
+      guidesRoot: FIXTURE,
+      compileOrder: COMPILE_ORDER,
+    });
+    const h1Count = output.split('\n').filter((line) => /^# /.test(line)).length;
+    expect(h1Count).toBe(1);
+    expect(output).toMatch(/^# Documentation Overview/m);
+    expect(output).toContain('## Admin Guide');
+    expect(output).toContain('## Coverage and where to look');
   });
 
   it('strips explicit anchor markers from compiled output', () => {

@@ -2,7 +2,9 @@
 
 **mdcp** splits, compiles, validates, and exports sharded Markdown documentation for code repositories. It uses the same Markdown you already know from READMEs and GitHub — `#` headings, `[links](url)`, lists, and tables. Nothing extra to memorize.
 
-You edit small shard files. mdcp weaves them back into one compiled file (`guides.md`) with correct heading levels, working cross-links, and structure checks.
+You edit small shard files. mdcp **weaves** them back into one compiled file (`guides.md`) with correct heading levels, working cross-links, and structure checks.
+
+mdcp is **opinionated**. The weave step is not a naive merge — compile applies Markdown formatting rules (heading levels, preamble handling, single document title, and more). Shards can look different from the compiled monolith on purpose; that is how the tool keeps output consistent.
 
 ## You probably started with one file
 
@@ -63,6 +65,8 @@ Welcome to the sample documentation set.
 ```
 
 You cannot get this by concatenating files. That is one reason mdcp exists.
+
+During weave, mdcp also enforces structural rules on the compiled monolith — for example, one top-level `#` title for the whole document, with later guides demoted under it. Optional linters in `mdcp check` (markdownlint, Vale) add further formatting expectations on shards and compiled output. See `@mdcp/presets` and your `mdcp.config.json` `lint` section to tune what runs in your repo.
 
 ## Why you need a utility (not just split the file)
 
@@ -139,7 +143,7 @@ Copy [examples/sample-guides/mdcp.config.json](examples/sample-guides/mdcp.confi
 | Field               | Purpose                                                          |
 | ------------------- | ---------------------------------------------------------------- |
 | `compileOrder`      | Order of guide directories in the compiled monolith              |
-| `guides`            | Per-guide options (compile hooks, heading exceptions)            |
+| `guides`            | Per-guide compile options (hooks, manifests, outputs)            |
 | `outputFile`        | Compiled monolith path (e.g. `guides.md`)                        |
 | `refs.registryFile` | Cross-link lookup table (`refs.json`) built during check/compile |
 
