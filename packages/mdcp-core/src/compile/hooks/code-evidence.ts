@@ -1,6 +1,7 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import type { CompileHook } from '../hooks.js';
+import { hookSearchRoots, resolveRelativeFile } from './path-resolve.js';
 
 const MD_LINK_RE = /\[([^\]]*)\]\(([^)]+)\)/g;
 
@@ -32,18 +33,6 @@ function lineRangeFromText(text: string): string | null {
   if (m[3]) return formatLineFragment(m[3]);
   if (m[4] && m[5]) return formatLineFragment(m[4], m[5]);
   if (m[6]) return formatLineFragment(m[6]);
-  return null;
-}
-
-function resolveRepoPath(rawPath: string, guideDir: string, searchRoots: string[]): string | null {
-  const [filePart] = rawPath.split('#');
-  const candidates = [
-    resolve(guideDir, filePart),
-    ...searchRoots.map((root) => resolve(root, filePart)),
-  ];
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) return candidate;
-  }
   return null;
 }
 
@@ -81,7 +70,7 @@ function rewriteEvidenceLink(
 
   let lineFrag = lineRangeFromText(label) ?? lineRangeFromText(pathPart);
   if (!lineFrag && fragment && !fragment.match(/^L\d/i)) {
-    const resolved = resolveRepoPath(pathPart, guideDir, searchRoots);
+    const resolved = resolveRelativeFile(pathPart, guideDir, searchRoots);
     if (resolved) {
       lineFrag = lineForSymbol(resolved, fragment) ?? null;
     }
@@ -93,12 +82,7 @@ function rewriteEvidenceLink(
 
 export const codeEvidenceHook: CompileHook = (ctx) => {
   const guideDir = dirname(ctx.sourceFile);
-  const searchRoots = [process.cwd(), resolve(process.cwd(), '..')];
-  const guideCfg = ctx.config.guides?.find((g) => g.name === ctx.guideName);
-  const extraRoots = guideCfg?.compile?.hooksConfig?.codeEvidence?.searchRoots ?? [];
-  for (const root of extraRoots) {
-    searchRoots.push(resolve(process.cwd(), root));
-  }
+  const searchRoots = hookSearchRoots(ctx, 'codeEvidence');
 
   return ctx.body.replace(MD_LINK_RE, (match, label: string, target: string) => {
     if (!isSourcePath(target.split('#')[0])) return match;

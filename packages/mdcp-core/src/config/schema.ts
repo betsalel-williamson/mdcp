@@ -56,6 +56,11 @@ const GuideSchema = z.object({
               targetMonolith: z.string().optional(),
             })
             .optional(),
+          inlineInserts: z
+            .object({
+              searchRoots: z.array(z.string()).optional(),
+            })
+            .optional(),
         })
         .optional(),
       stripAnchors: z.boolean().default(true),

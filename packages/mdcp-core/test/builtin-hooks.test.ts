@@ -47,20 +47,6 @@ describe('builtin compile hooks', () => {
     });
   });
 
-  it('inlineDiagrams expands diagram directive', () => {
-    const guideDir = join(work.path, 'review');
-    mkdirSync(guideDir, { recursive: true });
-    mkdirSync(join(guideDir, 'diagrams'), { recursive: true });
-    writeFileSync(join(guideDir, 'diagrams', 'flow.md'), '| A | B |\n|---|---|\n| 1 | 2 |\n');
-    const sourceFile = join(guideDir, 'claim.md');
-    const out = applyCompileHooks(
-      'Intro\n\n<!-- mdcp:diagram diagrams/flow.md -->\n',
-      { ...baseCtx, sourceFile },
-      ['inlineDiagrams'],
-    );
-    expect(out).toContain('| A | B |');
-  });
-
   it('reviewLinks rewrites FIND shard links to monolith anchors', () => {
     const outcomes = join(work.path, 'review', 'outcomes');
     mkdirSync(outcomes, { recursive: true });

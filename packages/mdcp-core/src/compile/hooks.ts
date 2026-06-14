@@ -1,5 +1,20 @@
 import type { MdcpConfigInput } from '../config/schema.js';
 
+export interface InlineInsertsHookState {
+  /** Resolved absolute insert shard path → anchor slug for first inline in this guide. */
+  firstAnchorByPath: Map<string, string>;
+  /** Per-kind insert counters (diagram, table, figure, media, insert) for numbered headings. */
+  nextNumberByKind: Map<string, number>;
+}
+
+export interface CompileHookState {
+  inlineInserts?: InlineInsertsHookState;
+}
+
+export function createCompileHookState(): CompileHookState {
+  return {};
+}
+
 export interface CompileHookContext {
   guideName: string;
   filename: string;
@@ -7,6 +22,8 @@ export interface CompileHookContext {
   config: MdcpConfigInput;
   outputBasename?: string;
   sourceFile: string;
+  /** Mutable per-guide state shared across shard hook invocations during assemble. */
+  hookState?: CompileHookState;
 }
 
 export type CompileHook = (ctx: CompileHookContext) => string;
