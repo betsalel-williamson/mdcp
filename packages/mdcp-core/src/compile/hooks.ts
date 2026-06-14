@@ -21,7 +21,7 @@ export interface CompileHookContext {
   body: string;
   config: MdcpConfigInput;
   outputBasename?: string;
-  /** Absolute path to compiled guide output when compile.outputFile is set. */
+  /** Absolute path to the rendered document (per-guide output or monolith). */
   outputFile?: string;
   sourceFile: string;
   /** Absolute repo / scope root for resolving evidence paths (compile.scopeRoot). */

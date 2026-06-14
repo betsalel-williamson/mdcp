@@ -12,15 +12,14 @@ import {
   lineRangeFromText,
   symbolFromLabel,
 } from '../src/compile/hooks/code-evidence.js';
-import { assembleGuide } from '../src/compile/assemble.js';
+import { assembleGuide, compileGuides } from '../src/compile/assemble.js';
+import { resolveGuideLinkBase } from '../src/config/load.js';
 import { useTmpDir, withCwd } from './helpers/tmp-dir.js';
 
 const baseCtx = {
   guideName: 'review',
   filename: 'claim.md',
-  config: {
-    guides: [{ name: 'review', compile: { scopeRoot: '.', outputFile: 'architecture-review.md' } }],
-  } as never,
+  config: { guides: [{ name: 'review' }] } as never,
 };
 
 function runCodeEvidence(body: string, sourceFile: string, extra: object = {}) {
@@ -114,6 +113,45 @@ describe('codeEvidence — path rewrite for rendered output', () => {
       });
       expect(out).toContain('[`orgCount`](../functions/src/foo.ts#L1)');
       expect(out).not.toContain('../../functions/src/foo.ts');
+    });
+  });
+
+  it('rewrites evidence paths relative to monolith output by default', () => {
+    const functionsDir = join(work.path, 'functions', 'src');
+    const guideDir = join(work.path, 'docs', 'review');
+    mkdirSync(functionsDir, { recursive: true });
+    mkdirSync(guideDir, { recursive: true });
+    writeFileSync(join(functionsDir, 'foo.ts'), 'export const orgCount = 1;\n');
+    writeFileSync(join(guideDir, 'index.md'), '# Review\n\n- [Claim](./claim.md)\n');
+    writeFileSync(
+      join(guideDir, 'claim.md'),
+      'Evidence: [`orgCount`](../../functions/src/foo.ts)\n',
+    );
+
+    withCwd(work.path, () => {
+      const out = compileGuides({
+        guidesRoot: join(work.path, 'docs'),
+        compileOrder: ['review'],
+        cwd: work.path,
+        config: {
+          outputDir: 'docs',
+          outputFile: 'guides.md',
+          compileOrder: ['review'],
+        },
+        guides: [{ name: 'review', compile: { hooks: ['codeEvidence'] } }],
+      });
+      expect(out).toContain('[`orgCount`](../functions/src/foo.ts#L1)');
+      expect(out).not.toContain('../../functions/src/foo.ts');
+    });
+  });
+
+  it('resolveGuideLinkBase prefers per-guide output over monolith', () => {
+    withCwd(work.path, () => {
+      expect(
+        resolveGuideLinkBase({ outputDir: 'docs', outputFile: 'guides.md' }, work.path, {
+          outputFile: 'architecture-review.md',
+        }),
+      ).toBe(join(work.path, 'architecture-review.md'));
     });
   });
 

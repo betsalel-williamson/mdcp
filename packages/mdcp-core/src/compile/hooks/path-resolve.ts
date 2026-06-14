@@ -8,7 +8,7 @@ export function defaultSearchRoots(): string[] {
 
 export function hookSearchRoots(
   ctx: Pick<CompileHookContext, 'guideName' | 'config'>,
-  configKey: 'codeEvidence' | 'inlineInserts' | 'reviewLinks',
+  configKey: 'inlineInserts' | 'reviewLinks',
 ): string[] {
   const roots = defaultSearchRoots();
   const guideCfg = ctx.config.guides?.find((g) => g.name === ctx.guideName);

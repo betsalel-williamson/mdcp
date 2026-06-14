@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, relative } from 'node:path';
 import type { CompileHook } from '../hooks.js';
-import { hookSearchRoots, resolveRelativeFile } from './path-resolve.js';
+import { defaultSearchRoots, resolveRelativeFile } from './path-resolve.js';
 
 const MD_LINK_RE = /\[([^\]]*)\]\(([^)]+)\)/g;
 
@@ -43,6 +43,12 @@ export function symbolFromLabel(label: string): string | null {
   if (!stripped || lineRangeFromText(stripped)) return null;
   if (!IDENT_RE.test(stripped)) return null;
   return stripped;
+}
+
+function evidenceSearchRoots(scopeRoot?: string): string[] {
+  const roots = defaultSearchRoots();
+  if (scopeRoot) roots.push(scopeRoot);
+  return roots;
 }
 
 function lineForSymbol(filePath: string, symbol: string): string | null {
@@ -110,8 +116,7 @@ function rewriteEvidenceLink(
 
 export const codeEvidenceHook: CompileHook = (ctx) => {
   const guideDir = dirname(ctx.sourceFile);
-  const searchRoots = hookSearchRoots(ctx, 'codeEvidence');
-  if (ctx.scopeRoot) searchRoots.push(ctx.scopeRoot);
+  const searchRoots = evidenceSearchRoots(ctx.scopeRoot);
 
   return ctx.body.replace(MD_LINK_RE, (match, label: string, target: string) => {
     if (!isSourcePath(target.split('#')[0])) return match;
