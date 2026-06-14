@@ -2,9 +2,9 @@
 
 **Audience:** contributors and maintainers working on the mdcp monorepo.
 
-This guide covers local setup, package development, sharded documentation in `docs/`, changesets, and npm releases. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](docs/features/feature-catalog.md).
+This guide covers local setup, package development, sharded documentation in `docs/`, changesets, and npm releases. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](#feature-catalog).
 
-Contributors are expected to follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+Contributors are expected to follow the [Contributor Covenant Code of Conduct](#contributor-covenant-code-of-conduct).
 
 ## Local setup
 
@@ -149,16 +149,16 @@ This repo's documentation is sharded under [`docs/`](docs/). Shards are the **so
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
-Repo scripts use `--config docs/mdcp.config.json --cwd docs`: the config path is resolved from the **repo root** (invocation directory), while `--cwd docs` sets the shard tree root. See [Config essentials — path resolution](docs/client-cli/config-essentials.md#--config-vs---cwd-path-resolution).
+Repo scripts use `--config docs/mdcp.config.json --cwd docs`: the config path is resolved from the **repo root** (invocation directory), while `--cwd docs` sets the shard tree root. See [Config essentials — path resolution](README.md#--config-vs---cwd-path-resolution).
 
 The **features** compile (`docs/guides.md`) is for reading through the stitched doc during review — edit shards, not the generated file. It is not committed.
 
 ### Edit workflow
 
 1. Edit shard `.md` files under the relevant guide directory.
-2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](docs/features/manifest-compile-order.md) when using `compile.sectionsHeading`.
+2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](README.md#manifest-compile-order) when using `compile.sectionsHeading`.
 3. Run `pnpm docs:compile:repo` then `pnpm docs:check:repo`.
-4. Commit shard changes. Regenerated `docs/guides.md` and `docs/refs.json` are gitignored — CI and `pnpm docs:check` compile them locally. Commit [`DEVELOPERS.md`](DEVELOPERS.md) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
+4. Commit shard changes. Regenerated `docs/guides.md` and `docs/refs.json` are gitignored — CI and `pnpm docs:check` compile them locally. Commit [`DEVELOPERS.md`](#developer-guide) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
 
 ### Agent context
 
@@ -313,12 +313,12 @@ Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you 
 
 ### Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](SECURITY.md) for the supported-versions table — update that table when cutting a new minor line.
+Security fixes target the **latest minor** on npm. See [SECURITY.md](#security-policy) for the supported-versions table — update that table when cutting a new minor line.
 
 ### Related docs
 
 - [Publishing](#publishing) — first publish, Trusted Publishing, npm commands
-- [.changeset/README.md](.changeset/README.md) — quick changeset reference
+- [.changeset/README.md](#bwilliamsonmdcp-core-1) — quick changeset reference
 
 ## Publishing
 
@@ -434,4 +434,4 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
-See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+See [SECURITY.md](#security-policy) for vulnerability reporting.

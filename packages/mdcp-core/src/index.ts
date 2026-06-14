@@ -40,8 +40,18 @@ export {
   compileGuides,
   compileGuideResults,
   writeCompiledGuides,
+  buildGuideLinkIndex,
   type CompileOptionsInput,
+  type GuideLinkIndex,
+  type GuideLinkEntry,
+  type SectionFilesOptions,
 } from './compile/assemble.js';
+export {
+  rewriteCrossGuideFileLinks,
+  rewriteIntraGuideFileLinks,
+  slugForSectionFile,
+  type CrossGuideLinkRewriteOptions,
+} from './compile/publish-links.js';
 export {
   githubSlugify,
   buildSlugRegistry,

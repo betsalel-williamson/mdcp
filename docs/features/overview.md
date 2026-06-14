@@ -208,6 +208,6 @@ Details: [Design constraints](./design-constraints.md).
 - **Install and daily commands** — [Client CLI guide](../client-cli/index.md)
 - **Programmatic API** — [Client core guide](../client-core/index.md)
 - **Config fields** — [API — Config](../client-core/api-config.md)
-- **Compile hooks** — [Compile hooks](../client-core/compile-hooks.md)
+- **Compile hooks** — [Compile hooks overview](../client-core/compile-hooks/index.md)
 - **Contributing to this repo** — [Developer guide](../developer/index.md)
 - **Migrating from legacy scripts** — [Legacy migration](./legacy-migration.md)
