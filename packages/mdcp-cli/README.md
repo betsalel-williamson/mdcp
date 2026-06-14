@@ -334,22 +334,6 @@ mdcp compile
 mdcp check
 ```
 
-### Legacy script port map
-
-Repos that used custom `scripts/docs/` tooling (for example the [doubling-compound](https://github.com/Doubling-Inc/doubling-compound) pipeline) can replace scripts with MDCP commands and compile hooks:
-
-| Legacy script                                 | MDCP replacement                                                    |
-| --------------------------------------------- | ------------------------------------------------------------------- |
-| `compile-sections.js`                         | `mdcp compile` — order from manifest links                          |
-| `inline-diagrams.js`                          | **`inlineInserts`** compile hook (not `inlineDiagrams`)             |
-| `resolve-code-evidence.js`                    | **`codeEvidence`** compile hook                                     |
-| `rewrite-review-links.js`                     | **`reviewLinks`** compile hook + automatic cross-guide link rewrite |
-| `write-sections-manifest.py` / `sections.txt` | Removed — list shards in `index.md` or `shards.md`                  |
-| `mdcp sections`                               | Removed — no separate manifest sync step                            |
-| `validate.sh` / link lint                     | `mdcp check --require-lint`                                         |
-
-Hook specs: [Compile hooks](#compile-hooks). Cross-monolith rewriting: [Cross-guide links](#cross-guide-link-rewriting).
-
 ### Guide manifests and compile order
 
 Compile order comes from link order in each guide's `index.md` or `shards.md`. List shards in the manifest in the order you want them stitched.
@@ -358,9 +342,9 @@ When a manifest has preamble prose with example inline links (not section shards
 
 After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — there is no separate manifest sync step.
 
-### Unified output layout
+### Output layout
 
-MDCP 0.2.0 uses an NPM-style two-root layout. Full breaking-change table: [Legacy migration — unified output layout](#unified-output-layout-breaking).
+MDCP uses an NPM-style two-root layout. Full breaking-change table for upgrades from earlier releases: [Legacy migration — unified output layout](#unified-output-layout-breaking).
 
 | Concept          | Default                            | Notes                                                                    |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------ |
@@ -372,11 +356,22 @@ MDCP 0.2.0 uses an NPM-style two-root layout. Full breaking-change table: [Legac
 
 Path resolution details: [Config essentials — path layout](#path-layout).
 
-**Preserve pre-0.2.0 layout temporarily:** set `"outputDir": "."`, `"outputFile": "guides.md"`, `"refs": { "registryFile": "refs.json" }` explicitly.
+### Compile hooks
 
-### Compound-style config sketch
+Register hooks per guide in `guides[].compile.hooks`:
 
-Multi-guide consumer repos typically set per-guide publish targets and explicit hooks:
+| Hook            | Purpose                                                               |
+| --------------- | --------------------------------------------------------------------- |
+| `stripAnchors`  | Remove explicit heading anchor markers from shard bodies              |
+| `inlineInserts` | Inline diagram, table, figure, and media catalog shards on first link |
+| `codeEvidence`  | Resolve evidence links to GitHub line-number fragments                |
+| `reviewLinks`   | Rewrite review links; optional hooksConfig.reviewLinks.targetMonolith |
+
+Cross-guide `.md` links rewrite automatically from `compileOrder` and per-guide `compile.outputFile`. Hook specs: [Compile hooks](#compile-hooks). Cross-monolith rewriting: [Cross-guide links](#cross-guide-link-rewriting).
+
+### Multi-guide config
+
+Multi-guide repos typically set per-guide publish targets, `sectionsHeading`, and hooks:
 
 ```json
 {
@@ -411,32 +406,27 @@ Multi-guide consumer repos typically set per-guide publish targets and explicit 
 }
 ```
 
-Notes:
-
-- Use **`inlineInserts`**, not `inlineDiagrams` — diagram catalog inlining is handled by the `inlineInserts` hook ([#14](https://github.com/betsalel-williamson/mdcp/issues/14)).
-- Cross-guide `.md` links rewrite automatically from `compileOrder` and per-guide `compile.outputFile`; `reviewLinks` handles monolith-specific review link targets when configured.
 - `compile.scopeRoot` helps resolve shard-relative paths in nested guide trees (for example `review/outcomes/FIND-004.md`).
 - Publish paths like `../packages/foo/README.md` resolve from `outputDir` (`_build`).
 
 ### Steps for a new consumer repo
 
 1. Add `mdcp.config.json` to your docs shard directory
-2. Replace local compile scripts with repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](#--config-vs---docs-root))
-3. Replace validate scripts with `npx @bwilliamson/mdcp-cli check --require-lint`
+2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](#--config-vs---docs-root))
+3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
 4. Use `mdcp refs lookup` for cross-link slugs (no ``)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
-Full maintainer migration map: [Legacy migration](#legacy-migration).
+Maintainer port map from earlier MDCP layouts: [Legacy migration](#legacy-migration).
 
 ### Verification checklist
 
-After migrating, confirm parity before merging:
+After setting up a consumer repo:
 
 1. **`mdcp compile`** — per-guide outputs under `_build/` (or explicit `compile.outputFile` targets); optional monolith when `outputFile` is set
 2. **`mdcp check --require-lint`** — orphans, xrefs, markdownlint on in-scope guide shards only
 3. **`mdcp check --require-vale`** — when Vale is configured
 4. **Hook output** — diagram tables inlined (`inlineInserts`), code evidence blocks resolved (`codeEvidence`), cross-monolith links rewritten (no raw `../other-guide/shard.md` in compiled output)
-5. **External QA** — re-run the consumer [migration QA ledger](https://github.com/Doubling-Inc/doubling-compound/blob/main/docs/features/docs-pipeline/mdcp-migration-qa.md) against published `@bwilliamson/mdcp-cli@0.2.0`
 
 ## LLM collaboration
 
