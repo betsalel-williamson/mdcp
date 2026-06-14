@@ -217,14 +217,15 @@ This workflow is how the mdcp project itself was bootstrapped: an early prompt a
 
 Full port map: [Legacy migration](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/legacy-migration.md).
 
-### Two-tier doc layout
+### Three-tier doc layout
 
-Split documentation the way the original bootstrap prompt described:
+Split documentation into three guides:
 
-| Guide directory                        | Audience                   | Typical content                                                          |
-| -------------------------------------- | -------------------------- | ------------------------------------------------------------------------ |
-| `docs/features/`                       | Maintainers, coding agents | What the feature does, design constraints, API surface                   |
-| `docs/client/` or `docs/client-guide/` | End users                  | How to use the feature; persona and skill level in `about-this-guide.md` |
+| Guide directory   | Audience                   | Typical content                                                    |
+| ----------------- | -------------------------- | ------------------------------------------------------------------ |
+| `docs/features/`  | Maintainers, coding agents | What the product does — capabilities, design, API surface          |
+| `docs/developer/` | Maintainers, contributors  | How to work on the repo — setup, layout, tests, releases           |
+| `docs/client/`    | End users                  | How to use the product; persona and scope in `about-this-guide.md` |
 
 Each guide directory needs:
 
@@ -235,7 +236,7 @@ Each guide directory needs:
 
 After changing a guide's `index.md`, run `mdcp sections`. Never hand-edit generated `guides.md` or `refs.json`.
 
-**Worked example:** this repository dogfoods under [`docs/features/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/features) (tool capabilities) and [`docs/client-cli/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/client-cli) (consumer adoption), wired by [`docs/mdcp.config.json`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.config.json). For a minimal fixture, see [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
+**Worked example:** this repository dogfoods under [`docs/features/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/features) (tool capabilities), [`docs/developer/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/developer) (repo development), and [`docs/client-cli/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/client-cli) (consumer adoption), wired by [`docs/mdcp.config.json`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.config.json). For a minimal fixture, see [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
 
 ### Bootstrap prompt (copy-paste)
 
@@ -248,40 +249,37 @@ For the feature: {{FEATURE}}
 
 The end user for client docs is: {{PERSONA}}
 
-I am setting up a docs-as-code pipeline for my project's Markdown documentation. You are an expert coder, expert tech writer, and expert UX designer. I want to evaluate my code into feature docs, followed by creating client-level docs. Split my docs into maintainable shards and use static analysis to enforce quality.
+Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, then write:
 
-**Use mdcp — do not generate custom compile or lint scripts.**
+- feature docs under `docs/features/` (what the product does)
+- developer docs under `docs/developer/` (how to maintain and develop the repo)
+- end-user docs under `docs/client/`
+  Use mdcp commands only — do not create custom compile or lint scripts.
 
-Install and wire:
-
-1. **mdcp toolchain** — Add dev dependencies:
+1. **Install** dev dependencies:
    `npm install -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets markdownlint-cli2 @vvago/vale`
-   Copy the starter config from
-   https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json
-   into `docs/mdcp.config.json`. Point `lint.markdownlint` at the preset JSONC files from `@bwilliamson/mdcp-presets`.
 
-2. **npm scripts** — Add to package.json:
+2. **Config** — Copy https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json to `docs/mdcp.config.json`. Update `compileOrder`, `guides`, and `vale.scanGlobs` for your guides. Set `lint.markdownlint` to the preset files in `node_modules/@bwilliamson/mdcp-presets/`. Copy `.vale.ini` from the same sample-guides directory.
+
+3. **npm scripts** — Add to `package.json`:
    - `docs:compile` → `mdcp compile --config docs/mdcp.config.json --cwd docs`
    - `docs:check` → `mdcp check --config docs/mdcp.config.json --cwd docs --require-lint`
    - `docs:context` → `mdcp export --llm --stdout --config docs/mdcp.config.json --cwd docs`
    - `docs:refs` → `mdcp refs lookup`
 
-3. **Two guide directories** under `docs/`:
-   - `docs/features/` — maintainer and agent docs for this feature
-   - `docs/client/` (or `docs/client-guide/`) — end-user guide; open with `about-this-guide.md` stating the persona above
-     Each guide: `index.md`, `sections.txt`, and topic shards. Register both guides in `mdcp.config.json` `compileOrder` and `guides`.
+4. **Guide layout** — Under `docs/`:
+   - `docs/features/` — product capabilities, design, and API surface
+   - `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
+   - `docs/client/` — end-user guide; open with `about-this-guide.md` stating the persona above
+     Each guide: `index.md`, `sections.txt`, and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
 
-4. **Vale** — Add `.vale.ini` under `docs/`. Ask me for 3 examples of ambiguous domain terms, then write custom Vale rules that warn when authors confuse them.
-
-5. **Do not create** `shard.sh`, `compile_sections.py`, `lint-xrefs.py`, `validate.sh`, or hand-maintained explicit heading-id markers. Use `mdcp shard`, `mdcp compile`, `mdcp check`, and `mdcp refs lookup` instead.
-
-6. **Write the docs** — After shards exist:
+5. **Write and validate** — After shards exist:
    - `mdcp sections --config docs/mdcp.config.json --cwd docs`
-   - `mdcp compile --config docs/mdcp.config.json --cwd docs`
-   - `mdcp check --config docs/mdcp.config.json --cwd docs --require-lint`
-     Fix any xref, orphan, or lint errors before finishing.
+   - `npm run docs:compile`
+   - `npm run docs:check`
+     Fix xref, orphan, and lint errors before finishing.
 
-Cross-links: run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)` in a shard. The slug must match **compiled** output, not the shard alone.
+**Cross-links:** Run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)`. The slug must match **compiled** output, not the shard alone.
 ```
 
 ### Toolchain integration
@@ -299,12 +297,12 @@ mdcp exposes a **tool-agnostic contract**: agents need shell access and the abil
 }
 ```
 
-| Tool                                         | How mdcp fits                                                                                                                                                                                                                                                                                                                                                                |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Cursor / Composer**                        | Paste the bootstrap prompt in Agent or Composer. `@`-reference shard files under `docs/features/` or `docs/client/` for local context. Run `npm run docs:check` before ending a turn. Optional: copy [examples/agent-rules/docs-as-code.mdc](https://github.com/betsalel-williamson/mdcp/blob/main/examples/agent-rules/docs-as-code.mdc) into your repo's `.cursor/rules/`. |
-| **Gemini CLI** (and similar terminal agents) | Start a session with `npm run docs:context` output as context, or instruct the agent to run it. Agent edits shards only — never `guides.md`. Verify with `npm run docs:check`.                                                                                                                                                                                               |
-| **Generic CI / headless agents**             | Same npm scripts. `mdcp check` exit code is the quality gate.                                                                                                                                                                                                                                                                                                                |
-| **Any agent writing links**                  | `npm run docs:refs -- "topic"` or `mdcp refs lookup "topic" --format json` before inserting cross-links.                                                                                                                                                                                                                                                                     |
+| Tool                                         | How mdcp fits                                                                                                                                                                                                                                                                                                                                                                                    |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Cursor / Composer**                        | Paste the bootstrap prompt in Agent or Composer. `@`-reference shard files under `docs/features/`, `docs/developer/`, or `docs/client/` for local context. Run `npm run docs:check` before ending a turn. Optional: copy [examples/agent-rules/docs-as-code.mdc](https://github.com/betsalel-williamson/mdcp/blob/main/examples/agent-rules/docs-as-code.mdc) into your repo's `.cursor/rules/`. |
+| **Gemini CLI** (and similar terminal agents) | Start a session with `npm run docs:context` output as context, or instruct the agent to run it. Agent edits shards only — never `guides.md`. Verify with `npm run docs:check`.                                                                                                                                                                                                                   |
+| **Generic CI / headless agents**             | Same npm scripts. `mdcp check` exit code is the quality gate.                                                                                                                                                                                                                                                                                                                                    |
+| **Any agent writing links**                  | `npm run docs:refs -- "topic"` or `mdcp refs lookup "topic" --format json` before inserting cross-links.                                                                                                                                                                                                                                                                                         |
 
 For npm script stubs only, see [Agent integration](#agent-integration).
 
@@ -315,7 +313,7 @@ Use these after the pipeline exists.
 **Add documentation for a new feature:**
 
 ```markdown
-Add shards for feature "{{FEATURE}}" under `docs/features/` and an end-user section under `docs/client/`.
+Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
 Update each guide's `index.md`, run `mdcp sections`, then `mdcp compile` and `mdcp check --require-lint`.
 Use `mdcp refs lookup` for every cross-link. Do not edit `guides.md` by hand.
 ```
