@@ -1,5 +1,13 @@
 # @bwilliamson/mdcp-core
 
+## 0.1.2
+
+### Patch Changes
+
+- Support mixed monolith and per-guide publish outputs: guides with `compile.outputFile` write to a separate path and are excluded from the monolith; guides without `outputFile` still compile into `guides.md`. Add optional `compile.includeBanner` per guide (defaults to false when `outputFile` is set).
+
+  `mdcp sections` now writes guide-relative paths in `sections.txt` (regenerated from `index.md`) instead of absolute filesystem paths.
+
 ## 0.1.1
 
 ### Patch Changes
