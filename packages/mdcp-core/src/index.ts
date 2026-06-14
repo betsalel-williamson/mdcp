@@ -16,6 +16,7 @@ export {
   guideScanDirs,
   shardLintPaths,
   xrefScanDirs,
+  resolveGuideOutputPath,
 } from './config/load.js';
 export {
   demoteHeadings,
