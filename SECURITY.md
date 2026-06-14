@@ -6,6 +6,8 @@
 | ------- | --------- |
 | 0.1.x   | Yes       |
 
+Update this table when a new minor line is published. Versioning policy: [docs/VERSIONING.md](docs/VERSIONING.md).
+
 ## Reporting a vulnerability
 
 Please report security issues privately — do not open a public GitHub issue for undisclosed vulnerabilities.

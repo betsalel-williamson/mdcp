@@ -25,6 +25,8 @@
     "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run docs:check",
     "changeset": "changeset",
     "changeset:status": "changeset status --since=origin/main",
+    "release:tag": "node scripts/release-tag.mjs",
+    "release:tag:push": "node scripts/release-tag.mjs --push",
     "prepare": "husky"
   },
   "engines": {

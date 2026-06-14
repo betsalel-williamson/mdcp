@@ -65,7 +65,15 @@ npm trust github @bwilliamson/mdcp-presets --file release.yml --repo betsalel-wi
 
 ### Step 3 — Future releases via CI
 
-Once Trusted Publishing is configured, [`.github/workflows/release.yml`](./.github/workflows/release.yml) publishes on Changesets merges to `main` using OIDC (no `NPM_TOKEN`).
+Tag a release from an **interactive terminal** on `main`; CI publishes when the tag is pushed:
+
+```bash
+pnpm release:tag:push
+```
+
+You will choose patch / minor / major / build and confirm by typing the version. Agents and CI cannot run this script.
+
+Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` tags**). See [docs/VERSIONING.md](./docs/VERSIONING.md).
 
 ## Trusted Publishing notes
 
@@ -75,9 +83,17 @@ Once Trusted Publishing is configured, [`.github/workflows/release.yml`](./.gith
 
 ## Release workflow
 
-Automated via [`.github/workflows/release.yml`](./.github/workflows/release.yml) when Changesets merge to `main`.
+1. Merge PRs with changesets to `main`.
+2. Run **`pnpm release:tag:push`** on `main` (applies changesets, tags `vX.Y.Z`, pushes).
+3. [`.github/workflows/release.yml`](./.github/workflows/release.yml) publishes to npm on tag push (OIDC, no `NPM_TOKEN`).
 
-Manual fallback (after first publish):
+Preview locally:
+
+```bash
+pnpm release:tag --dry-run
+```
+
+Manual fallback (publish from your machine, not CI):
 
 ```bash
 pnpm run check
@@ -89,6 +105,17 @@ pnpm changeset publish
 ```
 
 Changesets config: [`.changeset/config.json`](./.changeset/config.json) — all three packages version together.
+
+## Versioning and release schedule
+
+Semver policy, bump rules, and the lightweight as-needed release cadence are documented in [docs/VERSIONING.md](./docs/VERSIONING.md).
+
+Summary:
+
+- **Pre-1.0** (`0.x.y`) — patch for fixes, minor for features, major for breaking changes
+- **Fixed versioning** — `@bwilliamson/mdcp-core`, `@bwilliamson/mdcp-cli`, and `@bwilliamson/mdcp-presets` always share the same version
+- **No calendar releases** — ship when ready via `pnpm release:tag:push`
+- **Contributors** — run `pnpm changeset` on PRs that touch published packages; CI enforces with `changeset:status`
 
 Before publishing a new package, dry-run tarball contents:
 

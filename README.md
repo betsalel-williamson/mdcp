@@ -233,7 +233,19 @@ Further reading:
 - [docs/FEATURES.md](docs/FEATURES.md) — feature catalog by persona and priority
 - [docs/design.md](docs/design.md) — design constraints and md-tree integration
 - [docs/PHASE2-MIGRATION.md](docs/PHASE2-MIGRATION.md) — migration from monolith or legacy scripts
+- [docs/VERSIONING.md](docs/VERSIONING.md) — semver policy and release schedule
 - [PUBLISH.md](PUBLISH.md) — npm publish workflow
+
+### Releasing a change
+
+If your PR touches `packages/mdcp-*` source or published configs, add a changeset before merge:
+
+```bash
+pnpm changeset
+pnpm changeset:status   # optional — verify before pushing
+```
+
+Maintainers release to npm from `main` with `pnpm release:tag:push` (interactive: patch/minor/major/build + typed confirmation → CI publishes). See [docs/VERSIONING.md](docs/VERSIONING.md).
 
 ## License
 
