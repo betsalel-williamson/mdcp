@@ -12,6 +12,7 @@ import {
   rewritePublishPathLinks,
 } from './publish-links.js';
 import type { GuideConfig, GuideConfigInput, MdcpConfigInput } from '../config/schema.js';
+import { resolveGuideLinkBase } from '../config/load.js';
 import type { PublishPathRewriteOptions } from './publish-links.js';
 
 const FILE_LINK_RE = /\[[^\]]*\]\(([^)]+\.md)(?:#[^)]*)?\)/g;
@@ -104,6 +105,8 @@ export interface AssembleGuideOptions {
   hooks?: string[];
   stripAnchors?: boolean;
   outputBasename?: string;
+  /** Absolute path to the rendered document (per-guide output or monolith). */
+  outputFile?: string;
   publishPathRewrite?: PublishPathRewriteOptions;
   config?: MdcpConfigInput;
 }
@@ -155,6 +158,8 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
         filename: name,
         config: options.config ?? ({} as MdcpConfigInput),
         outputBasename: options.outputBasename,
+        outputFile: options.outputFile,
+        scopeRoot: options.scopeRoot,
         sourceFile: filePath,
         hookState,
       },
@@ -223,6 +228,8 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
     const compile = cfg?.compile;
     const outputBasename = compile?.outputFile ? basename(compile.outputFile) : undefined;
 
+    const linkBase = resolveGuideLinkBase(options.config ?? {}, cwd, compile);
+
     const text = assembleGuide(guideDir, {
       manifest: compile?.manifest,
       scopeRoot: compile?.scopeRoot ? resolve(cwd, compile.scopeRoot) : undefined,
@@ -232,6 +239,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       hooks: compile?.hooks,
       stripAnchors: compile?.stripAnchors,
       outputBasename,
+      outputFile: linkBase,
       publishPathRewrite: compile?.publishPathRewrite,
       config: options.config,
     });

@@ -46,11 +46,6 @@ const GuideSchema = z.object({
       hooks: z.array(z.string()).optional(),
       hooksConfig: z
         .object({
-          codeEvidence: z
-            .object({
-              searchRoots: z.array(z.string()).optional(),
-            })
-            .optional(),
           reviewLinks: z
             .object({
               targetMonolith: z.string().optional(),

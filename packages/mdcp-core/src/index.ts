@@ -8,6 +8,7 @@ export {
 export {
   loadConfig,
   resolveOutputPath,
+  resolveGuideLinkBase,
   resolveRefsPath,
   resolveGuidesRoot,
   resolveGuideDir,

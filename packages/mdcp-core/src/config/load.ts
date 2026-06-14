@@ -30,6 +30,18 @@ export function resolveGuideDir(name: string, config: MdcpConfig, cwd: string): 
   return join(resolveGuidesRoot(config, cwd), name);
 }
 
+/** Absolute path to the rendered document readers open (per-guide output or monolith). */
+export function resolveGuideLinkBase(
+  config: { outputDir?: string; outputFile?: string },
+  cwd: string,
+  compile?: { outputFile?: string },
+): string {
+  if (compile?.outputFile) return resolve(cwd, compile.outputFile);
+  const outputDir = config.outputDir ?? '.';
+  const outputFile = config.outputFile ?? 'guides.md';
+  return resolveUnderOutputDir(cwd, outputDir, outputFile);
+}
+
 export function getGuideConfig(config: MdcpConfig, name: string): GuideConfig | undefined {
   return config.guides?.find((g) => g.name === name);
 }
