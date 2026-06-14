@@ -216,7 +216,7 @@ Architecture and technical review shards cite **repo source files** as evidence.
 1. Resolves **line ranges** from link text (for example `L6-L8`, `lines 12–15`, `:42`)
 2. Resolves **symbols** from the URL fragment (`file.ts#symbol`) or from the link label when no fragment is present (for example ``[`orgCount`](../../functions/src/foo.ts)``)
 3. Appends GitHub-style **`#L` fragments** (`#L6`, `#L6-L8`) to the link target
-4. When the guide has `compile.outputFile`, rewrites the target path to be **relative to the compiled output** so links work in the rendered monolith or publish file
+4. Rewrites the target path to be **relative to the rendered output** — the per-guide `compile.outputFile` when set, otherwise the monolith path (`outputDir` + `outputFile` from config)
 
 Pair with `compile.publishPathRewrite` when publish outputs need repo-root path normalization (for example `../../package.json` → `package.json`).
 
@@ -258,10 +258,9 @@ Source file lookup order:
 1. Relative to the current shard directory
 2. Relative to the shard parent directory
 3. `process.cwd()` and its parent
-4. `compile.scopeRoot` (when set on the guide)
-5. Optional `hooksConfig.codeEvidence.searchRoots`
+4. `compile.scopeRoot` (when set on the guide — same field used for manifest scoping)
 
-When `compile.outputFile` is set, the hook rewrites the link target path to a POSIX path **relative to the compiled output file**, preserving any `#L…` fragment added by the hook.
+When a source file is resolved, the hook rewrites the link target to a POSIX path **relative to the rendered output document**, preserving any `#L…` fragment added by the hook. No hook-specific config is required: shard-relative paths in source are resolved as written, then rebased for where the compiled file lands.
 
 #### codeEvidence exclusions
 
@@ -274,16 +273,26 @@ The hook **does not** transform:
 
 #### codeEvidence config
 
+Minimal setup — add the hook name. Path rewriting uses the monolith or per-guide output path automatically:
+
+```json
+{
+  "name": "architecture-review",
+  "compile": {
+    "hooks": ["stripAnchors", "codeEvidence"]
+  }
+}
+```
+
+When the guide publishes to its own file instead of the monolith, set `compile.outputFile` (paths are rebased to that file). When shards link across directories outside the guide tree, set `compile.scopeRoot` (typically `"."` for repo root) so manifest scoping and evidence lookup share one root:
+
 ```json
 {
   "name": "architecture-review",
   "compile": {
     "scopeRoot": ".",
     "outputFile": "architecture-review.md",
-    "hooks": ["stripAnchors", "codeEvidence"],
-    "hooksConfig": {
-      "codeEvidence": { "searchRoots": ["functions/src"] }
-    }
+    "hooks": ["stripAnchors", "codeEvidence"]
   }
 }
 ```
