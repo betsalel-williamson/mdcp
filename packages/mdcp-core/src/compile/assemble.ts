@@ -162,7 +162,7 @@ export interface CompileOptions {
   compileOrder: string[];
   banner?: string;
   guides?: GuideConfigInput[];
-  cwd?: string;
+  docsRoot?: string;
   config?: MdcpConfigInput;
 }
 
@@ -181,7 +181,7 @@ function resolveGuideDir(
 
 export function compileGuideResults(options: CompileOptions): CompileGuideResult[] {
   const guideConfigMap = new Map((options.guides ?? []).map((g) => [g.name, g]));
-  const docsRoot = options.cwd ?? process.cwd();
+  const docsRoot = options.docsRoot ?? process.cwd();
   const orderLen = options.compileOrder.length;
   const linkIndex = buildGuideLinkIndex(options, docsRoot);
 
@@ -260,7 +260,7 @@ export function writeCompiledGuides(
   monolithOutputPath?: string,
 ): { path: string; lines: number }[] {
   const results = compileGuideResults(options);
-  const docsRoot = options.cwd ?? process.cwd();
+  const docsRoot = options.docsRoot ?? process.cwd();
   const outputDir = options.config?.outputDir ?? '_build';
   const written: { path: string; lines: number }[] = [];
 

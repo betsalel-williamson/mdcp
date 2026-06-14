@@ -132,7 +132,7 @@ describe('codeEvidence — path rewrite for rendered output', () => {
       const out = compileGuides({
         guidesRoot: join(work.path, 'docs'),
         compileOrder: ['review'],
-        cwd: work.path,
+        docsRoot: work.path,
         config: {
           outputDir: 'docs',
           outputFile: 'guides.md',

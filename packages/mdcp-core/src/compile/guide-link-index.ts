@@ -62,7 +62,7 @@ function outputBasenameForGuide(
 /** Build a cross-guide link index from every guide in compileOrder. */
 export function buildGuideLinkIndex(
   options: CompileOptions,
-  cwd: string = options.cwd ?? process.cwd(),
+  cwd: string = options.docsRoot ?? process.cwd(),
 ): GuideLinkIndex {
   const guideConfigMap = new Map((options.guides ?? []).map((g) => [g.name, g]));
   const index: GuideLinkIndex = new Map();

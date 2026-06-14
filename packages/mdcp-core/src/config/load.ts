@@ -5,11 +5,6 @@ import { resolveUnderOutputDir, defaultGuideOutputFile } from './paths.js';
 
 export { defaultGuideOutputFile, resolveUnderOutputDir } from './paths.js';
 
-/** @deprecated Use resolveUnderOutputDir — all generated paths are outputDir-relative. */
-export function resolveGuideOutputPath(docsRoot: string, outputDir: string, file: string): string {
-  return resolveUnderOutputDir(docsRoot, outputDir, file);
-}
-
 export function loadConfig(configPath: string, configBase: string): MdcpConfig {
   const abs = resolve(configBase, configPath);
   if (!existsSync(abs)) {
@@ -31,11 +26,6 @@ export function resolveRefsPath(docsRoot: string, outputDir: string, file: strin
 /** Docs root — parent of guide shard directories (CLI `--docs-root`). */
 export function resolveDocsRoot(_config: MdcpConfig, docsRoot: string): string {
   return docsRoot;
-}
-
-/** @deprecated Alias for resolveDocsRoot. */
-export function resolveGuidesRoot(config: MdcpConfig, docsRoot: string): string {
-  return resolveDocsRoot(config, docsRoot);
 }
 
 export function resolveGuideDir(name: string, config: MdcpConfig, docsRoot: string): string {

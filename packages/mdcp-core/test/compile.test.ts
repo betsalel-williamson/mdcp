@@ -112,7 +112,7 @@ describe('compileGuides', () => {
         guidesRoot: work,
         compileOrder: ['main', 'publish'],
         banner: '<!-- banner -->\n\n',
-        cwd: work,
+        docsRoot: work,
         config: { outputDir: '.', outputFile: 'guides.md', compileOrder: ['main', 'publish'] },
         guides: [
           { name: 'main', splitLevel: 2 as const },
@@ -164,7 +164,7 @@ describe('compileGuides', () => {
       const opts = {
         guidesRoot: work,
         compileOrder: ['guide'],
-        cwd: work,
+        docsRoot: work,
         config: { outputDir: '.', compileOrder: ['guide'] },
         guides: [
           {
@@ -227,7 +227,7 @@ describe('compileGuides', () => {
       const opts = {
         guidesRoot: work,
         compileOrder: ['guide'],
-        cwd: work,
+        docsRoot: work,
         config: { outputDir: '.', compileOrder: ['guide'] },
         guides: [
           {
@@ -257,7 +257,7 @@ describe('compileGuides', () => {
       const out = compileGuides({
         guidesRoot: work,
         compileOrder: ['guide'],
-        cwd: work,
+        docsRoot: work,
         guides: [
           {
             name: 'guide',
@@ -412,7 +412,7 @@ describe('cli e2e', () => {
   it('mdcp compile exits 0 on sample-guides', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'compile', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE],
+      [CLI, 'compile', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toMatch(/guides\.md/);
@@ -422,7 +422,7 @@ describe('cli e2e', () => {
   it('mdcp refs lookup returns JSON matches', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'refs', 'lookup', 'admin', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE],
+      [CLI, 'refs', 'lookup', 'admin', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     const matches = JSON.parse(out);
@@ -433,7 +433,7 @@ describe('cli e2e', () => {
   it('mdcp check passes on sample-guides (core, no peer require)', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'check', '--config', SAMPLE_CONFIG, '--cwd', FIXTURE, '--skip-vale'],
+      [CLI, 'check', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE, '--skip-vale'],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toContain('mdcp check passed');

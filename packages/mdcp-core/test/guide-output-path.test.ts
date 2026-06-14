@@ -59,7 +59,7 @@ describe('writeCompiledGuides per-guide defaults', () => {
       const opts = {
         guidesRoot: work,
         compileOrder: ['glossary'],
-        cwd: work,
+        docsRoot: work,
         config: { outputDir: '_build', compileOrder: ['glossary'] },
         guides: [{ name: 'glossary', compile: { manifest: 'index.md' } }],
       };

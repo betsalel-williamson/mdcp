@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import {
   loadConfig,
   resolveOutputPath,
-  resolveGuidesRoot,
+  resolveDocsRoot,
   resolveGuideDir,
   getGuideConfig,
   guideScanDirs,
@@ -33,16 +33,10 @@ import {
 interface GlobalOpts {
   config: string;
   docsRoot?: string;
-  cwd?: string;
 }
 
 function getDocsRoot(opts: GlobalOpts): string {
-  const legacyCwd = opts.cwd;
-  if (legacyCwd && !opts.docsRoot) {
-    console.warn('mdcp: --cwd is deprecated; use --docs-root');
-    return legacyCwd;
-  }
-  return opts.docsRoot ?? legacyCwd ?? process.cwd();
+  return opts.docsRoot ?? process.cwd();
 }
 
 function getConfig(opts: GlobalOpts) {
@@ -80,11 +74,11 @@ function resolveLinkTarget(config: MdcpConfig, docsRoot: string): string | undef
 
 function compileOptions(config: MdcpConfig, docsRoot: string) {
   return {
-    guidesRoot: resolveGuidesRoot(config, docsRoot),
+    guidesRoot: resolveDocsRoot(config, docsRoot),
     compileOrder: config.compileOrder,
     banner: config.banner,
     guides: config.guides,
-    cwd: docsRoot,
+    docsRoot,
     config,
   };
 }
@@ -119,8 +113,7 @@ program
     'config file (relative to invocation directory)',
     'mdcp.config.json',
   )
-  .option('--docs-root <path>', 'docs root (guide shard directories)')
-  .option('--cwd <path>', 'deprecated alias for --docs-root');
+  .option('--docs-root <path>', 'docs root (guide shard directories)');
 
 program
   .command('compile')
@@ -311,7 +304,7 @@ program
       console.error('Config requires "source" for shard command');
       process.exit(1);
     }
-    const guidesRoot = resolveGuidesRoot(config, getDocsRoot(opts));
+    const guidesRoot = resolveDocsRoot(config, getDocsRoot(opts));
     const sourceFile = resolve(getDocsRoot(opts), config.source);
 
     const mappings = (config.guides ?? []).map((g) => {
