@@ -35,7 +35,7 @@ const GuideSchema = z.object({
       manifest: z.string().default('index.md'),
       /** When set, only links after this ## heading are used for sections.txt / compile order. */
       sectionsHeading: z.string().optional(),
-      /** Injected compile title as ## heading. */
+      /** Injected compile title as ## heading, followed by a blank line before the first section. */
       title: z.string().optional(),
       scopeRoot: z.string().optional(),
       /** Per-guide output path relative to --cwd (excluded from monolith). */

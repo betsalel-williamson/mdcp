@@ -134,7 +134,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
   });
 
   if (useTitle) {
-    parts.push(formatCompileTitle(useTitle), '');
+    parts.push(`${formatCompileTitle(useTitle)}\n\n`);
   } else {
     const h1 = extractGuideH1(indexText);
     if (h1) parts.push(h1);
