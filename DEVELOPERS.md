@@ -149,6 +149,8 @@ This repo's documentation is sharded under [`docs/`](docs/). Shards are the **so
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
+Repo scripts use `--config docs/mdcp.config.json --cwd docs`: the config path is resolved from the **repo root** (invocation directory), while `--cwd docs` sets the shard tree root. See [Config essentials — path resolution](docs/client-cli/config-essentials.md#--config-vs---cwd-path-resolution).
+
 The **features** compile (`docs/guides.md`) is for reading through the stitched doc during review — edit shards, not the generated file. It is not committed.
 
 ### Edit workflow
