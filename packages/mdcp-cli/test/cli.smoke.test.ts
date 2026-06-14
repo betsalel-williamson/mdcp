@@ -39,10 +39,10 @@ describe('cli smoke', () => {
   it('resolves --config from invocation cwd, not --cwd (#10)', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'sections', '--config', 'docs/mdcp.config.json', '--cwd', 'docs'],
+      [CLI, 'compile', '--config', 'docs/mdcp.config.json', '--cwd', 'docs'],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
-    expect(out).toMatch(/sections/);
+    expect(out).toMatch(/guides\.md|→/);
   });
 
   it('normalizes cwd-relative refs.registryFile under outputDir (#11)', () => {
@@ -50,8 +50,7 @@ describe('cli smoke', () => {
     try {
       const guide = join(docs, 'g');
       mkdirSync(guide, { recursive: true });
-      writeFileSync(join(guide, 'index.md'), '[intro](introduction.md)\n');
-      writeFileSync(join(guide, 'sections.txt'), 'introduction.md\n');
+      writeFileSync(join(guide, 'index.md'), '# Guide\n\n- [intro](introduction.md)\n');
       writeFileSync(join(guide, 'introduction.md'), '# Guide\n\n## Hello\n');
       writeFileSync(
         join(docs, 'mdcp.config.json'),

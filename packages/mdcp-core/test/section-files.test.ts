@@ -19,18 +19,6 @@ describe('sectionFiles', () => {
     expect(files).toEqual([resolve(work.path, '01-one.md'), resolve(work.path, '02-two.md')]);
   });
 
-  it('reads sections.txt when present', () => {
-    writeFileSync(join(work.path, 'index.md'), '# Guide\n');
-    writeFileSync(join(work.path, 'sections.txt'), 'b.md\na.md\n');
-    writeFileSync(join(work.path, 'a.md'), '# A\n');
-    writeFileSync(join(work.path, 'b.md'), '# B\n');
-
-    expect(sectionFiles(work.path)).toEqual([
-      resolve(work.path, 'b.md'),
-      resolve(work.path, 'a.md'),
-    ]);
-  });
-
   it('limits manifest links to text after sectionsHeading', () => {
     writeFileSync(
       join(work.path, 'index.md'),

@@ -12,6 +12,7 @@ export interface GuideDirEntry {
   name: string;
   dir: string;
   manifest?: string;
+  sectionsHeading?: string;
   scopeRoot?: string;
 }
 
@@ -20,7 +21,7 @@ export function checkOrphansForGuides(guides: GuideDirEntry[]): OrphanIssue[] {
   const registered = new Set<string>();
 
   for (const guide of guides) {
-    const { name, dir, manifest, scopeRoot } = guide;
+    const { name, dir, manifest, sectionsHeading, scopeRoot } = guide;
     if (!existsSync(dir)) {
       issues.push({
         type: 'missing_guide',
@@ -34,6 +35,7 @@ export function checkOrphansForGuides(guides: GuideDirEntry[]): OrphanIssue[] {
     try {
       files = sectionFiles(dir, {
         manifest,
+        sectionsHeading,
         scopeRoot: scopeRoot ? resolve(scopeRoot) : undefined,
       });
     } catch (e) {
@@ -62,7 +64,7 @@ export function checkOrphansForGuides(guides: GuideDirEntry[]): OrphanIssue[] {
     const { name, dir, manifest = 'index.md' } = guide;
     if (!existsSync(dir)) continue;
 
-    const skip = new Set([manifest, 'shards.md', 'sections.txt']);
+    const skip = new Set([manifest, 'shards.md']);
     const onDisk = readdirSync(dir).filter((n: string) => n.endsWith('.md') && !skip.has(n));
     for (const f of onDisk) {
       const rel = join(name, f);

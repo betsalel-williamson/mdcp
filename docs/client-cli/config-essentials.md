@@ -26,7 +26,7 @@ From the repository root, point at the config file and set the docs root separat
 
 ```bash
 # Equivalent manual invocation from repo root
-mdcp sections --config docs/mdcp.config.json --cwd docs
+mdcp compile --config docs/mdcp.config.json --cwd docs
 ```
 
 This resolves the config as `<repo>/docs/mdcp.config.json` and treats `docs/` as the shard tree root.
@@ -106,6 +106,22 @@ Minimal `mdcp.config.json`:
 ```
 
 Per-guide `compile.outputFile` writes a publish target (relative to `--cwd`) and excludes that guide from the monolith. Use `compile.includeBanner: false` for npm README outputs.
+
+### `sectionsHeading`
+
+When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading` to that heading. See [Manifest compile order](../features/manifest-compile-order.md) for behavior, examples, and when it is required.
+
+```json
+{
+  "name": "glossary",
+  "path": "glossary",
+  "compile": {
+    "title": "Compound glossary",
+    "sectionsHeading": "Sections",
+    "outputFile": "_build/compiled/glossary.md"
+  }
+}
+```
 
 ## Schema-only fields
 

@@ -36,14 +36,13 @@ describe('checkOrphansForGuides', () => {
 
   it('detects broken manifest entry', () => {
     const guide = setup();
-    writeFileSync(join(guide, 'sections.txt'), 'missing.md\n');
+    writeFileSync(join(guide, 'index.md'), '# G\n\n- [missing](./missing.md)\n');
     const issues = checkOrphansForGuides([{ name: 'guide', dir: guide }]);
     expect(issues.some((i) => i.type === 'broken_manifest')).toBe(true);
   });
 
-  it('resolves sections.txt paths relative to guide dir', () => {
+  it('resolves manifest links relative to guide dir', () => {
     const guide = setup();
-    writeFileSync(join(guide, 'sections.txt'), 'a.md\n');
     expect(sectionFiles(guide)).toEqual([resolve(guide, 'a.md')]);
   });
 });

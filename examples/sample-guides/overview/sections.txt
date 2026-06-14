@@ -1,3 +1,0 @@
-about-this-guide.md
-introduction.md
-coverage-and-where-to-look-coverage-and-where-to-look.md

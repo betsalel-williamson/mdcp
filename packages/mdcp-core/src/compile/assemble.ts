@@ -70,18 +70,7 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
   }
 
   const text = readFileSync(indexPath, 'utf-8');
-  const manifestPath = join(guideDir, 'sections.txt');
   const scopedText = manifestTextForSections(text, options.sectionsHeading);
-
-  if (existsSync(manifestPath)) {
-    return readFileSync(manifestPath, 'utf-8')
-      .split('\n')
-      .map((l: string) => l.trim())
-      .filter((l: string) => l && !l.startsWith('#'))
-      .map((l: string) =>
-        l.startsWith('/') || l.includes('/') ? resolve(guideDir, l) : join(guideDir, l),
-      );
-  }
 
   const resolved = resolveManifestPaths(guideDir, scopedText, options);
   if (resolved.length > 0) return resolved;

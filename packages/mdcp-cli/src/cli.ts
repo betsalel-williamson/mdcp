@@ -12,7 +12,6 @@ import {
   xrefScanDirs,
   compileGuides,
   writeCompiledGuides,
-  writeAllSectionsManifests,
   checkOrphansForGuides,
   genRefsFromCompiled,
   checkRefsRegistry,
@@ -105,18 +104,6 @@ program
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
     writeCompiled(config, opts.cwd);
-  });
-
-program
-  .command('sections')
-  .description('Regenerate sections.txt from index.md')
-  .action((_, cmd) => {
-    const opts = cmd.parent.opts() as GlobalOpts;
-    const config = getConfig(opts);
-    const results = writeAllSectionsManifests(guideEntries(config, opts.cwd));
-    for (const r of results) {
-      console.log(`${r.name}: ${r.count} sections`);
-    }
   });
 
 const refs = program.command('refs').description('Heading slug registry (JSON default)');
@@ -326,7 +313,6 @@ program
       preambleHeading,
     });
 
-    writeAllSectionsManifests(guideEntries(config, opts.cwd));
     console.log('Done. Edit shards and run: mdcp compile');
   });
 

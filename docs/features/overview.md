@@ -10,7 +10,7 @@ Large Markdown guides are hard to edit, diff, and link correctly. A single `READ
 
 MDCP inverts the workflow:
 
-1. **Authors edit shards** — one file per section, listed in `sections.txt` (or derived from `index.md`).
+1. **Authors edit shards** — one file per section, listed in the guide manifest (`index.md` or `shards.md`).
 2. **Compile stitches shards** — heading levels are normalized, preambles stripped, links rewritten.
 3. **Validation catches drift** — orphans, stale refs, bare cross-references, optional prose/style linters.
 4. **Export serves consumers** — full monolith for humans, token-stripped output for LLM context.
@@ -22,7 +22,7 @@ You never hand-maintain the compiled file. Shards are the source of truth; `guid
 | Term               | Meaning                                                                                                                                                       |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Shard**          | A single `.md` file that becomes part of a guide (for example `01-intro.md`).                                                                                 |
-| **Guide**          | A directory of shards plus a manifest (`index.md` or `shards.md`) and `sections.txt`. Named in `compileOrder`.                                                |
+| **Guide**          | A directory of shards plus a manifest (`index.md` or `shards.md`). Named in `compileOrder`.                                                                   |
 | **Monolith**       | The default compiled output (`outputFile`, usually `guides.md`) — all guides without their own `compile.outputFile`, stitched in `compileOrder`.              |
 | **Publish output** | A per-guide compiled file (for example `packages/mdcp-cli/README.md`) written instead of being included in the monolith.                                      |
 | **Refs registry**  | `refs.json` — GitHub-style slugs and semantic keys from compiled headings, used by `mdcp refs lookup`.                                                        |
@@ -57,7 +57,7 @@ Consumer details: [Config essentials](../client-cli/config-essentials.md). API: 
 flowchart TB
   subgraph author["Authoring layer"]
     shards["Shard .md files"]
-    index["index.md / sections.txt"]
+    index["index.md / shards.md"]
   end
 
   subgraph mdcp["MDCP"]
@@ -93,11 +93,11 @@ flowchart TB
   shards --> validate
 ```
 
-| Package                         | Role                                                                                                       |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `sections`, `shard`, `refs`, `export`, peer linter wrappers. |
-| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.                    |
-| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs for shard and compiled trees (not bundled; opt-in via config).                |
+| Package                         | Role                                                                                           |
+| ------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `shard`, `refs`, `export`, peer linter wrappers. |
+| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.        |
+| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs for shard and compiled trees (not bundled; opt-in via config).    |
 
 The CLI is a thin wrapper over core. Integrators (CI, editors, agents) can call core directly or shell out to the CLI.
 
@@ -109,8 +109,6 @@ Understanding this sequence explains why most commands exist:
   [optional] mdcp shard          Split a monolith into guide shards (md-tree)
            ↓
   Edit shards + index.md
-           ↓
-  mdcp sections                Regenerate sections.txt from manifest link order
            ↓
   mdcp compile                 Assemble monolith + publish outputs; rewrite links
            ↓
@@ -127,7 +125,7 @@ Understanding this sequence explains why most commands exist:
 
 For each guide in `compileOrder`, core:
 
-1. **Reads section files** — from `sections.txt`, or from link order in the manifest (`index.md` / `shards.md`). Optional `compile.sectionsHeading` limits which manifest links count.
+1. **Reads section files** — from link order in the manifest (`index.md` / `shards.md`). See [Manifest compile order](./manifest-compile-order.md) when the manifest mixes preamble example links with a `## Sections` list (`compile.sectionsHeading`).
 2. **Transforms each shard** — demotes headings to fit the guide level; strips `about-this-guide` preamble; runs named **compile hooks** (`stripAnchors`, `codeEvidence`, `inlineDiagrams`, `reviewLinks`, …).
 3. **Assembles the guide body** — injects optional `compile.title` as a `##` heading followed by a blank line, then concatenates sections in order. When the first shard’s top heading matches the title, that duplicate heading is stripped.
 4. **Rewrites links** — same-guide `./section.md` → in-document `#anchor`; optional `publishPathRewrite` for repo-root paths on publish outputs.
@@ -168,7 +166,6 @@ This repository dogfoods under `docs/`: the features guide compiles into `docs/g
 | Config load / path resolution   | `src/config/`               | all commands                    |
 | Section list + assemble + write | `src/compile/assemble.ts`   | `compile`                       |
 | Per-shard hooks                 | `src/compile/hooks/`        | (config-driven)                 |
-| Sections manifest               | `src/manifest/sections.ts`  | `sections`                      |
 | Shard split orchestration       | `src/shard/orchestrator.ts` | `shard`                         |
 | Slugs + refs registry           | `src/refs/`                 | `refs`                          |
 | Orphan validation               | `src/validate/orphans.ts`   | `check`                         |
@@ -182,7 +179,7 @@ Start with `assemble.ts` and `cli.ts` if you are tracing a compile from config t
 
 ### LLM authoring a new section
 
-Edit a shard → `mdcp sections` (if manifest links changed) → `mdcp refs lookup "topic"` while writing links → `mdcp check`.
+Edit a shard (and `index.md` if section membership changed) → `mdcp refs lookup "topic"` while writing links → `mdcp check`.
 
 ### Human PR review
 

@@ -42,11 +42,6 @@ export {
   type CompileOptionsInput,
 } from './compile/assemble.js';
 export {
-  writeSectionsManifest,
-  writeAllSectionsManifests,
-  type SectionsManifestEntry,
-} from './manifest/sections.js';
-export {
   githubSlugify,
   buildSlugRegistry,
   lookupHeadings,

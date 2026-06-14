@@ -4,10 +4,17 @@ Add `source` to your config pointing at your existing monolith, then:
 
 ```bash
 mdcp shard
-mdcp sections
 mdcp compile
 mdcp check
 ```
+
+## Guide manifests and compile order
+
+Compile order comes from link order in each guide's `index.md` or `shards.md`. List shards in the manifest in the order you want them stitched.
+
+When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` — see [Manifest compile order](../features/manifest-compile-order.md).
+
+After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — there is no separate manifest sync step.
 
 ## Steps for a new consumer repo
 
