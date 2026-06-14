@@ -17,6 +17,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "vale:sync": "mkdir -p examples/sample-guides/styles && cd examples/sample-guides && ../../node_modules/.bin/vale sync",
+    "verify:peers": "node_modules/.bin/markdownlint-cli2 --version && node_modules/.bin/vale --version",
+    "prepare:docs": "pnpm run verify:peers && pnpm run vale:sync",
     "docs:lint": "node packages/mdcp-cli/dist/cli.js lint --config mdcp.config.json --cwd examples/sample-guides --require-lint",
     "docs:prose": "node packages/mdcp-cli/dist/cli.js prose --config mdcp.config.json --cwd examples/sample-guides --require-vale",
     "docs:check": "node packages/mdcp-cli/dist/cli.js check --config mdcp.config.json --cwd examples/sample-guides --require-lint --require-vale",
