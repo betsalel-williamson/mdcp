@@ -45,9 +45,15 @@ function guideEntries(config: MdcpConfig, cwd: string) {
       name,
       dir: resolveGuideDir(name, config, cwd),
       manifest: cfg?.compile?.manifest,
+      sectionsHeading: cfg?.compile?.sectionsHeading,
       scopeRoot: cfg?.compile?.scopeRoot ? resolve(cwd, cfg.compile.scopeRoot) : undefined,
     };
   });
+}
+
+function valeMinAlertLevel(config: MdcpConfig, strictFlag?: boolean): string | undefined {
+  if (strictFlag) return 'error';
+  return config.vale?.strictMinAlertLevel;
 }
 
 function compileOptions(config: MdcpConfig, cwd: string) {
@@ -237,8 +243,9 @@ program
     const tool = findPeerBinary('vale', opts.cwd);
     const scanPaths = config.vale?.scanGlobs ?? guideEntries(config, opts.cwd).map((g) => g.dir);
     const valeConfig = config.vale?.config ?? '.vale.ini';
-    const args = proseOpts.strict
-      ? ['--config', valeConfig, '--minAlertLevel=error', ...scanPaths]
+    const minLevel = valeMinAlertLevel(config, proseOpts.strict);
+    const args = minLevel
+      ? ['--config', valeConfig, `--minAlertLevel=${minLevel}`, ...scanPaths]
       : ['--config', valeConfig, ...scanPaths];
     const r = runPeer(tool, { require: proseOpts.requireVale, cwd: opts.cwd, args });
     if (r.exitCode !== 0) process.exit(r.exitCode);
@@ -284,17 +291,21 @@ program
     const sourceFile = resolve(opts.cwd, config.source);
 
     const mappings = (config.guides ?? []).map((g) => {
+      if (g.source?.type === 'directory') {
+        return { name: g.name, directoryPath: g.source.path, splitLevel: g.splitLevel };
+      }
       if (g.source?.type === 'merge') {
         return {
           name: g.name,
           mergeH1Indices: g.source.parts.map((p) => p.fromH1Extract),
           demoteFirstH1InMerge: g.source.parts.map((p) => p.demoteFirstH1 ?? false),
+          splitLevel: g.splitLevel,
         };
       }
       if (g.source?.type === 'h1Extract') {
-        return { name: g.name, h1Index: g.source.index };
+        return { name: g.name, h1Index: g.source.index, splitLevel: g.splitLevel };
       }
-      throw new Error(`Guide ${g.name} needs h1Extract or merge source for shard`);
+      throw new Error(`Guide ${g.name} needs h1Extract, merge, or directory source for shard`);
     });
 
     const firstSource = config.guides?.[0]?.source;
@@ -384,10 +395,11 @@ program
       const vale = findPeerBinary('vale', opts.cwd);
       const scanPaths = config.vale?.scanGlobs ?? guideEntries(config, opts.cwd).map((g) => g.dir);
       const valeConfig = config.vale?.config ?? '.vale.ini';
+      const minLevel = valeMinAlertLevel(config, true) ?? 'error';
       const r = runPeer(vale, {
         require: checkOpts.requireVale,
         cwd: opts.cwd,
-        args: ['--config', valeConfig, '--minAlertLevel=error', ...scanPaths],
+        args: ['--config', valeConfig, `--minAlertLevel=${minLevel}`, ...scanPaths],
       });
       if (r.exitCode !== 0) failed = true;
     }
