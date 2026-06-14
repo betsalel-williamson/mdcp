@@ -384,17 +384,23 @@ describe('cli e2e', () => {
       ],
     });
 
-    expect(output).toContain('| Step  | Actor  |');
-    expect(output).toContain('| Code | Meaning     |');
+    expect(output).toContain('| Step | Actor  | Action');
+    expect(output).toContain('| Code | Meaning   |');
+    expect(output).toContain('flowchart LR');
+    expect(output).toContain('![MDCP logo](./logo.svg)');
+    expect(output).toContain('<audio src="./chime.mp3" controls></audio>');
     expect(output).toContain('[Request flow](#diagram-1-request-flow)');
     expect(output).toContain('[Status codes](#table-1-status-codes)');
     expect(output).toContain('#### Media 1. Walkthrough');
     expect(output).toContain('[Walkthrough](#media-1-walkthrough)');
-    expect(output.match(/\| Step {2}\| Actor {2}\|/g)?.length).toBe(1);
-    expect(output.match(/\| Code \| Meaning {5}\|/g)?.length).toBe(1);
+    expect(output).toContain('#### Figure 3. Raster formats');
+    expect(output).toContain('GitHub markdown media reference');
+    expect(output.match(/\| Step \| Actor {2}\| Action/g)?.length).toBe(1);
+    expect(output.match(/\| Code \| Meaning {3}\|/g)?.length).toBe(1);
     expect(output).not.toContain('](../diagrams/request-flow.md)');
     expect(output).not.toContain('](../tables/status-codes.md)');
     expect(output).not.toContain('](../media/walkthrough.md)');
+    expect(output).not.toContain('](../figures/raster-formats.md)');
   });
 
   it('mdcp compile exits 0 on sample-guides', () => {
