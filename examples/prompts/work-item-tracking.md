@@ -1,19 +1,26 @@
 # Work item tracking (prompt setup)
 
-Task-type prompts use **two replacements at the top** — edit those lines, then send the rest unchanged.
+Task-type prompts use a **Replace before sending** code block at the top — fill in the values, then send the rest unchanged.
 
-## Placeholders
+## Replace block
 
-| Placeholder            | Replace with                                                                   |
-| ---------------------- | ------------------------------------------------------------------------------ |
-| `{{WORK_ITEM}}`        | Ticket ID or URL — linked in the code review at the end                        |
-| `{{WORK_ITEM_LOOKUP}}` | Full setup: branch, sync, and how to load scope (CLI, MCP, or local spec path) |
+```text
+WORK_ITEM=
+WORK_ITEM_LOOKUP=
+```
 
-Everything below **Replace before sending** is static. The body refers to "the work item above" and "the lookup line above."
+Example:
+
+```text
+WORK_ITEM=39
+WORK_ITEM_LOOKUP=Branch from main (pull first). Run gh issue view 39 --comments.
+```
+
+The prompt body refers to `WORK_ITEM` and `WORK_ITEM_LOOKUP` by name. Everything below the code block is static.
 
 ## Lookup examples
 
-Paste one of these (or your own) into `{{WORK_ITEM_LOOKUP}}`:
+Paste into `WORK_ITEM_LOOKUP` (one line):
 
 **GitHub CLI**
 
@@ -53,13 +60,12 @@ Branch from main (pull first). Read .work-items/user-auth/user-story.md, design.
 
 ## Work item examples
 
-| Tracker | `{{WORK_ITEM}}` example                              |
-| ------- | ---------------------------------------------------- |
-| GitHub  | `39` or `https://github.com/org/repo/issues/39`      |
-| Linear  | `ENG-123`                                            |
-| GitLab  | `12` or full issue URL                               |
-| Notion  | Page URL or ID                                       |
-| Local   | `user-auth` (slug matching `.work-items/user-auth/`) |
+```text
+WORK_ITEM=39
+WORK_ITEM=https://github.com/org/repo/issues/39
+WORK_ITEM=ENG-123
+WORK_ITEM=user-auth
+```
 
 ## Delivery workflow
 

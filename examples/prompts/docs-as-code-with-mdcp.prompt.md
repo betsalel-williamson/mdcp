@@ -1,19 +1,21 @@
 # Docs-as-code bootstrap prompt (mdcp)
 
-Copy the block below into your coding agent. Fill in the two lines at the top, then send.
+Copy the block below into your coding agent. Fill in the code block at the top, then send.
 
 ---
 
 **Replace before sending:**
 
-- {{FEATURE}} — e.g. `user-authentication`
-- {{PERSONA}} — e.g. `npm package maintainers adopting mdcp`
+```text
+FEATURE=
+PERSONA=
+```
 
-Set up a sharded docs-as-code pipeline using **mdcp** for the feature above. Analyze this codebase, then write:
+Set up a sharded docs-as-code pipeline using **mdcp** for FEATURE above. Analyze this codebase, then write:
 
 - feature docs under `docs/features/` (what the product does)
 - developer docs under `docs/developer/` (how to maintain and develop the repo)
-- end-user docs under `docs/client/` — open with `about-this-guide.md` stating the persona above
+- end-user docs under `docs/client/` — open with `about-this-guide.md` stating PERSONA above
   Use mdcp commands only — do not create custom compile or lint scripts.
 
 1. **Install** dev dependencies:
@@ -32,7 +34,7 @@ Set up a sharded docs-as-code pipeline using **mdcp** for the feature above. Ana
 4. **Guide layout** — Under `docs/`:
    - `docs/features/` — product capabilities, design, and API surface
    - `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
-   - `docs/client/` — end-user guide; open with `about-this-guide.md` stating the persona above
+   - `docs/client/` — end-user guide; open with `about-this-guide.md` stating PERSONA above
      Each guide: `index.md` and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
 
 5. **Write and validate** — After shards exist:

@@ -4,21 +4,21 @@ Bootstrap and follow-up prompts for coding agents. For the value proposition, se
 
 ## Bootstrap prompt (copy-paste)
 
-Fill in the two **Replace before sending** lines, then paste into Cursor Agent, Composer, Gemini CLI, or any shell-capable coding agent.
+Fill in the **Replace before sending** code block, then paste into Cursor Agent, Composer, Gemini CLI, or any shell-capable coding agent.
 
 A standalone copy lives at [examples/prompts/docs-as-code-with-mdcp.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/docs-as-code-with-mdcp.prompt.md).
 
 ```markdown
 **Replace before sending:**
 
-- {{FEATURE}} — e.g. `user-authentication`
-- {{PERSONA}} — e.g. `npm package maintainers adopting mdcp`
+    FEATURE=
+    PERSONA=
 
-Set up a sharded docs-as-code pipeline using **mdcp** for the feature above. Analyze this codebase, then write:
+Set up a sharded docs-as-code pipeline using **mdcp** for FEATURE above. Analyze this codebase, then write:
 
 - feature docs under `docs/features/` (what the product does)
 - developer docs under `docs/developer/` (how to maintain and develop the repo)
-- end-user docs under `docs/client/` — open with `about-this-guide.md` stating the persona above
+- end-user docs under `docs/client/` — open with `about-this-guide.md` stating PERSONA above
   Use mdcp commands only — do not create custom compile or lint scripts.
 
 1. **Install** dev dependencies:
@@ -37,7 +37,7 @@ Set up a sharded docs-as-code pipeline using **mdcp** for the feature above. Ana
 4. **Guide layout** — Under `docs/`:
    - `docs/features/` — product capabilities, design, and API surface
    - `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
-   - `docs/client/` — end-user guide; open with `about-this-guide.md` stating the persona above
+   - `docs/client/` — end-user guide; open with `about-this-guide.md` stating PERSONA above
      Each guide: `index.md` and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
 
 5. **Write and validate** — After shards exist:
@@ -108,18 +108,25 @@ Prefer structured prompts over permanently importing rigid always-on rules into 
 
 ## Work item tracking
 
-Task-type prompts use **two replacements at the top** — edit those lines, then send the rest unchanged.
+Task-type prompts use a **Replace before sending** code block at the top:
 
-| Placeholder            | Replace with                                                                   |
-| ---------------------- | ------------------------------------------------------------------------------ |
-| `{{WORK_ITEM}}`        | Ticket ID or URL — linked in the code review at the end                        |
-| `{{WORK_ITEM_LOOKUP}}` | Full setup: branch, sync, and how to load scope (CLI, MCP, or local spec path) |
+```text
+WORK_ITEM=
+WORK_ITEM_LOOKUP=
+```
+
+Example:
+
+```text
+WORK_ITEM=39
+WORK_ITEM_LOOKUP=Branch from main (pull first). Run gh issue view 39 --comments.
+```
 
 Lookup examples (GitHub CLI, Linear MCP, local `.work-items/` specs): [examples/prompts/work-item-tracking.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/work-item-tracking.md).
 
 ## Task-type prompt templates
 
-Reusable templates for common work types. Each embeds a version-control workflow (feature branch, atomic commits, release notes, code review) and keeps **end-user value** front and center. Fill in the two **Replace before sending** lines at the top of each template.
+Reusable templates for common work types. Each embeds a version-control workflow (feature branch, atomic commits, release notes, code review) and keeps **end-user value** front and center. Fill in the code block at the top of each template.
 
 Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/README.md) (index of all templates).
 
@@ -130,12 +137,12 @@ Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-will
 ```markdown
 **Replace before sending:**
 
-- {{WORK_ITEM}} — e.g. `39` or `https://github.com/org/repo/issues/39`
-- {{WORK_ITEM_LOOKUP}} — e.g. `Branch from main (pull first). Run gh issue view 39 --comments.`
+    WORK_ITEM=
+    WORK_ITEM_LOOKUP=
 
 **Role:** Act as an expert Technical Writer.
 
-**Setup:** Follow the lookup line above. Treat loaded acceptance criteria as the scope boundary.
+**Setup:** Follow WORK_ITEM_LOOKUP above. Treat loaded acceptance criteria as the scope boundary.
 
 **Value focus:** Explicitly define the **end-user value** this documentation brings — how does it help the user understand or use the product? Keep this value front and center while writing.
 
@@ -147,7 +154,7 @@ Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-will
 - **Refactor & clean:** Remove deprecated references. Ensure docs reflect the current product, not old workflows.
 - **Validate:** Run `npm run docs:compile` and `npm run docs:check` until all gates pass.
 - **Wrap-up:** Record what changed in your release process (changeset, changelog, or tracker comment). Highlight old workflows that are no longer recommended.
-- **Finalize:** Open a code review (pull request, merge request, or equivalent), link the work item above, and request review.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link WORK_ITEM above, and request review.
 ```
 
 ### Design architecture task
@@ -157,12 +164,12 @@ Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-will
 ```markdown
 **Replace before sending:**
 
-- {{WORK_ITEM}} — e.g. `39` or `https://github.com/org/repo/issues/39`
-- {{WORK_ITEM_LOOKUP}} — e.g. `Branch from main (pull first). Run gh issue view 39 --comments.`
+    WORK_ITEM=
+    WORK_ITEM_LOOKUP=
 
 **Role:** Act as an expert Systems Architect.
 
-**Setup:** Follow the lookup line above. Treat loaded acceptance criteria as the scope boundary.
+**Setup:** Follow WORK_ITEM_LOOKUP above. Treat loaded acceptance criteria as the scope boundary.
 
 **Value focus:** Explicitly define the **end-user value** this architectural change unlocks (for example faster load times, higher reliability, or enabling a highly requested feature).
 
@@ -174,7 +181,7 @@ Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-will
 - **Refactor & clean:** Retire superseded design shards or ADRs. Ensure docs reflect the intended as-built architecture.
 - **Validate:** Run `npm run docs:compile` and `npm run docs:check`.
 - **Wrap-up:** Record architectural changes in your release process (changeset, changelog, or tracker note). Document old system behaviors or constraints that no longer apply.
-- **Finalize:** Open a code review (pull request, merge request, or equivalent), link the work item above, and request review.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link WORK_ITEM above, and request review.
 ```
 
 ### Feature-level task
@@ -184,12 +191,12 @@ Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-will
 ```markdown
 **Replace before sending:**
 
-- {{WORK_ITEM}} — e.g. `39` or `https://github.com/org/repo/issues/39`
-- {{WORK_ITEM_LOOKUP}} — e.g. `Branch from main (pull first). Run gh issue view 39 --comments.`
+    WORK_ITEM=
+    WORK_ITEM_LOOKUP=
 
 **Role:** Act as an expert Software Engineer.
 
-**Setup:** Follow the lookup line above. Treat loaded acceptance criteria as the scope boundary.
+**Setup:** Follow WORK_ITEM_LOOKUP above. Treat loaded acceptance criteria as the scope boundary.
 
 **Value focus:** Explicitly define the **end-user value** this feature provides. How will this make the user's life easier or better?
 
@@ -201,7 +208,7 @@ Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-will
 - **Refactor & clean:** Refactor code, pay down relevant tech debt, update shards to match as-built behavior, and remove stale references.
 - **Validate:** Run tests, then `npm run docs:compile` and `npm run docs:check`.
 - **Wrap-up:** Record what changed in your release process (changeset, changelog, or tracker comment). Detail any old behavior that no longer works.
-- **Finalize:** Open a code review (pull request, merge request, or equivalent), link the work item above, and request review.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link WORK_ITEM above, and request review.
 ```
 
 ### UX task
@@ -211,12 +218,12 @@ Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-will
 ```markdown
 **Replace before sending:**
 
-- {{WORK_ITEM}} — e.g. `39` or `https://github.com/org/repo/issues/39`
-- {{WORK_ITEM_LOOKUP}} — e.g. `Branch from main (pull first). Run gh issue view 39 --comments.`
+    WORK_ITEM=
+    WORK_ITEM_LOOKUP=
 
 **Role:** Act as an expert UX Designer and Frontend Engineer.
 
-**Setup:** Follow the lookup line above. Treat loaded acceptance criteria as the scope boundary.
+**Setup:** Follow WORK_ITEM_LOOKUP above. Treat loaded acceptance criteria as the scope boundary.
 
 **Value focus:** Explicitly define the **end-user value** this UI/UX change brings. Focus on reducing friction, improving accessibility, and creating a delightful user journey.
 
@@ -228,21 +235,21 @@ Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-will
 - **Refactor & clean:** Consolidate UI patterns. Update client-guide shards to match the as-built interface; remove references to old UI patterns.
 - **Validate:** Run component tests, then `npm run docs:compile` and `npm run docs:check`.
 - **Wrap-up:** Record visual and interactive changes in your release process (changeset, changelog, or tracker comment). Highlight old UI behaviors or workflows that no longer exist.
-- **Finalize:** Open a code review (pull request, merge request, or equivalent), link the work item above, and request review.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link WORK_ITEM above, and request review.
 ```
 
 ## Phase-specific structured prompts
 
-Short prompts for individual spec-flow phases. Each uses one or two **Replace before sending** lines at the top; the body stays static.
+Short prompts for individual spec-flow phases. Each uses a **Replace before sending** code block at the top; the body stays static.
 
 **User story (end-user value):**
 
 ```markdown
 **Replace before sending:**
 
-- {{FEATURE}} — e.g. `user-authentication`
+    FEATURE=
 
-Create a user story in `.work-items/[feature]/user-story.md` using the feature slug above.
+Create a user story in `.work-items/[feature]/user-story.md` using FEATURE above.
 Lead with end-user value: who benefits, what problem is solved, and how success is measured.
 Keep experience and outcomes here — defer API and implementation details to the design doc.
 ```
@@ -252,9 +259,9 @@ Keep experience and outcomes here — defer API and implementation details to th
 ```markdown
 **Replace before sending:**
 
-- {{FEATURE}} — e.g. `user-authentication`
+    FEATURE=
 
-Create a technical design in `.work-items/[feature]/design.md` using the feature slug above.
+Create a technical design in `.work-items/[feature]/design.md` using FEATURE above.
 Cover requirements, API contracts, data models, and edge cases.
 Link to the user story for value context. When design stabilizes, add or update shards under `docs/features/`.
 ```
@@ -264,9 +271,9 @@ Link to the user story for value context. When design stabilizes, add or update 
 ```markdown
 **Replace before sending:**
 
-- {{FEATURE}} — e.g. `user-authentication`
+    FEATURE=
 
-Create an implementation task list in `.work-items/[feature]/task.md` using the feature slug above.
+Create an implementation task list in `.work-items/[feature]/task.md` using FEATURE above.
 Break work into atomic steps with acceptance criteria and validation gates (`npm test`, `npm run docs:check`).
 Reference the design doc — do not expand scope beyond what the user story justifies.
 ```
@@ -276,10 +283,10 @@ Reference the design doc — do not expand scope beyond what the user story just
 ```markdown
 **Replace before sending:**
 
-- {{FEATURE}} — e.g. `user-authentication`
-- {{DECISION_QUESTION}} — e.g. `use JWT or session cookies?`
+    FEATURE=
+    DECISION_QUESTION=
 
-Evaluate the decision question above. Draft an ADR in `.work-items/[feature]/adr-[short-name].md`.
+Evaluate DECISION_QUESTION above. Draft an ADR in `.work-items/[feature]/adr-[short-name].md`.
 State context, options considered, decision, and consequences. When accepted, add a summary shard under `docs/features/`.
 ```
 
@@ -338,7 +345,7 @@ When reviewing an agent's documentation PR:
 - `npm run docs:check` passes locally and in CI
 - Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`
-- Task-type prompts fill in only `{{WORK_ITEM}}` and `{{WORK_ITEM_LOOKUP}}` at the top — see [Work item tracking](#work-item-tracking)
+- Task-type prompts fill in only the top code block (`WORK_ITEM`, `WORK_ITEM_LOOKUP`) — see [Work item tracking](#work-item-tracking)
 
 ## Legacy script port map
 

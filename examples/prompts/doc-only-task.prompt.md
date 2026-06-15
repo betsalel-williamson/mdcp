@@ -1,17 +1,19 @@
 # Doc-only task prompt (mdcp)
 
-Copy the block below into your coding agent. Fill in the two lines at the top, then send. Tracker examples: [work-item-tracking.md](./work-item-tracking.md).
+Copy the block below into your coding agent. Fill in the code block at the top, then send. Tracker examples: [work-item-tracking.md](./work-item-tracking.md).
 
 ---
 
 **Replace before sending:**
 
-- {{WORK_ITEM}} — e.g. `39` or `https://github.com/org/repo/issues/39`
-- {{WORK_ITEM_LOOKUP}} — e.g. `Branch from main (pull first). Run gh issue view 39 --comments.` · Linear MCP · read `.work-items/my-feature/` spec files
+```text
+WORK_ITEM=
+WORK_ITEM_LOOKUP=
+```
 
 **Role:** Act as an expert Technical Writer.
 
-**Setup:** Follow the lookup line above. Treat loaded acceptance criteria as the scope boundary.
+**Setup:** Follow WORK_ITEM_LOOKUP above. Treat loaded acceptance criteria as the scope boundary.
 
 **Value focus:** Explicitly define the **end-user value** this documentation brings — how does it help the user understand or use the product? Keep this value front and center while writing.
 
@@ -23,4 +25,4 @@ Copy the block below into your coding agent. Fill in the two lines at the top, t
 - **Refactor & clean:** Remove deprecated references. Ensure docs reflect the current product, not old workflows.
 - **Validate:** Run `npm run docs:compile` and `npm run docs:check` until all gates pass.
 - **Wrap-up:** Record what changed in your release process (changeset, changelog, or tracker comment). Highlight old workflows that are no longer recommended.
-- **Finalize:** Open a code review (pull request, merge request, or equivalent), link the work item above, and request review.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link WORK_ITEM above, and request review.

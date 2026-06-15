@@ -6,6 +6,6 @@
 
 Agents edit individual `.md` shards instead of a monolithic README. mdcp compiles shards into a single guide, validates cross-references, and exports token-stripped context (`mdcp export --llm`) for the next agent turn. No custom bash or Python compile scripts to maintain.
 
-**Get started:** copy the [bootstrap prompt](#bootstrap-prompt-copy-paste) below into Cursor Agent, Composer, Gemini CLI, or any shell-capable agent. Fill in the two **Replace before sending** lines at the top.
+**Get started:** copy the [bootstrap prompt](#bootstrap-prompt-copy-paste) below into Cursor Agent, Composer, Gemini CLI, or any shell-capable agent. Fill in the **Replace before sending** code block at the top.
 
 For depth on capabilities and design, read the [feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).
