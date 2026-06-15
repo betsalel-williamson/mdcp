@@ -1,98 +1,72 @@
 # Work item tracking (prompt setup)
 
-Task-type prompts in this directory use placeholders for **your** project-management stack. mdcp does not require a specific tracker — wire whichever tool your agent can reach.
+Task-type prompts use **two replacements at the top** — edit those lines, then send the rest unchanged.
 
 ## Placeholders
 
-| Placeholder       | Replace with                                                            |
-| ----------------- | ----------------------------------------------------------------------- |
-| `{{WORK_ITEM}}`   | Issue/ticket ID, URL, Linear issue key, Notion page, or local spec path |
-| `{{BASE_BRANCH}}` | Your team's integration branch (often `main` or `master`)               |
-| `{{FEATURE}}`     | Short feature slug (used in `.work-items/` paths and doc shards)        |
+| Placeholder            | Replace with                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| `{{WORK_ITEM}}`        | Ticket ID or URL — linked in the code review at the end                        |
+| `{{WORK_ITEM_LOOKUP}}` | Full setup: branch, sync, and how to load scope (CLI, MCP, or local spec path) |
 
-Paste a prompt, fill placeholders, then add **one** lookup instruction for your tracker (below).
+Everything below **Replace before sending** is static. The body refers to "the work item above" and "the lookup line above."
 
-## Option A — Shell CLI
+## Lookup examples
 
-**GitHub**
+Paste one of these (or your own) into `{{WORK_ITEM_LOOKUP}}`:
 
-```bash
-gh issue view 39 --comments
-# or: gh issue view https://github.com/org/repo/issues/39
+**GitHub CLI**
+
+```text
+Branch from main (pull first). Run gh issue view 39 --comments.
 ```
 
-**GitLab**
+**GitLab CLI**
 
-```bash
-glab issue view 12
+```text
+Branch from main (pull first). Run glab issue view 12.
 ```
 
-**Jira** (when `jira` CLI is configured)
+**Linear MCP**
 
-```bash
-jira issue view PROJ-123
+```text
+Branch from main (pull first). Use the Linear MCP to load issue ENG-123 (title, description, acceptance criteria, comments).
 ```
 
-In the prompt **Setup** line, tell the agent which command to run, for example:
+**Notion MCP**
 
-```markdown
-**Setup:** Branch from `main`. Run `gh issue view {{WORK_ITEM}} --comments` and treat it as the source of truth for scope.
+```text
+Branch from main (pull first). Use the Notion MCP to load page [page-id] and linked spec subpages.
 ```
 
-## Option B — MCP servers
+**GitHub MCP**
 
-When your agent has MCP tools enabled, prefer them over shell CLIs — they return structured data and respect auth already configured in the IDE.
-
-**Linear** — fetch the issue by ID or key:
-
-```markdown
-**Setup:** Branch from `main`. Use the Linear MCP to load issue {{WORK_ITEM}} (title, description, acceptance criteria, and comments).
+```text
+Branch from main (pull first). Use the GitHub MCP to load issue 39 including description and discussion.
 ```
 
-**Notion** — fetch a page or database row:
+**Local specs (no tracker)**
 
-```markdown
-**Setup:** Branch from `main`. Use the Notion MCP to load page {{WORK_ITEM}} and any linked spec subpages.
+```text
+Branch from main (pull first). Read .work-items/user-auth/user-story.md, design.md, and task.md as the scope contract.
 ```
 
-**GitHub** — via GitHub MCP instead of `gh`:
+## Work item examples
 
-```markdown
-**Setup:** Branch from `main`. Use the GitHub MCP to load issue {{WORK_ITEM}} including description and discussion.
-```
+| Tracker | `{{WORK_ITEM}}` example                              |
+| ------- | ---------------------------------------------------- |
+| GitHub  | `39` or `https://github.com/org/repo/issues/39`      |
+| Linear  | `ENG-123`                                            |
+| GitLab  | `12` or full issue URL                               |
+| Notion  | Page URL or ID                                       |
+| Local   | `user-auth` (slug matching `.work-items/user-auth/`) |
 
-Adapt tool names to whatever your MCP server exposes (`get_issue`, `get_page`, etc.).
+## Delivery workflow
 
-## Option C — Local spec files (no tracker)
-
-For greenfield work or air-gapped repos, the work item **is** the spec under `.work-items/`:
-
-```markdown
-**Setup:** Branch from `main`. Read `.work-items/{{FEATURE}}/user-story.md`, `design.md`, and `task.md` as the scope contract. Do not expand beyond them.
-```
-
-`@`-reference those files in Cursor, or paste their contents into the agent session.
-
-## Delivery workflow placeholders
-
-Task prompts also mention release notes and code review. Map these to your repo:
+Map wrap-up and finalize steps to your repo:
 
 | Prompt phrase         | Common equivalents                                        |
 | --------------------- | --------------------------------------------------------- |
 | changeset / changelog | Changesets, `CHANGELOG.md`, release-drafter, tracker note |
 | pull request / PR     | GitHub PR, GitLab MR, Gerrit change, Phabricator diff     |
 | atomic commits        | Conventional commits, signed commits, or team policy      |
-
-Example **Finalize** customization:
-
-```markdown
-**Finalize:** Open a merge request in GitLab, link {{WORK_ITEM}}, and request review from {{REVIEWERS}}.
-```
-
-## Composing a full Setup block
-
-Minimal template — copy into any task prompt:
-
-```markdown
-**Setup:** Create a feature branch from `{{BASE_BRANCH}}` (sync with remote first). Load work item {{WORK_ITEM}} using [your tracker: CLI, MCP, or `.work-items/` spec files]. Treat tracker acceptance criteria as the scope boundary.
-```

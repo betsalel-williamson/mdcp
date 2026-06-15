@@ -1,18 +1,19 @@
 # Docs-as-code bootstrap prompt (mdcp)
 
-Copy the block below into your coding agent. Replace `{{FEATURE}}` and `{{PERSONA}}`, then run.
+Copy the block below into your coding agent. Fill in the two lines at the top, then send.
 
 ---
 
-For the feature: {{FEATURE}}
+**Replace before sending:**
 
-The end user for client docs is: {{PERSONA}}
+- {{FEATURE}} — e.g. `user-authentication`
+- {{PERSONA}} — e.g. `npm package maintainers adopting mdcp`
 
-Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, then write:
+Set up a sharded docs-as-code pipeline using **mdcp** for the feature above. Analyze this codebase, then write:
 
 - feature docs under `docs/features/` (what the product does)
 - developer docs under `docs/developer/` (how to maintain and develop the repo)
-- end-user docs under `docs/client/`
+- end-user docs under `docs/client/` — open with `about-this-guide.md` stating the persona above
   Use mdcp commands only — do not create custom compile or lint scripts.
 
 1. **Install** dev dependencies:
