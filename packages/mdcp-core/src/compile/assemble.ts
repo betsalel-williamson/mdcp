@@ -1,6 +1,5 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
 import { readFileSync, existsSync } from 'node:fs';
-import { join, resolve, basename, dirname } from 'node:path';
+import { join, resolve, basename } from 'node:path';
 import { demoteHeadings, stripAboutThisGuideHeading, extractGuideH1 } from './headings.js';
 import { stripExplicitAnchorMarkers } from './anchors.js';
 import { extractFirstHeading, stripFirstHeadingLine, formatCompileTitle } from './compile-title.js';
@@ -22,6 +21,7 @@ import {
 } from '../config/load.js';
 import { resolveCompileHooks } from '../config/resolve-compile-hooks.js';
 import type { PublishPathRewriteOptions } from './publish-links.js';
+import { writeOutputFile, type WriteOutputBackupOptions } from './write-output.js';
 
 export { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
 export {
@@ -168,6 +168,7 @@ export interface CompileOptions {
   guides?: GuideConfigInput[];
   docsRoot?: string;
   config?: MdcpConfigInput;
+  backup?: WriteOutputBackupOptions;
 }
 
 /** Alias for partial compile options in tests and callers that omit Zod defaults. */
@@ -263,29 +264,29 @@ export function compileGuides(options: CompileOptions): string {
 export function writeCompiledGuides(
   options: CompileOptions,
   monolithOutputPath?: string,
-): { path: string; lines: number }[] {
+): { path: string; lines: number; backupPath?: string }[] {
   const results = compileGuideResults(options);
   const docsRoot = options.docsRoot ?? process.cwd();
   const outputDir = options.config?.outputDir ?? '_build';
-  const written: { path: string; lines: number }[] = [];
+  const writeCtx = { docsRoot, outputDir, backup: options.backup };
+  const written: { path: string; lines: number; backupPath?: string }[] = [];
 
   for (const r of results) {
     const outPath = resolveUnderOutputDir(docsRoot, outputDir, r.outputFile);
     let text = r.text;
     if (options.banner && r.includeBanner) text = options.banner + text;
-    mkdirSync(dirname(outPath), { recursive: true });
-    writeFileSync(outPath, text, 'utf-8');
-    written.push({ path: outPath, lines: text.split('\n').length });
+    const { backupPath } = writeOutputFile(outPath, text, writeCtx);
+    written.push({ path: outPath, lines: text.split('\n').length, backupPath });
   }
 
   const monolith = monolithResults(results);
   if (monolithOutputPath && monolith.length > 0) {
     const combined = applyMonolithBanner(options, results);
-    mkdirSync(dirname(monolithOutputPath), { recursive: true });
-    writeFileSync(monolithOutputPath, combined, 'utf-8');
+    const { backupPath } = writeOutputFile(monolithOutputPath, combined, writeCtx);
     written.push({
       path: monolithOutputPath,
       lines: combined.split('\n').length,
+      backupPath,
     });
   }
 

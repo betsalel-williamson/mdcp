@@ -57,6 +57,15 @@ export {
   type SectionFilesOptions,
 } from './compile/assemble.js';
 export {
+  writeOutputFile,
+  resolveBackupPath,
+  resolveBackupOptions,
+  DEFAULT_BACKUP_DIR,
+  type WriteOutputBackupOptions,
+  type WriteOutputContext,
+  type CliBackupOverrides,
+} from './compile/write-output.js';
+export {
   rewriteCrossGuideFileLinks,
   rewriteIntraGuideFileLinks,
   slugForSectionFile,
