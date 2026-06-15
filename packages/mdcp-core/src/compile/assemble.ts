@@ -20,6 +20,7 @@ import {
   resolveUnderOutputDir,
   effectiveGuideOutputFile,
 } from '../config/load.js';
+import { resolveCompileHooks } from '../config/resolve-compile-hooks.js';
 import type { PublishPathRewriteOptions } from './publish-links.js';
 
 export { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
@@ -201,7 +202,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       sectionsHeading: compile?.sectionsHeading,
       preambleSection: compile?.preambleSection,
       title: compile?.title,
-      hooks: compile?.hooks,
+      hooks: resolveCompileHooks(compile),
       stripAnchors: compile?.stripAnchors,
       outputBasename,
       outputFile: linkBase,

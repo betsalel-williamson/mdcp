@@ -5,11 +5,10 @@ import type { CompileHook, CompileHookState, InlineInsertsHookState } from '../h
 import { hookSearchRoots, resolveRelativeFile } from './path-resolve.js';
 
 /** Paths under shared insert libraries: diagrams/, tables/, figures/, media/, inserts/, etc. */
-const INSERT_LIBRARY_SEGMENT =
-  '(?:diagram|diagrams|table|tables|figure|figures|media|insert|inserts)';
+const INSERT_LIBRARY_DIR = '(?:diagrams?|tables?|figures?|media|inserts?)';
 
 const INSERT_LINK_RE = new RegExp(
-  `\\[([^\\]]*)\\]\\((\\.\\/)?([^)]*${INSERT_LIBRARY_SEGMENT}[^)]*\\.md)(?:#[^)]+)?\\)`,
+  `\\[([^\\]]*)\\]\\((?!https?:)((?:(?:\\.\\./)+|\\./)?${INSERT_LIBRARY_DIR}/[^)#\\s][^)]*\\.md(?:#[^)]+)?)\\)`,
   'gi',
 );
 
@@ -152,7 +151,7 @@ function findInsertLinks(body: string): InsertLinkRef[] {
       start: index,
       end: index + raw.length,
       label: match[1],
-      relPath: match[3],
+      relPath: match[2],
     });
   }
   return refs;

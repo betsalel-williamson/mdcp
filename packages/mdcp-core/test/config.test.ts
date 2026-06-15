@@ -35,6 +35,22 @@ describe('MdcpConfigSchema', () => {
     expect(cfg.guides?.[0].compile?.hooks).toContain('stripAnchors');
   });
 
+  it('parses object-form hook opt-out', () => {
+    const cfg = MdcpConfigSchema.parse({
+      compileOrder: ['glossary'],
+      guides: [
+        {
+          name: 'glossary',
+          compile: {
+            hooks: { codeEvidence: false, inlineInserts: false },
+          },
+        },
+      ],
+    });
+    const hooks = cfg.guides?.[0].compile?.hooks;
+    expect(hooks).toEqual({ codeEvidence: false, inlineInserts: false });
+  });
+
   it('rejects empty compileOrder', () => {
     expect(() => MdcpConfigSchema.parse({ compileOrder: [] })).toThrow();
   });
