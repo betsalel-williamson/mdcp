@@ -62,7 +62,7 @@ Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host rep
 
 ## Compile hooks (P2.2)
 
-Per-shard assembly via `guides[].compile.hooks` on [authored GFM](../glossary/index.md#gfm). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints.md#preprocessor-templating-out-of-scope).
+Per-shard assembly via `guides[].compile.hooks` on [authored GFM](../glossary/index.md#gfm). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
 
 Built-in hooks:
 
@@ -90,6 +90,6 @@ Built-in hooks:
 - [GFM](../glossary/index.md#gfm) only — no Pandoc, no required `{#heading-ids}`
 - md-tree for split only — custom compile
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
-- No preprocessor / templating — see [Design constraints](./design-constraints.md#preprocessor-templating-out-of-scope)
+- No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope)
 
-Details in [Design constraints](./design-constraints.md) and [Legacy migration](./legacy-migration.md).
+Details in [Design constraints](./design-constraints/index.md) and [Legacy migration](./legacy-migration.md).

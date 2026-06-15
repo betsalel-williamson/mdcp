@@ -11,5 +11,5 @@ Product documentation for **what mdcp is designed to do** — the docs-as-code p
   - [Personas and priority tiers](./personas-and-priority-tiers.md)
   - [Feature catalog](./feature-catalog.md)
   - [Manifest compile order](./manifest-compile-order.md)
-  - [Design constraints](./design-constraints.md)
+  - [Design constraints](./design-constraints/index.md)
   - [Legacy migration](./legacy-migration.md)

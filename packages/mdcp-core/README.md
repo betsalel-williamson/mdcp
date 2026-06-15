@@ -674,7 +674,7 @@ For index building, resolution rules, and multi-output layouts, see [Cross-guide
 ### Further reading
 
 - [Project README](https://github.com/betsalel-williamson/mdcp#readme)
-- [Design constraints](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints.md)
+- [Design constraints](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints/index.md)
 - [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
 
 ### License

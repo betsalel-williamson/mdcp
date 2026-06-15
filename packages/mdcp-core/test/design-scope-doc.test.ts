@@ -11,6 +11,7 @@ function readRepoDoc(...segments: string[]): string {
 
 const PREPROCESSOR_HEADING = 'Preprocessor / templating (out of scope)';
 const PREPROCESSOR_SLUG = 'preprocessor-templating-out-of-scope';
+const PREPROCESSOR_SHARD = 'docs/features/design-constraints/preprocessor-templating.md';
 const GLOSSARY_MANIFEST = '../glossary/index.md';
 
 const GUIDE_INDEXES = [
@@ -27,7 +28,9 @@ const COMPILED_GUIDES = [
 ] as const;
 
 describe('design scope documentation (#26)', () => {
-  const designConstraints = readRepoDoc('docs/features/design-constraints.md');
+  const designConstraintsIndex = readRepoDoc('docs/features/design-constraints/index.md');
+  const preprocessorShard = readRepoDoc(PREPROCESSOR_SHARD);
+  const gfmScopeShard = readRepoDoc('docs/features/design-constraints/gfm-scope.md');
   const featureCatalog = readRepoDoc('docs/features/feature-catalog.md');
   const compileHooks = readRepoDoc('docs/client-core/compile-hooks/index.md');
   const glossary = readRepoDoc('docs/glossary/index.md');
@@ -36,31 +39,42 @@ describe('design scope documentation (#26)', () => {
     expect(githubSlugify(PREPROCESSOR_HEADING)).toBe(PREPROCESSOR_SLUG);
   });
 
-  it('documents preprocessor and templating only in design constraints', () => {
-    expect(designConstraints).toMatch(/## Preprocessor \/ templating \(out of scope\)/);
-    expect(designConstraints).toContain(
+  it('shards design constraints with a manifest and section files', () => {
+    expect(designConstraintsIndex).toContain('# Design constraints');
+    expect(designConstraintsIndex).toContain('./preprocessor-templating.md');
+    expect(designConstraintsIndex).toContain('./gfm-scope.md');
+    expect(designConstraintsIndex).toContain('./md-tree-integration.md');
+  });
+
+  it('documents preprocessor and templating only in the preprocessor shard', () => {
+    expect(preprocessorShard).toMatch(/# Preprocessor \/ templating \(out of scope\)/);
+    expect(preprocessorShard).toContain(
       'preprocess (optional) → mdcp compile / check → postprocess (optional)',
     );
-    expect(designConstraints).toContain('{{variable}}');
-    expect(designConstraints).toContain('Handlebars');
-    expect(designConstraints).toContain('inlineInserts');
-    expect(designConstraints).toContain('Not compile hooks');
+    expect(preprocessorShard).toContain('{{variable}}');
+    expect(preprocessorShard).toContain('Handlebars');
+    expect(preprocessorShard).toContain('inlineInserts');
+    expect(preprocessorShard).toContain('Not compile hooks');
     expect(featureCatalog).not.toContain('{% if %}');
     expect(compileHooks).not.toContain('{{variables}}');
   });
 
   it('links scope topics from catalog and hooks without repeating the spec', () => {
-    expect(featureCatalog).toContain(`./design-constraints.md#${PREPROCESSOR_SLUG}`);
+    expect(featureCatalog).toContain(
+      `./design-constraints/preprocessor-templating.md#${PREPROCESSOR_SLUG}`,
+    );
     expect(featureCatalog).toContain('[authored GFM](../glossary/index.md#gfm)');
     expect(compileHooks).toContain('[authored GFM](../glossary/index.md#gfm)');
-    expect(compileHooks).toContain(`../../features/design-constraints.md#${PREPROCESSOR_SLUG}`);
+    expect(compileHooks).toContain(
+      `../../features/design-constraints/preprocessor-templating.md#${PREPROCESSOR_SLUG}`,
+    );
   });
 
   it('defines GFM and authored GFM in the shared glossary', () => {
     expect(glossary).toContain('## GFM');
     expect(glossary).toContain('## Authored GFM');
     expect(glossary).toContain('GitHub Flavored Markdown');
-    expect(designConstraints).toContain('[GFM](../glossary/index.md#gfm)');
+    expect(gfmScopeShard).toContain('[GFM](../../glossary/index.md#gfm)');
   });
 
   it('lists glossary in every guide manifest', () => {

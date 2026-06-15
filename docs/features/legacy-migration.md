@@ -41,7 +41,7 @@ This repository dogfoods the pattern under `docs/` — see [examples/sample-guid
 
 ## md-tree fork criteria
 
-Document in [Design constraints](./design-constraints.md) when:
+Document in [Design constraints](./design-constraints/fork-criteria.md) when:
 
 - `assemble` needs heading-transform hooks
 - `explode` needs preamble without synthetic H2
