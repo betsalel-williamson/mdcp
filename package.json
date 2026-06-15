@@ -1,7 +1,7 @@
 {
   "name": "mdcp-monorepo",
   "private": true,
-  "description": "MDCP — Markdown Command Line Interface Processor",
+  "description": "MDCP — MarkDown Context Protocol",
   "license": "MIT",
   "repository": {
     "type": "git",
