@@ -244,7 +244,7 @@ mdcp compile --config docs/mdcp.config.json --docs-root docs
 mdcp check --config docs/mdcp.config.json --docs-root docs
 ```
 
-`--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](#config-vs-docs-root).
+`--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](#--config-vs---docs-root).
 
 Global options (apply to every command):
 
@@ -346,6 +346,8 @@ When a manifest has preamble prose with example links, set `compile.sectionsHead
 ## Config essentials
 
 ### `--config` vs `--docs-root`
+
+> **Link target:** On GitHub, this section's anchor is `#--config-vs---docs-root` (not `#config-vs-docs-root`).
 
 These two global options answer different questions:
 
@@ -537,7 +539,7 @@ Every command accepts:
 mdcp compile --config docs/mdcp.config.json --docs-root docs
 ```
 
-`--config` locates the file from where the command runs; `--docs-root` sets the shard tree root. These bases are independent — see [Config essentials](#config-vs-docs-root).
+`--config` locates the file from where the command runs; `--docs-root` sets the shard tree root. These bases are independent — see [Config essentials](#--config-vs---docs-root).
 
 ### Daily workflow
 
@@ -618,7 +620,7 @@ After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — the
 
 ### Output layout
 
-MDCP uses an NPM-style two-root layout. Full breaking-change table for upgrades from earlier releases: [Legacy migration — unified output layout](../../docs/features/legacy-migration.md#unified-output-layout-breaking).
+MDCP uses an NPM-style two-root layout.
 
 | Concept          | Default                            | Notes                                                                    |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------ |
@@ -714,12 +716,12 @@ See [Cross-guide links](../mdcp-core/README.md#cross-guide-ignore-example-mixed-
 ### Steps for a new consumer repo
 
 1. Add `mdcp.config.json` to your docs shard directory
-2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](#config-vs-docs-root))
+2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](#--config-vs---docs-root))
 3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
 4. Use `mdcp refs lookup` for cross-link slugs (no ``)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
-Maintainer port map from earlier MDCP layouts: [Legacy migration](../../docs/features/legacy-migration.md). Upgrading from 0.3.x `reviewLinks` config: [reviewLinks removal](../../docs/features/legacy-migration.md#reviewlinks-removal-03x-next).
+Upgrade notes from earlier MDCP releases are in the package **changeset** files at release time, not in the feature catalog.
 
 ### Verification checklist
 
