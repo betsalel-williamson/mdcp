@@ -4,6 +4,16 @@ Copy-paste prompts for agents working with mdcp. Fill in the **Replace before se
 
 Each prompt assumes the agent can **plan from repo context** — inspect developer docs, scripts, and configuration rather than rely on vendor-specific commands baked into the template.
 
+## Workflow best practices
+
+Task-type prompts (`WORK_ITEM` + `WORK_ITEM_LOOKUP`) share these conventions:
+
+- **Branch first** — create a feature branch from updated `main` before shards, tests, or code
+- **One issue per branch** — stay focused on a single feature, design, or doc scope; do not mix unrelated work in one PR
+- **Current behavior in docs** — shards describe the product as it works now; removed or breaking behavior belongs in the **changeset**, not feature or client guides
+
+Point `WORK_ITEM_LOOKUP` at your repo's agent work-item tracking shard (this repo: [Agent work-item tracking](../../docs/developer/agent-work-item-tracking.md)).
+
 | Prompt                                                                       | Use when                                                     |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | [getting-started-with-mdcp.prompt.md](./getting-started-with-mdcp.prompt.md) | Bootstrapping a sharded docs pipeline in a consumer repo     |

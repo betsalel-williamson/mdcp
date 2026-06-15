@@ -52,4 +52,4 @@ Use mdcp commands only — do not create custom compile or lint scripts.
 
 **Cross-links:** Run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)`. The slug must match **compiled** output, not the shard alone.
 
-**Next steps:** After the pipeline exists, use task-type prompts from [examples/prompts/README.md](./README.md). Document work-item tracking once per repo under `docs/developer/` so agents know how to load tracker issues (see [Agent work-item tracking](../../docs/developer/agent-work-item-tracking.md) in the mdcp repo).
+**Next steps:** After the pipeline exists, use task-type prompts from [examples/prompts/README.md](./README.md). Each task uses one WORK_ITEM per branch — branch from updated `main` before editing. Document work-item tracking once per repo under `docs/developer/` so agents know how to load tracker issues (see [Agent work-item tracking](../../docs/developer/agent-work-item-tracking.md) in the mdcp repo).
