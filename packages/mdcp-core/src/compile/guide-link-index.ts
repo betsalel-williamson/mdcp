@@ -6,6 +6,7 @@ import { defaultGuideOutputFile } from '../config/paths.js';
 import type { CompileOptions } from './assemble.js';
 
 export interface GuideLinkEntry {
+  guideName: string;
   outputBasename: string;
   slug: string;
 }
@@ -89,7 +90,7 @@ export function buildGuideLinkIndex(
     for (const filePath of files) {
       const slug = slugByBasename.get(basename(filePath));
       if (!slug) continue;
-      index.set(filePath, { outputBasename, slug });
+      index.set(filePath, { guideName: name, outputBasename, slug });
     }
   }
 

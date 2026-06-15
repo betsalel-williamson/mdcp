@@ -38,6 +38,10 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
 
+### ignoreGuides
+
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
+
 ## Quick example
 
 ```typescript
@@ -120,11 +124,19 @@ Consumer path table: [Config essentials — path layout](#path-layout).
 
 Built-in hooks run by default when `compile.hooks` is omitted. See [Default compile hooks](#default-compile-hooks).
 
-- **Omitted** — run `DEFAULT_COMPILE_HOOKS` in order: `stripAnchors`, `codeEvidence`, `inlineInserts`, `reviewLinks`
+- **Omitted** — run `DEFAULT_COMPILE_HOOKS` in order: `stripAnchors`, `codeEvidence`, `inlineInserts`
 - **`string[]`** — explicit override; replaces defaults entirely (backward compatible)
 - **`Record<string, boolean>`** — opt out; keys with `false` remove that hook from defaults
 
-Optional per-hook settings: `compile.hooksConfig` (`reviewLinks.targetMonolith`, `inlineInserts.searchRoots`). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
+Optional per-hook settings: `compile.hooksConfig` (`inlineInserts.searchRoots`). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
+
+### `compile.crossGuideLinks`
+
+Assembly-time cross-guide link options on the **compiling** guide (not a compile hook):
+
+- **`ignoreGuides`** — `string[]` of guide names whose cross-guide shard links keep source `.md` paths instead of rewriting to monolith `#slug` targets
+
+See [Cross-guide link rewriting](#cross-guide-link-rewriting) and [ignoreGuides](#ignoreguides).
 
 ## API — Compile
 
@@ -205,7 +217,7 @@ Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → 
 
 ## Compile hooks
 
-Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (anchor stripping, cross-guide rewrite, intra-guide rewrite, optional `publishPathRewrite`) run after all hooks complete.
+Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, anchor stripping, intra-guide rewrite, optional `publishPathRewrite`) run around the hook pipeline.
 
 Hooks assemble [authored GFM](#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
 
@@ -222,7 +234,7 @@ assembleGuide (per guide)
   └─ stitch → stripAnchors (default) → intra-guide .md → publishPathRewrite
 ```
 
-**Guide link index** — built once per `compileGuideResults` from every guide in `compileOrder` (manifest sections plus transitively linked shards). Passed into hook context and the automatic cross-guide pass. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
+**Guide link index** — built once per `compileGuideResults` from every guide in `compileOrder` (manifest sections plus transitively linked shards). Used by the automatic cross-guide pass. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide skips monolith rewrite for listed targets. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
 
 **Per-guide hook state** — mutable `hookState` on `CompileHookContext` (for example `inlineInserts` counters and first-anchor map) shared across shard invocations within one guide compile.
 
@@ -250,17 +262,18 @@ Built-in hooks run **by default**. Omit `compile.hooks` for the common case. Opt
 
 ```json
 {
-  "name": "architecture-review",
+  "name": "glossary",
   "compile": {
     "scopeRoot": ".",
-    "outputFile": "architecture-review.md",
+    "outputFile": "glossary.md",
     "hooksConfig": {
-      "inlineInserts": { "searchRoots": ["diagrams"] },
-      "reviewLinks": { "targetMonolith": "architecture-review.md" }
+      "inlineInserts": { "searchRoots": ["diagrams"] }
     }
   }
 }
 ```
+
+Optional assembly-time cross-guide exceptions: `compile.crossGuideLinks.ignoreGuides` on the compiling guide — see [Cross-guide link rewriting](#cross-guide-link-rewriting).
 
 #### Opt out per hook
 
@@ -295,10 +308,9 @@ For manifest compile order and `compile.sectionsHeading`, see [Manifest compile 
 - **`stripAnchors`** — per shard (also default post-stitch). Removes explicit anchor markers.
 - **`codeEvidence`** — per shard. [codeEvidence](#codeevidence): repo source links → `#L` fragments.
 - **`inlineInserts`** — per shard. [inlineInserts](#inlineinserts): inline captioned insert libraries.
-- **Cross-guide rewrite** _(assembly)_ — per shard + post-stitch. [Cross-guide links](#cross-guide-link-rewriting): automatic from `compileOrder`.
-- **`reviewLinks`** — per shard. [reviewLinks](#reviewlinks): `targetMonolith` override for cross-guide targets.
+- **Cross-guide rewrite** _(assembly)_ — per shard before stitch. [Cross-guide links](#cross-guide-link-rewriting): automatic from `compileOrder`; optional `crossGuideLinks.ignoreGuides`.
 
-`stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly. Cross-guide rewrite runs automatically for multi-output layouts; `reviewLinks` applies `targetMonolith` when set in `hooksConfig`.
+`stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly.
 
 ## codeEvidence
 
@@ -587,11 +599,11 @@ Multi-output consumer repos compile separate monoliths (for example `glossary.md
 
 At compile time, MDCP:
 
-1. Builds a **guide link index** from every guide in `compileOrder` — each manifest-listed shard maps to its compiled `{outputBasename, slug}` (slug from the demoted first heading, same rules as intra-guide rewrite), plus shards linked transitively from section bodies
+1. Builds a **guide link index** from every guide in `compileOrder` — each manifest-listed shard maps to its compiled `{guideName, outputBasename, slug}` (slug from the demoted first heading, same rules as intra-guide rewrite), plus shards linked transitively from section bodies
 2. Rewrites **cross-guide** `.md` links per shard (using the shard path for relative resolution) before sections are stitched
 3. Rewrites **same-guide** `./section.md` links on the assembled body (intra-guide pass)
 
-Pair with `compile.publishPathRewrite` when publish outputs also need repo-root path normalization for non-markdown targets.
+This is an **assembly-time pass**, not a compile hook. Pair with `compile.publishPathRewrite` when publish outputs also need repo-root path normalization for non-markdown targets.
 
 ### Cross-guide link matching
 
@@ -601,6 +613,7 @@ A link is rewritten when **all** of the following hold:
 - Target path ends in `.md` (optional `#fragment`)
 - Target is not `http://`, `https://`, or `#…`
 - Target resolves to a shard registered in the guide link index
+- Target shard's guide is **not** listed in `compile.crossGuideLinks.ignoreGuides` on the compiling guide
 
 Same-guide `./section.md` links are handled by the intra-guide pass after assembly; cross-guide rewrite handles `../` and repo-scoped paths that point at another guide's shards.
 
@@ -620,6 +633,7 @@ When the resolved absolute path is in the guide link index:
 | Same compiled output as the compiling guide      | `#slug` or `#fragment` when the link includes a fragment                |
 | Different compiled output (`compile.outputFile`) | `{outputBasename}#slug` (for example `architecture-review.md#find-004`) |
 | Monolith output (no per-guide `outputFile`)      | `#slug`                                                                 |
+| Target guide in `ignoreGuides`                   | **unchanged** — keep source `.md` path (link to shard, not monolith)    |
 
 Finding shards (`FIND-*.md`) use the finding id from the filename (for example `#find-004`), not the parent outcomes section slug.
 
@@ -631,6 +645,7 @@ The pass **does not** transform:
 - Same-document `#fragment` links
 - Markdown links that do not resolve to an indexed shard
 - Non-markdown paths (handled by `codeEvidence` or left unchanged)
+- Links to shards in guides listed in `compile.crossGuideLinks.ignoreGuides`
 
 ### Cross-guide config
 
@@ -657,12 +672,34 @@ Minimal multi-output setup — index and rewrite run automatically from `compile
         "manifest": "shards.md",
         "outputFile": "architecture-review.md"
       }
+    },
+    {
+      "name": "technical-guide",
+      "path": "technical",
+      "compile": {
+        "scopeRoot": ".",
+        "outputFile": "technical-guide.md"
+      }
     }
   ]
 }
 ```
 
-Optional **`reviewLinks`** hook — same rewrite rules with an explicit override when every cross-guide link should target one monolith file (`hooksConfig.reviewLinks.targetMonolith`). Prefer assembly-time index rewrite when guides map to separate outputs; use `targetMonolith` for legacy single-file review layouts. See [reviewLinks](#reviewlinks).
+#### `compile.crossGuideLinks.ignoreGuides`
+
+Set on the **guide being compiled**. Guide names in this list keep source `.md` paths for cross-guide links instead of rewriting to that guide's monolith `#slug` target ([ignoreGuides](#ignoreguides)). Use when one compiled guide should link to live shard files for specific guides (for example technical reference docs that are not folded into a review bundle).
+
+```json
+{
+  "name": "glossary",
+  "compile": {
+    "outputFile": "glossary.md",
+    "crossGuideLinks": {
+      "ignoreGuides": ["technical-guide"]
+    }
+  }
+}
+```
 
 ### Cross-guide compile example
 
@@ -686,28 +723,37 @@ Compiled glossary output:
 See [FIND-004](architecture-review.md#find-004) in the architecture review.
 ```
 
-## reviewLinks
+### Cross-guide multi-target (three guides)
 
-Compile hook that delegates to the same cross-guide rewrite engine as the automatic assembly pass. Tests in `packages/mdcp-core/test/builtin-hooks.test.ts` cover the `targetMonolith` override.
+When one guide links to shards in **two or more** other guides, each link rewrites to that shard's own `compile.outputFile` independently.
 
-Runs by default. Set **`hooksConfig.reviewLinks.targetMonolith`** to force all resolved cross-guide links onto one output file (legacy consumer monoliths):
+Hub shard input (`glossary/terms.md`):
 
-```json
-{
-  "name": "glossary",
-  "compile": {
-    "hooksConfig": {
-      "reviewLinks": { "targetMonolith": "architecture-review.md" }
-    }
-  }
-}
+```markdown
+## Terms
+
+See [FIND-004](../review/outcomes/FIND-004.md) and [Deployment](../technical/deployment.md).
 ```
 
-When `targetMonolith` is set, indexed targets in other outputs are rewritten to `{targetMonolith}#slug` instead of their native `outputFile`. When omitted, the hook uses the guide link index (same behavior as the automatic per-shard pass).
+Compiled `glossary.md` (each target keeps its guide output):
 
-Opt out: `"hooks": { "reviewLinks": false }`. See [Default compile hooks](#default-compile-hooks).
+```markdown
+## Terms
 
-For index building, resolution rules, and multi-output layouts, see [Cross-guide link rewriting](#cross-guide-link-rewriting).
+See [FIND-004](architecture-review.md#find-004) and [Deployment](technical-guide.md#deployment).
+```
+
+### Cross-guide ignore example (mixed monolith and shard links)
+
+Same hub shard with `ignoreGuides: ["technical-guide"]` on the **glossary** guide:
+
+```markdown
+## Terms
+
+See [FIND-004](architecture-review.md#find-004) and [Deployment](../technical/deployment.md).
+```
+
+Review targets use the compiled monolith; ignored guides keep shard paths. Tests in `packages/mdcp-core/test/cross-guide-links.test.ts` cover index entries, per-link routing, `ignoreGuides`, and end-to-end compile.
 
 ## Related packages
 

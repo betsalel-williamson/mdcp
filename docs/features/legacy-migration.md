@@ -39,6 +39,14 @@ This repository dogfoods the pattern under `docs/` — see [examples/sample-guid
 
 **One guide = one subdirectory** of the docs root; `compileOrder` selects which folders compile. See [Config essentials — path layout](../client-cli/config-essentials.md#path-layout).
 
+## reviewLinks removal (0.3.x → next)
+
+- **`hooksConfig.reviewLinks.targetMonolith`** — remove; use per-guide `compile.outputFile` (assembly rewrites links automatically)
+- **`"hooks"` listing `reviewLinks`** or `{ "reviewLinks": false }` — remove; hook deleted; cross-guide rewrite is assembly-time
+- **Shard `.md` links for one guide** — `compile.crossGuideLinks.ignoreGuides` on the compiling guide; see [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md)
+
+`targetMonolith` has no one-for-one replacement. Legacy single-monolith layouts should adopt per-guide `compile.outputFile`, or list guides in `ignoreGuides` when compiled output must keep shard paths.
+
 ## md-tree fork criteria
 
 Document in [Design constraints](./design-constraints/fork-criteria.md) when:

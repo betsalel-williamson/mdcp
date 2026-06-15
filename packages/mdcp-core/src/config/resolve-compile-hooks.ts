@@ -1,12 +1,7 @@
 import type { GuideConfigInput } from './schema.js';
 
 /** Built-in compile hooks run when `compile.hooks` is omitted. */
-export const DEFAULT_COMPILE_HOOKS = [
-  'stripAnchors',
-  'codeEvidence',
-  'inlineInserts',
-  'reviewLinks',
-] as const;
+export const DEFAULT_COMPILE_HOOKS = ['stripAnchors', 'codeEvidence', 'inlineInserts'] as const;
 
 export type DefaultCompileHook = (typeof DEFAULT_COMPILE_HOOKS)[number];
 

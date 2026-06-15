@@ -22,6 +22,10 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](README.md#preprocessor-templating-out-of-scope).
 
+### ignoreGuides
+
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](README.md#cross-guide-link-rewriting).
+
 ## Local setup
 
 ### Requirements

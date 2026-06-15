@@ -12,5 +12,4 @@
   - [codeEvidence](./compile-hooks/code-evidence.md)
   - [inlineInserts](./compile-hooks/inline-inserts.md)
   - [Cross-guide link rewriting](./compile-hooks/cross-guide-links.md)
-  - [reviewLinks](./compile-hooks/review-links.md)
   - [Related packages](./related-packages.md)

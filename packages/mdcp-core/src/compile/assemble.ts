@@ -58,6 +58,8 @@ export interface AssembleGuideOptions {
   publishPathRewrite?: PublishPathRewriteOptions;
   config?: MdcpConfigInput;
   linkIndex?: GuideLinkIndex;
+  /** Guide names whose cross-guide shard links keep source `.md` paths. */
+  ignoreGuides?: string[];
 }
 
 export function assembleGuide(guideDir: string, options: AssembleGuideOptions = {}): string {
@@ -123,6 +125,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
         scopeRoot: options.scopeRoot,
         currentOutputBasename: options.outputBasename,
         linkIndex: options.linkIndex,
+        ignoreGuides: options.ignoreGuides,
       });
     }
 
@@ -209,6 +212,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       publishPathRewrite: compile?.publishPathRewrite,
       config: options.config,
       linkIndex,
+      ignoreGuides: compile?.crossGuideLinks?.ignoreGuides,
     });
 
     const includeBanner = compile?.includeBanner ?? false;

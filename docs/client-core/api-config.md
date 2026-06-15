@@ -42,8 +42,16 @@ Consumer path table: [Config essentials — path layout](../client-cli/config-es
 
 Built-in hooks run by default when `compile.hooks` is omitted. See [Default compile hooks](../features/default-compile-hooks.md).
 
-- **Omitted** — run `DEFAULT_COMPILE_HOOKS` in order: `stripAnchors`, `codeEvidence`, `inlineInserts`, `reviewLinks`
+- **Omitted** — run `DEFAULT_COMPILE_HOOKS` in order: `stripAnchors`, `codeEvidence`, `inlineInserts`
 - **`string[]`** — explicit override; replaces defaults entirely (backward compatible)
 - **`Record<string, boolean>`** — opt out; keys with `false` remove that hook from defaults
 
-Optional per-hook settings: `compile.hooksConfig` (`reviewLinks.targetMonolith`, `inlineInserts.searchRoots`). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
+Optional per-hook settings: `compile.hooksConfig` (`inlineInserts.searchRoots`). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
+
+## `compile.crossGuideLinks`
+
+Assembly-time cross-guide link options on the **compiling** guide (not a compile hook):
+
+- **`ignoreGuides`** — `string[]` of guide names whose cross-guide shard links keep source `.md` paths instead of rewriting to monolith `#slug` targets
+
+See [Cross-guide link rewriting](./compile-hooks/cross-guide-links.md) and [ignoreGuides](../glossary/index.md#ignoreguides).

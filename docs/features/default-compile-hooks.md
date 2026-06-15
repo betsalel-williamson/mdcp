@@ -1,13 +1,13 @@
 # Default compile hooks
 
-Built-in compile hooks run on every guide compile **without** listing hook names in config. Authors express intent in shard markdown (evidence links, insert libraries, cross-guide links); hook enablement is not a second manifest.
+Built-in compile hooks run on every guide compile **without** listing hook names in config. Authors express intent in shard markdown (evidence links, insert libraries); hook enablement is not a second manifest.
 
 ## Problem
 
 Consumer configs repeat the same hook array on every guide:
 
 ```json
-"hooks": ["stripAnchors", "codeEvidence", "inlineInserts", "reviewLinks"]
+"hooks": ["stripAnchors", "codeEvidence", "inlineInserts"]
 ```
 
 New hooks require doc churn and config edits across all guides. Most guides want the same defaults.
@@ -21,9 +21,10 @@ When `guides[].compile.hooks` is omitted, mdcp runs these hooks **in order** on 
 | `stripAnchors`  | Remove explicit heading anchor markers per shard; post-stitch strip uses `compile.stripAnchors` (default `true`) |
 | `codeEvidence`  | Rewrite repo source links to `#L` line fragments                                                                 |
 | `inlineInserts` | Inline captioned insert-library shards on first link                                                             |
-| `reviewLinks`   | Cross-guide link rewrite; honors `hooksConfig.reviewLinks.targetMonolith` when set                               |
 
-Hooks are no-ops when shard content does not match (no evidence links, no insert links, etc.). Cross-guide rewrite also runs automatically at assembly time; default-on `reviewLinks` ensures monolith override works without listing the hook when `targetMonolith` is configured.
+Hooks are no-ops when shard content does not match (no evidence links, no insert links, etc.).
+
+**Cross-guide link rewriting** is not a compile hook — it runs automatically at assembly time from `compileOrder` and per-guide `compile.outputFile`. Optional per-guide exceptions: `compile.crossGuideLinks.ignoreGuides`. See [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md).
 
 Custom hooks registered via `registerCompileHook` are **not** included in defaults — only built-in names above.
 
@@ -31,15 +32,28 @@ Custom hooks registered via `registerCompileHook` are **not** included in defaul
 
 ### Minimal (common case)
 
-Omit `compile.hooks`. Optional per-hook config still lives under `hooksConfig`:
+Omit `compile.hooks`. Optional per-hook config lives under `hooksConfig` (`inlineInserts.searchRoots`):
 
 ```json
 {
-  "name": "architecture-review",
+  "name": "glossary",
   "compile": {
-    "outputFile": "architecture-review.md",
-    "hooksConfig": {
-      "reviewLinks": { "targetMonolith": "architecture-review.md" }
+    "outputFile": "glossary.md"
+  }
+}
+```
+
+### Cross-guide exceptions (optional)
+
+Cross-guide link rewrite runs at assembly by default. To keep shard `.md` paths for specific target guides, set `compile.crossGuideLinks.ignoreGuides` on the compiling guide — see [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md):
+
+```json
+{
+  "name": "glossary",
+  "compile": {
+    "outputFile": "glossary.md",
+    "crossGuideLinks": {
+      "ignoreGuides": ["technical-guide"]
     }
   }
 }

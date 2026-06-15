@@ -1,6 +1,6 @@
 # Compile hooks
 
-Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (anchor stripping, cross-guide rewrite, intra-guide rewrite, optional `publishPathRewrite`) run after all hooks complete.
+Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, anchor stripping, intra-guide rewrite, optional `publishPathRewrite`) run around the hook pipeline.
 
 Hooks assemble [authored GFM](../glossary/index.md#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
 
@@ -17,7 +17,7 @@ assembleGuide (per guide)
   └─ stitch → stripAnchors (default) → intra-guide .md → publishPathRewrite
 ```
 
-**Guide link index** — built once per `compileGuideResults` from every guide in `compileOrder` (manifest sections plus transitively linked shards). Passed into hook context and the automatic cross-guide pass. See [Cross-guide link rewriting](./cross-guide-links.md).
+**Guide link index** — built once per `compileGuideResults` from every guide in `compileOrder` (manifest sections plus transitively linked shards). Used by the automatic cross-guide pass. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide skips monolith rewrite for listed targets. See [Cross-guide link rewriting](./cross-guide-links.md).
 
 **Per-guide hook state** — mutable `hookState` on `CompileHookContext` (for example `inlineInserts` counters and first-anchor map) shared across shard invocations within one guide compile.
 
@@ -45,17 +45,18 @@ Built-in hooks run **by default**. Omit `compile.hooks` for the common case. Opt
 
 ```json
 {
-  "name": "architecture-review",
+  "name": "glossary",
   "compile": {
     "scopeRoot": ".",
-    "outputFile": "architecture-review.md",
+    "outputFile": "glossary.md",
     "hooksConfig": {
-      "inlineInserts": { "searchRoots": ["diagrams"] },
-      "reviewLinks": { "targetMonolith": "architecture-review.md" }
+      "inlineInserts": { "searchRoots": ["diagrams"] }
     }
   }
 }
 ```
+
+Optional assembly-time cross-guide exceptions: `compile.crossGuideLinks.ignoreGuides` on the compiling guide — see [Cross-guide link rewriting](./cross-guide-links.md).
 
 ### Opt out per hook
 
@@ -90,7 +91,6 @@ For manifest compile order and `compile.sectionsHeading`, see [Manifest compile 
 - **`stripAnchors`** — per shard (also default post-stitch). Removes explicit anchor markers.
 - **`codeEvidence`** — per shard. [codeEvidence](./code-evidence.md): repo source links → `#L` fragments.
 - **`inlineInserts`** — per shard. [inlineInserts](./inline-inserts.md): inline captioned insert libraries.
-- **Cross-guide rewrite** _(assembly)_ — per shard + post-stitch. [Cross-guide links](./cross-guide-links.md): automatic from `compileOrder`.
-- **`reviewLinks`** — per shard. [reviewLinks](./review-links.md): `targetMonolith` override for cross-guide targets.
+- **Cross-guide rewrite** _(assembly)_ — per shard before stitch. [Cross-guide links](./cross-guide-links.md): automatic from `compileOrder`; optional `crossGuideLinks.ignoreGuides`.
 
-`stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly. Cross-guide rewrite runs automatically for multi-output layouts; `reviewLinks` applies `targetMonolith` when set in `hooksConfig`.
+`stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly.
