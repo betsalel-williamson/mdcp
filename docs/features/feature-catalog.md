@@ -62,7 +62,9 @@ Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host rep
 
 ## Compile hooks (P2.2)
 
-Per-shard transforms via `guides[].compile.hooks`. Built-in hooks:
+Per-shard transforms via `guides[].compile.hooks`. Hooks are **documentation assembly** transforms on authored GFM — not a general preprocessor or template engine. Variable substitution, `{% if %}` blocks, and macro-style includes belong in a separate pipeline stage; see [Preprocessor / templating](./design-constraints.md#preprocessor--templating-out-of-scope).
+
+Built-in hooks:
 
 - **`stripAnchors`** — removes `{#anchor}` markers (also default via `compile.stripAnchors`)
 - **`codeEvidence`** — rewrites repo source links to `#L` line fragments (symbol or line range in link text); rebases paths for the rendered output automatically. See [codeEvidence](../client-core/compile-hooks/code-evidence.md).
@@ -88,5 +90,6 @@ Per-shard transforms via `guides[].compile.hooks`. Built-in hooks:
 - GFM only — no Pandoc, no required `{#heading-ids}`
 - md-tree for split only — custom compile
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
+- No preprocessor / templating — wire `preprocess → mdcp → postprocess` in the consumer repo
 
 Details in [Design constraints](./design-constraints.md) and [Legacy migration](./legacy-migration.md).
