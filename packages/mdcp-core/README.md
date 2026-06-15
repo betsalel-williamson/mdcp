@@ -515,7 +515,7 @@ Compiled fragment (first guide mention):
 See [Request flow](#diagram-1-request-flow) again in prose.
 ```
 
-Example fixture: [`examples/sample-guides/inserts-demo/`](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides/inserts-demo). See [GitHub media reference](https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/inserts-demo/github-media-help.md) for a format matrix (PNG, JPEG, GIF, SVG, MP4, MP3/WAV, Mermaid, tables, lists) and minimal generated sample assets under `figures/` and `media/`.
+Example fixture: [`examples/sample-guides/inserts-demo/`](../../../examples/sample-guides/inserts-demo/). See [GitHub media reference](#github-markdown-media-reference) for a format matrix (PNG, JPEG, GIF, SVG, MP4, MP3/WAV, Mermaid, tables, lists) and minimal generated sample assets under `figures/` and `media/`.
 
 **Figure with embedded image** — shard `figures/component-map.md`:
 
@@ -673,8 +673,8 @@ For index building, resolution rules, and multi-output layouts, see [Cross-guide
 
 ### Further reading
 
-- [Project README](https://github.com/betsalel-williamson/mdcp#readme)
-- [Design constraints](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints/index.md)
+- [Project README](#changesets)
+- [Design constraints](#developer-guide-1)
 - [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
 
 ### License
