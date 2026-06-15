@@ -12,5 +12,6 @@ Each prompt assumes the agent can **plan from repo context** — inspect develop
 | [design-architecture-task.prompt.md](./design-architecture-task.prompt.md) | RFCs, ADRs, and data models before implementation            |
 | [feature-level-task.prompt.md](./feature-level-task.prompt.md)             | Feature work with docs-first scope and repo test conventions |
 | [ux-task.prompt.md](./ux-task.prompt.md)                                   | UI flows, accessibility, and client-guide updates            |
+| [phase-spec-flow.prompt.md](./phase-spec-flow.prompt.md)                   | User story, design, task breakdown, and ADR phases           |
 
-Published copies and inline versions also appear in the [LLM collaboration](https://github.com/betsalel-williamson/mdcp/blob/main/docs/client-cli/llm-collaboration.md) consumer guide.
+Consumer guide index (workflow, layout, review): [LLM collaboration](https://github.com/betsalel-williamson/mdcp/blob/main/docs/client-cli/llm-collaboration.md).
