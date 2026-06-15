@@ -8,6 +8,7 @@ dist/
 # MDCP temp / cache
 .compile-build/
 .shard-work/
+.caches/
 *.llm.md
 
 # Tooling auto-save / local state
