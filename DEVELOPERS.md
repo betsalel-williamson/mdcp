@@ -332,7 +332,7 @@ Security fixes target the **latest minor** on npm. See [SECURITY.md](#security-p
 ### Related docs
 
 - [Publishing](#publishing) — first publish, Trusted Publishing, npm commands
-- [.changeset/README.md](#bwilliamsonmdcp-core-1) — quick changeset reference
+- [.changeset/README.md](#agent-prompt-templates) — quick changeset reference
 
 ## Publishing
 

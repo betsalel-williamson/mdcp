@@ -14,7 +14,7 @@ For depth on capabilities and design, read the [feature catalog](https://github.
 
 ## LLM collaboration
 
-Bootstrap and follow-up prompts for coding agents. For the value proposition, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
+Bootstrap and follow-up prompts for coding agents. For the value proposition, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents). Standalone copies live under [examples/prompts/](https://github.com/betsalel-williamson/mdcp/tree/main/examples/prompts).
 
 ### Bootstrap prompt (copy-paste)
 
@@ -86,6 +86,189 @@ Use `mdcp refs lookup` to correct broken fragment links.
 I updated `index.md` in guide `{{GUIDE_NAME}}`. Run `mdcp compile` and `mdcp check`.
 ```
 
+### Spec-flow: document before you code
+
+The key to working with LLMs on product work is documenting ideas in phases **before** asking the model to implement. Walk through requirements, design, and tasks — then implement. This spec-flow approach reduces scope creep and gives the agent a clear contract to work against.
+
+| Document   | Holds                                                              |
+| ---------- | ------------------------------------------------------------------ |
+| User story | End-user value and experience                                      |
+| Design     | Technical requirements, API specifications, implementation details |
+| Task       | Concrete steps, acceptance criteria, and validation gates          |
+
+Keep that separation when you document. LLMs tend to say "yes" and add scope even when not prompted — work within a value-stream mindset and split oversized features into smaller deliverables.
+
+Example layout in your repo:
+
+```text
+.work-items/{feature_name}/
+├── user-story.md
+├── design.md
+└── task.md
+```
+
+Author these as mdcp shards (or plain markdown) and `@`-reference them in agent sessions. Use `mdcp export --llm` to load only the compiled guides an agent needs for the current phase.
+
+#### Sharding keeps context lean
+
+Split guidance into focused, load-on-demand documents rather than one monolithic prompt. mdcp models this pattern:
+
+- **Core workflow** — bootstrap and npm scripts (this guide)
+- **On demand** — phase-specific prompts below; `@`-reference only what the current task needs
+- **Compiled context** — `npm run docs:context` for token-stripped output scoped to registered guides
+
+Prefer structured prompts over permanently importing rigid always-on rules into every repo. Use intentional, phase-specific prompts to guide planning and implementation.
+
+### Work item tracking
+
+Task-type prompts use placeholders for **your** project-management stack — not only GitHub. Wire whichever tracker your agent can reach: shell CLI, MCP server, or local spec files.
+
+| Placeholder       | Replace with                                                          |
+| ----------------- | --------------------------------------------------------------------- |
+| `{{WORK_ITEM}}`   | Issue/ticket ID, URL, Linear key, Notion page, or `.work-items/` path |
+| `{{BASE_BRANCH}}` | Integration branch (often `main`)                                     |
+| `{{FEATURE}}`     | Short feature slug for `.work-items/` paths and doc shards            |
+
+**Shell CLI** — `gh issue view`, `glab issue view`, `jira issue view`, and similar.
+
+**MCP** — Linear, Notion, GitHub, or Jira MCP tools (structured fetch; uses IDE auth).
+
+**Local specs** — `.work-items/{{FEATURE}}/user-story.md`, `design.md`, `task.md`; `@`-reference in Cursor or paste into the session.
+
+**Delivery** — Map "changeset/changelog" and "pull request" to your repo (Changesets, `CHANGELOG.md`, GitLab MR, tracker comments).
+
+Full examples and Setup customization: [examples/prompts/work-item-tracking.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/work-item-tracking.md).
+
+### Task-type prompt templates
+
+Reusable templates for common work types. Each embeds a version-control workflow (feature branch, atomic commits, release notes, code review) and keeps **end-user value** front and center. Replace placeholders per the table above.
+
+Standalone copies: [examples/prompts/README.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/README.md) (index of all templates).
+
+#### Doc-only task
+
+**Best for:** Technical writers or developers focusing entirely on documentation, tutorials, or user manuals.
+
+```markdown
+**Role:** Act as an expert Technical Writer.
+
+**Setup:** Create a feature branch from `{{BASE_BRANCH}}` (sync with remote first). Load work item **{{WORK_ITEM}}** using your team's tracker — shell CLI (`gh`, `glab`, `jira`), MCP (Linear, Notion, GitHub), or local `.work-items/{{FEATURE}}/` spec files. Treat acceptance criteria as the scope boundary.
+
+**Value focus:** Explicitly define the **end-user value** this documentation brings — how does it help the user understand or use the product? Keep this value front and center while writing.
+
+**Workflow:**
+
+- Make atomic, logically grouped commits along the way.
+- **Revise & write:** Add or revise mdcp shards under the appropriate guide (`docs/features/`, `docs/developer/`, `docs/client/`). Update each guide's `index.md` for compile order. Use `mdcp refs lookup` for every cross-link — do not edit `guides.md` or `refs.json` by hand.
+- **Review:** Meta-review the shards for accuracy against the as-built software.
+- **Refactor & clean:** Remove deprecated references. Ensure docs reflect the current product, not old workflows.
+- **Validate:** Run `npm run docs:compile` and `npm run docs:check` until all gates pass.
+- **Wrap-up:** Record what changed in your release process (changeset, changelog, or tracker comment). Highlight old workflows that are no longer recommended.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link **{{WORK_ITEM}}**, and request review.
+```
+
+#### Design architecture task
+
+**Best for:** System architects or senior engineers drafting RFCs, ADRs, or data models before writing code.
+
+```markdown
+**Role:** Act as an expert Systems Architect.
+
+**Setup:** Create a feature branch from `{{BASE_BRANCH}}` (sync with remote first). Load work item **{{WORK_ITEM}}** using your team's tracker — shell CLI (`gh`, `glab`, `jira`), MCP (Linear, Notion, GitHub), or local `.work-items/{{FEATURE}}/` spec files. Treat acceptance criteria as the scope boundary.
+
+**Value focus:** Explicitly define the **end-user value** this architectural change unlocks (for example faster load times, higher reliability, or enabling a highly requested feature).
+
+**Workflow:**
+
+- Make atomic, logically grouped commits along the way.
+- **Design first:** Draft the architecture (system diagrams, API contracts, data models) as shards under `docs/features/`. Focus on how the design enables the desired end-user experience.
+- **Review:** Meta-review the proposed architecture with engineering to identify bottlenecks early.
+- **Refactor & clean:** Retire superseded design shards or ADRs. Ensure docs reflect the intended as-built architecture.
+- **Validate:** Run `npm run docs:compile` and `npm run docs:check`.
+- **Wrap-up:** Record architectural changes in your release process (changeset, changelog, or tracker note). Document old system behaviors or constraints that no longer apply.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link **{{WORK_ITEM}}**, and request review.
+```
+
+#### Feature-level task
+
+**Best for:** Server-side or full-stack engineers implementing new logic, APIs, or core system functionality.
+
+```markdown
+**Role:** Act as an expert Software Engineer.
+
+**Setup:** Create a feature branch from `{{BASE_BRANCH}}` (sync with remote first). Load work item **{{WORK_ITEM}}** using your team's tracker — shell CLI (`gh`, `glab`, `jira`), MCP (Linear, Notion, GitHub), or local `.work-items/{{FEATURE}}/` spec files. Treat acceptance criteria as the scope boundary.
+
+**Value focus:** Explicitly define the **end-user value** this feature provides. How will this make the user's life easier or better?
+
+**Workflow:**
+
+- Make atomic, logically grouped commits along the way.
+- **Docs first & TDD:** Start with a docs-first pass — shards under `docs/features/` and `docs/client/` defining how the feature _should_ work for the user. Then use TDD to implement the core logic.
+- **Review:** Meta-code review focusing on edge cases and performance.
+- **Refactor & clean:** Refactor code, pay down relevant tech debt, update shards to match as-built behavior, and remove stale references.
+- **Validate:** Run tests, then `npm run docs:compile` and `npm run docs:check`.
+- **Wrap-up:** Record what changed in your release process (changeset, changelog, or tracker comment). Detail any old behavior that no longer works.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link **{{WORK_ITEM}}**, and request review.
+```
+
+#### UX task
+
+**Best for:** UX designers or frontend engineers focusing on interfaces, user flows, and accessibility.
+
+```markdown
+**Role:** Act as an expert UX Designer and Frontend Engineer.
+
+**Setup:** Create a feature branch from `{{BASE_BRANCH}}` (sync with remote first). Load work item **{{WORK_ITEM}}** using your team's tracker — shell CLI (`gh`, `glab`, `jira`), MCP (Linear, Notion, GitHub), or local `.work-items/{{FEATURE}}/` spec files. Treat acceptance criteria as the scope boundary.
+
+**Value focus:** Explicitly define the **end-user value** this UI/UX change brings. Focus on reducing friction, improving accessibility, and creating a delightful user journey.
+
+**Workflow:**
+
+- Make atomic, logically grouped commits along the way.
+- **Design & implement:** Map the ideal user flow in shards under `docs/client/` (docs/specs first). Implement UI components; use TDD for frontend components where applicable.
+- **Review:** Meta-review code and user flows with design/product stakeholders.
+- **Refactor & clean:** Consolidate UI patterns. Update client-guide shards to match the as-built interface; remove references to old UI patterns.
+- **Validate:** Run component tests, then `npm run docs:compile` and `npm run docs:check`.
+- **Wrap-up:** Record visual and interactive changes in your release process (changeset, changelog, or tracker comment). Highlight old UI behaviors or workflows that no longer exist.
+- **Finalize:** Open a code review (pull request, merge request, or equivalent), link **{{WORK_ITEM}}**, and request review.
+```
+
+### Phase-specific structured prompts
+
+Short prompts for individual spec-flow phases. Adapt the format to your repo's standards files or `.work-items/` layout.
+
+**User story (end-user value):**
+
+```markdown
+Create a user story for {{FEATURE}} in `.work-items/{{FEATURE}}/user-story.md`.
+Lead with end-user value: who benefits, what problem is solved, and how success is measured.
+Keep experience and outcomes here — defer API and implementation details to the design doc.
+```
+
+**Technical design (implementation details):**
+
+```markdown
+Create a technical design for {{FEATURE}} in `.work-items/{{FEATURE}}/design.md`.
+Cover requirements, API contracts, data models, and edge cases.
+Link to the user story for value context. When design stabilizes, add or update shards under `docs/features/`.
+```
+
+**Task breakdown:**
+
+```markdown
+Create an implementation task list for {{FEATURE}} in `.work-items/{{FEATURE}}/task.md`.
+Break work into atomic steps with acceptance criteria and validation gates (`npm test`, `npm run docs:check`).
+Reference the design doc — do not expand scope beyond what the user story justifies.
+```
+
+**Architecture decision:**
+
+```markdown
+Should we {{DECISION_QUESTION}}?
+Draft an ADR in `.work-items/{{FEATURE}}/adr-{{SHORT_NAME}}.md`.
+State context, options considered, decision, and consequences. When accepted, add a summary shard under `docs/features/`.
+```
+
 ### Toolchain integration
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files. Wire the same npm scripts regardless of which agent you use.
@@ -141,6 +324,7 @@ When reviewing an agent's documentation PR:
 - `npm run docs:check` passes locally and in CI
 - Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`
+- Task-type prompts use `{{WORK_ITEM}}` and tracker-specific Setup lines — see [Work item tracking](#work-item-tracking)
 
 ### Legacy script port map
 
@@ -162,6 +346,7 @@ Full port map: [Legacy migration](#legacy-migration).
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — value proposition
 - [Agent integration](#agent-integration) — npm scripts quick reference
+- [examples/prompts/](https://github.com/betsalel-williamson/mdcp/tree/main/examples/prompts) — standalone copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
 - [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
@@ -231,7 +416,7 @@ Global options (apply to every command):
 
 ## Agent integration
 
-npm script stubs for wiring mdcp into any coding agent. For the bootstrap prompt and follow-up templates, see [LLM collaboration](#llm-collaboration).
+npm script stubs for wiring mdcp into any coding agent. For bootstrap, follow-up, spec-flow, and task-type prompt templates, see [LLM collaboration](#llm-collaboration).
 
 Add npm scripts in your consumer repo:
 
@@ -267,7 +452,7 @@ mdcp check --require-lint
 ### Further reading
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — value proposition for agent workflows
-- [LLM collaboration](#llm-collaboration) — bootstrap prompt, toolchain integration, follow-up templates
+- [LLM collaboration](#llm-collaboration) — bootstrap prompt, spec-flow, task-type templates, toolchain integration
 - [Project README](https://github.com/betsalel-williamson/mdcp#readme) — concepts and design rationale
 - [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md) — full maintainer docs
 - [Sample guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides)
