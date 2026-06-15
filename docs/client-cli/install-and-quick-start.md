@@ -1,7 +1,5 @@
 # Install and quick start
 
-**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. You edit small shard files; mdcp weaves them into one compiled guide (`guides.md`) with correct heading levels, working cross-links, and structure checks.
-
 This package installs the `mdcp` command for use in your repo or CI.
 
 ## Requirements
@@ -55,8 +53,6 @@ mdcp check --config docs/mdcp.config.json --docs-root docs
 ```
 
 `--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](./config-essentials.md#--config-vs---docs-root).
-
-Collaborating with an LLM? See [LLM collaboration](./llm-collaboration.md) for bootstrap prompts and toolchain integration (Cursor, Composer, Gemini CLI).
 
 Global options (apply to every command):
 
