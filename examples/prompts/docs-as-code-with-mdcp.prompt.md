@@ -40,3 +40,5 @@ Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, th
      Fix xref, orphan, and lint errors before finishing.
 
 **Cross-links:** Run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)`. The slug must match **compiled** output, not the shard alone.
+
+**Next steps:** After the pipeline exists, use task-type prompts from [examples/prompts/README.md](./README.md) (doc-only, feature, architecture, UX) and configure work-item tracking per [work-item-tracking.md](./work-item-tracking.md).
