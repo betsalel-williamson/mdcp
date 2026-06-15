@@ -1,8 +1,172 @@
 # @bwilliamson/mdcp-cli
 
-## Install and quick start
+## Why mdcp for coding agents
 
-**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. You edit small shard files; mdcp weaves them into one compiled guide (`guides.md`) with correct heading levels, working cross-links, and structure checks.
+**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks.
+
+### Why use it with coding agents?
+
+Agents edit individual `.md` shards instead of a monolithic README. mdcp compiles shards into a single guide, validates cross-references, and exports token-stripped context (`mdcp export --llm`) for the next agent turn. No custom bash or Python compile scripts to maintain.
+
+**Get started:** copy the [bootstrap prompt](#bootstrap-prompt-copy-paste) below into Cursor Agent, Composer, Gemini CLI, or any shell-capable agent. Fill in `{{FEATURE}}` and `{{PERSONA}}`.
+
+For depth on capabilities and design, read the [feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).
+
+## LLM collaboration
+
+Bootstrap and follow-up prompts for coding agents. For the value proposition, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
+
+### Bootstrap prompt (copy-paste)
+
+Fill in `{{FEATURE}}` and `{{PERSONA}}`, then paste into Cursor Agent, Composer, Gemini CLI, or any shell-capable coding agent.
+
+A standalone copy lives at [examples/prompts/docs-as-code-with-mdcp.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/docs-as-code-with-mdcp.prompt.md).
+
+```markdown
+For the feature: {{FEATURE}}
+
+The end user for client docs is: {{PERSONA}}
+
+Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, then write:
+
+- feature docs under `docs/features/` (what the product does)
+- developer docs under `docs/developer/` (how to maintain and develop the repo)
+- end-user docs under `docs/client/`
+  Use mdcp commands only — do not create custom compile or lint scripts.
+
+1. **Install** dev dependencies:
+   `npm install -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets markdownlint-cli2`
+
+   Install [Vale](https://vale.sh/docs/vale-cli/installation/) separately so `vale` is on your `PATH`. After copying `.vale.ini`, run `vale sync` in that directory.
+
+2. **Config** — Copy https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json to `docs/mdcp.config.json`. Update `compileOrder`, `guides`, and `vale.scanGlobs` for your guides. Set `lint.markdownlint` to the preset files in `node_modules/@bwilliamson/mdcp-presets/`. Copy `.vale.ini` from the same sample-guides directory.
+
+3. **npm scripts** — Add to `package.json`:
+   - `docs:compile` → `mdcp compile --config docs/mdcp.config.json --docs-root docs`
+   - `docs:check` → `mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint`
+   - `docs:context` → `mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs`
+   - `docs:refs` → `mdcp refs lookup`
+
+4. **Guide layout** — Under `docs/`:
+   - `docs/features/` — product capabilities, design, and API surface
+   - `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
+   - `docs/client/` — end-user guide; open with `about-this-guide.md` stating the persona above
+     Each guide: `index.md` and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
+
+5. **Write and validate** — After shards exist:
+   - `npm run docs:compile`
+   - `npm run docs:check`
+     Fix xref, orphan, and lint errors before finishing.
+
+**Cross-links:** Run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)`. The slug must match **compiled** output, not the shard alone.
+```
+
+### Follow-up prompts
+
+Use these after the pipeline exists.
+
+**Add documentation for a new feature:**
+
+```markdown
+Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
+Update each guide's `index.md`, then `mdcp compile` and `mdcp check --require-lint`.
+Use `mdcp refs lookup` for every cross-link. Do not edit `guides.md` by hand.
+```
+
+**Fix validation failures:**
+
+```markdown
+`npm run docs:check` failed. Read the error output, fix only shard `.md` files and config if needed, then re-run until check passes.
+Use `mdcp refs lookup` to correct broken fragment links.
+```
+
+**Regenerate manifest after TOC change:**
+
+```markdown
+I updated `index.md` in guide `{{GUIDE_NAME}}`. Run `mdcp compile` and `mdcp check`.
+```
+
+### Toolchain integration
+
+mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files. Wire the same npm scripts regardless of which agent you use.
+
+```json
+{
+  "scripts": {
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
+    "docs:refs": "mdcp refs lookup"
+  }
+}
+```
+
+| Tool                                         | How mdcp fits                                                                                                                                                                                                                                                                                                                                                                                    |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Cursor / Composer**                        | Paste the bootstrap prompt in Agent or Composer. `@`-reference shard files under `docs/features/`, `docs/developer/`, or `docs/client/` for local context. Run `npm run docs:check` before ending a turn. Optional: copy [examples/agent-rules/docs-as-code.mdc](https://github.com/betsalel-williamson/mdcp/blob/main/examples/agent-rules/docs-as-code.mdc) into your repo's `.cursor/rules/`. |
+| **Gemini CLI** (and similar terminal agents) | Start a session with `npm run docs:context` output as context, or instruct the agent to run it. Agent edits shards only — never `guides.md`. Verify with `npm run docs:check`.                                                                                                                                                                                                                   |
+| **Generic CI / headless agents**             | Same npm scripts. `mdcp check` exit code is the quality gate.                                                                                                                                                                                                                                                                                                                                    |
+| **Any agent writing links**                  | `npm run docs:refs -- "topic"` or `mdcp refs lookup "topic" --format json` before inserting cross-links.                                                                                                                                                                                                                                                                                         |
+
+For npm script stubs only, see [Agent integration](#agent-integration).
+
+### Three-tier doc layout
+
+Split documentation into three guides:
+
+| Guide directory   | Audience                   | Typical content                                                    |
+| ----------------- | -------------------------- | ------------------------------------------------------------------ |
+| `docs/features/`  | Maintainers, coding agents | What the product does — capabilities, design, API surface          |
+| `docs/developer/` | Maintainers, contributors  | How to work on the repo — setup, layout, tests, releases           |
+| `docs/client/`    | End users                  | How to use the product; persona and scope in `about-this-guide.md` |
+
+Each guide directory needs:
+
+- `index.md` — human table of contents (links to shard files; compile order comes from link order here)
+- Topic shards — one file per section (for example `authentication.md`)
+- Optional `about-this-guide.md` — preamble shard (persona, scope)
+
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](#manifest-compile-order)).
+
+Never hand-edit generated `guides.md` or `refs.json`.
+
+**Worked example:** this repository dogfoods under [`docs/features/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/features) (tool capabilities), [`docs/developer/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/developer) (repo development), and [`docs/client-cli/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/client-cli) (consumer adoption), wired by [`docs/mdcp.config.json`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.config.json). For a minimal fixture, see [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
+
+### Human review checklist
+
+When reviewing an agent's documentation PR:
+
+- Only shard `.md` files and config changed — not hand-edited `guides.md` or `refs.json`
+- `index.md` link order matches intended compile order (use `compile.sectionsHeading` when the manifest has preamble example links)
+- `npm run docs:check` passes locally and in CI
+- Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
+- Client guide opens with persona context in `about-this-guide.md`
+
+### Legacy script port map
+
+If you previously used bash/Python compile scripts, replace them with mdcp commands:
+
+| Legacy pattern                    | Use mdcp instead                                                       |
+| --------------------------------- | ---------------------------------------------------------------------- |
+| Custom shard / split scripts      | `mdcp shard` (split only; requires `source` in config)                 |
+| Custom compile / heading demotion | `mdcp compile`                                                         |
+| Separate markdownlint configs     | `@bwilliamson/mdcp-presets` shard + compiled configs                   |
+| Custom xref lint scripts          | `mdcp check` (built-in xref lint)                                      |
+| Hand-maintained anchor registries | `mdcp refs lookup` / `refs.json` (GitHub slugs on **compiled** output) |
+| Custom Vale term lists in scripts | `.vale.ini` + custom YAML in your repo                                 |
+| Shell validate wrappers           | `mdcp check --require-lint` (+ optional `--require-vale`)              |
+
+Full port map: [Legacy migration](#legacy-migration).
+
+### See also
+
+- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — value proposition
+- [Agent integration](#agent-integration) — npm scripts quick reference
+- [Project layout](#project-layout) — shard directory structure
+- [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
+- [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
+
+## Install and quick start
 
 This package installs the `mdcp` command for use in your repo or CI.
 
@@ -58,8 +222,6 @@ mdcp check --config docs/mdcp.config.json --docs-root docs
 
 `--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](#--config-vs---docs-root).
 
-Collaborating with an LLM? See [LLM collaboration](#llm-collaboration) for bootstrap prompts and toolchain integration (Cursor, Composer, Gemini CLI).
-
 Global options (apply to every command):
 
 | Option                | Default            | Purpose                                                                          |
@@ -67,17 +229,52 @@ Global options (apply to every command):
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
 | `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |
 
-## Glossary
+## Agent integration
 
-Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
+npm script stubs for wiring mdcp into any coding agent. For the bootstrap prompt and follow-up templates, see [LLM collaboration](#llm-collaboration).
 
-### GFM
+Add npm scripts in your consumer repo:
 
-**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+```json
+{
+  "scripts": {
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
+    "docs:refs": "mdcp refs lookup"
+  }
+}
+```
 
-### Authored GFM
+```bash
+# Compact context for feature work
+mdcp export --llm --stdout --config docs/mdcp.config.json
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
+# Find the right section link while writing
+mdcp refs lookup "authentication" --format json
+
+# Full structural gate
+mdcp check --require-lint
+```
+
+### Related packages
+
+| Package                                                                                | Use                                                         |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [`@bwilliamson/mdcp-core`](https://www.npmjs.com/package/@bwilliamson/mdcp-core)       | Programmatic compile, refs, and validation API              |
+| [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) | Starter markdownlint configs for shards and compiled output |
+
+### Further reading
+
+- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — value proposition for agent workflows
+- [LLM collaboration](#llm-collaboration) — bootstrap prompt, toolchain integration, follow-up templates
+- [Project README](https://github.com/betsalel-williamson/mdcp#readme) — concepts and design rationale
+- [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md) — full maintainer docs
+- [Sample guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides)
+
+### License
+
+MIT
 
 ## Project layout
 
@@ -440,205 +637,6 @@ After setting up a consumer repo:
 3. **`mdcp check --require-vale`** — when Vale is configured
 4. **Hook output** — diagram tables inlined (`inlineInserts`), code evidence blocks resolved (`codeEvidence`), cross-monolith links rewritten (no raw `../other-guide/shard.md` in compiled output)
 
-## LLM collaboration
-
-Use **mdcp** with coding agents (Cursor, Composer, Gemini CLI, and other terminal tools) to build and maintain sharded documentation. You describe the feature and end-user persona; the agent edits shard files; mdcp compiles, validates, and exports context for the next turn.
-
-This workflow is how the mdcp project itself was bootstrapped: an early prompt asked an LLM to generate bash and Python tooling (`shard.sh`, `compile_sections.py`, `lint-xrefs.py`, `validate.sh`). That pipeline became the [`legacy/`](https://github.com/betsalel-williamson/mdcp/tree/main/legacy) reference implementation and then the `@bwilliamson/mdcp-*` npm packages. New adopters should **install mdcp** instead of asking an agent to recreate those scripts.
-
-### Original prompt → mdcp
-
-| Original ask                       | Use mdcp instead                                                       |
-| ---------------------------------- | ---------------------------------------------------------------------- |
-| `shard.sh` + BMAD / md-tree        | `mdcp shard` (split only; requires `source` in config)                 |
-| `compile_sections.py`              | `mdcp compile` (heading demotion, preamble strip)                      |
-| Two `.markdownlint.jsonc` files    | `@bwilliamson/mdcp-presets` shard + compiled configs                   |
-| `lint-xrefs.py`                    | `mdcp check` (built-in xref lint)                                      |
-| Anchor registry JSON + heading ids | `mdcp refs lookup` / `refs.json` (GitHub slugs on **compiled** output) |
-| Vale ambiguous-term rules          | `.vale.ini` + custom YAML in your repo (you define the terms)          |
-| `validate.sh`                      | `mdcp check --require-lint` (+ optional `--require-vale`)              |
-
-Full port map: [Legacy migration](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/legacy-migration.md).
-
-### Three-tier doc layout
-
-Split documentation into three guides:
-
-| Guide directory   | Audience                   | Typical content                                                    |
-| ----------------- | -------------------------- | ------------------------------------------------------------------ |
-| `docs/features/`  | Maintainers, coding agents | What the product does — capabilities, design, API surface          |
-| `docs/developer/` | Maintainers, contributors  | How to work on the repo — setup, layout, tests, releases           |
-| `docs/client/`    | End users                  | How to use the product; persona and scope in `about-this-guide.md` |
-
-Each guide directory needs:
-
-- `index.md` — human table of contents (links to shard files; compile order comes from link order here)
-- Topic shards — one file per section (for example `authentication.md`)
-- Optional `about-this-guide.md` — preamble shard (persona, scope)
-
-When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](#manifest-compile-order)).
-
-Never hand-edit generated `guides.md` or `refs.json`.
-
-**Worked example:** this repository dogfoods under [`docs/features/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/features) (tool capabilities), [`docs/developer/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/developer) (repo development), and [`docs/client-cli/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/client-cli) (consumer adoption), wired by [`docs/mdcp.config.json`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.config.json). For a minimal fixture, see [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
-
-### Bootstrap prompt (copy-paste)
-
-Fill in `{{FEATURE}}` and `{{PERSONA}}`, then paste into Cursor Agent, Composer, Gemini CLI, or any shell-capable coding agent.
-
-A standalone copy lives at [examples/prompts/docs-as-code-with-mdcp.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/docs-as-code-with-mdcp.prompt.md).
-
-```markdown
-For the feature: {{FEATURE}}
-
-The end user for client docs is: {{PERSONA}}
-
-Set up a sharded docs-as-code pipeline using **mdcp**. Analyze this codebase, then write:
-
-- feature docs under `docs/features/` (what the product does)
-- developer docs under `docs/developer/` (how to maintain and develop the repo)
-- end-user docs under `docs/client/`
-  Use mdcp commands only — do not create custom compile or lint scripts.
-
-1. **Install** dev dependencies:
-   `npm install -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets markdownlint-cli2`
-
-   Install [Vale](https://vale.sh/docs/vale-cli/installation/) separately so `vale` is on your `PATH`. After copying `.vale.ini`, run `vale sync` in that directory.
-
-2. **Config** — Copy https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json to `docs/mdcp.config.json`. Update `compileOrder`, `guides`, and `vale.scanGlobs` for your guides. Set `lint.markdownlint` to the preset files in `node_modules/@bwilliamson/mdcp-presets/`. Copy `.vale.ini` from the same sample-guides directory.
-
-3. **npm scripts** — Add to `package.json`:
-   - `docs:compile` → `mdcp compile --config docs/mdcp.config.json --docs-root docs`
-   - `docs:check` → `mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint`
-   - `docs:context` → `mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs`
-   - `docs:refs` → `mdcp refs lookup`
-
-4. **Guide layout** — Under `docs/`:
-   - `docs/features/` — product capabilities, design, and API surface
-   - `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
-   - `docs/client/` — end-user guide; open with `about-this-guide.md` stating the persona above
-     Each guide: `index.md` and topic shards. Shards are the source of truth — do not hand-edit `guides.md` or `refs.json`.
-
-5. **Write and validate** — After shards exist:
-   - `npm run docs:compile`
-   - `npm run docs:check`
-     Fix xref, orphan, and lint errors before finishing.
-
-**Cross-links:** Run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)`. The slug must match **compiled** output, not the shard alone.
-```
-
-### Toolchain integration
-
-mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files. Wire the same npm scripts regardless of which agent you use.
-
-```json
-{
-  "scripts": {
-    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
-    "docs:refs": "mdcp refs lookup"
-  }
-}
-```
-
-| Tool                                         | How mdcp fits                                                                                                                                                                                                                                                                                                                                                                                    |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Cursor / Composer**                        | Paste the bootstrap prompt in Agent or Composer. `@`-reference shard files under `docs/features/`, `docs/developer/`, or `docs/client/` for local context. Run `npm run docs:check` before ending a turn. Optional: copy [examples/agent-rules/docs-as-code.mdc](https://github.com/betsalel-williamson/mdcp/blob/main/examples/agent-rules/docs-as-code.mdc) into your repo's `.cursor/rules/`. |
-| **Gemini CLI** (and similar terminal agents) | Start a session with `npm run docs:context` output as context, or instruct the agent to run it. Agent edits shards only — never `guides.md`. Verify with `npm run docs:check`.                                                                                                                                                                                                                   |
-| **Generic CI / headless agents**             | Same npm scripts. `mdcp check` exit code is the quality gate.                                                                                                                                                                                                                                                                                                                                    |
-| **Any agent writing links**                  | `npm run docs:refs -- "topic"` or `mdcp refs lookup "topic" --format json` before inserting cross-links.                                                                                                                                                                                                                                                                                         |
-
-For npm script stubs only, see [Agent integration](#agent-integration).
-
-### Follow-up prompts
-
-Use these after the pipeline exists.
-
-**Add documentation for a new feature:**
-
-```markdown
-Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
-Update each guide's `index.md`, then `mdcp compile` and `mdcp check --require-lint`.
-Use `mdcp refs lookup` for every cross-link. Do not edit `guides.md` by hand.
-```
-
-**Fix validation failures:**
-
-```markdown
-`npm run docs:check` failed. Read the error output, fix only shard `.md` files and config if needed, then re-run until check passes.
-Use `mdcp refs lookup` to correct broken fragment links.
-```
-
-**Regenerate manifest after TOC change:**
-
-```markdown
-I updated `index.md` in guide `{{GUIDE_NAME}}`. Run `mdcp compile` and `mdcp check`.
-```
-
-### Human review checklist
-
-When reviewing an agent's documentation PR:
-
-- Only shard `.md` files and config changed — not hand-edited `guides.md` or `refs.json`
-- `index.md` link order matches intended compile order (use `compile.sectionsHeading` when the manifest has preamble example links)
-- `npm run docs:check` passes locally and in CI
-- Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
-- Client guide opens with persona context in `about-this-guide.md`
-
-### See also
-
-- [Agent integration](#agent-integration) — npm scripts quick reference
-- [Project layout](#project-layout) — shard directory structure
-- [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
-- [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
-
-## Agent integration
-
-npm script stubs for wiring mdcp into any coding agent. For bootstrap prompts, multi-tool workflows (Cursor, Composer, Gemini CLI), and human review checklists, see [LLM collaboration](#llm-collaboration).
-
-Add npm scripts in your consumer repo:
-
-```json
-{
-  "scripts": {
-    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
-    "docs:refs": "mdcp refs lookup"
-  }
-}
-```
-
-```bash
-# Compact context for feature work
-mdcp export --llm --stdout --config docs/mdcp.config.json
-
-# Find the right section link while writing
-mdcp refs lookup "authentication" --format json
-
-# Full structural gate
-mdcp check --require-lint
-```
-
-### Related packages
-
-| Package                                                                                | Use                                                         |
-| -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| [`@bwilliamson/mdcp-core`](https://www.npmjs.com/package/@bwilliamson/mdcp-core)       | Programmatic compile, refs, and validation API              |
-| [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) | Starter markdownlint configs for shards and compiled output |
-
-### Further reading
-
-- [LLM collaboration](#llm-collaboration) — bootstrap prompt, toolchain integration, follow-up templates
-- [Project README](https://github.com/betsalel-williamson/mdcp#readme) — concepts and design rationale
-- [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md) — full maintainer docs
-- [Sample guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides)
-
-### License
-
-MIT
-
 ## Optional linters
 
 These commands use tools installed in **your** repo (not bundled with mdcp):
@@ -692,3 +690,15 @@ Optional overrides **narrow** scope further; they never widen it beyond what you
 The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (`!**/index.md`, `!guides.md`). **Scope always comes from the CLI** — not from preset globs.
 
 `mdcp fix` is out of band: it runs unscoped `prettier --write .` and `markdownlint-cli2 --fix` across the repo and is not part of mdcp's guide fileset gate.
+
+## Glossary
+
+Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
+
+### GFM
+
+**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+
+### Authored GFM
+
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).

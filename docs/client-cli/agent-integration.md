@@ -1,6 +1,6 @@
 # Agent integration
 
-npm script stubs for wiring mdcp into any coding agent. For bootstrap prompts, multi-tool workflows (Cursor, Composer, Gemini CLI), and human review checklists, see [LLM collaboration](./llm-collaboration.md).
+npm script stubs for wiring mdcp into any coding agent. For the bootstrap prompt and follow-up templates, see [LLM collaboration](./llm-collaboration.md).
 
 Add npm scripts in your consumer repo:
 
@@ -35,6 +35,7 @@ mdcp check --require-lint
 
 ## Further reading
 
+- [Why mdcp for coding agents](./why-mdcp-for-agents.md) — value proposition for agent workflows
 - [LLM collaboration](./llm-collaboration.md) — bootstrap prompt, toolchain integration, follow-up templates
 - [Project README](https://github.com/betsalel-williamson/mdcp#readme) — concepts and design rationale
 - [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md) — full maintainer docs
