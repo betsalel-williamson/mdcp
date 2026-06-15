@@ -44,13 +44,15 @@ const GuideSchema = z.object({
       includeBanner: z.boolean().optional(),
       /** Named compile hooks (see compile/hooks.ts). String array replaces defaults; object opts out. */
       hooks: z.union([z.array(z.string()), z.record(z.string(), z.boolean())]).optional(),
+      /** Cross-guide link rewrite options (assembly-time; not a compile hook). */
+      crossGuideLinks: z
+        .object({
+          /** Guide names whose shards keep source `.md` paths instead of monolith `#slug` targets. */
+          ignoreGuides: z.array(z.string()).optional(),
+        })
+        .optional(),
       hooksConfig: z
         .object({
-          reviewLinks: z
-            .object({
-              targetMonolith: z.string().optional(),
-            })
-            .optional(),
           inlineInserts: z
             .object({
               searchRoots: z.array(z.string()).optional(),

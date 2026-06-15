@@ -4,7 +4,7 @@ import { githubSlugify } from '../refs/slugs.js';
 import { extractFirstHeading } from './compile-title.js';
 import { demoteHeadings, stripAboutThisGuideHeading } from './headings.js';
 import { defaultSearchRoots, resolveRelativeFile } from './hooks/path-resolve.js';
-import type { GuideLinkIndex } from './guide-link-index.js';
+import type { GuideLinkIndex, GuideLinkEntry } from './guide-link-index.js';
 
 function sectionBodyForSlug(filename: string, content: string): string {
   if (filename === 'about-this-guide.md') {
@@ -98,8 +98,8 @@ export interface CrossGuideLinkRewriteOptions {
   scopeRoot?: string;
   currentOutputBasename?: string;
   linkIndex: GuideLinkIndex;
-  /** When set, all indexed targets rewrite to this output file (reviewLinks hook). */
-  targetMonolith?: string;
+  /** Guide names whose shards keep source `.md` paths instead of monolith `#slug` targets. */
+  ignoreGuides?: string[];
   searchRoots?: string[];
 }
 
@@ -107,7 +107,7 @@ function resolveIndexedMarkdownLink(
   file: string,
   fragment: string | undefined,
   options: CrossGuideLinkRewriteOptions,
-): { entry: { outputBasename: string; slug: string }; anchor: string } | null {
+): { entry: GuideLinkEntry; anchor: string } | null {
   const shardDir = dirname(options.sourceFile);
   const searchRoots = [
     ...(options.searchRoots ?? defaultSearchRoots()),
@@ -132,8 +132,8 @@ function formatCrossGuideTarget(
   entry: { outputBasename: string },
   options: CrossGuideLinkRewriteOptions,
 ): string {
-  const targetOutput = options.targetMonolith ?? entry.outputBasename;
   const current = options.currentOutputBasename;
+  const targetOutput = entry.outputBasename;
   if (!current || targetOutput === current) {
     return `${prefix}#${anchor})`;
   }
@@ -148,6 +148,7 @@ export function rewriteCrossGuideFileLinks(
   return markdown.replace(CROSS_GUIDE_MD_LINK_RE, (match, prefix, file, fragment) => {
     const hit = resolveIndexedMarkdownLink(file, fragment, options);
     if (!hit) return match;
+    if (options.ignoreGuides?.includes(hit.entry.guideName)) return match;
     return formatCrossGuideTarget(prefix, hit.anchor, hit.entry, options);
   });
 }

@@ -39,11 +39,10 @@ Built-in hooks run **by default** on every guide — omit `compile.hooks` for th
 | `stripAnchors`  | Remove explicit heading anchor markers from shard bodies              |
 | `inlineInserts` | Inline diagram, table, figure, and media catalog shards on first link |
 | `codeEvidence`  | Resolve evidence links to GitHub line-number fragments                |
-| `reviewLinks`   | Rewrite review links; optional hooksConfig.reviewLinks.targetMonolith |
 
 Opt out per hook: `"hooks": { "codeEvidence": false }`. Replace the pipeline entirely with a string array when needed.
 
-Cross-guide `.md` links rewrite automatically from `compileOrder` and per-guide `compile.outputFile`. Hook specs: [Compile hooks](../client-core/compile-hooks/index.md). Cross-monolith rewriting: [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md).
+Cross-guide `.md` links rewrite automatically at assembly from `compileOrder` and per-guide `compile.outputFile`. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard paths for listed guides — see [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md). Hook specs: [Compile hooks](../client-core/compile-hooks/index.md).
 
 ## Multi-guide config
 
@@ -58,7 +57,10 @@ Multi-guide repos typically set per-guide publish targets and `sectionsHeading` 
       "name": "glossary",
       "compile": {
         "outputFile": "glossary.md",
-        "sectionsHeading": "Sections"
+        "sectionsHeading": "Sections",
+        "crossGuideLinks": {
+          "ignoreGuides": ["technical-guide"]
+        }
       }
     },
     {
@@ -68,10 +70,15 @@ Multi-guide repos typically set per-guide publish targets and `sectionsHeading` 
         "manifest": "shards.md",
         "outputFile": "architecture-review.md",
         "sectionsHeading": "Sections",
-        "scopeRoot": ".",
-        "hooksConfig": {
-          "reviewLinks": { "targetMonolith": "architecture-review.md" }
-        }
+        "scopeRoot": "."
+      }
+    },
+    {
+      "name": "technical-guide",
+      "path": "technical",
+      "compile": {
+        "outputFile": "technical-guide.md",
+        "sectionsHeading": "Sections"
       }
     }
   ],
@@ -81,6 +88,7 @@ Multi-guide repos typically set per-guide publish targets and `sectionsHeading` 
 ```
 
 - `compile.scopeRoot` helps resolve shard-relative paths in nested guide trees (for example `review/outcomes/FIND-004.md`).
+- `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard `.md` links for listed guides instead of monolith `#slug` targets.
 - Publish paths like `../packages/foo/README.md` resolve from `outputDir` (`_build`).
 
 ## Steps for a new consumer repo

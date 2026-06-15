@@ -17,7 +17,7 @@ describe('resolveCompileHooks', () => {
       resolveCompileHooks({
         hooks: { codeEvidence: false, inlineInserts: false },
       }),
-    ).toEqual(['stripAnchors', 'reviewLinks']);
+    ).toEqual(['stripAnchors']);
   });
 
   it('ignores true values in object form', () => {
@@ -25,25 +25,12 @@ describe('resolveCompileHooks', () => {
       resolveCompileHooks({
         hooks: { codeEvidence: true, inlineInserts: false },
       }),
-    ).toEqual(['stripAnchors', 'codeEvidence', 'reviewLinks']);
-  });
-
-  it('includes reviewLinks in defaults when targetMonolith is set', () => {
-    expect(
-      resolveCompileHooks({
-        hooksConfig: { reviewLinks: { targetMonolith: 'architecture-review.md' } },
-      }),
-    ).toContain('reviewLinks');
+    ).toEqual(['stripAnchors', 'codeEvidence']);
   });
 });
 
 describe('DEFAULT_COMPILE_HOOKS', () => {
   it('lists built-in hooks in compile order', () => {
-    expect(DEFAULT_COMPILE_HOOKS).toEqual([
-      'stripAnchors',
-      'codeEvidence',
-      'inlineInserts',
-      'reviewLinks',
-    ]);
+    expect(DEFAULT_COMPILE_HOOKS).toEqual(['stripAnchors', 'codeEvidence', 'inlineInserts']);
   });
 });
