@@ -7,8 +7,7 @@ export function githubSlugify(text: string): string {
     .replace(/[*_`]/g, '')
     .replace(/[^\w\s-]/g, '')
     .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+    .replace(/-$/, '');
   return s;
 }
 

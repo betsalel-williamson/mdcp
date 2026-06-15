@@ -10,6 +10,10 @@ describe('githubSlugify', () => {
   it('strips brace ids and punctuation', () => {
     expect(githubSlugify('Hello {#world}!')).toBe('hello');
   });
+
+  it('preserves consecutive dashes from CLI flag headings', () => {
+    expect(githubSlugify('`--config` vs `--docs-root`')).toBe('--config-vs---docs-root');
+  });
 });
 
 describe('buildSlugRegistry', () => {
