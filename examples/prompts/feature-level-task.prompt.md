@@ -1,6 +1,6 @@
 # Feature-level task prompt (mdcp)
 
-Copy the block below into your agent. Fill in the code block at the top, then send. Work-item setup: [work-item-tracking.md](./work-item-tracking.md).
+Copy the block below into your agent. Fill in the code block at the top, then send.
 
 ---
 
@@ -22,7 +22,8 @@ WORK_ITEM_LOOKUP=
 **Workflow:**
 
 - Make logically grouped commits per this repo's conventions.
-- **Docs first:** Add or update shards under `docs/features/` and `docs/client/` defining how the feature should work for the user. Then implement core logic; use tests where the repo already does.
+- **Docs first:** Add or update shards under `docs/features/` (capabilities, design, API surface, acceptance criteria) and `docs/client/` (end-user value and how to use the feature). Update each guide's `index.md`. Use `mdcp refs lookup` for cross-links.
+- **TDD:** Implement against the documented contract — write failing tests first where the repo already uses tests, then make them pass, then refactor.
 - **Review:** Check implementation for edge cases, performance, and alignment with the design.
 - **Refactor & clean:** Refactor code, pay down relevant tech debt, update shards to match as-built behavior, and remove stale references.
 - **Validate:** Run this repo's test and documentation validation commands until they pass (discover from developer docs or package scripts).

@@ -1,6 +1,6 @@
 # Design architecture task prompt (mdcp)
 
-Copy the block below into your agent. Fill in the code block at the top, then send. Work-item setup: [work-item-tracking.md](./work-item-tracking.md).
+Copy the block below into your agent. Fill in the code block at the top, then send.
 
 ---
 

@@ -14,7 +14,7 @@ pnpm docs:check           # repo docs + examples/sample-guides
 
 Try the minimal fixture: [examples/sample-guides/](examples/sample-guides/).
 
-**LLM-first adoption:** copy the [bootstrap prompt](examples/prompts/docs-as-code-with-mdcp.prompt.md) into your coding agent. The published npm README leads with the same prompt — see [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) and [LLM collaboration](docs/client-cli/llm-collaboration.md).
+**LLM-first adoption:** copy the [bootstrap prompt](examples/prompts/getting-started-with-mdcp.prompt.md) into your coding agent. The published npm README leads with the same prompt — see [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) and [LLM collaboration](docs/client-cli/llm-collaboration.md).
 
 ## Documentation (sharded)
 
