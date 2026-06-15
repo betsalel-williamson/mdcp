@@ -32,7 +32,7 @@ Path resolution details: [Config essentials — path layout](./config-essentials
 
 ## Compile hooks
 
-Register hooks per guide in `guides[].compile.hooks`:
+Built-in hooks run **by default** on every guide — omit `compile.hooks` for the common case. See [Default compile hooks](../features/default-compile-hooks.md).
 
 | Hook            | Purpose                                                               |
 | --------------- | --------------------------------------------------------------------- |
@@ -41,11 +41,13 @@ Register hooks per guide in `guides[].compile.hooks`:
 | `codeEvidence`  | Resolve evidence links to GitHub line-number fragments                |
 | `reviewLinks`   | Rewrite review links; optional hooksConfig.reviewLinks.targetMonolith |
 
+Opt out per hook: `"hooks": { "codeEvidence": false }`. Replace the pipeline entirely with a string array when needed.
+
 Cross-guide `.md` links rewrite automatically from `compileOrder` and per-guide `compile.outputFile`. Hook specs: [Compile hooks](../client-core/compile-hooks/index.md). Cross-monolith rewriting: [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md).
 
 ## Multi-guide config
 
-Multi-guide repos typically set per-guide publish targets, `sectionsHeading`, and hooks:
+Multi-guide repos typically set per-guide publish targets and `sectionsHeading` — hooks need not be listed:
 
 ```json
 {
@@ -56,8 +58,7 @@ Multi-guide repos typically set per-guide publish targets, `sectionsHeading`, an
       "name": "glossary",
       "compile": {
         "outputFile": "glossary.md",
-        "sectionsHeading": "Sections",
-        "hooks": ["stripAnchors", "inlineInserts", "reviewLinks"]
+        "sectionsHeading": "Sections"
       }
     },
     {
@@ -68,7 +69,6 @@ Multi-guide repos typically set per-guide publish targets, `sectionsHeading`, an
         "outputFile": "architecture-review.md",
         "sectionsHeading": "Sections",
         "scopeRoot": ".",
-        "hooks": ["stripAnchors", "codeEvidence", "inlineInserts", "reviewLinks"],
         "hooksConfig": {
           "reviewLinks": { "targetMonolith": "architecture-review.md" }
         }

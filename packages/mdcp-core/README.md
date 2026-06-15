@@ -80,6 +80,7 @@ Use `writeCompiledGuides` when you need to write the monolith and per-guide publ
 | `resolveOutputPath`, `resolveRefsPath`, `resolveGuideDir`, `defaultGuideOutputFile`    | Path resolvers for docs root and `outputDir`                                |
 | `getGuideConfig`, `guideScanDirs`, `shardLintPaths`, `xrefScanDirs`                    | In-scope guide fileset and xref scan helpers                                |
 | `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput` | Zod schema and types                                                        |
+| `DEFAULT_COMPILE_HOOKS`, `resolveCompileHooks`                                         | Default built-in hook pipeline and guide-level resolution                   |
 
 ### Path resolution: `configBase` vs docs root
 
@@ -110,6 +111,16 @@ Consumer path table: [Config essentials — path layout](#path-layout).
 `compile.includeBanner` controls whether the global banner is prepended (defaults to `false` for per-guide outputs).
 
 `compile.publishPathRewrite` rewrites shard-relative repo paths in publish outputs. Intra-guide `./section.md` links rewrite to `#anchor` on every compile.
+
+### `compile.hooks`
+
+Built-in hooks run by default when `compile.hooks` is omitted. See [Default compile hooks](#default-compile-hooks).
+
+- **Omitted** — run `DEFAULT_COMPILE_HOOKS` in order: `stripAnchors`, `codeEvidence`, `inlineInserts`, `reviewLinks`
+- **`string[]`** — explicit override; replaces defaults entirely (backward compatible)
+- **`Record<string, boolean>`** — opt out; keys with `false` remove that hook from defaults
+
+Optional per-hook settings: `compile.hooksConfig` (`reviewLinks.targetMonolith`, `inlineInserts.searchRoots`). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
 
 ## API — Compile
 
@@ -225,11 +236,13 @@ registerCompileHook('myHook', (ctx) => {
 });
 ```
 
-List hook names in `mdcp.config.json` under `guides[].compile.hooks` (order matters). Optional per-hook config lives under `guides[].compile.hooksConfig`.
+Custom hooks are **not** in the default pipeline — list them explicitly in `compile.hooks` when needed.
 
 Hook implementations should be **pure on `ctx.body`** except when intentionally using shared `hookState`. Leave unmatched links unchanged. Prefer docs-first specs with tests mapped to spec sections (see each hook shard below).
 
 ### Configuration
+
+Built-in hooks run **by default**. Omit `compile.hooks` for the common case. Optional per-hook config lives under `guides[].compile.hooksConfig`.
 
 ```json
 {
@@ -237,7 +250,6 @@ Hook implementations should be **pure on `ctx.body`** except when intentionally 
   "compile": {
     "scopeRoot": ".",
     "outputFile": "architecture-review.md",
-    "hooks": ["stripAnchors", "codeEvidence", "inlineInserts"],
     "hooksConfig": {
       "inlineInserts": { "searchRoots": ["diagrams"] },
       "reviewLinks": { "targetMonolith": "architecture-review.md" }
@@ -245,6 +257,32 @@ Hook implementations should be **pure on `ctx.body`** except when intentionally 
   }
 }
 ```
+
+#### Opt out per hook
+
+Disable specific defaults with an object on `compile.hooks` (`false` removes a hook):
+
+```json
+{
+  "compile": {
+    "hooks": { "inlineInserts": false }
+  }
+}
+```
+
+#### Explicit override
+
+Replace the entire default pipeline with a string array (backward compatible):
+
+```json
+{
+  "compile": {
+    "hooks": ["stripAnchors", "codeEvidence"]
+  }
+}
+```
+
+Default hook order and behavior: [Default compile hooks](#default-compile-hooks). Config API: [API — Config](#api-config).
 
 For manifest compile order and `compile.sectionsHeading`, see [Manifest compile order](#manifest-compile-order).
 
@@ -254,9 +292,9 @@ For manifest compile order and `compile.sectionsHeading`, see [Manifest compile 
 - **`codeEvidence`** — per shard. [codeEvidence](#codeevidence): repo source links → `#L` fragments.
 - **`inlineInserts`** — per shard. [inlineInserts](#inlineinserts): inline captioned insert libraries.
 - **Cross-guide rewrite** _(assembly)_ — per shard + post-stitch. [Cross-guide links](#cross-guide-link-rewriting): automatic from `compileOrder`.
-- **`reviewLinks`** — per shard (optional). [reviewLinks](#reviewlinks): `targetMonolith` override for cross-guide targets.
+- **`reviewLinks`** — per shard. [reviewLinks](#reviewlinks): `targetMonolith` override for cross-guide targets.
 
-`stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly. Cross-guide rewrite runs automatically for multi-output layouts; add `reviewLinks` only when forcing all cross-links onto one output file.
+`stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly. Cross-guide rewrite runs automatically for multi-output layouts; `reviewLinks` applies `targetMonolith` when set in `hooksConfig`.
 
 ## codeEvidence
 
@@ -322,18 +360,16 @@ The hook **does not** transform:
 - Markdown shard links (`.md`)
 - External URLs
 - Source links when the file cannot be resolved and no line range appears in label or path
-- Body text when `codeEvidence` is not in `compile.hooks`
+- Body text when `codeEvidence` is disabled via `compile.hooks: { "codeEvidence": false }` or an explicit hook override that omits it
 
 ### codeEvidence config
 
-Minimal setup — add the hook name. Path rewriting uses the monolith or per-guide output path automatically:
+Runs by default — no hook list required. Path rewriting uses the monolith or per-guide output path automatically:
 
 ```json
 {
   "name": "architecture-review",
-  "compile": {
-    "hooks": ["stripAnchors", "codeEvidence"]
-  }
+  "compile": {}
 }
 ```
 
@@ -344,11 +380,12 @@ When the guide publishes to its own file instead of the monolith, set `compile.o
   "name": "architecture-review",
   "compile": {
     "scopeRoot": ".",
-    "outputFile": "architecture-review.md",
-    "hooks": ["stripAnchors", "codeEvidence"]
+    "outputFile": "architecture-review.md"
   }
 }
 ```
+
+Opt out: `"hooks": { "codeEvidence": false }`. See [Default compile hooks](#default-compile-hooks).
 
 ### codeEvidence compile example
 
@@ -357,7 +394,7 @@ Shard input (under `review/claim.md`):
 ```markdown
 Evidence: [`orgCount`](../../functions/src/foo.ts)
 
-See [firestore.rules L6-L8](../../firestore.rules).
+See [firestore.rules L6-L8](../../firestore.rules#L6-L8).
 ```
 
 Compiled output (when `functions/src/foo.ts` defines `orgCount` on line 6 and output is `architecture-review.md` at repo root):
@@ -416,7 +453,7 @@ The hook **does not** transform:
 - Direct links to binary assets (for example `../figures/architecture.png`, `../figures/demo.mp4`) — use a captioned `.md` insert shard that embeds the media instead
 - External URLs, even when the path contains `diagrams/`
 - Links to missing insert files (left unchanged)
-- Body text when `inlineInserts` is not in `compile.hooks`
+- Body text when `inlineInserts` is disabled via `compile.hooks: { "inlineInserts": false }` or an explicit hook override that omits it
 
 ### inlineInserts first inline
 
@@ -472,17 +509,20 @@ Lookup order for insert shard paths:
 
 ### inlineInserts config
 
+Runs by default. Optional search roots:
+
 ```json
 {
   "name": "architecture-review",
   "compile": {
-    "hooks": ["stripAnchors", "inlineInserts", "reviewLinks"],
     "hooksConfig": {
       "inlineInserts": { "searchRoots": ["diagrams"] }
     }
   }
 }
 ```
+
+Opt out: `"hooks": { "inlineInserts": false }`. See [Default compile hooks](#default-compile-hooks).
 
 ### inlineInserts compile example
 
@@ -644,15 +684,14 @@ See [FIND-004](architecture-review.md#find-004) in the architecture review.
 
 ## reviewLinks
 
-Optional compile hook that delegates to the same cross-guide rewrite engine as the automatic assembly pass. Tests in `packages/mdcp-core/test/builtin-hooks.test.ts` cover the `targetMonolith` override.
+Compile hook that delegates to the same cross-guide rewrite engine as the automatic assembly pass. Tests in `packages/mdcp-core/test/builtin-hooks.test.ts` cover the `targetMonolith` override.
 
-Add to `compile.hooks` when you need **`hooksConfig.reviewLinks.targetMonolith`** to force all resolved cross-guide links onto one output file (legacy consumer monoliths).
+Runs by default. Set **`hooksConfig.reviewLinks.targetMonolith`** to force all resolved cross-guide links onto one output file (legacy consumer monoliths):
 
 ```json
 {
   "name": "glossary",
   "compile": {
-    "hooks": ["stripAnchors", "reviewLinks"],
     "hooksConfig": {
       "reviewLinks": { "targetMonolith": "architecture-review.md" }
     }
@@ -661,6 +700,8 @@ Add to `compile.hooks` when you need **`hooksConfig.reviewLinks.targetMonolith`*
 ```
 
 When `targetMonolith` is set, indexed targets in other outputs are rewritten to `{targetMonolith}#slug` instead of their native `outputFile`. When omitted, the hook uses the guide link index (same behavior as the automatic per-shard pass).
+
+Opt out: `"hooks": { "reviewLinks": false }`. See [Default compile hooks](#default-compile-hooks).
 
 For index building, resolution rules, and multi-output layouts, see [Cross-guide link rewriting](#cross-guide-link-rewriting).
 

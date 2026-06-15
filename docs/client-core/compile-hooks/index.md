@@ -35,11 +35,13 @@ registerCompileHook('myHook', (ctx) => {
 });
 ```
 
-List hook names in `mdcp.config.json` under `guides[].compile.hooks` (order matters). Optional per-hook config lives under `guides[].compile.hooksConfig`.
+Custom hooks are **not** in the default pipeline — list them explicitly in `compile.hooks` when needed.
 
 Hook implementations should be **pure on `ctx.body`** except when intentionally using shared `hookState`. Leave unmatched links unchanged. Prefer docs-first specs with tests mapped to spec sections (see each hook shard below).
 
 ## Configuration
+
+Built-in hooks run **by default**. Omit `compile.hooks` for the common case. Optional per-hook config lives under `guides[].compile.hooksConfig`.
 
 ```json
 {
@@ -47,7 +49,6 @@ Hook implementations should be **pure on `ctx.body`** except when intentionally 
   "compile": {
     "scopeRoot": ".",
     "outputFile": "architecture-review.md",
-    "hooks": ["stripAnchors", "codeEvidence", "inlineInserts"],
     "hooksConfig": {
       "inlineInserts": { "searchRoots": ["diagrams"] },
       "reviewLinks": { "targetMonolith": "architecture-review.md" }
@@ -55,6 +56,32 @@ Hook implementations should be **pure on `ctx.body`** except when intentionally 
   }
 }
 ```
+
+### Opt out per hook
+
+Disable specific defaults with an object on `compile.hooks` (`false` removes a hook):
+
+```json
+{
+  "compile": {
+    "hooks": { "inlineInserts": false }
+  }
+}
+```
+
+### Explicit override
+
+Replace the entire default pipeline with a string array (backward compatible):
+
+```json
+{
+  "compile": {
+    "hooks": ["stripAnchors", "codeEvidence"]
+  }
+}
+```
+
+Default hook order and behavior: [Default compile hooks](../../features/default-compile-hooks.md). Config API: [API — Config](../api-config.md).
 
 For manifest compile order and `compile.sectionsHeading`, see [Manifest compile order](../../features/manifest-compile-order.md).
 
@@ -64,6 +91,6 @@ For manifest compile order and `compile.sectionsHeading`, see [Manifest compile 
 - **`codeEvidence`** — per shard. [codeEvidence](./code-evidence.md): repo source links → `#L` fragments.
 - **`inlineInserts`** — per shard. [inlineInserts](./inline-inserts.md): inline captioned insert libraries.
 - **Cross-guide rewrite** _(assembly)_ — per shard + post-stitch. [Cross-guide links](./cross-guide-links.md): automatic from `compileOrder`.
-- **`reviewLinks`** — per shard (optional). [reviewLinks](./review-links.md): `targetMonolith` override for cross-guide targets.
+- **`reviewLinks`** — per shard. [reviewLinks](./review-links.md): `targetMonolith` override for cross-guide targets.
 
-`stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly. Cross-guide rewrite runs automatically for multi-output layouts; add `reviewLinks` only when forcing all cross-links onto one output file.
+`stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly. Cross-guide rewrite runs automatically for multi-output layouts; `reviewLinks` applies `targetMonolith` when set in `hooksConfig`.
