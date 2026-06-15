@@ -62,7 +62,9 @@ Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host rep
 
 ## Compile hooks (P2.2)
 
-Per-shard transforms via `guides[].compile.hooks`. Built-in hooks:
+Per-shard assembly via `guides[].compile.hooks` on [authored GFM](../glossary/index.md#gfm). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
+
+Built-in hooks:
 
 - **`stripAnchors`** — removes `{#anchor}` markers (also default via `compile.stripAnchors`)
 - **`codeEvidence`** — rewrites repo source links to `#L` line fragments (symbol or line range in link text); rebases paths for the rendered output automatically. See [codeEvidence](../client-core/compile-hooks/code-evidence.md).
@@ -85,8 +87,9 @@ Per-shard transforms via `guides[].compile.hooks`. Built-in hooks:
 
 ## Design constraints (summary)
 
-- GFM only — no Pandoc, no required `{#heading-ids}`
+- [GFM](../glossary/index.md#gfm) only — no Pandoc, no required `{#heading-ids}`
 - md-tree for split only — custom compile
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
+- No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope)
 
-Details in [Design constraints](./design-constraints.md) and [Legacy migration](./legacy-migration.md).
+Details in [Design constraints](./design-constraints/index.md) and [Legacy migration](./legacy-migration.md).

@@ -32,7 +32,7 @@ Edit shards, then `pnpm docs:compile:repo`. Agent context: `pnpm docs:context`.
 Key shards:
 
 - [Feature catalog](docs/features/feature-catalog.md) — commands, tiers, agent scripts
-- [Design constraints](docs/features/design-constraints.md) — md-tree, GFM, peer linters
+- [Design constraints](docs/features/design-constraints/index.md) — md-tree, GFM, peer linters
 - [Developer guide](docs/developer/local-setup.md) — setup, tests, docs dogfooding, releases
 - [CLI quick start](docs/client-cli/install-and-quick-start.md) — install and first compile
 - [LLM collaboration](docs/client-cli/llm-collaboration.md) — bootstrap prompt and agent workflows

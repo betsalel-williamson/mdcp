@@ -2,6 +2,8 @@
 
 Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (anchor stripping, cross-guide rewrite, intra-guide rewrite, optional `publishPathRewrite`) run after all hooks complete.
 
+Hooks assemble [authored GFM](../glossary/index.md#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
+
 ## Architecture
 
 ```text

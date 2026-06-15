@@ -6,6 +6,18 @@ This guide covers local setup, package development, sharded documentation in `do
 
 Contributors are expected to follow the [Contributor Covenant Code of Conduct](#contributor-covenant-code-of-conduct).
 
+## Glossary
+
+Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
+
+### GFM
+
+**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+
+### Authored GFM
+
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](README.md#preprocessor-templating-out-of-scope).
+
 ## Local setup
 
 ### Requirements
@@ -67,6 +79,7 @@ mdcp/
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
 │   └── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
+│   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)
 │   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
@@ -142,6 +155,7 @@ This repo's documentation is sharded under [`docs/`](docs/). Shards are the **so
 
 | Directory      | Audience                         | Output                                            |
 | -------------- | -------------------------------- | ------------------------------------------------- |
+| `glossary/`    | Shared terms (cross-guide)       | Stitched into every guide via manifest link       |
 | `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review) |
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
@@ -171,7 +185,7 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 ### Linting docs
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
-- **Vale** — prose lint on `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
+- **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
 - **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
