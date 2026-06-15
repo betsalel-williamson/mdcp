@@ -36,7 +36,7 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 ### Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 ### ignoreGuides
 
@@ -99,7 +99,7 @@ Use `writeCompiledGuides` when you need to write the monolith and per-guide publ
 | `outputDir`                | Docs root                     | `_build` → `<docsRoot>/_build`                                                |
 | All generated paths        | `outputDir`                   | `features.md` → `<docsRoot>/_build/features.md`; `.caches/refs.json` for refs |
 
-All generated paths use `resolveUnderOutputDir(docsRoot, outputDir, file)` — relative to `outputDir` unless `file` is absolute. Details: [API — Refs](#api-refs-and-validation).
+All generated paths use `resolveUnderOutputDir(docsRoot, outputDir, file)` — relative to `outputDir` unless `file` is absolute. Details: [API — Refs](#api--refs-and-validation).
 
 ```typescript
 import { loadConfig, resolveGuideDir } from '@bwilliamson/mdcp-core';
@@ -165,7 +165,7 @@ See [Cross-guide link rewriting](#cross-guide-link-rewriting) and [ignoreGuides]
 
 `writeOutputFile` writes compile or export targets. Default: overwrite. When `backup.enabled` is true, moves an existing file to `{outputDir}/{backupDir}/{docsRoot-relative-key}{ext}` before writing. Pass `backup` on `CompileOptions` or resolve via `resolveBackupOptions(config, cliOverrides)`.
 
-When `compile.title` is set, `assembleGuide` injects a `##` heading followed by a blank line before the first section. See [API — Config](#api-config) for per-guide compile fields and top-level `backup` config.
+When `compile.title` is set, `assembleGuide` injects a `##` heading followed by a blank line before the first section. See [API — Config](#api--config) for per-guide compile fields and top-level `backup` config.
 
 Full spec: [Compile output backup](../../docs/features/compile-output-backup.md).
 
@@ -173,11 +173,12 @@ Full spec: [Compile output backup](../../docs/features/compile-output-backup.md)
 
 ### Refs (cross-links)
 
-| Export                                                         | Purpose                    |
-| -------------------------------------------------------------- | -------------------------- |
-| `buildSlugRegistry`, `lookupHeadings`, `githubSlugify`         | GitHub-style heading slugs |
-| `genRefsFromCompiled`, `readRefsRegistry`, `checkRefsRegistry` | `refs.json` lifecycle      |
-| `resolveRefsPath`, `writeRefsRegistry`                         | Path and I/O helpers       |
+| Export                                                         | Purpose                                 |
+| -------------------------------------------------------------- | --------------------------------------- |
+| `headingTextToPlain`, `githubSlugify`, `buildSlugRegistry`     | GitHub heading slugs via github-slugger |
+| `lookupHeadings`                                               | Fuzzy search over `refs.json` headings  |
+| `genRefsFromCompiled`, `readRefsRegistry`, `checkRefsRegistry` | `refs.json` lifecycle                   |
+| `resolveRefsPath`, `writeRefsRegistry`                         | Path and I/O helpers                    |
 
 #### `resolveRefsPath(docsRoot, outputDir, registryFile)`
 
@@ -195,6 +196,31 @@ resolveRefsPath('/docs', '.', 'refs.json');
 ```
 
 Prefer outputDir-relative values in config (for example `".caches/refs.json"` when `outputDir` is `"_build"`). See [Config essentials — path layout](../mdcp-cli/README.md#path-layout).
+
+#### Heading slugs (github-slugger)
+
+`githubSlugify`, `headingTextToPlain`, and `buildSlugRegistry` derive `#fragment` targets from compiled headings using [`github-slugger`](https://www.npmjs.com/package/github-slugger), which matches GitHub's [html-pipeline `TableOfContentsFilter`](https://github.com/gjtorikian/html-pipeline/blob/main/lib/html/pipeline/toc_filter.rb). GFM does not define auto-generated heading IDs; treat github-slugger parity as the contract.
+
+| Export               | Purpose                                              |
+| -------------------- | ---------------------------------------------------- |
+| `headingTextToPlain` | Strip ids and inline markup before slugging          |
+| `githubSlugify`      | Single-heading slug via github-slugger               |
+| `buildSlugRegistry`  | Document-wide slugs; duplicates get numeric suffixes |
+
+```typescript
+import { githubSlugify, headingTextToPlain } from '@bwilliamson/mdcp-core';
+
+headingTextToPlain('**Authored GFM** ``');
+// → 'Authored GFM'
+
+githubSlugify('Preprocessor / templating (out of scope)');
+// → 'preprocessor--templating-out-of-scope'
+
+githubSlugify('`--config` vs `--docs-root`');
+// → '--config-vs---docs-root'
+```
+
+Consumer docs: [Cross-links and refs — heading slugs](../mdcp-cli/README.md#heading-slugs-github-rules).
 
 ### Manifest
 
@@ -235,7 +261,7 @@ Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → 
 
 Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, publish-relative rewrite on `compile.outputFile` outputs, anchor stripping, intra-guide rewrite) run around the hook pipeline.
 
-Hooks assemble [authored GFM](#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
+Hooks assemble [authored GFM](#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 ### Architecture
 
@@ -316,7 +342,7 @@ Replace the entire default pipeline with a string array (backward compatible):
 }
 ```
 
-Default hook order and behavior: [Default compile hooks](../../docs/features/default-compile-hooks.md). Config API: [API — Config](#api-config).
+Default hook order and behavior: [Default compile hooks](../../docs/features/default-compile-hooks.md). Config API: [API — Config](#api--config).
 
 For manifest compile order and `compile.sectionsHeading`, see [Manifest compile order](../../docs/features/manifest-compile-order.md).
 
@@ -892,7 +918,7 @@ Link validation may still report **`missing publish path`** for those targets �
 
 - [Cross-guide link rewriting](#cross-guide-link-rewriting) — indexed `.md` between guides
 - [Compile hooks — overview](#developer-guide) — assembly pipeline
-- [API — Config](#api-config) — `compile.outputFile`
+- [API — Config](#api--config) — `compile.outputFile`
 - [codeEvidence](#codeevidence) — separate path rebase for repo source evidence links
 
 ## Related packages

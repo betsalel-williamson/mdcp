@@ -73,6 +73,7 @@ export {
 } from './compile/publish-links.js';
 export {
   githubSlugify,
+  headingTextToPlain,
   buildSlugRegistry,
   lookupHeadings,
   type HeadingEntry,

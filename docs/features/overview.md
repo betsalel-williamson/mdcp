@@ -193,9 +193,9 @@ Set `guides[].compile.outputFile` to the README path; run `mdcp compile`; README
 
 - **[GFM](../glossary/index.md#gfm) only** — no Pandoc, wikilinks, or required `{#heading-ids}`
 - **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used
-- **GitHub slugs** — computed from compiled headings, not from author-supplied IDs
+- **GitHub slugs** — computed from compiled headings via [github-slugger](https://www.npmjs.com/package/github-slugger) (html-pipeline algorithm); see [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules)
 - **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.
-- **No preprocessor / templating** — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope)
+- **No preprocessor / templating** — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)
 
 Details: [Design constraints](./design-constraints/index.md).
 

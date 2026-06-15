@@ -379,7 +379,7 @@ mdcp compile --config mdcp.config.json --docs-root .
 
 #### Programmatic API
 
-`loadConfig(configPath, configBase)` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root as `docsRoot` when resolving guide paths. See [API — Config](../mdcp-core/README.md#api-config).
+`loadConfig(configPath, configBase)` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root as `docsRoot` when resolving guide paths. See [API — Config](../mdcp-core/README.md#api--config).
 
 ### Path layout
 
@@ -598,7 +598,24 @@ mdcp refs list
 
 The part after `#` must match how the compiled doc names that heading — which changes when shards are merged and headings shift level.
 
-Section links are derived from compiled headings using the same rules GitHub uses when rendering. No hand-maintained `` required.
+### Heading slugs (GitHub rules)
+
+MDCP derives `#fragment` targets from **compiled** heading text using the same algorithm GitHub applies when rendering READMEs and issues. There is no separate GFM spec for auto-generated heading IDs; the de-facto reference is GitHub's [html-pipeline `TableOfContentsFilter`](https://github.com/gjtorikian/html-pipeline/blob/main/lib/html/pipeline/toc_filter.rb). `@bwilliamson/mdcp-core` implements that behavior through the [`github-slugger`](https://www.npmjs.com/package/github-slugger) package.
+
+| Input                                      | Plain text used for slugging                | Example slug                            |
+| ------------------------------------------ | ------------------------------------------- | --------------------------------------- |
+| Heading `git status`                       | `git status` (inline markup stripped)       | `git-status`                            |
+| `Preprocessor / templating (out of scope)` | Punctuation removed; each space becomes `-` | `preprocessor--templating-out-of-scope` |
+| `` `--config` vs `--docs-root` ``          | Consecutive dashes preserved                | `--config-vs---docs-root`               |
+| Two `## Foo` headings in one guide         | Second occurrence disambiguated             | `foo`, then `foo-1`                     |
+
+**Authoring rules:**
+
+1. **Look up slugs** — run `mdcp refs lookup` or `mdcp refs list` after compile; do not hand-roll anchors from heading titles.
+2. **Prefer unique subheadings** — duplicate heading text in the same document produces `-1`, `-2` suffixes; the first `#slug` link may not reach later occurrences.
+3. **Explicit `` overrides** — when present on a heading line, that id is used instead of the auto slug (lowercased). Use sparingly; GitHub slugs are the default contract.
+
+`githubSlugify` and `buildSlugRegistry` in `@bwilliamson/mdcp-core` share this algorithm for link validation, `refs.json`, and compile-time slug maps. See [API — Refs and validation](../mdcp-core/README.md#heading-slugs-github-slugger).
 
 ## Consumer migration
 
@@ -800,7 +817,7 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 ### Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 ### ignoreGuides
 

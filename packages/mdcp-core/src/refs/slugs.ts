@@ -1,14 +1,20 @@
-/** GitHub-style heading slug (matches common GFM renderers). */
-export function githubSlugify(text: string): string {
-  const s = text
+import GithubSlugger, { slug as githubSlug } from 'github-slugger';
+
+/**
+ * Strip mdcp heading adornments before slugging.
+ * github-slugger expects plain visible text (html-pipeline `node.text`), not raw Markdown.
+ */
+export function headingTextToPlain(text: string): string {
+  return text
     .trim()
-    .toLowerCase()
     .replace(/\{#.*?\}/g, '')
     .replace(/[*_`]/g, '')
-    .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-$/, '');
-  return s;
+    .trim();
+}
+
+/** GitHub heading slug via github-slugger (html-pipeline TableOfContentsFilter algorithm). */
+export function githubSlugify(text: string): string {
+  return githubSlug(headingTextToPlain(text));
 }
 
 const HEADING_RE = /^(#{1,6})\s+(.+)$/;
@@ -46,7 +52,7 @@ export function buildSlugRegistry(
   compiledText: string,
   sourceMap?: Map<string, string>,
 ): RefsRegistry {
-  const slugCounts = new Map<string, number>();
+  const slugger = new GithubSlugger();
   const headings: HeadingEntry[] = [];
   const slugs: Record<string, string> = {};
 
@@ -68,10 +74,7 @@ export function buildSlugRegistry(
       currentGuide = githubSlugify(rawTitle).slice(0, 32) || 'guide';
     }
 
-    const base = githubSlugify(rawTitle);
-    const count = slugCounts.get(base) ?? 0;
-    slugCounts.set(base, count + 1);
-    const slug = count === 0 ? base : `${base}-${count}`;
+    const slug = slugger.slug(headingTextToPlain(rawTitle));
 
     const key = semanticKey(rawTitle, currentGuide);
     const sourceFile = sourceMap?.get(slug) ?? null;

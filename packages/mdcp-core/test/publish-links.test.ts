@@ -69,7 +69,7 @@ describe('publish link rewriting', () => {
       writeFileSync(shard, '# Hooks\n');
 
       const input =
-        '[Preprocessor](../../features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).';
+        '[Preprocessor](../../features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).';
       const out = rewritePublishRelativeLinks(input, {
         sourceFile: shard,
         guideDir: join(work, 'docs', 'client-core'),
@@ -77,7 +77,7 @@ describe('publish link rewriting', () => {
       });
 
       expect(out).toBe(
-        '[Preprocessor](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).',
+        '[Preprocessor](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).',
       );
     });
   });

@@ -1,28 +1,81 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { githubSlugify, buildSlugRegistry, lookupHeadings } from '../src/refs/slugs.js';
+import GithubSlugger, { slug as githubSlug } from 'github-slugger';
+import {
+  githubSlugify,
+  headingTextToPlain,
+  buildSlugRegistry,
+  lookupHeadings,
+} from '../src/refs/slugs.js';
 import { genRefsFromCompiled, checkRefsRegistry } from '../src/refs/registry.js';
 import { resolveRefsPath } from '../src/config/load.js';
 import { useTmpDir } from './helpers/tmp-dir.js';
 
+const PREPROCESSOR_HEADING = 'Preprocessor / templating (out of scope)';
+
 describe('githubSlugify', () => {
   it('strips brace ids and punctuation', () => {
-    expect(githubSlugify('Hello {#world}!')).toBe('hello');
+    const raw = 'Hello {#world}!';
+    expect(githubSlugify(raw)).toBe(githubSlug(headingTextToPlain(raw)));
+    expect(githubSlugify(raw)).toBe('hello-');
   });
 
   it('preserves consecutive dashes from CLI flag headings', () => {
-    expect(githubSlugify('`--config` vs `--docs-root`')).toBe('--config-vs---docs-root');
+    const raw = '`--config` vs `--docs-root`';
+    expect(githubSlugify(raw)).toBe('--config-vs---docs-root');
+    expect(githubSlugify(raw)).toBe(githubSlug(headingTextToPlain(raw)));
+  });
+
+  it('matches github-slugger on plain repo headings', () => {
+    expect(githubSlugify(PREPROCESSOR_HEADING)).toBe('preprocessor--templating-out-of-scope');
+    expect(githubSlugify(PREPROCESSOR_HEADING)).toBe(githubSlug(PREPROCESSOR_HEADING));
+  });
+
+  it.each([
+    ['Authentication flow', 'authentication-flow'],
+    ['config --', 'config---'],
+    ['😄 emoji', '-emoji'],
+    ['Привет non-latin 你好', 'привет-non-latin-你好'],
+  ])('matches github-slugger for plain text %j', (plain, expected) => {
+    expect(githubSlug(plain)).toBe(expected);
+    expect(githubSlugify(plain)).toBe(expected);
+  });
+
+  it('keeps trailing dashes (GitHub html-pipeline behavior)', () => {
+    const plain = 'Trailing dash -';
+    expect(githubSlugify(plain)).toBe('trailing-dash--');
+    expect(githubSlugify(plain)).toBe(githubSlug(plain));
+  });
+});
+
+describe('headingTextToPlain', () => {
+  it('strips explicit ids and inline markdown before slugging', () => {
+    expect(headingTextToPlain('**Bold** `{#custom-id}`')).toBe('Bold');
   });
 });
 
 describe('buildSlugRegistry', () => {
-  it('disambiguates duplicate slugs', () => {
+  it('disambiguates duplicate slugs like github-slugger', () => {
     const text = '# Guide\n\n## Foo\n\n## Foo\n';
     const reg = buildSlugRegistry(text);
     const slugs = reg.headings.map((h) => h.slug);
+
+    const slugger = new GithubSlugger();
+    const expected = ['Guide', 'Foo', 'Foo'].map((title) => slugger.slug(title));
+    expect(slugs).toEqual(expected);
     expect(slugs).toContain('foo');
     expect(slugs).toContain('foo-1');
+  });
+
+  it('tracks duplicates across the full compiled document', () => {
+    const text = '# Guide\n\n## Alpha\n\n## Beta\n\n## Alpha\n\n## Alpha\n';
+    const reg = buildSlugRegistry(text);
+    const slugger = new GithubSlugger();
+    const expected = ['Guide', 'Alpha', 'Beta', 'Alpha', 'Alpha'].map((title) =>
+      slugger.slug(title),
+    );
+    expect(reg.headings.map((h) => h.slug)).toEqual(expected);
   });
 });
 
