@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { basename, dirname } from 'node:path';
+import { basename, dirname, relative } from 'node:path';
 import { githubSlugify } from '../refs/slugs.js';
 import { extractFirstHeading } from './compile-title.js';
 import { demoteHeadings, stripAboutThisGuideHeading } from './headings.js';
@@ -96,7 +96,10 @@ export interface CrossGuideLinkRewriteOptions {
   sourceFile: string;
   guideDir: string;
   scopeRoot?: string;
+  currentGuideName?: string;
   currentOutputBasename?: string;
+  /** Absolute path to the guide output being assembled. */
+  currentOutputFile?: string;
   linkIndex: GuideLinkIndex;
   /** Guide names whose shards keep source `.md` paths instead of monolith `#slug` targets. */
   ignoreGuides?: string[];
@@ -129,15 +132,34 @@ function resolveIndexedMarkdownLink(
 function formatCrossGuideTarget(
   prefix: string,
   anchor: string,
-  entry: { outputBasename: string },
+  entry: GuideLinkEntry,
   options: CrossGuideLinkRewriteOptions,
 ): string {
-  const current = options.currentOutputBasename;
-  const targetOutput = entry.outputBasename;
-  if (!current || targetOutput === current) {
+  const sameGuide =
+    options.currentGuideName !== undefined && entry.guideName === options.currentGuideName;
+  const sameOutputFile =
+    options.currentOutputFile !== undefined && entry.outputFile === options.currentOutputFile;
+  const sameBasenameLegacy =
+    options.currentOutputBasename !== undefined &&
+    entry.outputBasename === options.currentOutputBasename &&
+    options.currentOutputFile === undefined;
+
+  if (sameGuide || sameOutputFile || sameBasenameLegacy) {
     return `${prefix}#${anchor})`;
   }
-  return `${prefix}${targetOutput}#${anchor})`;
+
+  if (options.currentOutputFile) {
+    const fromDir = dirname(options.currentOutputFile);
+    const toFile = entry.outputFile;
+    if (dirname(toFile) === fromDir) {
+      return `${prefix}${basename(toFile)}#${anchor})`;
+    }
+    let rel = relative(fromDir, toFile).replace(/\\/g, '/');
+    if (!rel.startsWith('.')) rel = `./${rel}`;
+    return `${prefix}${rel}#${anchor})`;
+  }
+
+  return `${prefix}${entry.outputBasename}#${anchor})`;
 }
 
 /** Rewrite cross-guide `.md` links using the compile-time guide link index. */

@@ -22,6 +22,9 @@ import {
 import { resolveCompileHooks } from '../config/resolve-compile-hooks.js';
 import type { PublishPathRewriteOptions } from './publish-links.js';
 import { writeOutputFile, type WriteOutputBackupOptions } from './write-output.js';
+import { collectShardProvenance } from '../links/validate-shards.js';
+import { markBrokenLinks } from '../links/mark-broken.js';
+import type { LinkProvenance } from '../links/mark-broken.js';
 
 export { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
 export {
@@ -60,6 +63,10 @@ export interface AssembleGuideOptions {
   linkIndex?: GuideLinkIndex;
   /** Guide names whose cross-guide shard links keep source `.md` paths. */
   ignoreGuides?: string[];
+  markBroken?: boolean;
+  guideName?: string;
+  knownOutputBasenames?: Set<string>;
+  knownSlugs?: Set<string>;
 }
 
 export function assembleGuide(guideDir: string, options: AssembleGuideOptions = {}): string {
@@ -84,6 +91,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
   }
 
   const hookState = createCompileHookState();
+  const provenance: LinkProvenance[] = [];
 
   for (let i = 0; i < files.length; i++) {
     const filePath = files[i];
@@ -91,6 +99,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
     if (!existsSync(filePath)) {
       throw new Error(`Missing section file: ${filePath}`);
     }
+    provenance.push(...collectShardProvenance(filePath));
     let raw = readFileSync(filePath, 'utf-8').trim();
 
     if (i === 0 && useTitle) {
@@ -123,7 +132,9 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
         sourceFile: filePath,
         guideDir,
         scopeRoot: options.scopeRoot,
+        currentGuideName: options.guideName ?? guideName,
         currentOutputBasename: options.outputBasename,
+        currentOutputFile: options.outputFile,
         linkIndex: options.linkIndex,
         ignoreGuides: options.ignoreGuides,
       });
@@ -148,6 +159,26 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
   if (options.publishPathRewrite) {
     compiled = rewritePublishPathLinks(compiled, options.publishPathRewrite);
   }
+
+  const intraSlugs = new Set(slugByBasename.values());
+  const assemblingGuide = options.guideName ?? guideName;
+  if (options.linkIndex && assemblingGuide) {
+    for (const entry of options.linkIndex.values()) {
+      if (entry.guideName === assemblingGuide) {
+        intraSlugs.add(entry.slug);
+      }
+    }
+  }
+  const marked = markBrokenLinks(compiled, {
+    outputFile: options.outputFile,
+    provenance,
+    enabled: options.markBroken !== false,
+    guideName: options.guideName ?? guideName,
+    compiledOutputPath: options.outputFile,
+    knownOutputBasenames: options.knownOutputBasenames,
+    knownSlugs: intraSlugs,
+  });
+  compiled = marked.markdown;
 
   return compiled;
 }
@@ -189,6 +220,17 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
   const docsRoot = options.docsRoot ?? process.cwd();
   const orderLen = options.compileOrder.length;
   const linkIndex = buildGuideLinkIndex(options, docsRoot);
+  const knownOutputBasenames = new Set(
+    options.compileOrder.map((name) => {
+      const cfg = guideConfigMap.get(name) as GuideConfig | undefined;
+      const compile = cfg?.compile;
+      const outputFile = effectiveGuideOutputFile(name, compile, orderLen);
+      return basename(outputFile);
+    }),
+  );
+  if (options.config?.outputFile !== undefined) {
+    knownOutputBasenames.add(basename(options.config.outputFile));
+  }
 
   return options.compileOrder.map((name) => {
     const cfg = guideConfigMap.get(name) as GuideConfig | undefined;
@@ -214,6 +256,9 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       config: options.config,
       linkIndex,
       ignoreGuides: compile?.crossGuideLinks?.ignoreGuides,
+      markBroken: compile?.links?.markBroken,
+      guideName: name,
+      knownOutputBasenames,
     });
 
     const includeBanner = compile?.includeBanner ?? false;
