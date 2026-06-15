@@ -2,9 +2,9 @@
 
 **Audience:** contributors and maintainers working on the mdcp monorepo.
 
-This guide covers local setup, package development, sharded documentation in `docs/`, changesets, and npm releases. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](#feature-catalog).
+This guide covers local setup, package development, sharded documentation in `docs/`, changesets, and npm releases. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](README.md#feature-catalog).
 
-Contributors are expected to follow the [Contributor Covenant Code of Conduct](#contributor-covenant-code-of-conduct).
+Contributors are expected to follow the [Contributor Covenant Code of Conduct](README.md#contributor-covenant-code-of-conduct).
 
 ## Glossary
 
@@ -96,8 +96,6 @@ gh issue view <number> --comments
 
 **GitHub MCP** (when enabled in Cursor or another host): use GitHub issue tools to fetch the issue named in `WORK_ITEM` — title, body, labels, and comments.
 
-**No remote access:** read local specs under `.work-items/{slug}/` if the task was spec-driven instead of tracker-driven.
-
 If none of the above apply, inspect enabled MCP tool descriptors or run `gh --help` / `gh issue view --help` before guessing commands.
 
 ### Git and delivery
@@ -188,7 +186,7 @@ JSONC markdownlint configs only — no TypeScript build. Edit `*.markdownlint-cl
 1. `pnpm run build && pnpm test`
 2. `pnpm run lint && pnpm run format:check`
 3. `pnpm docs:compile:repo && pnpm docs:check` if you touched `docs/` shards
-4. `pnpm changeset` if you changed published package behavior (see [Versioning and releases](#versioning-and-releases))
+4. `pnpm changeset` if you changed published package behavior (see [Versioning and releases](README.md#versioning-and-releases))
 
 CI runs the same core gates as `pnpm run check` (typecheck, lint, format, build, test, `docs:check`), plus:
 
@@ -223,7 +221,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 1. Edit shard `.md` files under the relevant guide directory.
 2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](README.md#manifest-compile-order) when using `compile.sectionsHeading`.
 3. Run `pnpm docs:compile:repo` then `pnpm docs:check:repo`.
-4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](#developer-guide) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
+4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](README.md#developer-guide) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
 
 ### Agent context
 
@@ -367,7 +365,7 @@ The [release workflow](.github/workflows/release.yml) runs on **`v*` tag push**,
 
 #### Manual fallback
 
-See [Publishing](#publishing).
+See [Publishing](README.md#publishing).
 
 ### Changelogs
 
@@ -378,12 +376,12 @@ Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you 
 
 ### Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](#security-policy) for the supported-versions table — update that table when cutting a new minor line.
+Security fixes target the **latest minor** on npm. See [SECURITY.md](README.md#security-policy) for the supported-versions table — update that table when cutting a new minor line.
 
 ### Related docs
 
-- [Publishing](#publishing) — first publish, Trusted Publishing, npm commands
-- [.changeset/README.md](#agent-prompt-templates) — quick changeset reference
+- [Publishing](README.md#publishing) — first publish, Trusted Publishing, npm commands
+- [.changeset/README.md](README.md#changesets) — quick changeset reference
 
 ## Publishing
 
@@ -456,7 +454,7 @@ pnpm release:tag:push
 
 You will choose patch / minor / major / build and confirm by typing the version. Agents and CI cannot run this script.
 
-Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` tags**). See [Versioning and releases](#versioning-and-releases).
+Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` tags**). See [Versioning and releases](README.md#versioning-and-releases).
 
 ### Trusted Publishing notes
 
@@ -499,4 +497,4 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
-See [SECURITY.md](#security-policy) for vulnerability reporting.
+See [SECURITY.md](README.md#security-policy) for vulnerability reporting.

@@ -33,9 +33,9 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ## Quick start
 
-1. Copy a starter config from the [mdcp repo](https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
+1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
-2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
+2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](../../examples/sample-guides/).
 
 3. Run:
 

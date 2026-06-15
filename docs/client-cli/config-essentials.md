@@ -136,4 +136,4 @@ When a manifest has preamble prose with example inline links before an ordered `
 | `refs.slugAlgorithm`        | Informational only — only `github` is implemented          |
 | `export.llm.skipIndexFiles` | No-op — compile output never includes `index.md` manifests |
 
-Full schema and examples: [mdcp.config.json in sample-guides](https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json).
+Full schema and examples: [mdcp.config.json in sample-guides](../../examples/sample-guides/mdcp.config.json).
