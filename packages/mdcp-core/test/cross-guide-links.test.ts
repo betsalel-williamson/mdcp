@@ -379,9 +379,9 @@ describe('cross-guide link rewriting', () => {
 
       writeFileSync(
         join(work, 'features', 'index.md'),
-        '# Features\n\n## Sections\n\n- [Legacy](./legacy-migration.md)\n',
+        '# Features\n\n## Sections\n\n- [Catalog](./feature-catalog.md)\n',
       );
-      writeFileSync(join(work, 'features', 'legacy-migration.md'), '# Legacy migration\n');
+      writeFileSync(join(work, 'features', 'feature-catalog.md'), '# Feature catalog\n');
 
       writeFileSync(
         join(work, 'client-cli', 'index.md'),
@@ -389,7 +389,7 @@ describe('cross-guide link rewriting', () => {
       );
       writeFileSync(
         join(work, 'client-cli', 'consumer.md'),
-        '## Consumer\n\n[Legacy](../features/legacy-migration.md)\n',
+        '## Consumer\n\n[Catalog](../features/feature-catalog.md)\n',
       );
 
       const opts = {
@@ -407,7 +407,7 @@ describe('cross-guide link rewriting', () => {
         ],
       };
       const index = buildGuideLinkIndex(opts, work);
-      const entry = index.get(join(work, 'features', 'legacy-migration.md'));
+      const entry = index.get(join(work, 'features', 'feature-catalog.md'));
       expect(entry?.guideName).toBe('features');
       expect(entry?.outputBasename).toBe('guides.md');
     });
@@ -420,9 +420,9 @@ describe('cross-guide link rewriting', () => {
 
       writeFileSync(
         join(work, 'features', 'index.md'),
-        '# Features\n\n## Sections\n\n- [Legacy](./legacy-migration.md)\n',
+        '# Features\n\n## Sections\n\n- [Catalog](./feature-catalog.md)\n',
       );
-      writeFileSync(join(work, 'features', 'legacy-migration.md'), '# Legacy migration\n');
+      writeFileSync(join(work, 'features', 'feature-catalog.md'), '# Feature catalog\n');
 
       writeFileSync(
         join(work, 'client-cli', 'index.md'),
@@ -430,7 +430,7 @@ describe('cross-guide link rewriting', () => {
       );
       writeFileSync(
         join(work, 'client-cli', 'consumer.md'),
-        '## Consumer\n\n[Legacy](../features/legacy-migration.md)\n',
+        '## Consumer\n\n[Catalog](../features/feature-catalog.md)\n',
       );
 
       const results = compileGuideResults({
@@ -449,8 +449,8 @@ describe('cross-guide link rewriting', () => {
       });
 
       const readme = results.find((r) => r.name === 'client-cli')!.text;
-      expect(readme).toContain('[Legacy](guides.md#legacy-migration)');
-      expect(readme).not.toMatch(/\[Legacy\]\(#legacy-migration\)/);
+      expect(readme).toContain('[Catalog](guides.md#feature-catalog)');
+      expect(readme).not.toMatch(/\[Catalog\]\(#feature-catalog\)/);
     });
   });
 

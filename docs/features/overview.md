@@ -207,4 +207,3 @@ Details: [Design constraints](./design-constraints/index.md).
 - **Config fields** — [API — Config](../client-core/api-config.md)
 - **Compile hooks** — [Compile hooks overview](../client-core/compile-hooks/index.md)
 - **Contributing to this repo** — [Developer guide](../developer/index.md)
-- **Migrating from legacy scripts** — [Legacy migration](./legacy-migration.md)

@@ -292,11 +292,11 @@ describe('compileGuideResults link validation e2e', () => {
 
       writeFileSync(
         join(work, 'features', 'index.md'),
-        '# Features\n\n## Sections\n\n- [Legacy](./legacy-migration.md)\n',
+        '# Features\n\n## Sections\n\n- [Catalog](./feature-catalog.md)\n',
       );
       writeFileSync(
-        join(work, 'features', 'legacy-migration.md'),
-        '# Legacy migration\n\nContent.\n',
+        join(work, 'features', 'feature-catalog.md'),
+        '# Feature catalog\n\nContent.\n',
       );
 
       writeFileSync(
@@ -305,7 +305,7 @@ describe('compileGuideResults link validation e2e', () => {
       );
       writeFileSync(
         join(work, 'client-cli', 'consumer.md'),
-        '# CLI\n\n## Consumer\n\nSee [Legacy](../features/legacy-migration.md).\n',
+        '# CLI\n\n## Consumer\n\nSee [Catalog](../features/feature-catalog.md).\n',
       );
 
       const results = compileGuideResults({
@@ -327,7 +327,7 @@ describe('compileGuideResults link validation e2e', () => {
       });
 
       const readme = results.find((r) => r.name === 'client-cli')!.text;
-      expect(readme).toContain('guides.md#legacy-migration');
+      expect(readme).toContain('guides.md#feature-catalog');
       expect(readme).not.toContain('**BROKEN LINK:**');
     });
   });
@@ -341,9 +341,9 @@ describe('compileGuideResults link validation e2e', () => {
 
       writeFileSync(
         join(docsRoot, 'features', 'index.md'),
-        '# Features\n\n## Sections\n\n- [Legacy](./legacy-migration.md)\n',
+        '# Features\n\n## Sections\n\n- [Catalog](./feature-catalog.md)\n',
       );
-      writeFileSync(join(docsRoot, 'features', 'legacy-migration.md'), '# Legacy migration\n');
+      writeFileSync(join(docsRoot, 'features', 'feature-catalog.md'), '# Feature catalog\n');
 
       writeFileSync(
         join(docsRoot, 'client-cli', 'index.md'),
@@ -351,7 +351,7 @@ describe('compileGuideResults link validation e2e', () => {
       );
       writeFileSync(
         join(docsRoot, 'client-cli', 'consumer.md'),
-        '## Consumer\n\n[Legacy](../features/legacy-migration.md)\n',
+        '## Consumer\n\n[Catalog](../features/feature-catalog.md)\n',
       );
 
       const compileOptions = {
@@ -379,8 +379,8 @@ describe('compileGuideResults link validation e2e', () => {
       const results = compileGuideResults(compileOptions);
 
       const readme = results.find((r) => r.name === 'client-cli')!.text;
-      expect(readme).toMatch(/\[Legacy\]\([^)]*features\/legacy-migration\.md\)/);
-      expect(readme).not.toContain('guides.md#legacy-migration');
+      expect(readme).toMatch(/\[Catalog\]\([^)]*features\/feature-catalog\.md\)/);
+      expect(readme).not.toContain('guides.md#feature-catalog');
       expect(readme).not.toContain('**BROKEN LINK:**');
 
       const issues = lintLinks({
@@ -398,7 +398,7 @@ describe('compileGuideResults link validation e2e', () => {
           (i) =>
             i.guideName === 'client-cli' &&
             i.kind === 'missing publish path' &&
-            i.originalTarget.includes('legacy-migration.md'),
+            i.originalTarget.includes('feature-catalog.md'),
         ),
       ).toBe(true);
     });

@@ -108,7 +108,7 @@ Nested shards use more `../` segments in source; per-shard resolution still yiel
 
 ## `ignoreGuides` interaction
 
-When `compile.crossGuideLinks.ignoreGuides` keeps a cross-guide link as a shard `.md` path, publish-relative still rebases that path for the publish file. Example: `client-cli` with `ignoreGuides: ["features"]` compiles `../features/legacy-migration.md` to `../../docs/features/legacy-migration.md` in the package README.
+When `compile.crossGuideLinks.ignoreGuides` keeps a cross-guide link as a shard `.md` path, publish-relative still rebases that path for the publish file. Example: `client-cli` with `ignoreGuides: ["features"]` compiles `../features/feature-catalog.md` to `../../docs/features/feature-catalog.md` in the package README.
 
 Link validation may still report **`missing publish path`** for those targets — that is policy (publish output should not link into unpublished shard trees), not a rewrite failure. See [Link validation](../../features/link-validation.md#publish-only-link-policy).
 

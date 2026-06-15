@@ -18,13 +18,13 @@ describe('publish link rewriting', () => {
     const input =
       'Collaborating with an LLM? See [LLM collaboration](./llm-collaboration.md) for details.\n' +
       'Also see [Agent integration](./agent-integration.md#scripts).\n' +
-      'External [Legacy migration](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/legacy-migration.md).\n';
+      'External [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).\n';
 
     const out = rewriteIntraGuideFileLinks(input, slugByBasename);
     expect(out).toContain('[LLM collaboration](#llm-collaboration)');
     expect(out).toContain('[Agent integration](#scripts)');
     expect(out).toContain(
-      '[Legacy migration](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/legacy-migration.md)',
+      '[Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md)',
     );
     expect(out).not.toMatch(/\]\(\.\/llm-collaboration\.md\)/);
   });

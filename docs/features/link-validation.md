@@ -17,7 +17,7 @@ After cross-guide, publish-relative, and intra-guide rewrite passes, compile run
 Broken links are replaced with visible prose (no clickable dead href):
 
 ```markdown
-**BROKEN LINK:** "Legacy migration" (`../features/legacy-migration.md`) → `#legacy-migration` (dead anchor in compiled guide)
+**BROKEN LINK:** "Feature catalog" (`../features/feature-catalog.md`) → `#feature-catalog` (dead anchor in compiled guide)
 ```
 
 | Field           | Source                                                               |
@@ -41,7 +41,7 @@ Guides with `compile.outputFile` are **publish-only** outputs (npm READMEs, `DEV
 
 See [publish-relative rewrite](../client-core/compile-hooks/publish-relative-links.md) for how shard paths are rebased before this policy runs.
 
-Example: `client-cli` with `ignoreGuides: ["features"]` compiles `../features/legacy-migration.md` to `../../docs/features/legacy-migration.md` in `packages/mdcp-cli/README.md`. The href works on disk; lint still flags it so maintainers prefer monolith `#slug` targets or move reference content into a published guide.
+Example: `client-cli` with `ignoreGuides: ["features"]` compiles `../features/feature-catalog.md` to `../../docs/features/feature-catalog.md` in `packages/mdcp-cli/README.md`. The href works on disk; lint still flags it so maintainers prefer monolith `#slug` targets or move reference content into a published guide.
 
 Publish-relative rewrite and publish-only lint are complementary: rewrite fixes geometry from absolute resolution; lint enforces which target classes are allowed in publish output.
 
@@ -107,7 +107,7 @@ Global option (all commands that run link validation):
 ## Diagnostic shape
 
 ```text
-link: docs/client-cli/consumer-migration.md:122: dead anchor "#legacy-migration" (slug not found in compiled guide "client-cli")
+link: docs/client-cli/consumer-migration.md:42: dead anchor "#missing-slug" (slug not found in compiled guide "client-cli")
   → compiled: packages/mdcp-cli/README.md:696
 ```
 

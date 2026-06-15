@@ -91,4 +91,4 @@ Built-in hooks:
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
 - No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope)
 
-Details in [Design constraints](./design-constraints/index.md) and [Legacy migration](./legacy-migration.md).
+Details in [Design constraints](./design-constraints/index.md).

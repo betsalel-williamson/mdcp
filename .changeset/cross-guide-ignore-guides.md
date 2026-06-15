@@ -10,6 +10,8 @@ Replace `reviewLinks` compile hook with assembly-time `compile.crossGuideLinks.i
 
 - Remove `reviewLinks` from the default compile hook pipeline
 - Remove `hooksConfig.reviewLinks` and `targetMonolith`
+- Unified output layout: `--cwd` → **`--docs-root`**; default `outputDir` **`_build`**; guide shards under **`{docsRoot}/{name}/`**; per-guide outputs default to `{name}.md`; monolith opt-in via top-level `outputFile`; refs at **`.caches/refs.json`**
+- Legacy bash/Python scripts (`compile_sections.py`, `validate.sh`, etc.) replaced by `@bwilliamson/mdcp-core` and `mdcp check`
 
 **Added:**
 

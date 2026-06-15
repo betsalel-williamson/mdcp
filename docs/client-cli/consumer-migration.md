@@ -18,7 +18,7 @@ After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — the
 
 ## Output layout
 
-MDCP uses an NPM-style two-root layout. Full breaking-change table for upgrades from earlier releases: [Legacy migration — unified output layout](../features/legacy-migration.md#unified-output-layout-breaking).
+MDCP uses an NPM-style two-root layout.
 
 | Concept          | Default                            | Notes                                                                    |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------ |
@@ -114,12 +114,12 @@ See [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md#cross-
 ## Steps for a new consumer repo
 
 1. Add `mdcp.config.json` to your docs shard directory
-2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](./config-essentials.md#config-vs-docs-root))
+2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](./config-essentials.md#--config-vs---docs-root))
 3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
 4. Use `mdcp refs lookup` for cross-link slugs (no `{#heading-ids}`)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
-Maintainer port map from earlier MDCP layouts: [Legacy migration](../features/legacy-migration.md). Upgrading from 0.3.x `reviewLinks` config: [reviewLinks removal](../features/legacy-migration.md#reviewlinks-removal-03x-next).
+Upgrade notes from earlier MDCP releases are in the package **changeset** files at release time, not in the feature catalog.
 
 ## Verification checklist
 
