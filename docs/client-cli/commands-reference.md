@@ -8,6 +8,7 @@ Every command accepts:
 | --------------------- | ------------------ | -------------------------------------------------------------------------------- |
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
 | `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |
+| `--warn-broken-links` | off                | Report broken internal links but exit 0 (overrides `lint.links.severity`)        |
 
 **Repo-root npm scripts** typically use both flags:
 
@@ -15,7 +16,7 @@ Every command accepts:
 mdcp compile --config docs/mdcp.config.json --docs-root docs
 ```
 
-`--config` locates the file from where the command runs; `--docs-root` sets the shard tree root. These bases are independent — see [Config essentials](./config-essentials.md#--config-vs---docs-root).
+`--config` locates the file from where the command runs; `--docs-root` sets the shard tree root. These bases are independent — see [Config essentials](./config-essentials.md#config-vs-docs-root).
 
 ## Daily workflow
 
@@ -23,24 +24,26 @@ mdcp compile --config docs/mdcp.config.json --docs-root docs
 # Regenerate the monolith from shards (link order from each guide's index.md / shards.md)
 mdcp compile
 
-# Full validation gate (orphans → compile → refs → xrefs; optional linters)
+# Full validation gate (orphans → compile → refs → links → xrefs; optional peer linters)
 mdcp check
 ```
 
+`mdcp compile` and `mdcp check` exit **1** when broken internal links are found (default). Use `--warn-broken-links` to surface `link-warn:` diagnostics without failing CI. See [Link validation](../features/link-validation.md).
+
 ## Command summary
 
-| Command                    | When you need it                                                     |
-| -------------------------- | -------------------------------------------------------------------- |
-| `mdcp compile`             | Regenerate the monolith from shards                                  |
-| `mdcp check`               | Full gate: orphans → compile → refs → xrefs; optional peer linters   |
-| `mdcp shard`               | Split a monolith into shards (requires `config.source`)              |
-| `mdcp refs list`           | List heading slugs from `refs.json` as JSON                          |
-| `mdcp refs lookup <query>` | Search compiled section titles while writing cross-links             |
-| `mdcp export --llm`        | Token-stripped compiled output for LLM context                       |
-| `mdcp lint`                | markdownlint-cli2 on shards and compiled output (peer, if installed) |
-| `mdcp prose`               | Vale prose lint (peer, if installed)                                 |
-| `mdcp links`               | markdown-link-check on compiled output (peer, if installed)          |
-| `mdcp fix`                 | Prettier + markdownlint `--fix` (install peers in host repo first)   |
+| Command                    | When you need it                                                           |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `mdcp compile`             | Regenerate the monolith from shards (exits 1 on broken links by default)   |
+| `mdcp check`               | Full gate: orphans → compile → refs → links → xrefs; optional peer linters |
+| `mdcp shard`               | Split a monolith into shards (requires `config.source`)                    |
+| `mdcp refs list`           | List heading slugs from `refs.json` as JSON                                |
+| `mdcp refs lookup <query>` | Search compiled section titles while writing cross-links                   |
+| `mdcp export --llm`        | Token-stripped compiled output for LLM context                             |
+| `mdcp lint`                | markdownlint-cli2 on shards and compiled output (peer, if installed)       |
+| `mdcp prose`               | Vale prose lint (peer, if installed)                                       |
+| `mdcp links`               | markdown-link-check on compiled output (peer, if installed)                |
+| `mdcp fix`                 | Prettier + markdownlint `--fix` (install peers in host repo first)         |
 
 ## Refs subcommands
 

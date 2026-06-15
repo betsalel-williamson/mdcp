@@ -30,7 +30,7 @@ mdcp export --llm --stdout --config mdcp.config.json
 
 ## Check gate (P0.4)
 
-Structural validation: orphans → compile → refs → xrefs; peer linters optional.
+Structural validation: orphans → compile → refs → **links** → xrefs; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md).
 
 ```bash
 mdcp check --require-lint
