@@ -115,14 +115,16 @@ WORK_ITEM=
 WORK_ITEM_LOOKUP=
 ```
 
+`WORK_ITEM_LOOKUP` should point agents at **your repo's developer docs** — not a fixed list of every tracker CLI and MCP. Each team documents its stack once during setup (see [Agent work-item tracking](../developer/agent-work-item-tracking.md) in this repo).
+
 Example:
 
 ```text
 WORK_ITEM=39
-WORK_ITEM_LOOKUP=Branch from main (pull first). Run gh issue view 39 --comments.
+WORK_ITEM_LOOKUP=Branch from main (pull first). Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
 ```
 
-Lookup examples (GitHub CLI, Linear MCP, local `.work-items/` specs): [examples/prompts/work-item-tracking.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/work-item-tracking.md).
+General pattern and discovery order for consumer repos: [examples/prompts/work-item-tracking.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/work-item-tracking.md).
 
 ## Task-type prompt templates
 

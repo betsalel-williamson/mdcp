@@ -9,67 +9,46 @@ WORK_ITEM=
 WORK_ITEM_LOOKUP=
 ```
 
-Example:
-
-```text
-WORK_ITEM=39
-WORK_ITEM_LOOKUP=Branch from main (pull first). Run gh issue view 39 --comments.
-```
+- **`WORK_ITEM`** — ticket ID, URL, or local spec slug (linked in the code review)
+- **`WORK_ITEM_LOOKUP`** — where and how the agent loads scope (see below — not every tool listed here)
 
 The prompt body refers to `WORK_ITEM` and `WORK_ITEM_LOOKUP` by name. Everything below the code block is static.
 
-## Lookup examples
+## What goes in `WORK_ITEM_LOOKUP`
 
-Paste into `WORK_ITEM_LOOKUP` (one line):
+Do **not** try to list every tracker, CLI, and MCP in this file. Each repo documents its own stack once in **developer docs**. The lookup line points the agent there and tells it to discover the rest.
 
-**GitHub CLI**
-
-```text
-Branch from main (pull first). Run gh issue view 39 --comments.
-```
-
-**GitLab CLI**
+Use a pattern like:
 
 ```text
-Branch from main (pull first). Run glab issue view 12.
+WORK_ITEM_LOOKUP=Branch from main (pull first). Load WORK_ITEM using this repo's developer docs (work-item tracking section). If those docs are silent, inspect enabled MCP tool schemas, tracker CLIs on PATH, or local .work-items/ specs.
 ```
 
-**Linear MCP**
-
-```text
-Branch from main (pull first). Use the Linear MCP to load issue ENG-123 (title, description, acceptance criteria, comments).
-```
-
-**Notion MCP**
-
-```text
-Branch from main (pull first). Use the Notion MCP to load page [page-id] and linked spec subpages.
-```
-
-**GitHub MCP**
-
-```text
-Branch from main (pull first). Use the GitHub MCP to load issue 39 including description and discussion.
-```
-
-**Local specs (no tracker)**
-
-```text
-Branch from main (pull first). Read .work-items/user-auth/user-story.md, design.md, and task.md as the scope contract.
-```
-
-## Work item examples
+Example after your repo documents its setup:
 
 ```text
 WORK_ITEM=39
-WORK_ITEM=https://github.com/org/repo/issues/39
-WORK_ITEM=ENG-123
-WORK_ITEM=user-auth
+WORK_ITEM_LOOKUP=Branch from main (pull first). Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
 ```
+
+## Where the agent should look (discovery order)
+
+When `WORK_ITEM_LOOKUP` sends the agent to your developer docs, that shard should answer “how do we load a work item here?” The agent can also self-serve from:
+
+1. **Repo developer docs** — canonical; maintain one shard (for example `docs/developer/agent-work-item-tracking.md`) as part of local setup. State tracker, branch convention, review/release steps, and the preferred load path (CLI command, MCP server name, or local spec directory).
+2. **Enabled MCP servers** — list available MCP tools and their schemas in the IDE; use the server that matches your tracker (GitHub, Linear, Notion, Jira, and so on).
+3. **Shell CLIs on PATH** — run `--help` on whatever your team installs (`gh`, `glab`, `jira`, etc.); do not assume a specific tool unless developer docs name it.
+4. **Local specs** — when there is no remote tracker, scope lives under `.work-items/{slug}/` (`user-story.md`, `design.md`, `task.md`).
+
+## Setup once per repo (maintainers)
+
+Add a **work-item tracking** shard to `docs/developer/` during project setup — same tier as local setup and contributing guidelines. Link it from your setup doc so contributors and agents find it before the first task-type prompt.
+
+This repository dogfoods that pattern: [Agent work-item tracking](https://github.com/betsalel-williamson/mdcp/blob/main/docs/developer/agent-work-item-tracking.md).
 
 ## Delivery workflow
 
-Map wrap-up and finalize steps to your repo:
+Map wrap-up and finalize steps to your repo (document these in the same developer shard):
 
 | Prompt phrase         | Common equivalents                                        |
 | --------------------- | --------------------------------------------------------- |
