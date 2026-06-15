@@ -10,9 +10,10 @@ At compile time, MDCP:
 
 1. Builds a **guide link index** from every guide in `compileOrder` — each manifest-listed shard maps to its compiled `{guideName, outputBasename, slug}` (slug from the demoted first heading, same rules as intra-guide rewrite), plus shards linked transitively from section bodies
 2. Rewrites **cross-guide** `.md` links per shard (using the shard path for relative resolution) before sections are stitched
-3. Rewrites **same-guide** `./section.md` links on the assembled body (intra-guide pass)
+3. Rewrites **publish-relative** `../` file links per shard when the guide has `compile.outputFile` — see [Publish-relative link rewriting](./publish-relative-links.md)
+4. Rewrites **same-guide** `./section.md` links on the assembled body (intra-guide pass)
 
-This is an **assembly-time pass**, not a compile hook. Pair with `compile.publishPathRewrite` when publish outputs also need repo-root path normalization for non-markdown targets.
+Cross-guide handles indexed markdown between guides. Publish-relative rebases remaining file paths for outputs outside the shard tree (no manual path config). This is an **assembly-time pass**, not a compile hook.
 
 ## Cross-guide link matching
 
@@ -54,7 +55,7 @@ The pass **does not** transform:
 - Same-document `#fragment` links
 - Markdown links that do not resolve to an indexed shard
 - Non-markdown paths (handled by `codeEvidence` or left unchanged)
-- Links to shards in guides listed in `compile.crossGuideLinks.ignoreGuides`
+- Links to shards in guides listed in `compile.crossGuideLinks.ignoreGuides` (publish-relative may still rebase the unchanged shard path for publish outputs — see [Publish-relative link rewriting](./publish-relative-links.md))
 
 ## Cross-guide config
 

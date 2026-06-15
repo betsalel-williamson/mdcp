@@ -77,7 +77,15 @@ describe('cli smoke', () => {
   it('resolves --config from invocation directory, not --docs-root (#10)', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'compile', '--config', 'docs/mdcp.config.json', '--docs-root', 'docs'],
+      [
+        CLI,
+        'compile',
+        '--config',
+        'docs/mdcp.config.json',
+        '--docs-root',
+        'docs',
+        '--warn-broken-links',
+      ],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toMatch(/guides\.md|→/);

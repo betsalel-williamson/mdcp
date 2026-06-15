@@ -36,11 +36,11 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 ### Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/_build/guides.md#preprocessor-templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
 
 ### ignoreGuides
 
-Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](#publish-relative-link-rewriting) still rebases the shard path for the publish file. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
 
 ## Quick example
 
@@ -118,11 +118,20 @@ Consumer path table: [Config essentials — path layout](../mdcp-cli/README.md#p
 
 `compile.includeBanner` controls whether the global banner is prepended (defaults to `false` for per-guide outputs).
 
-`compile.publishPathRewrite` rewrites shard-relative repo paths in publish outputs. Intra-guide `./section.md` links rewrite to `#anchor` on every compile.
+#### Publish outputs and link paths
+
+Guides with `compile.outputFile` publish outside the shard tree (npm READMEs, `DEVELOPERS.md`, and similar). Shard-authored `../` links are rebased automatically:
+
+- Resolve each link from the **shard file** to an absolute path
+- Emit a path **relative to the publish output file**
+
+No per-guide path-prefix config — output location and shard path supply the geometry. See [Publish-relative link rewriting](#publish-relative-link-rewriting) for intent, pass ordering, and dogfood examples.
+
+Intra-guide `./section.md` links still rewrite to `#anchor` on every compile (post-stitch pass).
 
 ### `compile.hooks`
 
-Built-in hooks run by default when `compile.hooks` is omitted. See [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks).
+Built-in hooks run by default when `compile.hooks` is omitted. See [Default compile hooks](../../docs/features/default-compile-hooks.md).
 
 - **Omitted** — run `DEFAULT_COMPILE_HOOKS` in order: `stripAnchors`, `codeEvidence`, `inlineInserts`
 - **`string[]`** — explicit override; replaces defaults entirely (backward compatible)
@@ -158,7 +167,7 @@ See [Cross-guide link rewriting](#cross-guide-link-rewriting) and [ignoreGuides]
 
 When `compile.title` is set, `assembleGuide` injects a `##` heading followed by a blank line before the first section. See [API — Config](#api-config) for per-guide compile fields and top-level `backup` config.
 
-Full spec: [Compile output backup](../../docs/_build/guides.md#compile-output-backup).
+Full spec: [Compile output backup](../../docs/features/compile-output-backup.md).
 
 ## API — Refs and validation
 
@@ -224,9 +233,9 @@ Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → 
 
 ## Compile hooks
 
-Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, anchor stripping, intra-guide rewrite, optional `publishPathRewrite`) run around the hook pipeline.
+Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, publish-relative rewrite on `compile.outputFile` outputs, anchor stripping, intra-guide rewrite) run around the hook pipeline.
 
-Hooks assemble [authored GFM](#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../docs/_build/guides.md#preprocessor-templating-out-of-scope).
+Hooks assemble [authored GFM](#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
 
 ### Architecture
 
@@ -236,16 +245,17 @@ assembleGuide (per guide)
   ├─ for each manifest shard (in order)
   │    ├─ processSection (demote headings, strip about-this-guide)
   │    ├─ applyCompileHooks (named hooks from config, in order)
-  │    └─ rewriteCrossGuideFileLinks (automatic when link index present)
+  │    ├─ rewriteCrossGuideFileLinks (automatic when link index present)
+  │    └─ rewritePublishRelativeLinks (when compile.outputFile is set)
   │
-  └─ stitch → stripAnchors (default) → intra-guide .md → publishPathRewrite
+  └─ stitch → stripAnchors (default) → intra-guide .md
 ```
 
 **Guide link index** — built once per `compileGuideResults` from every guide in `compileOrder` (manifest sections plus transitively linked shards). Used by the automatic cross-guide pass. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide skips monolith rewrite for listed targets. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
 
 **Per-guide hook state** — mutable `hookState` on `CompileHookContext` (for example `inlineInserts` counters and first-anchor map) shared across shard invocations within one guide compile.
 
-**Path resolution** — most hooks resolve relative paths from `dirname(sourceFile)` (the current shard), then parent, then `compile.scopeRoot`, then cwd. Rebasing for rendered output uses `outputFile` / monolith path via `resolveGuideLinkBase`.
+**Path resolution** — hooks and assembly passes resolve relative paths from `dirname(sourceFile)` first, then `guideDir`, then `compile.scopeRoot`. Publish outputs rebase remaining `../` file links per shard via absolute-path resolution — see [Publish-relative link rewriting](#publish-relative-link-rewriting). Cross-guide and `codeEvidence` use the same resolve-then-rebase model for their link classes.
 
 ### Extension pattern
 
@@ -306,9 +316,9 @@ Replace the entire default pipeline with a string array (backward compatible):
 }
 ```
 
-Default hook order and behavior: [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks). Config API: [API — Config](#api-config).
+Default hook order and behavior: [Default compile hooks](../../docs/features/default-compile-hooks.md). Config API: [API — Config](#api-config).
 
-For manifest compile order and `compile.sectionsHeading`, see [Manifest compile order](../../docs/_build/guides.md#manifest-compile-order).
+For manifest compile order and `compile.sectionsHeading`, see [Manifest compile order](../../docs/features/manifest-compile-order.md).
 
 ### Built-in hooks
 
@@ -316,6 +326,7 @@ For manifest compile order and `compile.sectionsHeading`, see [Manifest compile 
 - **`codeEvidence`** — per shard. [codeEvidence](#codeevidence): repo source links → `#L` fragments.
 - **`inlineInserts`** — per shard. [inlineInserts](#inlineinserts): inline captioned insert libraries.
 - **Cross-guide rewrite** _(assembly)_ — per shard before stitch. [Cross-guide links](#cross-guide-link-rewriting): automatic from `compileOrder`; optional `crossGuideLinks.ignoreGuides`.
+- **Publish-relative rewrite** _(assembly)_ — per shard before stitch when `compile.outputFile` is set. [Publish-relative links](#publish-relative-link-rewriting): resolve shard links to absolute paths, emit paths relative to the publish file.
 
 `stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly.
 
@@ -332,7 +343,7 @@ Architecture and technical review shards cite **repo source files** as evidence.
 3. Appends GitHub-style **`#L` fragments** (`#L6`, `#L6-L8`) to the link target
 4. Rewrites the target path to be **relative to the rendered output** — the per-guide `compile.outputFile` when set, otherwise the monolith path (`outputDir` + `outputFile` from config)
 
-Pair with `compile.publishPathRewrite` when publish outputs need repo-root path normalization (for example `../../package.json` → `package.json`).
+Publish outputs (`compile.outputFile`) rewrite remaining relative file links automatically (for example `../../package.json` → `package.json` in `DEVELOPERS.md`). Same resolve-then-rebase model as publish-relative assembly; see [Publish-relative link rewriting](#publish-relative-link-rewriting).
 
 ### codeEvidence link matching
 
@@ -408,7 +419,7 @@ When the guide publishes to its own file instead of the monolith, set `compile.o
 }
 ```
 
-Opt out: `"hooks": { "codeEvidence": false }`. See [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks).
+Opt out: `"hooks": { "codeEvidence": false }`. See [Default compile hooks](../../docs/features/default-compile-hooks.md).
 
 ### codeEvidence compile example
 
@@ -545,7 +556,7 @@ Runs by default. Optional search roots:
 }
 ```
 
-Opt out: `"hooks": { "inlineInserts": false }`. See [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks).
+Opt out: `"hooks": { "inlineInserts": false }`. See [Default compile hooks](../../docs/features/default-compile-hooks.md).
 
 ### inlineInserts compile example
 
@@ -578,7 +589,7 @@ Compiled fragment (first guide mention):
 See [Request flow](#diagram-1-request-flow) again in prose.
 ```
 
-Example fixture: [`examples/sample-guides/inserts-demo/`](../../../examples/sample-guides/inserts-demo/). See [GitHub media reference](../../docs/_build/guides.md#github-markdown-media-reference) for a format matrix (PNG, JPEG, GIF, SVG, MP4, MP3/WAV, Mermaid, tables, lists) and minimal generated sample assets under `figures/` and `media/`.
+Example fixture: [`examples/sample-guides/inserts-demo/`](../../examples/sample-guides/inserts-demo). See [GitHub media reference](../../examples/sample-guides/inserts-demo/github-media-help.md) for a format matrix (PNG, JPEG, GIF, SVG, MP4, MP3/WAV, Mermaid, tables, lists) and minimal generated sample assets under `figures/` and `media/`.
 
 **Figure with embedded image** — shard `figures/component-map.md`:
 
@@ -608,9 +619,10 @@ At compile time, MDCP:
 
 1. Builds a **guide link index** from every guide in `compileOrder` — each manifest-listed shard maps to its compiled `{guideName, outputBasename, slug}` (slug from the demoted first heading, same rules as intra-guide rewrite), plus shards linked transitively from section bodies
 2. Rewrites **cross-guide** `.md` links per shard (using the shard path for relative resolution) before sections are stitched
-3. Rewrites **same-guide** `./section.md` links on the assembled body (intra-guide pass)
+3. Rewrites **publish-relative** `../` file links per shard when the guide has `compile.outputFile` — see [Publish-relative link rewriting](#publish-relative-link-rewriting)
+4. Rewrites **same-guide** `./section.md` links on the assembled body (intra-guide pass)
 
-This is an **assembly-time pass**, not a compile hook. Pair with `compile.publishPathRewrite` when publish outputs also need repo-root path normalization for non-markdown targets.
+Cross-guide handles indexed markdown between guides. Publish-relative rebases remaining file paths for outputs outside the shard tree (no manual path config). This is an **assembly-time pass**, not a compile hook.
 
 ### Cross-guide link matching
 
@@ -652,7 +664,7 @@ The pass **does not** transform:
 - Same-document `#fragment` links
 - Markdown links that do not resolve to an indexed shard
 - Non-markdown paths (handled by `codeEvidence` or left unchanged)
-- Links to shards in guides listed in `compile.crossGuideLinks.ignoreGuides`
+- Links to shards in guides listed in `compile.crossGuideLinks.ignoreGuides` (publish-relative may still rebase the unchanged shard path for publish outputs — see [Publish-relative link rewriting](#publish-relative-link-rewriting))
 
 ### Cross-guide config
 
@@ -762,6 +774,127 @@ See [FIND-004](architecture-review.md#find-004) and [Deployment](../technical/de
 
 Review targets use the compiled monolith; ignored guides keep shard paths. Tests in `packages/mdcp-core/test/cross-guide-links.test.ts` cover index entries, per-link routing, `ignoreGuides`, and end-to-end compile.
 
+## Publish-relative link rewriting
+
+Specification for assembly-time rebasing of shard-relative file links when a guide publishes outside the shard tree. Tests in `packages/mdcp-core/test/publish-links.test.ts` and `packages/mdcp-core/test/links.test.ts` map to the sections below.
+
+### Why this pass exists
+
+Shards are authored with paths relative to **where the file lives** in the guide tree:
+
+- `../features/foo.md` from `docs/developer/`
+- `../../features/foo.md` from `docs/client-core/compile-hooks/`
+- `../../package.json` from `docs/developer/` (repo root)
+
+That works while readers open shards under `docs/`. It breaks when the same content compiles to a **publish output** elsewhere — for example `DEVELOPERS.md` at the repo root or `packages/mdcp-cli/README.md`.
+
+**Problem:** a single stitched document no longer knows which shard each `../` hop came from, so post-stitch string substitution cannot reliably rebase paths. Nested shards use different `../` depth; publish targets sit at different locations (`repo root`, `packages/*/`).
+
+**Solution:** resolve and rebase **per shard**, before stitch:
+
+1. Resolve the link from `dirname(sourceFile)` to an **absolute** target path
+2. Emit `relative(dirname(publishOutputFile), absoluteTarget)` in the compiled body
+
+No `stripParentSegments`, `oneLevelPrefix`, or other publish-path config — geometry comes from `sourceFile`, `compile.outputFile`, and the filesystem.
+
+### When it runs
+
+| Condition                                       | Publish-relative rewrite                                 |
+| ----------------------------------------------- | -------------------------------------------------------- |
+| Guide has `compile.outputFile` set              | **Yes** — per shard, after cross-guide rewrite           |
+| Guide outputs only to `_build/{name}.md`        | **No** — shard-relative paths stay as authored           |
+| Optional monolith (`outputFile` at config root) | **No** for guides without their own `compile.outputFile` |
+
+Implementation: `rewritePublishRelativeLinks` in `packages/mdcp-core/src/compile/publish-links.ts`, invoked from `assembleGuide` when `publishOutputFile` is set.
+
+### Division of labor (three link passes)
+
+Assembly applies specialized passes instead of one generic rewriter:
+
+| Pass                 | Scope                                         | Input links                                | Output                                               |
+| -------------------- | --------------------------------------------- | ------------------------------------------ | ---------------------------------------------------- |
+| **Cross-guide**      | Indexed `.md` in another guide                | `../other-guide/shard.md`                  | `{outputFile}#slug` or unchanged when `ignoreGuides` |
+| **Publish-relative** | Remaining `../` file links on publish outputs | `../features/foo.md`, `../../package.json` | Path relative to publish file                        |
+| **Intra-guide**      | Same-guide section shards                     | `./section.md`                             | `#anchor` in assembled body                          |
+
+Cross-guide runs first and uses the **guide link index**. Publish-relative handles everything else that still starts with `../` — config files, `package.json`, and shard paths left unchanged by `ignoreGuides`.
+
+### Publish-relative matching
+
+A link is rewritten when **all** of the following hold:
+
+- Standard markdown link syntax: `[label](path)`
+- Target starts with one or more `../` segments (not `./` — see exclusions)
+- Target is not `http://`, `https://`, `mailto:`, or `#…`
+- Target resolves to an existing file from the shard directory (then guide directory, then `compile.scopeRoot`)
+- Resolved path is **not** a same-guide indexed shard (intra-guide pass owns those)
+- Resolved path is **not** another guide's `compile.outputFile` (cross-guide already rebased)
+
+### Publish-relative resolution
+
+Path lookup order (same as cross-guide shard resolution):
+
+1. `resolve(dirname(sourceFile), filePart)`
+2. `resolve(guideDir, filePart)`
+3. `compile.scopeRoot` when set
+
+Then:
+
+```text
+relative(dirname(publishOutputFile), resolvedAbsolute) + optional #fragment
+```
+
+`publishOutputFile` is the absolute path from `resolveGuideLinkBase` for the guide's `compile.outputFile`.
+
+### Publish-relative exclusions
+
+The pass **does not** transform:
+
+- External URLs
+- Same-document `#fragment` links
+- `./section.md` and other `./` paths (cross-guide or intra-guide handle `.md`; publish-relative only matches `../`)
+- Links cross-guide already rewrote to `{otherPublishOutput}#slug`
+- Unresolvable paths (left unchanged)
+
+### Repo dogfood examples
+
+Config: [`docs/mdcp.config.json`](../../docs/mdcp.config.json) — `developer`, `client-cli`, and `client-core` use `compile.outputFile`.
+
+**`developer` → `DEVELOPERS.md` (repo root)**
+
+| Shard input (`docs/developer/…`) | Compiled in `DEVELOPERS.md`        |
+| -------------------------------- | ---------------------------------- |
+| `../../package.json`             | `package.json`                     |
+| `../features/feature-catalog.md` | `docs/features/feature-catalog.md` |
+| `../mdcp.config.json`            | `docs/mdcp.config.json`            |
+
+**`client-cli` → `packages/mdcp-cli/README.md`**
+
+| Shard input (`docs/client-cli/…`) | Compiled in README                       |
+| --------------------------------- | ---------------------------------------- |
+| `../features/feature-catalog.md`  | `../../docs/features/feature-catalog.md` |
+
+**`client-core/compile-hooks/` → `packages/mdcp-core/README.md`**
+
+Nested shards use more `../` segments in source; per-shard resolution still yields the correct publish-relative path:
+
+| Shard input                                                    | Compiled in README                                                  |
+| -------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `../../features/design-constraints/preprocessor-templating.md` | `../../docs/features/design-constraints/preprocessor-templating.md` |
+
+### `ignoreGuides` interaction
+
+When `compile.crossGuideLinks.ignoreGuides` keeps a cross-guide link as a shard `.md` path, publish-relative still rebases that path for the publish file. Example: `client-cli` with `ignoreGuides: ["features"]` compiles `../features/legacy-migration.md` to `../../docs/features/legacy-migration.md` in the package README.
+
+Link validation may still report **`missing publish path`** for those targets — that is policy (publish output should not link into unpublished shard trees), not a rewrite failure. See [Link validation](../../docs/features/link-validation.md#publish-only-link-policy).
+
+### Related
+
+- [Cross-guide link rewriting](#cross-guide-link-rewriting) — indexed `.md` between guides
+- [Compile hooks — overview](#developer-guide) — assembly pipeline
+- [API — Config](#api-config) — `compile.outputFile`
+- [codeEvidence](#codeevidence) — separate path rebase for repo source evidence links
+
 ## Related packages
 
 | Package                                                                                | Use                           |
@@ -771,8 +904,8 @@ Review targets use the compiled monolith; ignored guides keep shard paths. Tests
 
 ### Further reading
 
-- [Project README](../../docs/_build/guides.md#bwilliamsonmdcp-core-1)
-- [Design constraints](../../docs/_build/guides.md#developer-guide)
+- [Project README](../../README.md)
+- [Design constraints](#compile-hooks)
 - [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
 
 ### License

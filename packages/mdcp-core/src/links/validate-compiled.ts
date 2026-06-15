@@ -9,6 +9,9 @@ export interface LintCompiledLinksOptions {
   guideName?: string;
   knownOutputBasenames?: Set<string>;
   knownSlugs?: Set<string>;
+  publishOnly?: boolean;
+  allowedPublishPaths?: Set<string>;
+  disallowedShardPaths?: Set<string>;
 }
 
 /** Validate links in assembled compiled guide output. */
@@ -46,6 +49,9 @@ export function lintCompiledLinks(options: LintCompiledLinksOptions): LinkIssue[
       outputFile: options.outputFile,
       knownOutputBasenames: options.knownOutputBasenames,
       knownSlugs: options.knownSlugs,
+      publishOnly: options.publishOnly,
+      allowedPublishPaths: options.allowedPublishPaths,
+      disallowedShardPaths: options.disallowedShardPaths,
     });
     if (result.valid) continue;
     issues.push({

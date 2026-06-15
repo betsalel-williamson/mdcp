@@ -12,7 +12,7 @@ Peer `mdcp links` / `markdown-link-check` remains optional for external URL HTTP
 
 ## BROKEN LINK marker
 
-After cross-guide, intra-guide, and publish-path rewrite passes, compile runs **`markBrokenLinks`** on each assembled guide body.
+After cross-guide, publish-relative, and intra-guide rewrite passes, compile runs **`markBrokenLinks`** on each assembled guide body.
 
 Broken links are replaced with visible prose (no clickable dead href):
 
@@ -28,6 +28,22 @@ Broken links are replaced with visible prose (no clickable dead href):
 | Reason          | `dead anchor`, `missing file`, `missing publish path`                |
 
 Disable markers per guide with `compile.links.markBroken: false`. `lint.links.enabled` can still fail check.
+
+## Publish-only link policy
+
+Guides with `compile.outputFile` are **publish-only** outputs (npm READMEs, `DEVELOPERS.md`, and similar). Link validation applies extra rules:
+
+| Target in publish output                              | Result                     |
+| ----------------------------------------------------- | -------------------------- |
+| Another guide's compiled `outputFile`                 | Valid                      |
+| `#fragment` in the same document                      | Valid when slug exists     |
+| Shard `.md` in an unpublished or `ignoreGuides` guide | **`missing publish path`** |
+
+See [publish-relative rewrite](../client-core/compile-hooks/publish-relative-links.md) for how shard paths are rebased before this policy runs.
+
+Example: `client-cli` with `ignoreGuides: ["features"]` compiles `../features/legacy-migration.md` to `../../docs/features/legacy-migration.md` in `packages/mdcp-cli/README.md`. The href works on disk; lint still flags it so maintainers prefer monolith `#slug` targets or move reference content into a published guide.
+
+Publish-relative rewrite and publish-only lint are complementary: rewrite fixes geometry from absolute resolution; lint enforces which target classes are allowed in publish output.
 
 ## Validation phases
 
@@ -103,7 +119,7 @@ link: docs/client-cli/consumer-migration.md:122: dead anchor "#legacy-migration"
 - Shard dead file link at `path:line`
 - Shard dead same-doc `#fragment`
 - Compiled dead anchor after demotion
-- Compiled dead path after `publishPathRewrite`
+- Compiled dead path after publish-relative link rewrite
 - Manifest-first guide link index — transitive guide does not overwrite manifest owner
 - Cross-guide publish link rewrites to `guides.md#slug`, not same-doc `#slug`
 - `mdcp check` / `mdcp compile` exit **1** on broken links by default
@@ -113,5 +129,6 @@ link: docs/client-cli/consumer-migration.md:122: dead anchor "#legacy-migration"
 ## Link validation related
 
 - [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md)
+- [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md)
 - [Optional linters](../client-cli/optional-linters.md)
 - [Commands reference](../client-cli/commands-reference.md)

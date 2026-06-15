@@ -16,6 +16,11 @@ export interface ValidateCompiledLinkOptions {
   /** Output basenames from the current compile run (cross-guide targets). */
   knownOutputBasenames?: Set<string>;
   knownSlugs?: Set<string>;
+  /** When true, `.md` links must target published outputs — not guide shard sources. */
+  publishOnly?: boolean;
+  allowedPublishPaths?: Set<string>;
+  /** Indexed shard paths that must not appear as link targets in publish output. */
+  disallowedShardPaths?: Set<string>;
 }
 
 function slugSet(registry: RefsRegistry): Set<string> {
@@ -34,6 +39,42 @@ function isExternal(target: string): boolean {
 
 function isMarkdownPath(path: string): boolean {
   return path === '' || /\.md$/i.test(path) || path.endsWith('.md');
+}
+
+/** Match a publish output when href used a rewritten or sibling-package path. */
+function resolveAllowedPublishTarget(
+  resolved: string,
+  filePart: string,
+  fragment: string | undefined,
+  options: ValidateCompiledLinkOptions,
+): string | undefined {
+  if (options.allowedPublishPaths?.has(resolved)) return resolved;
+  const resolvedAbs = resolve(resolved);
+  if ([...(options.allowedPublishPaths ?? [])].some((p) => resolve(p) === resolvedAbs)) {
+    return resolvedAbs;
+  }
+
+  const base = basename(filePart);
+  const candidates = [...(options.allowedPublishPaths ?? [])]
+    .map((p) => resolve(p))
+    .filter((p) => basename(p) === base);
+  if (candidates.length === 0) return undefined;
+  if (candidates.length === 1) return candidates[0];
+
+  if (fragment) {
+    const matching = candidates.filter((p) => {
+      if (!existsSync(p)) return false;
+      try {
+        const reg = buildSlugRegistry(readFileSync(p, 'utf-8'));
+        return slugSet(reg).has(fragment);
+      } catch {
+        return false;
+      }
+    });
+    if (matching.length === 1) return matching[0];
+  }
+
+  return undefined;
 }
 
 /** Validate a link target against a compiled document's slug registry and output path. */
@@ -74,7 +115,7 @@ export function validateCompiledLinkTarget(
   }
 
   const base = basename(filePart);
-  if (options.knownOutputBasenames?.has(base)) {
+  if (!options.publishOnly && options.knownOutputBasenames?.has(base)) {
     return { valid: true };
   }
 
@@ -82,8 +123,43 @@ export function validateCompiledLinkTarget(
     return { valid: true };
   }
 
-  const baseDir = dirname(options.outputFile);
+  const baseDir = dirname(resolve(options.outputFile));
   const resolved = isAbsolute(filePart) ? filePart : resolve(baseDir, filePart);
+
+  if (options.publishOnly) {
+    const publishTarget = resolveAllowedPublishTarget(resolved, filePart, fragment, options);
+    if (publishTarget) {
+      if (fragment && existsSync(publishTarget)) {
+        const fileRegistry = buildSlugRegistry(readFileSync(publishTarget, 'utf-8'));
+        if (!slugSet(fileRegistry).has(fragment)) {
+          return { valid: false, reason: 'dead anchor', brokenTarget: target };
+        }
+      }
+      return { valid: true };
+    }
+    if (options.disallowedShardPaths?.has(resolved)) {
+      return {
+        valid: false,
+        reason: 'missing publish path',
+        brokenTarget: target,
+      };
+    }
+    if (!existsSync(resolved)) {
+      return {
+        valid: false,
+        reason: 'missing publish path',
+        brokenTarget: target,
+      };
+    }
+    if (fragment) {
+      const fileRegistry = buildSlugRegistry(readFileSync(resolved, 'utf-8'));
+      if (!slugSet(fileRegistry).has(fragment)) {
+        return { valid: false, reason: 'dead anchor', brokenTarget: target };
+      }
+    }
+    return { valid: true };
+  }
+
   if (!existsSync(resolved)) {
     return {
       valid: false,

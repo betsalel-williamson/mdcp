@@ -4,7 +4,7 @@ import type { CompileGuideResult } from '../compile/assemble.js';
 import type { MdcpConfig } from '../config/schema.js';
 import { getGuideConfig, resolveGuideDir, resolveUnderOutputDir } from '../config/load.js';
 import { sectionFiles } from '../compile/section-manifest.js';
-import { buildGuideLinkIndex } from '../compile/guide-link-index.js';
+import { buildGuideLinkIndex, type GuideLinkIndex } from '../compile/guide-link-index.js';
 import { lintCompiledLinks } from './validate-compiled.js';
 import { lintShardLinks } from './validate-shards.js';
 import type { LinkIssue } from './types.js';
@@ -27,6 +27,36 @@ export interface LintLinksOptions {
   compileOptions?: import('../compile/assemble.js').CompileOptions;
 }
 
+function disallowedShardPathsForPublisher(
+  config: MdcpConfig,
+  docsRoot: string,
+  publishingGuideName: string,
+  linkIndex: GuideLinkIndex,
+): Set<string> {
+  const ignoreGuides = new Set(
+    getGuideConfig(config, publishingGuideName)?.compile?.crossGuideLinks?.ignoreGuides ?? [],
+  );
+  const disallowed = new Set<string>();
+  const absDocsRoot = resolve(docsRoot);
+
+  for (const name of config.compileOrder) {
+    const cfg = getGuideConfig(config, name);
+    const compile = cfg?.compile;
+    const unpublished = !compile?.outputFile;
+    const ignored = ignoreGuides.has(name);
+    if (!unpublished && !ignored) continue;
+
+    const guideDir = resolveGuideDir(name, config, absDocsRoot);
+    for (const shardPath of linkIndex.keys()) {
+      const absShard = resolve(shardPath);
+      if (absShard === guideDir || absShard.startsWith(`${guideDir}/`)) {
+        disallowed.add(absShard);
+      }
+    }
+  }
+  return disallowed;
+}
+
 export function lintLinks(options: LintLinksOptions): LinkIssue[] {
   const issues: LinkIssue[] = [];
   const { config, docsRoot, results } = options;
@@ -38,8 +68,16 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
   }
 
   const knownSlugs = new Set<string>();
+  const absDocsRoot = resolve(docsRoot);
+  const allowedPublishPaths = new Set(
+    results
+      .filter((r) => r.publishOnly)
+      .map((r) => resolve(resolveUnderOutputDir(absDocsRoot, outputDir, r.outputFile))),
+  );
+
+  let linkIndex: GuideLinkIndex | undefined;
   if (options.compileOptions) {
-    const linkIndex = buildGuideLinkIndex(options.compileOptions, docsRoot);
+    linkIndex = buildGuideLinkIndex(options.compileOptions, docsRoot);
     for (const entry of linkIndex.values()) {
       knownSlugs.add(entry.slug);
     }
@@ -75,7 +113,10 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
   }
 
   for (const r of results) {
-    const outPath = resolveUnderOutputDir(docsRoot, outputDir, r.outputFile);
+    const outPath = resolve(resolveUnderOutputDir(absDocsRoot, outputDir, r.outputFile));
+    const disallowedShardPaths = linkIndex
+      ? disallowedShardPathsForPublisher(config, docsRoot, r.name, linkIndex)
+      : undefined;
     issues.push(
       ...lintCompiledLinks({
         markdown: r.text,
@@ -83,6 +124,9 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
         guideName: r.name,
         knownOutputBasenames,
         knownSlugs,
+        publishOnly: r.publishOnly,
+        allowedPublishPaths,
+        disallowedShardPaths,
       }),
     );
   }

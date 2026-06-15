@@ -119,7 +119,7 @@ See [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md#cross-
 4. Use `mdcp refs lookup` for cross-link slugs (no `{#heading-ids}`)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
-Maintainer port map from earlier MDCP layouts: [Legacy migration](../features/legacy-migration.md). Upgrading from 0.3.x `reviewLinks` config: [reviewLinks removal](../features/legacy-migration.md#reviewlinks-removal-03x--next).
+Maintainer port map from earlier MDCP layouts: [Legacy migration](../features/legacy-migration.md). Upgrading from 0.3.x `reviewLinks` config: [reviewLinks removal](../features/legacy-migration.md#reviewlinks-removal-03x-next).
 
 ## Verification checklist
 

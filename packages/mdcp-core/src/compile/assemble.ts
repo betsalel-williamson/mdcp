@@ -9,7 +9,7 @@ import {
   buildSectionSlugMap,
   rewriteCrossGuideFileLinks,
   rewriteIntraGuideFileLinks,
-  rewritePublishPathLinks,
+  rewritePublishRelativeLinks,
 } from './publish-links.js';
 import { buildGuideLinkIndex, type GuideLinkIndex } from './guide-link-index.js';
 import { sectionFiles } from './section-manifest.js';
@@ -20,7 +20,6 @@ import {
   effectiveGuideOutputFile,
 } from '../config/load.js';
 import { resolveCompileHooks } from '../config/resolve-compile-hooks.js';
-import type { PublishPathRewriteOptions } from './publish-links.js';
 import { writeOutputFile, type WriteOutputBackupOptions } from './write-output.js';
 import { collectShardProvenance } from '../links/validate-shards.js';
 import { markBrokenLinks } from '../links/mark-broken.js';
@@ -58,7 +57,8 @@ export interface AssembleGuideOptions {
   outputBasename?: string;
   /** Absolute path to the rendered document (per-guide output or monolith). */
   outputFile?: string;
-  publishPathRewrite?: PublishPathRewriteOptions;
+  /** When set, rewrite shard-relative file links for this publish output path. */
+  publishOutputFile?: string;
   config?: MdcpConfigInput;
   linkIndex?: GuideLinkIndex;
   /** Guide names whose cross-guide shard links keep source `.md` paths. */
@@ -140,6 +140,17 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
       });
     }
 
+    if (options.publishOutputFile) {
+      body = rewritePublishRelativeLinks(body, {
+        sourceFile: filePath,
+        guideDir,
+        scopeRoot: options.scopeRoot,
+        currentGuideName: options.guideName ?? guideName,
+        currentOutputFile: options.publishOutputFile,
+        linkIndex: options.linkIndex,
+      });
+    }
+
     parts.push(body + '\n\n');
   }
 
@@ -155,10 +166,6 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
 
   const slugByBasename = buildSectionSlugMap(files);
   compiled = rewriteIntraGuideFileLinks(compiled, slugByBasename);
-
-  if (options.publishPathRewrite) {
-    compiled = rewritePublishPathLinks(compiled, options.publishPathRewrite);
-  }
 
   const intraSlugs = new Set(slugByBasename.values());
   const assemblingGuide = options.guideName ?? guideName;
@@ -217,7 +224,7 @@ function resolveGuideDir(
 
 export function compileGuideResults(options: CompileOptions): CompileGuideResult[] {
   const guideConfigMap = new Map((options.guides ?? []).map((g) => [g.name, g]));
-  const docsRoot = options.docsRoot ?? process.cwd();
+  const docsRoot = resolve(options.docsRoot ?? process.cwd());
   const orderLen = options.compileOrder.length;
   const linkIndex = buildGuideLinkIndex(options, docsRoot);
   const knownOutputBasenames = new Set(
@@ -240,7 +247,9 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
     const publishOnly = Boolean(compile?.outputFile);
     const outputBasename = basename(outputFile);
 
-    const linkBase = resolveGuideLinkBase(options.config ?? {}, docsRoot, name, orderLen, compile);
+    const linkBase = resolve(
+      resolveGuideLinkBase(options.config ?? {}, docsRoot, name, orderLen, compile),
+    );
 
     const text = assembleGuide(guideDir, {
       manifest: compile?.manifest,
@@ -252,7 +261,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       stripAnchors: compile?.stripAnchors,
       outputBasename,
       outputFile: linkBase,
-      publishPathRewrite: compile?.publishPathRewrite,
+      publishOutputFile: publishOnly ? linkBase : undefined,
       config: options.config,
       linkIndex,
       ignoreGuides: compile?.crossGuideLinks?.ignoreGuides,

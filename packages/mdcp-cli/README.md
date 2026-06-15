@@ -25,31 +25,31 @@ Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile
 
 ### Get started
 
-First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../docs/_build/guides.md#getting-started-with-mdcp-bootstrap-prompt), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
+First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
 
-For command and capability depth, read the [feature catalog](../../docs/_build/guides.md#feature-catalog).
+For command and capability depth, read the [feature catalog](../../docs/features/feature-catalog.md).
 
 ## LLM collaboration
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
-**Source of truth:** copy-paste prompts live under [examples/prompts/](../../examples/prompts/). This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** copy-paste prompts live under [examples/prompts/](../../examples/prompts). This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ### Prompt library
 
-Copy from [examples/prompts/](../../examples/prompts/). Index: [README.md](../../docs/_build/guides.md#bwilliamsonmdcp-core-1).
+Copy from [examples/prompts/](../../examples/prompts). Index: [README.md](../../examples/prompts/README.md).
 
-- [getting-started-with-mdcp.prompt.md](../../docs/_build/guides.md#getting-started-with-mdcp-bootstrap-prompt) — first-time pipeline setup in a consumer repo
-- [doc-only-task.prompt.md](../../docs/_build/guides.md#doc-only-task-prompt-mdcp) — documentation-only work
-- [design-architecture-task.prompt.md](../../docs/_build/guides.md#design-architecture-task-prompt-mdcp) — RFCs, ADRs, data models
-- [feature-level-task.prompt.md](../../docs/_build/guides.md#feature-level-task-prompt-mdcp) — feature work, docs-first then TDD
-- [ux-task.prompt.md](../../docs/_build/guides.md#ux-task-prompt-mdcp) — UI flows and client-guide updates
+- [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md) — first-time pipeline setup in a consumer repo
+- [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md) — documentation-only work
+- [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — RFCs, ADRs, data models
+- [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — feature work, docs-first then TDD
+- [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UI flows and client-guide updates
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
 ### Bootstrap prompt (copy-paste)
 
-First-time setup for a consumer repo: [examples/prompts/getting-started-with-mdcp.prompt.md](../../docs/_build/guides.md#getting-started-with-mdcp-bootstrap-prompt).
+First-time setup for a consumer repo: [examples/prompts/getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md).
 
 Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring.
 
@@ -80,7 +80,7 @@ I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using
 
 ### Docs-first feature workflow
 
-Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../docs/_build/guides.md#feature-level-task-prompt-mdcp).
+Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md).
 
 #### Workflow best practices
 
@@ -94,7 +94,7 @@ Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`,
 | Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
 | Implement | Code + tests     | TDD against the documented contract                    |
 
-For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](../../docs/_build/guides.md#design-architecture-task-prompt-mdcp).
+For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md).
 
 #### Sharding keeps context lean
 
@@ -117,10 +117,10 @@ This repository documents its stack in [Agent work-item tracking](../../DEVELOPE
 
 ### Task-type prompt templates
 
-- [doc-only-task.prompt.md](../../docs/_build/guides.md#doc-only-task-prompt-mdcp) — technical writers; documentation, tutorials, guides
-- [design-architecture-task.prompt.md](../../docs/_build/guides.md#design-architecture-task-prompt-mdcp) — architects; RFCs, ADRs, data models before code
-- [feature-level-task.prompt.md](../../docs/_build/guides.md#feature-level-task-prompt-mdcp) — server-side or full-stack feature work
-- [ux-task.prompt.md](../../docs/_build/guides.md#ux-task-prompt-mdcp) — UX and frontend; flows, accessibility, client guides
+- [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md) — technical writers; documentation, tutorials, guides
+- [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
+- [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — server-side or full-stack feature work
+- [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
 
 ### Toolchain integration
 
@@ -162,11 +162,11 @@ Each guide directory needs:
 - Topic shards — one file per section (for example `authentication.md`)
 - Optional `about-this-guide.md` — preamble shard (persona, scope)
 
-When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](../../docs/_build/guides.md#manifest-compile-order)).
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](../../docs/features/manifest-compile-order.md)).
 
 Never hand-edit generated compile output or `refs.json`.
 
-**Worked example:** this repository dogfoods under [`docs/features/`](../features/), [`docs/developer/`](../developer/), and [`docs/client-cli/`](./), wired by [`docs/mdcp.config.json`](../mdcp.config.json). Minimal fixture: [examples/sample-guides](../../examples/sample-guides/).
+**Worked example:** this repository dogfoods under [`docs/features/`](../../docs/features), [`docs/developer/`](../../docs/developer), and [`docs/client-cli/`](./), wired by [`docs/mdcp.config.json`](../../docs/mdcp.config.json). Minimal fixture: [examples/sample-guides](../../examples/sample-guides).
 
 ### Human review checklist
 
@@ -185,7 +185,7 @@ When reviewing an agent's documentation PR:
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [Agent integration](#agent-integration) — npm scripts quick reference
-- [examples/prompts/](../../examples/prompts/) — copy-paste prompt files
+- [examples/prompts/](../../examples/prompts) — copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
 - [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
@@ -227,7 +227,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
-2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](../../examples/sample-guides/).
+2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](../../examples/sample-guides).
 
 3. Run:
 
@@ -292,9 +292,9 @@ mdcp check --require-lint
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [LLM collaboration](#llm-collaboration) — spec-driven workflow, prompts, toolchain integration
-- [Project README](../../docs/_build/guides.md#bwilliamsonmdcp-core-1) — concepts and design rationale
-- [Feature catalog](../../docs/_build/guides.md#feature-catalog) — full maintainer docs
-- [Sample guides](../../examples/sample-guides/)
+- [Project README](../../README.md) — concepts and design rationale
+- [Feature catalog](../../docs/features/feature-catalog.md) — full maintainer docs
+- [Sample guides](../../examples/sample-guides)
 
 ### License
 
@@ -341,7 +341,7 @@ docs/
 
 Publish outside `_build` (npm READMEs, repo-root docs) via `compile.outputFile` paths relative to `outputDir` (for example `../../packages/mdcp-cli/README.md`).
 
-When a manifest has preamble prose with example links, set `compile.sectionsHeading`. See [Manifest compile order](../../docs/_build/guides.md#manifest-compile-order).
+When a manifest has preamble prose with example links, set `compile.sectionsHeading`. See [Manifest compile order](../../docs/features/manifest-compile-order.md).
 
 ## Config essentials
 
@@ -421,7 +421,7 @@ Only directories listed in `compileOrder` are compiled and linted. Support folde
 | `refs.registryFile`   | `outputDir`   | `docs/_build/.caches/refs.json`     |
 | `compile.outputFile`  | `outputDir`   | `../../DEVELOPERS.md` from `_build` |
 
-Delete `_build/` to clean all generated output. `.caches/` holds derived state (refs registry) and, when `--backup` is used, prior compile output under `backups/`. See [Compile output backup](../../docs/_build/guides.md#compile-output-backup).
+Delete `_build/` to clean all generated output. `.caches/` holds derived state (refs registry) and, when `--backup` is used, prior compile output under `backups/`. See [Compile output backup](../../docs/features/compile-output-backup.md).
 
 #### Opt-in output backup
 
@@ -433,11 +433,11 @@ Default: compile and export **overwrite** existing files (git is the safety net)
 }
 ```
 
-Or pass `--backup` on the CLI (overrides config). Optional `backup.dir` (default `.caches/backups`) and `backup.ext`. Full spec: [Compile output backup](../../docs/_build/guides.md#compile-output-backup).
+Or pass `--backup` on the CLI (overrides config). Optional `backup.dir` (default `.caches/backups`) and `backup.ext`. Full spec: [Compile output backup](../../docs/features/compile-output-backup.md).
 
 #### Link validation
 
-Built-in internal link validation is on by default. Broken links emit **`BROKEN LINK`** markers in compiled output and fail `mdcp compile` / `mdcp check` (exit **1**). See [Link validation](../../docs/_build/guides.md#built-in-link-validation).
+Built-in internal link validation is on by default. Broken links emit **`BROKEN LINK`** markers in compiled output and fail `mdcp compile` / `mdcp check` (exit **1**). See [Link validation](../../docs/features/link-validation.md).
 
 ```json
 {
@@ -497,7 +497,7 @@ Set top-level `outputFile` (for example `"guides.md"`) to also stitch guides **w
 
 #### `sectionsHeading`
 
-When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading`. See [Manifest compile order](../../docs/_build/guides.md#manifest-compile-order).
+When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading`. See [Manifest compile order](../../docs/features/manifest-compile-order.md).
 
 ```json
 {
@@ -549,7 +549,7 @@ mdcp compile
 mdcp check
 ```
 
-`mdcp compile` and `mdcp check` exit **1** when broken internal links are found (default). Use `--warn-broken-links` to surface `link-warn:` diagnostics without failing CI. See [Link validation](../../docs/_build/guides.md#built-in-link-validation).
+`mdcp compile` and `mdcp check` exit **1** when broken internal links are found (default). Use `--warn-broken-links` to surface `link-warn:` diagnostics without failing CI. See [Link validation](../../docs/features/link-validation.md).
 
 ### Command summary
 
@@ -612,13 +612,13 @@ mdcp check
 
 Compile order comes from link order in each guide's `index.md` or `shards.md`. List shards in the manifest in the order you want them stitched.
 
-When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` — see [Manifest compile order](../../docs/_build/guides.md#manifest-compile-order).
+When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` — see [Manifest compile order](../../docs/features/manifest-compile-order.md).
 
 After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — there is no separate manifest sync step.
 
 ### Output layout
 
-MDCP uses an NPM-style two-root layout. Full breaking-change table for upgrades from earlier releases: [Legacy migration — unified output layout](../../docs/_build/guides.md#unified-output-layout-breaking).
+MDCP uses an NPM-style two-root layout. Full breaking-change table for upgrades from earlier releases: [Legacy migration — unified output layout](../../docs/features/legacy-migration.md#unified-output-layout-breaking).
 
 | Concept          | Default                            | Notes                                                                    |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------ |
@@ -632,7 +632,7 @@ Path resolution details: [Config essentials — path layout](#path-layout).
 
 ### Compile hooks
 
-Built-in hooks run **by default** on every guide — omit `compile.hooks` for the common case. See [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks).
+Built-in hooks run **by default** on every guide — omit `compile.hooks` for the common case. See [Default compile hooks](../../docs/features/default-compile-hooks.md).
 
 | Hook            | Purpose                                                               |
 | --------------- | --------------------------------------------------------------------- |
@@ -719,7 +719,7 @@ See [Cross-guide links](../mdcp-core/README.md#cross-guide-ignore-example-mixed-
 4. Use `mdcp refs lookup` for cross-link slugs (no ``)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
-Maintainer port map from earlier MDCP layouts: [Legacy migration](../../docs/_build/guides.md#legacy-migration). Upgrading from 0.3.x `reviewLinks` config: [reviewLinks removal](../../docs/_build/guides.md#reviewlinks-removal-03x--next).
+Maintainer port map from earlier MDCP layouts: [Legacy migration](../../docs/features/legacy-migration.md). Upgrading from 0.3.x `reviewLinks` config: [reviewLinks removal](../../docs/features/legacy-migration.md#reviewlinks-removal-03x-next).
 
 ### Verification checklist
 
@@ -798,8 +798,8 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 ### Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/_build/guides.md#preprocessor-templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
 
 ### ignoreGuides
 
-Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](../mdcp-core/README.md#cross-guide-link-rewriting).
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](../mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. See [Cross-guide link rewriting](../mdcp-core/README.md#cross-guide-link-rewriting).

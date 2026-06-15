@@ -309,7 +309,7 @@ describe('cross-guide link rewriting', () => {
 
         const glossary = readFileSync(join(work, 'glossary.md'), 'utf-8');
         expect(glossary).toContain('[FIND-004](architecture-review.md#find-004)');
-        expect(glossary).toContain('[Deployment](../technical/deployment.md)');
+        expect(glossary).toContain('[Deployment](technical/deployment.md)');
         expect(glossary).not.toContain('[Deployment](technical-guide.md#deployment)');
       });
     });

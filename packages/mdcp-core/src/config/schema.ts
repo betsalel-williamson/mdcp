@@ -66,13 +66,6 @@ const GuideSchema = z.object({
           markBroken: z.boolean().default(true),
         })
         .optional(),
-      /** Rewrite shard-relative repo paths for publish outputs (e.g. DEVELOPERS.md). */
-      publishPathRewrite: z
-        .object({
-          stripParentSegments: z.number().int().min(1).max(4),
-          oneLevelPrefix: z.string(),
-        })
-        .optional(),
     })
     .optional(),
 });

@@ -30,7 +30,6 @@ export function resolveRelativeFile(
   const filePart = normalized.split('#')[0];
   const candidates = [
     resolve(guideDir, filePart),
-    resolve(guideDir, '..', filePart),
     ...searchRoots.map((root) => resolve(root, filePart)),
   ];
   for (const candidate of candidates) {

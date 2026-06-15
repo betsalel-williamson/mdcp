@@ -212,10 +212,11 @@ describe('compileGuides', () => {
     });
   });
 
-  it('does not rewrite publish path links without publishPathRewrite config', () => {
-    withTmpDir('mdcp-no-path-rewrite-', (work) => {
+  it('rewrites publish path links automatically for publish outputs', () => {
+    withTmpDir('mdcp-publish-path-rewrite-', (work) => {
       const guideDir = join(work, 'guide');
       mkdirSync(guideDir, { recursive: true });
+      writeFileSync(join(work, 'mdcp.config.json'), '{}');
 
       writeFileSync(join(guideDir, 'index.md'), '# @example/pkg\n\n- [Section](section.md)\n');
       writeFileSync(
@@ -242,7 +243,7 @@ describe('compileGuides', () => {
 
       writeCompiledGuides(opts, join(work, 'guides.md'));
       const text = readFileSync(publishOut, 'utf-8');
-      expect(text).toContain('[Config](../mdcp.config.json)');
+      expect(text).toContain('[Config](mdcp.config.json)');
     });
   });
 

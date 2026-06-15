@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { basename, dirname, relative } from 'node:path';
+import { basename, dirname, relative, resolve, isAbsolute } from 'node:path';
 import { githubSlugify } from '../refs/slugs.js';
 import { extractFirstHeading } from './compile-title.js';
 import { demoteHeadings, stripAboutThisGuideHeading } from './headings.js';
@@ -58,24 +58,78 @@ export function buildSectionSlugMap(sectionPaths: string[]): Map<string, string>
   return slugByBasename;
 }
 
-export interface PublishPathRewriteOptions {
-  stripParentSegments: number;
-  oneLevelPrefix: string;
+const PUBLISH_RELATIVE_LINK_RE = /(\[[^\]]*\]\()((?!https?:|\/\/|mailto:)(?:\.\.\/)+[^)]+)\)/g;
+
+export interface PublishRelativeLinkRewriteOptions {
+  sourceFile: string;
+  guideDir: string;
+  scopeRoot?: string;
+  currentGuideName?: string;
+  /** Absolute path to the publish output being assembled. */
+  currentOutputFile: string;
+  linkIndex?: GuideLinkIndex;
+  searchRoots?: string[];
 }
 
-/** Rewrite shard-relative paths for publish outputs outside the guide directory. */
-export function rewritePublishPathLinks(
+function parseLinkPath(target: string): { path: string; suffix: string } {
+  const hash = target.indexOf('#');
+  if (hash === -1) return { path: target, suffix: '' };
+  return { path: target.slice(0, hash), suffix: target.slice(hash) };
+}
+
+function resolvePublishLinkTarget(
+  filePart: string,
+  options: PublishRelativeLinkRewriteOptions,
+): string | null {
+  const shardDir = dirname(options.sourceFile);
+  const searchRoots = options.scopeRoot ? [options.scopeRoot] : [];
+  return (
+    resolveRelativeFile(filePart, shardDir, searchRoots) ??
+    resolveRelativeFile(filePart, options.guideDir, searchRoots)
+  );
+}
+
+function isOtherPublishOutput(
+  resolvedAbs: string,
+  options: PublishRelativeLinkRewriteOptions,
+): boolean {
+  if (!options.linkIndex) return false;
+  for (const entry of options.linkIndex.values()) {
+    if (entry.outputFile === resolvedAbs) return true;
+  }
+  return false;
+}
+
+function skipPublishRelativeRewrite(
+  resolvedAbs: string,
+  options: PublishRelativeLinkRewriteOptions,
+): boolean {
+  if (!options.linkIndex || !options.currentGuideName) return false;
+  const entry = options.linkIndex.get(resolvedAbs);
+  return entry?.guideName === options.currentGuideName;
+}
+
+/** Rewrite shard-relative file links to paths relative to a publish output file. */
+export function rewritePublishRelativeLinks(
   markdown: string,
-  options: PublishPathRewriteOptions,
+  options: PublishRelativeLinkRewriteOptions,
 ): string {
-  let out = markdown;
-  if (options.stripParentSegments >= 2) {
-    out = out.replace(/(\[[^\]]*\]\()\.\.\/\.\.\//g, '$1');
-  }
-  if (options.stripParentSegments >= 1) {
-    out = out.replace(/(\[[^\]]*\]\()\.\.\//g, `$1${options.oneLevelPrefix}`);
-  }
-  return out;
+  const outputAbs = resolve(options.currentOutputFile);
+  if (!isAbsolute(outputAbs)) return markdown;
+
+  return markdown.replace(PUBLISH_RELATIVE_LINK_RE, (match, prefix, target) => {
+    const { path: filePart, suffix } = parseLinkPath(target);
+    if (!filePart) return match;
+
+    const resolved = resolvePublishLinkTarget(filePart, options);
+    if (!resolved) return match;
+    if (isOtherPublishOutput(resolved, options)) return match;
+    if (skipPublishRelativeRewrite(resolved, options)) return match;
+
+    const fromDir = dirname(outputAbs);
+    const rel = relative(fromDir, resolve(resolved)).replace(/\\/g, '/');
+    return `${prefix}${rel}${suffix})`;
+  });
 }
 
 /** Rewrite same-guide shard links to in-document anchors for publish outputs (npm READMEs). */

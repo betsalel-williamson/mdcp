@@ -1,6 +1,6 @@
 # Compile hooks
 
-Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, anchor stripping, intra-guide rewrite, optional `publishPathRewrite`) run around the hook pipeline.
+Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, publish-relative rewrite on `compile.outputFile` outputs, anchor stripping, intra-guide rewrite) run around the hook pipeline.
 
 Hooks assemble [authored GFM](../glossary/index.md#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
 
@@ -12,16 +12,17 @@ assembleGuide (per guide)
   ├─ for each manifest shard (in order)
   │    ├─ processSection (demote headings, strip about-this-guide)
   │    ├─ applyCompileHooks (named hooks from config, in order)
-  │    └─ rewriteCrossGuideFileLinks (automatic when link index present)
+  │    ├─ rewriteCrossGuideFileLinks (automatic when link index present)
+  │    └─ rewritePublishRelativeLinks (when compile.outputFile is set)
   │
-  └─ stitch → stripAnchors (default) → intra-guide .md → publishPathRewrite
+  └─ stitch → stripAnchors (default) → intra-guide .md
 ```
 
 **Guide link index** — built once per `compileGuideResults` from every guide in `compileOrder` (manifest sections plus transitively linked shards). Used by the automatic cross-guide pass. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide skips monolith rewrite for listed targets. See [Cross-guide link rewriting](./cross-guide-links.md).
 
 **Per-guide hook state** — mutable `hookState` on `CompileHookContext` (for example `inlineInserts` counters and first-anchor map) shared across shard invocations within one guide compile.
 
-**Path resolution** — most hooks resolve relative paths from `dirname(sourceFile)` (the current shard), then parent, then `compile.scopeRoot`, then cwd. Rebasing for rendered output uses `outputFile` / monolith path via `resolveGuideLinkBase`.
+**Path resolution** — hooks and assembly passes resolve relative paths from `dirname(sourceFile)` first, then `guideDir`, then `compile.scopeRoot`. Publish outputs rebase remaining `../` file links per shard via absolute-path resolution — see [Publish-relative link rewriting](./publish-relative-links.md). Cross-guide and `codeEvidence` use the same resolve-then-rebase model for their link classes.
 
 ## Extension pattern
 
@@ -92,5 +93,6 @@ For manifest compile order and `compile.sectionsHeading`, see [Manifest compile 
 - **`codeEvidence`** — per shard. [codeEvidence](./code-evidence.md): repo source links → `#L` fragments.
 - **`inlineInserts`** — per shard. [inlineInserts](./inline-inserts.md): inline captioned insert libraries.
 - **Cross-guide rewrite** _(assembly)_ — per shard before stitch. [Cross-guide links](./cross-guide-links.md): automatic from `compileOrder`; optional `crossGuideLinks.ignoreGuides`.
+- **Publish-relative rewrite** _(assembly)_ — per shard before stitch when `compile.outputFile` is set. [Publish-relative links](./publish-relative-links.md): resolve shard links to absolute paths, emit paths relative to the publish file.
 
 `stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly.
