@@ -22,6 +22,18 @@ The CLI (`@bwilliamson/mdcp-cli`) depends on this package. Install `@bwilliamson
 
 **Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Pin a specific version and read package changelogs before upgrading.
 
+## Glossary
+
+Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
+
+### GFM
+
+**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+
+### Authored GFM
+
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
+
 ## Quick example
 
 ```typescript
@@ -180,7 +192,7 @@ Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → 
 
 Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (anchor stripping, cross-guide rewrite, intra-guide rewrite, optional `publishPathRewrite`) run after all hooks complete.
 
-**Not general templating:** hooks rewrite links, inline captioned inserts, and apply other documentation-specific assembly on **already-authored [GFM](https://github.com/betsalel-williamson/mdcp/blob/main/docs/glossary/index.md#gfm)**. They do not substitute `{{variables}}`, evaluate `{% if %}` blocks, or replace a template engine. For that, run a preprocessor before shards are committed or a postprocessor after compile — see [Preprocessor / templating (out of scope)](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints.md#preprocessor-templating-out-of-scope).
+Hooks assemble [authored GFM](#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
 
 ### Architecture
 

@@ -1,6 +1,6 @@
 # MDCP — Markdown Command Line Interface Processor
 
-**mdcp** splits, compiles, validates, and exports sharded Markdown documentation for code repositories. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks. Preprocessor and templating steps (variables, `{% if %}`, macro includes) stay outside MDCP — wire them before or after compile in your repo.
+**mdcp** splits, compiles, validates, and exports sharded Markdown documentation for code repositories. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks.
 
 Shards are the **source of truth**. Generated output includes a local `docs/guides.md` (features review — gitignored), `docs/refs.json` (gitignored), [`DEVELOPERS.md`](DEVELOPERS.md) (from `docs/developer/`), and npm package READMEs compiled from `docs/client-cli/` and `docs/client-core/`.
 
@@ -32,7 +32,7 @@ Edit shards, then `pnpm docs:compile:repo`. Agent context: `pnpm docs:context`.
 Key shards:
 
 - [Feature catalog](docs/features/feature-catalog.md) — commands, tiers, agent scripts
-- [Design constraints](docs/features/design-constraints.md) — md-tree, GFM, peer linters, preprocessor scope
+- [Design constraints](docs/features/design-constraints.md) — md-tree, GFM, peer linters
 - [Developer guide](docs/developer/local-setup.md) — setup, tests, docs dogfooding, releases
 - [CLI quick start](docs/client-cli/install-and-quick-start.md) — install and first compile
 - [LLM collaboration](docs/client-cli/llm-collaboration.md) — bootstrap prompt and agent workflows

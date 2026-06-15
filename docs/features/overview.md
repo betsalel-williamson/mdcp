@@ -191,11 +191,11 @@ Set `guides[].compile.outputFile` to the README path; run `mdcp compile`; README
 
 ## Design boundaries (intentional limits)
 
-- **GFM only** — [GitHub Flavored Markdown](../glossary/index.md#gfm); no Pandoc, wikilinks, or required `{#heading-ids}`.
-- **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used.
-- **GitHub slugs** — computed from compiled headings, not from author-supplied IDs.
+- **[GFM](../glossary/index.md#gfm) only** — no Pandoc, wikilinks, or required `{#heading-ids}`
+- **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used
+- **GitHub slugs** — computed from compiled headings, not from author-supplied IDs
 - **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.
-- **No preprocessor / templating** — variable substitution, template engines, and macro includes are consumer-repo pipeline stages outside MDCP (`preprocess → mdcp → postprocess`).
+- **No preprocessor / templating** — see [Design constraints](./design-constraints.md#preprocessor-templating-out-of-scope)
 
 Details: [Design constraints](./design-constraints.md).
 

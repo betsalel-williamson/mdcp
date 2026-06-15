@@ -4,13 +4,13 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 ## Guide directories
 
-| Directory      | Audience                         | Output                                             |
-| -------------- | -------------------------------- | -------------------------------------------------- |
-| `glossary/`    | Shared terms (cross-guide)       | Stitched into `features` compile via manifest link |
-| `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review)  |
-| `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                       |
-| `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                      |
-| `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                     |
+| Directory      | Audience                         | Output                                            |
+| -------------- | -------------------------------- | ------------------------------------------------- |
+| `glossary/`    | Shared terms (cross-guide)       | Stitched into every guide via manifest link       |
+| `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review) |
+| `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
+| `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
+| `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
 
 Config: [`docs/mdcp.config.json`](../mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
@@ -36,7 +36,7 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 ## Linting docs
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
-- **Vale** — prose lint on `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
+- **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
 - **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).

@@ -2,6 +2,7 @@
 
 - [@bwilliamson/mdcp-core](#table-of-contents)
   - [Overview](./overview.md)
+  - [Glossary](../glossary/index.md)
   - [Quick example](./quick-example.md)
   - [API — Config](./api-config.md)
   - [API — Compile](./api-compile.md)
