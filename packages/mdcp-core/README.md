@@ -36,7 +36,7 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 ### Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/_build/guides.md#preprocessor-templating-out-of-scope).
 
 ### ignoreGuides
 
@@ -110,7 +110,7 @@ const featuresDir = resolveGuideDir('features', config, join(process.cwd(), 'doc
 
 Pass `process.cwd()` as `configBase` for `loadConfig`. Pass the docs root as `docsRoot` to `resolveGuideDir`, `resolveOutputPath`, and `resolveRefsPath`.
 
-Consumer path table: [Config essentials — path layout](#path-layout).
+Consumer path table: [Config essentials — path layout](../mdcp-cli/README.md#path-layout).
 
 **Defaults:** `outputDir` `_build`; per-guide outputs `{name}.md` (or `guide.md` when one guide); optional monolith when `outputFile` is set; refs at `.caches/refs.json`.
 
@@ -122,7 +122,7 @@ Consumer path table: [Config essentials — path layout](#path-layout).
 
 ### `compile.hooks`
 
-Built-in hooks run by default when `compile.hooks` is omitted. See [Default compile hooks](#default-compile-hooks).
+Built-in hooks run by default when `compile.hooks` is omitted. See [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks).
 
 - **Omitted** — run `DEFAULT_COMPILE_HOOKS` in order: `stripAnchors`, `codeEvidence`, `inlineInserts`
 - **`string[]`** — explicit override; replaces defaults entirely (backward compatible)
@@ -158,7 +158,7 @@ See [Cross-guide link rewriting](#cross-guide-link-rewriting) and [ignoreGuides]
 
 When `compile.title` is set, `assembleGuide` injects a `##` heading followed by a blank line before the first section. See [API — Config](#api-config) for per-guide compile fields and top-level `backup` config.
 
-Full spec: [Compile output backup](#compile-output-backup).
+Full spec: [Compile output backup](../../docs/_build/guides.md#compile-output-backup).
 
 ## API — Refs and validation
 
@@ -185,7 +185,7 @@ resolveRefsPath('/docs', '.', 'refs.json');
 // → /docs/refs.json
 ```
 
-Prefer outputDir-relative values in config (for example `".caches/refs.json"` when `outputDir` is `"_build"`). See [Config essentials — path layout](#path-layout).
+Prefer outputDir-relative values in config (for example `".caches/refs.json"` when `outputDir` is `"_build"`). See [Config essentials — path layout](../mdcp-cli/README.md#path-layout).
 
 ### Manifest
 
@@ -226,7 +226,7 @@ Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → 
 
 Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, anchor stripping, intra-guide rewrite, optional `publishPathRewrite`) run around the hook pipeline.
 
-Hooks assemble [authored GFM](#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
+Hooks assemble [authored GFM](#gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../docs/_build/guides.md#preprocessor-templating-out-of-scope).
 
 ### Architecture
 
@@ -306,9 +306,9 @@ Replace the entire default pipeline with a string array (backward compatible):
 }
 ```
 
-Default hook order and behavior: [Default compile hooks](#default-compile-hooks). Config API: [API — Config](#api-config).
+Default hook order and behavior: [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks). Config API: [API — Config](#api-config).
 
-For manifest compile order and `compile.sectionsHeading`, see [Manifest compile order](#manifest-compile-order).
+For manifest compile order and `compile.sectionsHeading`, see [Manifest compile order](../../docs/_build/guides.md#manifest-compile-order).
 
 ### Built-in hooks
 
@@ -408,7 +408,7 @@ When the guide publishes to its own file instead of the monolith, set `compile.o
 }
 ```
 
-Opt out: `"hooks": { "codeEvidence": false }`. See [Default compile hooks](#default-compile-hooks).
+Opt out: `"hooks": { "codeEvidence": false }`. See [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks).
 
 ### codeEvidence compile example
 
@@ -518,7 +518,7 @@ Rules:
 Within one guide:
 
 - First link to `../diagrams/flow.md` → inline under numbered heading
-- Later links to the same resolved file (any path spelling, with or without `#fragment`) → `[label](#diagram-1-…)`
+- Later links to the same resolved file (any path spelling, with or without `#fragment`) → `` `[label](#diagram-1-…)` ``
 - Same basename in different libraries (`diagrams/overview.md` vs `tables/overview.md`) → separate headings and anchors
 
 ### inlineInserts path resolution
@@ -545,7 +545,7 @@ Runs by default. Optional search roots:
 }
 ```
 
-Opt out: `"hooks": { "inlineInserts": false }`. See [Default compile hooks](#default-compile-hooks).
+Opt out: `"hooks": { "inlineInserts": false }`. See [Default compile hooks](../../docs/_build/guides.md#default-compile-hooks).
 
 ### inlineInserts compile example
 
@@ -578,7 +578,7 @@ Compiled fragment (first guide mention):
 See [Request flow](#diagram-1-request-flow) again in prose.
 ```
 
-Example fixture: [`examples/sample-guides/inserts-demo/`](../../../examples/sample-guides/inserts-demo/). See [GitHub media reference](#github-markdown-media-reference) for a format matrix (PNG, JPEG, GIF, SVG, MP4, MP3/WAV, Mermaid, tables, lists) and minimal generated sample assets under `figures/` and `media/`.
+Example fixture: [`examples/sample-guides/inserts-demo/`](../../../examples/sample-guides/inserts-demo/). See [GitHub media reference](../../docs/_build/guides.md#github-markdown-media-reference) for a format matrix (PNG, JPEG, GIF, SVG, MP4, MP3/WAV, Mermaid, tables, lists) and minimal generated sample assets under `figures/` and `media/`.
 
 **Figure with embedded image** — shard `figures/component-map.md`:
 
@@ -586,7 +586,7 @@ Example fixture: [`examples/sample-guides/inserts-demo/`](../../../examples/samp
 ![Component map overview](./component-map.png)
 ```
 
-Catalog link `[Component map](../figures/component-map.md)` compiles to a numbered `#### Figure 1. …` heading followed by that image markdown.
+Catalog link `` `[Component map](../figures/component-map.md)` `` compiles to a numbered `#### Figure 1. …` heading followed by that image markdown.
 
 **Media with embedded video** — shard `media/walkthrough.md`:
 
@@ -594,7 +594,7 @@ Catalog link `[Component map](../figures/component-map.md)` compiles to a number
 <video src="./walkthrough.mp4" controls></video>
 ```
 
-Catalog link `[Walkthrough](../media/walkthrough.md)` compiles to `#### Media 1. Walkthrough` followed by the video embed.
+Catalog link `` `[Walkthrough](../media/walkthrough.md)` `` compiles to `#### Media 1. Walkthrough` followed by the video embed.
 
 ## Cross-guide link rewriting
 
@@ -771,8 +771,8 @@ Review targets use the compiled monolith; ignored guides keep shard paths. Tests
 
 ### Further reading
 
-- [Project README](#changesets)
-- [Design constraints](#developer-guide-1)
+- [Project README](../../docs/_build/guides.md#bwilliamsonmdcp-core-1)
+- [Design constraints](../../docs/_build/guides.md#developer-guide)
 - [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
 
 ### License

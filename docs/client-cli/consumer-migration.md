@@ -114,7 +114,7 @@ See [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md#cross-
 ## Steps for a new consumer repo
 
 1. Add `mdcp.config.json` to your docs shard directory
-2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](./config-essentials.md#--config-vs---docs-root))
+2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](./config-essentials.md#config-vs-docs-root))
 3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
 4. Use `mdcp refs lookup` for cross-link slugs (no `{#heading-ids}`)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`

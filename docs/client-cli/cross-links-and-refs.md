@@ -1,6 +1,6 @@
 # Cross-links and refs
 
-When writing `[link text](#anchor)` in a shard, the anchor must match the compiled heading slug. Look it up instead of guessing:
+When writing `` `[link text](#anchor)` `` in a shard, the anchor must match the compiled heading slug. Look it up instead of guessing:
 
 ```bash
 mdcp refs lookup "getting started" --format json

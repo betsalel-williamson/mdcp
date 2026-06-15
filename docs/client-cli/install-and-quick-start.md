@@ -52,7 +52,7 @@ mdcp compile --config docs/mdcp.config.json --docs-root docs
 mdcp check --config docs/mdcp.config.json --docs-root docs
 ```
 
-`--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](./config-essentials.md#--config-vs---docs-root).
+`--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](./config-essentials.md#config-vs-docs-root).
 
 Global options (apply to every command):
 

@@ -2,9 +2,9 @@
 
 **Audience:** contributors and maintainers working on the mdcp monorepo.
 
-This guide covers local setup, package development, sharded documentation in `docs/`, changesets, and npm releases. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](README.md#feature-catalog).
+This guide covers local setup, package development, sharded documentation in `docs/`, changesets, and npm releases. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](./docs/_build/guides.md#feature-catalog).
 
-Contributors are expected to follow the [Contributor Covenant Code of Conduct](README.md#contributor-covenant-code-of-conduct).
+Contributors are expected to follow the [Contributor Covenant Code of Conduct](./docs/_build/guides.md#contributor-covenant-code-of-conduct).
 
 ## Glossary
 
@@ -20,11 +20,11 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 ### Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](README.md#preprocessor-templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](./docs/_build/guides.md#preprocessor-templating-out-of-scope).
 
 ### ignoreGuides
 
-Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](README.md#cross-guide-link-rewriting).
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](./packages/mdcp-core/README.md#cross-guide-link-rewriting).
 
 ## Local setup
 
@@ -44,7 +44,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ### Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([examples/prompts/](examples/prompts/)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](README.md#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type prompts ([examples/prompts/](examples/prompts/)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ### Daily commands
 
@@ -84,7 +84,7 @@ CI runs the full gate: `pnpm run check`.
 
 How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [examples/prompts/](examples/prompts/) point here via `WORK_ITEM_LOOKUP`.
 
-Configure an equivalent shard in consumer repos during [local setup](README.md#local-setup).
+Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 
 ### Tracker
 
@@ -133,7 +133,7 @@ WORK_ITEM=39
 WORK_ITEM_LOOKUP=Branch from main (pull first). One issue per branch. Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
 ```
 
-For task-type prompt templates, read [LLM collaboration](README.md#llm-collaboration).
+For task-type prompt templates, read [LLM collaboration](./packages/mdcp-cli/README.md#llm-collaboration).
 
 ## Repository layout
 
@@ -204,7 +204,7 @@ JSONC markdownlint configs only — no TypeScript build. Edit `*.markdownlint-cl
 1. `pnpm run build && pnpm test`
 2. `pnpm run lint && pnpm run format:check`
 3. `pnpm docs:compile:repo && pnpm docs:check` if you touched `docs/` shards
-4. `pnpm changeset` if you changed published package behavior (see [Versioning and releases](README.md#versioning-and-releases))
+4. `pnpm changeset` if you changed published package behavior (see [Versioning and releases](#versioning-and-releases))
 
 CI runs the same core gates as `pnpm run check` (typecheck, lint, format, build, test, `docs:check`), plus:
 
@@ -230,16 +230,16 @@ This repo's documentation is sharded under [`docs/`](docs/). Shards are the **so
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
-Repo scripts use `--config docs/mdcp.config.json --docs-root docs`: the config path is resolved from the **repo root** (invocation directory), while `--docs-root docs` sets the shard tree root. See [Config essentials — path resolution](README.md#--docs-root-vs---config-path-resolution).
+Repo scripts use `--config docs/mdcp.config.json --docs-root docs`: the config path is resolved from the **repo root** (invocation directory), while `--docs-root docs` sets the shard tree root. See [Config essentials — path resolution](./packages/mdcp-cli/README.md#--docs-root-vs---config-path-resolution).
 
 The **features** compile (`docs/_build/guides.md`) is for reading through the stitched doc during review — edit shards, not the generated file. It is not committed.
 
 ### Edit workflow
 
 1. Edit shard `.md` files under the relevant guide directory.
-2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](README.md#manifest-compile-order) when using `compile.sectionsHeading`.
+2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](./docs/_build/guides.md#manifest-compile-order) when using `compile.sectionsHeading`.
 3. Run `pnpm docs:compile:repo` then `pnpm docs:check:repo`.
-4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](README.md#developer-guide) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
+4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](./docs/_build/guides.md#developer-guide-1) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
 
 ### Agent context
 
@@ -383,7 +383,7 @@ The [release workflow](.github/workflows/release.yml) runs on **`v*` tag push**,
 
 #### Manual fallback
 
-See [Publishing](README.md#publishing).
+See [Publishing](#publishing).
 
 ### Changelogs
 
@@ -394,12 +394,12 @@ Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you 
 
 ### Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](README.md#security-policy) for the supported-versions table — update that table when cutting a new minor line.
+Security fixes target the **latest minor** on npm. See [SECURITY.md](./docs/_build/guides.md#security-policy) for the supported-versions table — update that table when cutting a new minor line.
 
 ### Related docs
 
-- [Publishing](README.md#publishing) — first publish, Trusted Publishing, npm commands
-- [.changeset/README.md](README.md#changesets) — quick changeset reference
+- [Publishing](#publishing) — first publish, Trusted Publishing, npm commands
+- [.changeset/README.md](./docs/_build/guides.md#bwilliamsonmdcp-core-1) — quick changeset reference
 
 ## Publishing
 
@@ -472,7 +472,7 @@ pnpm release:tag:push
 
 You will choose patch / minor / major / build and confirm by typing the version. Agents and CI cannot run this script.
 
-Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` tags**). See [Versioning and releases](README.md#versioning-and-releases).
+Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` tags**). See [Versioning and releases](#versioning-and-releases).
 
 ### Trusted Publishing notes
 
@@ -515,4 +515,4 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
-See [SECURITY.md](README.md#security-policy) for vulnerability reporting.
+See [SECURITY.md](./docs/_build/guides.md#security-policy) for vulnerability reporting.
