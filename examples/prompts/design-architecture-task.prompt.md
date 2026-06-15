@@ -1,6 +1,6 @@
 # Design architecture task prompt (mdcp)
 
-Copy the block below into your coding agent. Fill in the code block at the top, then send. Tracker examples: [work-item-tracking.md](./work-item-tracking.md).
+Copy the block below into your agent. Fill in the code block at the top, then send. Work-item setup: [work-item-tracking.md](./work-item-tracking.md).
 
 ---
 
@@ -13,16 +13,18 @@ WORK_ITEM_LOOKUP=
 
 **Role:** Act as an expert Systems Architect.
 
-**Setup:** Follow WORK_ITEM_LOOKUP above. Treat loaded acceptance criteria as the scope boundary.
+**Setup:** Follow WORK_ITEM_LOOKUP above. Inspect the repository for scope, acceptance criteria, validation commands, and delivery conventions before editing. Treat acceptance criteria as the scope boundary.
+
+**Plan:** Outline steps from WORK_ITEM and repo context. Pull only the shards, docs, and code paths needed for this task.
 
 **Value focus:** Explicitly define the **end-user value** this architectural change unlocks (for example faster load times, higher reliability, or enabling a highly requested feature).
 
 **Workflow:**
 
-- Make atomic, logically grouped commits along the way.
+- Make logically grouped commits per this repo's conventions.
 - **Design first:** Draft the architecture (system diagrams, API contracts, data models) as shards under `docs/features/`. Focus on how the design enables the desired end-user experience.
-- **Review:** Meta-review the proposed architecture with engineering to identify bottlenecks early.
+- **Review:** Check the proposed architecture for bottlenecks and fit with the as-built system.
 - **Refactor & clean:** Retire superseded design shards or ADRs. Ensure docs reflect the intended as-built architecture.
-- **Validate:** Run `npm run docs:compile` and `npm run docs:check`.
-- **Wrap-up:** Record architectural changes in your release process (changeset, changelog, or tracker note). Document old system behaviors or constraints that no longer apply.
-- **Finalize:** Open a code review (pull request, merge request, or equivalent), link WORK_ITEM above, and request review.
+- **Validate:** Run this repo's documentation validation commands until they pass (discover from developer docs or package scripts).
+- **Wrap-up:** Record architectural changes per this repo's release and communication conventions. Document old behaviors or constraints that no longer apply.
+- **Finalize:** Submit work for review and link WORK_ITEM.

@@ -9,49 +9,38 @@ WORK_ITEM=
 WORK_ITEM_LOOKUP=
 ```
 
-- **`WORK_ITEM`** — ticket ID, URL, or local spec slug (linked in the code review)
-- **`WORK_ITEM_LOOKUP`** — where and how the agent loads scope (see below — not every tool listed here)
+- **`WORK_ITEM`** — identifier for the task (ticket, URL, or local spec slug)
+- **`WORK_ITEM_LOOKUP`** — where the agent finds scope and delivery conventions (see below)
 
 The prompt body refers to `WORK_ITEM` and `WORK_ITEM_LOOKUP` by name. Everything below the code block is static.
 
 ## What goes in `WORK_ITEM_LOOKUP`
 
-Do **not** try to list every tracker, CLI, and MCP in this file. Each repo documents its own stack once in **developer docs**. The lookup line points the agent there and tells it to discover the rest.
+Do not hard-code a tracker, CLI, or integration in the prompt. Each repo documents its stack once in **developer docs**. The lookup line sends the agent there; the agent discovers commands and tools from that context.
 
-Use a pattern like:
+Pattern:
 
 ```text
-WORK_ITEM_LOOKUP=Branch from main (pull first). Load WORK_ITEM using this repo's developer docs (work-item tracking section). If those docs are silent, inspect enabled MCP tool schemas, tracker CLIs on PATH, or local .work-items/ specs.
+WORK_ITEM_LOOKUP=Load WORK_ITEM per this repo's developer docs (work-item tracking section). If those docs are silent, inspect the repository for tracker links, local .work-items/ specs, and any documented integration or CLI tools.
 ```
 
-Example after your repo documents its setup:
+Filled example (paths vary by repo):
 
 ```text
 WORK_ITEM=39
-WORK_ITEM_LOOKUP=Branch from main (pull first). Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
+WORK_ITEM_LOOKUP=Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
 ```
 
 ## Where the agent should look (discovery order)
 
-When `WORK_ITEM_LOOKUP` sends the agent to your developer docs, that shard should answer “how do we load a work item here?” The agent can also self-serve from:
-
-1. **Repo developer docs** — canonical; maintain one shard (for example `docs/developer/agent-work-item-tracking.md`) as part of local setup. State tracker, branch convention, review/release steps, and the preferred load path (CLI command, MCP server name, or local spec directory).
-2. **Enabled MCP servers** — list available MCP tools and their schemas in the IDE; use the server that matches your tracker (GitHub, Linear, Notion, Jira, and so on).
-3. **Shell CLIs on PATH** — run `--help` on whatever your team installs (`gh`, `glab`, `jira`, etc.); do not assume a specific tool unless developer docs name it.
-4. **Local specs** — when there is no remote tracker, scope lives under `.work-items/{slug}/` (`user-story.md`, `design.md`, `task.md`).
+1. **Repo developer docs** — canonical. Maintain one shard (for example under `docs/developer/`) as part of local setup. Document how to load `WORK_ITEM`, branch conventions, validation commands, and how work is submitted for review.
+2. **Repository context** — package scripts, config files, contribution guides, and integration metadata the repo already exposes. Use `--help`, tool schemas, or API docs present in the environment; do not assume a specific vendor or host.
+3. **Local specs** — when there is no remote tracker, scope may live under `.work-items/{slug}/` (`user-story.md`, `design.md`, `task.md`).
 
 ## Setup once per repo (maintainers)
 
-Add a **work-item tracking** shard to `docs/developer/` during project setup — same tier as local setup and contributing guidelines. Link it from your setup doc so contributors and agents find it before the first task-type prompt.
-
-This repository dogfoods that pattern: [Agent work-item tracking](https://github.com/betsalel-williamson/mdcp/blob/main/docs/developer/agent-work-item-tracking.md).
+Add a work-item tracking shard during project setup — same tier as local setup and contributing guidelines. Link it from your setup doc so agents read it before the first task-type prompt.
 
 ## Delivery workflow
 
-Map wrap-up and finalize steps to your repo (document these in the same developer shard):
-
-| Prompt phrase         | Common equivalents                                        |
-| --------------------- | --------------------------------------------------------- |
-| changeset / changelog | Changesets, `CHANGELOG.md`, release-drafter, tracker note |
-| pull request / PR     | GitHub PR, GitLab MR, Gerrit change, Phabricator diff     |
-| atomic commits        | Conventional commits, signed commits, or team policy      |
+Document wrap-up and finalize steps in the same developer shard. Prompts refer to them generically; map terms to your repo's process (release notes, review workflow, commit policy).
