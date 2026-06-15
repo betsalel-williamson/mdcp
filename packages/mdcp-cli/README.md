@@ -2,19 +2,36 @@
 
 ## Why mdcp for coding agents
 
-**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks.
+**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
 
-### Why use it with coding agents?
+### The pain
 
-Agents edit individual `.md` shards instead of a monolithic README. mdcp compiles shards into a single guide, validates cross-references, and exports token-stripped context (`mdcp export --llm`) for the next agent turn. No custom bash or Python compile scripts to maintain.
+LLM pair-coding on a repo breaks down when documentation is a single monolith, unvalidated, and mixed up with implementation:
 
-**Get started:** copy the [bootstrap prompt](#docs-as-code-bootstrap-prompt-mdcp) from `examples/prompts/`. Fill in the **Replace before sending** code block at the top. Workflow index: [LLM collaboration](#llm-collaboration).
+| Pain                       | What goes wrong                                            | mdcp command                                                                                                                                     |
+| -------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Monolithic guides**      | Merge conflicts, missing sections, stale table of contents | `mdcp compile` stitches shards; `mdcp check` catches orphans                                                                                     |
+| **Broken cross-links**     | Agents guess `#anchor` slugs; links rot after edits        | `mdcp refs lookup` reads slugs from **compiled** output                                                                                          |
+| **Context overload**       | Entire README in every agent turn                          | `mdcp export --llm` strips tokens for scoped context                                                                                             |
+| **Docs drift**             | Shards and published output diverge silently               | `mdcp check` runs compile → refs → xrefs before merge                                                                                            |
+| **Custom compile scripts** | Bash/Python glue nobody owns                               | `compile`, `check`, and `@bwilliamson/mdcp-presets` replace one-offs                                                                             |
+| **Plan mixed with code**   | Agents re-implement from stale prose or skip user value    | Three-tier shards: `docs/features/` (plumbing), `docs/client/` (persona value), `docs/developer/` (repo workflow) — implementation stays in code |
 
-For depth on capabilities and design, read the [feature catalog](#feature-catalog).
+Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way.
+
+### Typical agent loop
+
+Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile` → `mdcp check` → `mdcp export --llm` when the next turn needs doc context.
+
+### Get started
+
+First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](#getting-started-with-mdcp-bootstrap-prompt), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
+
+For command and capability depth, read the [feature catalog](#feature-catalog).
 
 ## LLM collaboration
 
-Bootstrap and task prompts for coding agents. For the value proposition, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
+Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
 **Source of truth:** copy-paste prompts live under [examples/prompts/](../../examples/prompts/). This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
@@ -22,7 +39,7 @@ Bootstrap and task prompts for coding agents. For the value proposition, see [Wh
 
 Copy from [examples/prompts/](../../examples/prompts/). Index: [README.md](#changesets).
 
-- [getting-started-with-mdcp.prompt.md](#docs-as-code-bootstrap-prompt-mdcp) — bootstrap a sharded docs pipeline
+- [getting-started-with-mdcp.prompt.md](#getting-started-with-mdcp-bootstrap-prompt) — first-time pipeline setup in a consumer repo
 - [doc-only-task.prompt.md](#doc-only-task-prompt-mdcp) — documentation-only work
 - [design-architecture-task.prompt.md](#design-architecture-task-prompt-mdcp) — RFCs, ADRs, data models
 - [feature-level-task.prompt.md](#feature-level-task-prompt-mdcp) — feature work, docs-first then TDD
@@ -32,7 +49,7 @@ Each prompt uses a **Replace before sending** code block at the top; the agent p
 
 ### Bootstrap prompt (copy-paste)
 
-First-time setup for a consumer repo: [examples/prompts/getting-started-with-mdcp.prompt.md](#docs-as-code-bootstrap-prompt-mdcp).
+First-time setup for a consumer repo: [examples/prompts/getting-started-with-mdcp.prompt.md](#getting-started-with-mdcp-bootstrap-prompt).
 
 Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring.
 
@@ -156,25 +173,9 @@ When reviewing an agent's documentation PR:
 - Client guide opens with persona context in `about-this-guide.md`
 - Task prompts use only the top replace block — fill in `WORK_ITEM` and `WORK_ITEM_LOOKUP` before sending
 
-### Legacy script port map
-
-If you previously used bash/Python compile scripts, replace them with mdcp commands:
-
-| Legacy pattern                    | Use mdcp instead                                                       |
-| --------------------------------- | ---------------------------------------------------------------------- |
-| Custom shard / split scripts      | `mdcp shard` (split only; requires `source` in config)                 |
-| Custom compile / heading demotion | `mdcp compile`                                                         |
-| Separate markdownlint configs     | `@bwilliamson/mdcp-presets` shard + compiled configs                   |
-| Custom xref lint scripts          | `mdcp check` (built-in xref lint)                                      |
-| Hand-maintained anchor registries | `mdcp refs lookup` / `refs.json` (GitHub slugs on **compiled** output) |
-| Custom Vale term lists in scripts | `.vale.ini` + custom YAML in your repo                                 |
-| Shell validate wrappers           | `mdcp check --require-lint` (+ optional `--require-vale`)              |
-
-Full port map: [Legacy migration](#legacy-migration).
-
 ### See also
 
-- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — value proposition
+- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [Agent integration](#agent-integration) — npm scripts quick reference
 - [examples/prompts/](../../examples/prompts/) — copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
@@ -246,7 +247,7 @@ Global options (apply to every command):
 
 ## Agent integration
 
-npm script stubs for wiring mdcp into any coding agent. For bootstrap, follow-up, docs-first feature workflow, and task-type prompt templates, see [LLM collaboration](#llm-collaboration).
+npm script stubs for wiring mdcp into any coding agent. For setup prompts, docs-first feature workflow, and task-type templates, see [LLM collaboration](#llm-collaboration).
 
 Add npm scripts in your consumer repo:
 
@@ -281,8 +282,8 @@ mdcp check --require-lint
 
 ### Further reading
 
-- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — value proposition for agent workflows
-- [LLM collaboration](#llm-collaboration) — bootstrap prompt, docs-first feature workflow, task-type templates, toolchain integration
+- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
+- [LLM collaboration](#llm-collaboration) — spec-driven workflow, prompts, toolchain integration
 - [Project README](#changesets) — concepts and design rationale
 - [Feature catalog](#feature-catalog) — full maintainer docs
 - [Sample guides](../../examples/sample-guides/)

@@ -14,7 +14,7 @@ pnpm docs:check           # repo docs + examples/sample-guides
 
 Try the minimal fixture: [examples/sample-guides/](examples/sample-guides/).
 
-**LLM-first adoption:** copy the [bootstrap prompt](examples/prompts/getting-started-with-mdcp.prompt.md) into your coding agent. The published npm README leads with the same prompt — see [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) and [LLM collaboration](docs/client-cli/llm-collaboration.md).
+**LLM pair-coding:** documentation shards hold context and the high-level plan; code holds implementation. See [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) for the pain each command addresses, then [LLM collaboration](docs/client-cli/llm-collaboration.md) for prompts and workflow.
 
 ## Documentation (sharded)
 
@@ -34,9 +34,9 @@ Key shards:
 - [Feature catalog](docs/features/feature-catalog.md) — commands, tiers, agent scripts
 - [Design constraints](docs/features/design-constraints/index.md) — md-tree, GFM, peer linters
 - [Developer guide](docs/developer/local-setup.md) — setup, tests, docs dogfooding, releases
-- [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) — value prop and bootstrap prompt entry point
+- [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) — developer pain and which commands address it
 - [CLI install and quick start](docs/client-cli/install-and-quick-start.md) — install and first compile
-- [LLM collaboration](docs/client-cli/llm-collaboration.md) — bootstrap prompt, follow-ups, and agent workflows
+- [LLM collaboration](docs/client-cli/llm-collaboration.md) — spec-driven workflow, prompts, and agent integration
 
 ## Contributing
 

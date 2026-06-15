@@ -1,4 +1,4 @@
-# Docs-as-code bootstrap prompt (mdcp)
+# Getting started with mdcp (bootstrap prompt)
 
 Copy the block below into your agent. Fill in the code block at the top, then send.
 
@@ -11,7 +11,7 @@ FEATURE=
 PERSONA=
 ```
 
-Set up a sharded docs-as-code pipeline using **mdcp** for FEATURE above.
+Set up a sharded documentation pipeline using **mdcp** for FEATURE above.
 
 **Setup:** Inspect this repository — package manager, existing docs layout, and developer docs — before changing files. Do not assume a specific host, script runner, or optional linter; discover what the repo already uses.
 

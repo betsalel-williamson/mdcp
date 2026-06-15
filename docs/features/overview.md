@@ -1,6 +1,6 @@
 # Overview
 
-**mdcp** (Markdown Command Line Interface Processor) is a docs-as-code pipeline for repositories where documentation is **authored in small shard files**, **compiled into canonical outputs**, and **validated before merge**. It is designed for teams that use LLMs to draft shards, humans to review them, and compiled monoliths for agents and end-user readers.
+**mdcp** (Markdown Command Line Interface Processor) helps teams maintain large documentation in **small shard files**, **compile them into canonical outputs**, and **validate before merge**. It is built for LLM-assisted authoring, human review, and compiled output for agents and end-user readers.
 
 This page is the **mental model** for the whole system. Use it to orient yourself before diving into command details, API modules, or config fields.
 
