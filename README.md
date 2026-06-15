@@ -14,7 +14,7 @@ pnpm docs:check           # repo docs + examples/sample-guides
 
 Try the minimal fixture: [examples/sample-guides/](examples/sample-guides/).
 
-**LLM collaboration:** copy the [bootstrap prompt](examples/prompts/docs-as-code-with-mdcp.prompt.md) and read the [LLM collaboration guide](docs/client-cli/llm-collaboration.md) for workflows with Cursor, Composer, Gemini CLI, and other agents.
+**LLM-first adoption:** copy the [bootstrap prompt](examples/prompts/docs-as-code-with-mdcp.prompt.md) into your coding agent. The published npm README leads with the same prompt — see [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) and [LLM collaboration](docs/client-cli/llm-collaboration.md).
 
 ## Documentation (sharded)
 
@@ -34,8 +34,9 @@ Key shards:
 - [Feature catalog](docs/features/feature-catalog.md) — commands, tiers, agent scripts
 - [Design constraints](docs/features/design-constraints/index.md) — md-tree, GFM, peer linters
 - [Developer guide](docs/developer/local-setup.md) — setup, tests, docs dogfooding, releases
-- [CLI quick start](docs/client-cli/install-and-quick-start.md) — install and first compile
-- [LLM collaboration](docs/client-cli/llm-collaboration.md) — bootstrap prompt and agent workflows
+- [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) — value prop and bootstrap prompt entry point
+- [CLI install and quick start](docs/client-cli/install-and-quick-start.md) — install and first compile
+- [LLM collaboration](docs/client-cli/llm-collaboration.md) — bootstrap prompt, follow-ups, and agent workflows
 
 ## Contributing
 
