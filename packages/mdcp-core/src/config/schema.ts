@@ -82,6 +82,21 @@ export const MdcpConfigSchema = z.object({
   banner: z.string().optional(),
   guides: z.array(GuideSchema).optional(),
 
+  /** Opt-in backup of existing compile/export targets before overwrite. */
+  backup: z
+    .object({
+      enabled: z.boolean().default(false),
+      /** Directory relative to outputDir (default `.caches/backups`). */
+      dir: z.string().default('.caches/backups'),
+      /** Suffix appended to backup filename. */
+      ext: z.string().default(''),
+    })
+    .default({
+      enabled: false,
+      dir: '.caches/backups',
+      ext: '',
+    }),
+
   refs: z
     .object({
       /** Registry path relative to outputDir. */
