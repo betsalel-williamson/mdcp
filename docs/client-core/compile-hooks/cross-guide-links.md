@@ -81,6 +81,14 @@ Minimal multi-output setup — index and rewrite run automatically from `compile
         "manifest": "shards.md",
         "outputFile": "architecture-review.md"
       }
+    },
+    {
+      "name": "technical-guide",
+      "path": "technical",
+      "compile": {
+        "scopeRoot": ".",
+        "outputFile": "technical-guide.md"
+      }
     }
   ]
 }
@@ -88,7 +96,7 @@ Minimal multi-output setup — index and rewrite run automatically from `compile
 
 ### `compile.crossGuideLinks.ignoreGuides`
 
-Set on the **guide being compiled**. Guide names in this list keep source `.md` paths for cross-guide links instead of rewriting to that guide's monolith `#slug` target. Use when one compiled guide should link to live shard files for specific guides (for example technical reference docs that are not folded into a review bundle).
+Set on the **guide being compiled**. Guide names in this list keep source `.md` paths for cross-guide links instead of rewriting to that guide's monolith `#slug` target ([ignoreGuides](../../glossary/index.md#ignoreguides)). Use when one compiled guide should link to live shard files for specific guides (for example technical reference docs that are not folded into a review bundle).
 
 ```json
 {

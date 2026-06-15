@@ -38,6 +38,19 @@ Omit `compile.hooks`. Optional per-hook config lives under `hooksConfig` (`inlin
 {
   "name": "glossary",
   "compile": {
+    "outputFile": "glossary.md"
+  }
+}
+```
+
+### Cross-guide exceptions (optional)
+
+Cross-guide link rewrite runs at assembly by default. To keep shard `.md` paths for specific target guides, set `compile.crossGuideLinks.ignoreGuides` on the compiling guide — see [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md):
+
+```json
+{
+  "name": "glossary",
+  "compile": {
     "outputFile": "glossary.md",
     "crossGuideLinks": {
       "ignoreGuides": ["technical-guide"]

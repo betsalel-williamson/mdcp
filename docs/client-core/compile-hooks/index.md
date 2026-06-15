@@ -51,13 +51,12 @@ Built-in hooks run **by default**. Omit `compile.hooks` for the common case. Opt
     "outputFile": "glossary.md",
     "hooksConfig": {
       "inlineInserts": { "searchRoots": ["diagrams"] }
-    },
-    "crossGuideLinks": {
-      "ignoreGuides": ["technical-guide"]
     }
   }
 }
 ```
+
+Optional assembly-time cross-guide exceptions: `compile.crossGuideLinks.ignoreGuides` on the compiling guide — see [Cross-guide link rewriting](./cross-guide-links.md).
 
 ### Opt out per hook
 

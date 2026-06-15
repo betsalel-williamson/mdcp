@@ -38,6 +38,10 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
 
+### ignoreGuides
+
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
+
 ## Quick example
 
 ```typescript
@@ -124,7 +128,15 @@ Built-in hooks run by default when `compile.hooks` is omitted. See [Default comp
 - **`string[]`** — explicit override; replaces defaults entirely (backward compatible)
 - **`Record<string, boolean>`** — opt out; keys with `false` remove that hook from defaults
 
-Optional per-hook settings: `compile.hooksConfig` (`inlineInserts.searchRoots`). Cross-guide link exceptions: `compile.crossGuideLinks.ignoreGuides` (assembly-time; see [Cross-guide links](#cross-guide-link-rewriting)). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
+Optional per-hook settings: `compile.hooksConfig` (`inlineInserts.searchRoots`). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
+
+### `compile.crossGuideLinks`
+
+Assembly-time cross-guide link options on the **compiling** guide (not a compile hook):
+
+- **`ignoreGuides`** — `string[]` of guide names whose cross-guide shard links keep source `.md` paths instead of rewriting to monolith `#slug` targets
+
+See [Cross-guide link rewriting](#cross-guide-link-rewriting) and [ignoreGuides](#ignoreguides).
 
 ## API — Compile
 
@@ -256,13 +268,12 @@ Built-in hooks run **by default**. Omit `compile.hooks` for the common case. Opt
     "outputFile": "glossary.md",
     "hooksConfig": {
       "inlineInserts": { "searchRoots": ["diagrams"] }
-    },
-    "crossGuideLinks": {
-      "ignoreGuides": ["technical-guide"]
     }
   }
 }
 ```
+
+Optional assembly-time cross-guide exceptions: `compile.crossGuideLinks.ignoreGuides` on the compiling guide — see [Cross-guide link rewriting](#cross-guide-link-rewriting).
 
 #### Opt out per hook
 
@@ -661,6 +672,14 @@ Minimal multi-output setup — index and rewrite run automatically from `compile
         "manifest": "shards.md",
         "outputFile": "architecture-review.md"
       }
+    },
+    {
+      "name": "technical-guide",
+      "path": "technical",
+      "compile": {
+        "scopeRoot": ".",
+        "outputFile": "technical-guide.md"
+      }
     }
   ]
 }
@@ -668,7 +687,7 @@ Minimal multi-output setup — index and rewrite run automatically from `compile
 
 #### `compile.crossGuideLinks.ignoreGuides`
 
-Set on the **guide being compiled**. Guide names in this list keep source `.md` paths for cross-guide links instead of rewriting to that guide's monolith `#slug` target. Use when one compiled guide should link to live shard files for specific guides (for example technical reference docs that are not folded into a review bundle).
+Set on the **guide being compiled**. Guide names in this list keep source `.md` paths for cross-guide links instead of rewriting to that guide's monolith `#slug` target ([ignoreGuides](#ignoreguides)). Use when one compiled guide should link to live shard files for specific guides (for example technical reference docs that are not folded into a review bundle).
 
 ```json
 {

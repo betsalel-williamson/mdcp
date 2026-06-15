@@ -46,4 +46,12 @@ Built-in hooks run by default when `compile.hooks` is omitted. See [Default comp
 - **`string[]`** — explicit override; replaces defaults entirely (backward compatible)
 - **`Record<string, boolean>`** — opt out; keys with `false` remove that hook from defaults
 
-Optional per-hook settings: `compile.hooksConfig` (`inlineInserts.searchRoots`). Cross-guide link exceptions: `compile.crossGuideLinks.ignoreGuides` (assembly-time; see [Cross-guide links](./compile-hooks/cross-guide-links.md)). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
+Optional per-hook settings: `compile.hooksConfig` (`inlineInserts.searchRoots`). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.
+
+## `compile.crossGuideLinks`
+
+Assembly-time cross-guide link options on the **compiling** guide (not a compile hook):
+
+- **`ignoreGuides`** — `string[]` of guide names whose cross-guide shard links keep source `.md` paths instead of rewriting to monolith `#slug` targets
+
+See [Cross-guide link rewriting](./compile-hooks/cross-guide-links.md) and [ignoreGuides](../glossary/index.md#ignoreguides).
