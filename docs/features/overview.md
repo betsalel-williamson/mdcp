@@ -1,6 +1,6 @@
 # Overview
 
-**mdcp** (Markdown Command Line Interface Processor) helps teams maintain large documentation in **small shard files**, **compile them into canonical outputs**, and **validate before merge**. It is built for LLM-assisted authoring, human review, and compiled output for agents and end-user readers.
+**mdcp** ([MarkDown Context Protocol](../glossary/index.md#mdcp)) helps teams maintain large documentation in **small shard files**, **compile them into canonical outputs**, and **validate before merge**. It is built for LLM-assisted authoring, human review, and compiled output for agents and end-user readers.
 
 This page is the **mental model** for the whole system. Use it to orient yourself before diving into command details, API modules, or config fields.
 

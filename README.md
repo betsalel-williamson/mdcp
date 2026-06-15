@@ -1,6 +1,6 @@
-# MDCP — Markdown Command Line Interface Processor
+# MDCP — MarkDown Context Protocol
 
-**mdcp** splits, compiles, validates, and exports sharded Markdown documentation for code repositories. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks.
+**mdcp** is a protocol for repository documentation context — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks. The CLI is one surface for `compile`, `check`, `refs lookup`, and `export --llm`.
 
 Shards are the **source of truth**. Generated output includes a local `docs/guides.md` (features review — gitignored), `docs/refs.json` (gitignored), [`DEVELOPERS.md`](DEVELOPERS.md) (from `docs/developer/`), and npm package READMEs compiled from `docs/client-cli/` and `docs/client-core/`.
 
