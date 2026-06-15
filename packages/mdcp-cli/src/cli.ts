@@ -106,7 +106,7 @@ const program = new Command();
 
 program
   .name('mdcp')
-  .description('Markdown Command Line Interface Processor')
+  .description('MarkDown Context Protocol')
   .version(pkg.version)
   .option(
     '-c, --config <path>',

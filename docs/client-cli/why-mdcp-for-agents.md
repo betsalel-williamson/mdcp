@@ -1,6 +1,6 @@
 # Why mdcp for coding agents
 
-**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
+**MDCP** ([MarkDown Context Protocol](../glossary/index.md#mdcp)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
 
 ## The pain
 

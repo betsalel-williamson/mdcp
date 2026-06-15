@@ -2,7 +2,7 @@
 
 ## Why mdcp for coding agents
 
-**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
+**MDCP** ([MarkDown Context Protocol](#mdcp)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
 
 ### The pain
 
@@ -718,6 +718,10 @@ The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (
 ## Glossary
 
 Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
+
+### MDCP
+
+**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
 
 ### GFM
 
