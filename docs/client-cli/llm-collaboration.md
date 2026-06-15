@@ -2,25 +2,23 @@
 
 Bootstrap and task prompts for coding agents. For the value proposition, see [Why mdcp for coding agents](./why-mdcp-for-agents.md).
 
-**Source of truth:** copy-paste prompts live under [examples/prompts/](https://github.com/betsalel-williamson/mdcp/tree/main/examples/prompts). This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** copy-paste prompts live under [examples/prompts/](../../examples/prompts/). This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ## Prompt library
 
-Copy from [examples/prompts/](https://github.com/betsalel-williamson/mdcp/tree/main/examples/prompts). Index: [README.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/README.md).
+Copy from [examples/prompts/](../../examples/prompts/). Index: [README.md](../../examples/prompts/README.md).
 
-- [docs-as-code-with-mdcp.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/docs-as-code-with-mdcp.prompt.md) — bootstrap a sharded docs pipeline
-- [work-item-tracking.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/work-item-tracking.md) — `WORK_ITEM` and `WORK_ITEM_LOOKUP` pattern
-- [doc-only-task.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/doc-only-task.prompt.md) — documentation-only work
-- [design-architecture-task.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/design-architecture-task.prompt.md) — RFCs, ADRs, data models
-- [feature-level-task.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/feature-level-task.prompt.md) — feature work, docs-first
-- [ux-task.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/ux-task.prompt.md) — UI flows and client-guide updates
-- [phase-spec-flow.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/phase-spec-flow.prompt.md) — user story, design, task, ADR phases
+- [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md) — bootstrap a sharded docs pipeline
+- [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md) — documentation-only work
+- [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — RFCs, ADRs, data models
+- [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — feature work, docs-first then TDD
+- [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UI flows and client-guide updates
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
 ## Bootstrap prompt (copy-paste)
 
-First-time setup for a consumer repo: [examples/prompts/docs-as-code-with-mdcp.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/docs-as-code-with-mdcp.prompt.md).
+First-time setup for a consumer repo: [examples/prompts/getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md).
 
 Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring.
 
@@ -49,47 +47,43 @@ Use `mdcp refs lookup` to correct broken fragment links.
 I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using this repo's documented commands.
 ```
 
-## Spec-flow: document before you code
+## Docs-first feature workflow
 
-Document in phases **before** implementation. Walk through requirements, design, and tasks — then implement. This reduces scope creep and gives the agent a clear contract.
+Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md).
 
-| Document   | Holds                                                              |
-| ---------- | ------------------------------------------------------------------ |
-| User story | End-user value and experience                                      |
-| Design     | Technical requirements, API specifications, implementation details |
-| Task       | Concrete steps, acceptance criteria, and validation gates          |
+| Phase     | Where            | Holds                                                  |
+| --------- | ---------------- | ------------------------------------------------------ |
+| Document  | `docs/features/` | Capabilities, design, API surface, acceptance criteria |
+| Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
+| Implement | Code + tests     | TDD against the documented contract                    |
 
-Example layout:
-
-```text
-.work-items/{feature_name}/
-├── user-story.md
-├── design.md
-└── task.md
-```
-
-Phase prompts: [examples/prompts/phase-spec-flow.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/phase-spec-flow.prompt.md).
+For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md).
 
 ### Sharding keeps context lean
 
 - **Core workflow** — bootstrap prompt and repo script wiring
-- **On demand** — task-type and phase prompts from `examples/prompts/`; load only what the current task needs
+- **On demand** — task-type prompts from `examples/prompts/`; load only what the current task needs
 - **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
 
 Prefer structured prompts over permanently importing rigid always-on rules into every repo.
 
 ## Work item tracking
 
-Task-type prompts start with `WORK_ITEM=` and `WORK_ITEM_LOOKUP=`. Pattern and discovery order: [examples/prompts/work-item-tracking.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/work-item-tracking.md).
+Task-type prompts include a **Replace before sending** block with `WORK_ITEM` and `WORK_ITEM_LOOKUP`:
 
-This repository documents its stack in [Agent work-item tracking](../developer/agent-work-item-tracking.md) — link there from `WORK_ITEM_LOOKUP` when dogfooding mdcp.
+- **`WORK_ITEM`** — ticket identifier or URL
+- **`WORK_ITEM_LOOKUP`** — where the agent loads scope and delivery conventions (do not hard-code a tracker in the prompt)
+
+Point `WORK_ITEM_LOOKUP` at a shard under `docs/developer/` in your repo. The agent discovers GitHub MCP, `gh issue view`, Linear MCP, or other tools from that doc — not from the prompt template.
+
+This repository documents its stack in [Agent work-item tracking](../developer/agent-work-item-tracking.md) — use that path in `WORK_ITEM_LOOKUP` when dogfooding mdcp.
 
 ## Task-type prompt templates
 
-- [doc-only-task.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/doc-only-task.prompt.md) — technical writers; documentation, tutorials, guides
-- [design-architecture-task.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
-- [feature-level-task.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/feature-level-task.prompt.md) — server-side or full-stack feature work
-- [ux-task.prompt.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
+- [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md) — technical writers; documentation, tutorials, guides
+- [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
+- [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — server-side or full-stack feature work
+- [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
 
 ## Toolchain integration
 
@@ -135,7 +129,7 @@ When a manifest has preamble prose with example links (not section shards), set 
 
 Never hand-edit generated compile output or `refs.json`.
 
-**Worked example:** this repository dogfoods under [`docs/features/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/features), [`docs/developer/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/developer), and [`docs/client-cli/`](https://github.com/betsalel-williamson/mdcp/tree/main/docs/client-cli), wired by [`docs/mdcp.config.json`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.config.json). Minimal fixture: [examples/sample-guides](https://github.com/betsalel-williamson/mdcp/tree/main/examples/sample-guides).
+**Worked example:** this repository dogfoods under [`docs/features/`](../features/), [`docs/developer/`](../developer/), and [`docs/client-cli/`](./), wired by [`docs/mdcp.config.json`](../mdcp.config.json). Minimal fixture: [examples/sample-guides](../../examples/sample-guides/).
 
 ## Human review checklist
 
@@ -146,7 +140,7 @@ When reviewing an agent's documentation PR:
 - Doc check passes locally and in CI (repo's documented commands)
 - Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`
-- Task prompts use only the top replace block — see [work-item-tracking.md](https://github.com/betsalel-williamson/mdcp/blob/main/examples/prompts/work-item-tracking.md)
+- Task prompts use only the top replace block — fill in `WORK_ITEM` and `WORK_ITEM_LOOKUP` before sending
 
 ## Legacy script port map
 
@@ -168,7 +162,7 @@ Full port map: [Legacy migration](../features/legacy-migration.md).
 
 - [Why mdcp for coding agents](./why-mdcp-for-agents.md) — value proposition
 - [Agent integration](./agent-integration.md) — npm scripts quick reference
-- [examples/prompts/](https://github.com/betsalel-williamson/mdcp/tree/main/examples/prompts) — copy-paste prompt files
+- [examples/prompts/](../../examples/prompts/) — copy-paste prompt files
 - [Project layout](./project-layout.md) — shard directory structure
 - [Cross-links and refs](./cross-links-and-refs.md) — slug lookup while authoring
 - [Optional linters](./optional-linters.md) — markdownlint, Vale, link check peers

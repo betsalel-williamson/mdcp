@@ -22,8 +22,6 @@ gh issue view <number> --comments
 
 **GitHub MCP** (when enabled in Cursor or another host): use GitHub issue tools to fetch the issue named in `WORK_ITEM` — title, body, labels, and comments.
 
-**No remote access:** read local specs under `.work-items/{slug}/` if the task was spec-driven instead of tracker-driven.
-
 If none of the above apply, inspect enabled MCP tool descriptors or run `gh --help` / `gh issue view --help` before guessing commands.
 
 ## Git and delivery
