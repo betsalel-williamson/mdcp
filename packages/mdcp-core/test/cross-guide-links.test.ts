@@ -158,6 +158,7 @@ describe('cross-guide link rewriting', () => {
       expect(index.get(finding)).toEqual({
         guideName: 'architecture-review',
         outputBasename: 'architecture-review.md',
+        outputFile: join(work, 'architecture-review.md'),
         slug: 'find-004',
       });
 
@@ -165,6 +166,7 @@ describe('cross-guide link rewriting', () => {
       expect(index.get(terms)).toEqual({
         guideName: 'glossary',
         outputBasename: 'glossary.md',
+        outputFile: join(work, 'glossary.md'),
         slug: 'terms',
       });
     });
@@ -251,11 +253,13 @@ describe('cross-guide link rewriting', () => {
         expect(index.get(join(work, 'review', 'outcomes', 'FIND-004.md'))).toEqual({
           guideName: 'architecture-review',
           outputBasename: 'architecture-review.md',
+          outputFile: join(work, 'architecture-review.md'),
           slug: 'find-004',
         });
         expect(index.get(join(work, 'technical', 'deployment.md'))).toEqual({
           guideName: 'technical-guide',
           outputBasename: 'technical-guide.md',
+          outputFile: join(work, 'technical-guide.md'),
           slug: 'deployment',
         });
       });
@@ -358,12 +362,143 @@ describe('cross-guide link rewriting', () => {
               scopeRoot: '.',
               outputFile: 'glossary.md',
               sectionsHeading: 'Sections',
+              links: { markBroken: false },
             },
           },
         ],
       });
 
       expect(results[0].text).toContain('[Missing](../missing/shard.md)');
+    });
+  });
+
+  it('buildGuideLinkIndex does not let transitive guide overwrite manifest owner', () => {
+    withTmpDir('mdcp-index-owner-', (work) => {
+      mkdirSync(join(work, 'features'), { recursive: true });
+      mkdirSync(join(work, 'client-cli'), { recursive: true });
+
+      writeFileSync(
+        join(work, 'features', 'index.md'),
+        '# Features\n\n## Sections\n\n- [Legacy](./legacy-migration.md)\n',
+      );
+      writeFileSync(join(work, 'features', 'legacy-migration.md'), '# Legacy migration\n');
+
+      writeFileSync(
+        join(work, 'client-cli', 'index.md'),
+        '# CLI\n\n## Sections\n\n- [Consumer](./consumer.md)\n',
+      );
+      writeFileSync(
+        join(work, 'client-cli', 'consumer.md'),
+        '## Consumer\n\n[Legacy](../features/legacy-migration.md)\n',
+      );
+
+      const opts = {
+        guidesRoot: work,
+        compileOrder: ['features', 'client-cli'],
+        docsRoot: work,
+        config: {
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['features', 'client-cli'],
+        },
+        guides: [
+          { name: 'features' },
+          { name: 'client-cli', compile: { outputFile: 'README.md' } },
+        ],
+      };
+      const index = buildGuideLinkIndex(opts, work);
+      const entry = index.get(join(work, 'features', 'legacy-migration.md'));
+      expect(entry?.guideName).toBe('features');
+      expect(entry?.outputBasename).toBe('guides.md');
+    });
+  });
+
+  it('compileGuideResults rewrites features link to guides.md#slug not #slug', () => {
+    withTmpDir('mdcp-publish-regression-', (work) => {
+      mkdirSync(join(work, 'features'), { recursive: true });
+      mkdirSync(join(work, 'client-cli'), { recursive: true });
+
+      writeFileSync(
+        join(work, 'features', 'index.md'),
+        '# Features\n\n## Sections\n\n- [Legacy](./legacy-migration.md)\n',
+      );
+      writeFileSync(join(work, 'features', 'legacy-migration.md'), '# Legacy migration\n');
+
+      writeFileSync(
+        join(work, 'client-cli', 'index.md'),
+        '# CLI\n\n## Sections\n\n- [Consumer](./consumer.md)\n',
+      );
+      writeFileSync(
+        join(work, 'client-cli', 'consumer.md'),
+        '## Consumer\n\n[Legacy](../features/legacy-migration.md)\n',
+      );
+
+      const results = compileGuideResults({
+        guidesRoot: work,
+        compileOrder: ['features', 'client-cli'],
+        docsRoot: work,
+        config: {
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['features', 'client-cli'],
+        },
+        guides: [
+          { name: 'features' },
+          { name: 'client-cli', compile: { outputFile: 'README.md', links: { markBroken: true } } },
+        ],
+      });
+
+      const readme = results.find((r) => r.name === 'client-cli')!.text;
+      expect(readme).toContain('[Legacy](guides.md#legacy-migration)');
+      expect(readme).not.toMatch(/\[Legacy\]\(#legacy-migration\)/);
+    });
+  });
+
+  it('rewriteCrossGuideFileLinks uses relative output paths when guides share output basename', () => {
+    withTmpDir('mdcp-same-basename-', (work) => {
+      mkdirSync(join(work, 'pkg-a'), { recursive: true });
+      mkdirSync(join(work, 'pkg-b'), { recursive: true });
+
+      writeFileSync(
+        join(work, 'pkg-a', 'index.md'),
+        '# A\n\n## Sections\n\n- [Section](./section.md)\n',
+      );
+      writeFileSync(join(work, 'pkg-a', 'section.md'), '## Section A\n\nBody.\n');
+
+      writeFileSync(
+        join(work, 'pkg-b', 'index.md'),
+        '# B\n\n## Sections\n\n- [Consumer](./consumer.md)\n',
+      );
+      writeFileSync(
+        join(work, 'pkg-b', 'consumer.md'),
+        '## Consumer\n\nSee [Section A](../pkg-a/section.md#section-a).\n',
+      );
+
+      const opts = {
+        guidesRoot: work,
+        compileOrder: ['pkg-a', 'pkg-b'],
+        docsRoot: work,
+        config: { outputDir: '.', compileOrder: ['pkg-a', 'pkg-b'] },
+        guides: [
+          { name: 'pkg-a', path: 'pkg-a', compile: { outputFile: 'out-a/README.md' } },
+          { name: 'pkg-b', path: 'pkg-b', compile: { outputFile: 'out-b/README.md' } },
+        ],
+      };
+      const index = buildGuideLinkIndex(opts, work);
+      const sourceFile = join(work, 'pkg-b', 'consumer.md');
+      const currentOutput = join(work, 'out-b', 'README.md');
+
+      const out = rewriteCrossGuideFileLinks('See [Section A](../pkg-a/section.md#section-a).', {
+        sourceFile,
+        guideDir: join(work, 'pkg-b'),
+        scopeRoot: work,
+        currentGuideName: 'pkg-b',
+        currentOutputBasename: 'README.md',
+        currentOutputFile: currentOutput,
+        linkIndex: index,
+      });
+
+      expect(out).toBe('See [Section A](../out-a/README.md#section-a).');
     });
   });
 });
