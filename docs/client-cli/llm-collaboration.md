@@ -51,6 +51,12 @@ I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using
 
 Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md).
 
+### Workflow best practices
+
+- **Branch first** — create a feature branch from updated `main` before shards, tests, or code (see [Agent work-item tracking](../developer/agent-work-item-tracking.md))
+- **One issue per branch** — stay focused on a single feature, design, or doc scope; do not mix unrelated work in one PR
+- **Current behavior in docs** — shards describe the product as it works now; removed or breaking behavior belongs in the **changeset**, not `docs/features/` or `docs/client/`
+
 | Phase     | Where            | Holds                                                  |
 | --------- | ---------------- | ------------------------------------------------------ |
 | Document  | `docs/features/` | Capabilities, design, API surface, acceptance criteria |
@@ -141,6 +147,8 @@ When reviewing an agent's documentation PR:
 - Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`
 - Task prompts use only the top replace block — fill in `WORK_ITEM` and `WORK_ITEM_LOOKUP` before sending
+- One WORK_ITEM per PR — branch and scope match a single feature or design
+- Shards describe current behavior; breaking or removed behavior is in the changeset, not feature/client guides
 
 ## See also
 

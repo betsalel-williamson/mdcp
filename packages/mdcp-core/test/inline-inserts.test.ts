@@ -31,6 +31,8 @@ describe('inlineInserts — link matching', () => {
     expect(isInsertLibraryPath('../figures/map.md')).toBe(true);
     expect(isInsertLibraryPath('../media/walkthrough.md')).toBe(true);
     expect(isInsertLibraryPath('../inserts/shared-block.md')).toBe(true);
+    expect(isInsertLibraryPath('./inline-inserts.md')).toBe(false);
+    expect(isInsertLibraryPath('compile-hooks/inline-inserts.md')).toBe(false);
     expect(isInsertLibraryPath('./intro.md')).toBe(false);
     expect(isInsertLibraryPath('../glossary/term.md')).toBe(false);
     expect(isInsertLibraryPath('../diagrams/flow.png')).toBe(false);

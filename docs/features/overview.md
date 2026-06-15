@@ -122,7 +122,7 @@ Understanding this sequence explains why most commands exist:
 For each guide in `compileOrder`, core:
 
 1. **Reads section files** — from link order in the manifest (`index.md` / `shards.md`). See [Manifest compile order](./manifest-compile-order.md) when the manifest mixes preamble example links with a `## Sections` list (`compile.sectionsHeading`).
-2. **Transforms each shard** — demotes headings to fit the guide level; strips `about-this-guide` preamble; runs named **compile hooks** (`stripAnchors`, `codeEvidence`, `inlineInserts`, `reviewLinks`, …).
+2. **Transforms each shard** — demotes headings to fit the guide level; strips `about-this-guide` preamble; runs **compile hooks** (`stripAnchors`, `codeEvidence`, `inlineInserts`, `reviewLinks`) by default — see [Default compile hooks](./default-compile-hooks.md).
 3. **Assembles the guide body** — injects optional `compile.title` as a `##` heading followed by a blank line, then concatenates sections in order. When the first shard’s top heading matches the title, that duplicate heading is stripped.
 4. **Rewrites links** — same-guide `./section.md` → in-document `#anchor`; optional `publishPathRewrite` for repo-root paths on publish outputs.
 5. **Writes outputs** — monolith file and/or per-guide `compile.outputFile`.

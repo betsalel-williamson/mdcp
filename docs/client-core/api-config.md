@@ -6,6 +6,7 @@
 | `resolveOutputPath`, `resolveRefsPath`, `resolveGuideDir`, `defaultGuideOutputFile`    | Path resolvers for docs root and `outputDir`                                |
 | `getGuideConfig`, `guideScanDirs`, `shardLintPaths`, `xrefScanDirs`                    | In-scope guide fileset and xref scan helpers                                |
 | `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput` | Zod schema and types                                                        |
+| `DEFAULT_COMPILE_HOOKS`, `resolveCompileHooks`                                         | Default built-in hook pipeline and guide-level resolution                   |
 
 ## Path resolution: `configBase` vs docs root
 
@@ -36,3 +37,13 @@ Consumer path table: [Config essentials — path layout](../client-cli/config-es
 `compile.includeBanner` controls whether the global banner is prepended (defaults to `false` for per-guide outputs).
 
 `compile.publishPathRewrite` rewrites shard-relative repo paths in publish outputs. Intra-guide `./section.md` links rewrite to `#anchor` on every compile.
+
+## `compile.hooks`
+
+Built-in hooks run by default when `compile.hooks` is omitted. See [Default compile hooks](../features/default-compile-hooks.md).
+
+- **Omitted** — run `DEFAULT_COMPILE_HOOKS` in order: `stripAnchors`, `codeEvidence`, `inlineInserts`, `reviewLinks`
+- **`string[]`** — explicit override; replaces defaults entirely (backward compatible)
+- **`Record<string, boolean>`** — opt out; keys with `false` remove that hook from defaults
+
+Optional per-hook settings: `compile.hooksConfig` (`reviewLinks.targetMonolith`, `inlineInserts.searchRoots`). Post-stitch anchor stripping: `compile.stripAnchors` (default `true`), independent of the per-shard `stripAnchors` hook unless opted out.

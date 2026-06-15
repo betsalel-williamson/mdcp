@@ -11,5 +11,6 @@ Product documentation for **what mdcp is designed to do** — the problems it so
   - [Personas and priority tiers](./personas-and-priority-tiers.md)
   - [Feature catalog](./feature-catalog.md)
   - [Manifest compile order](./manifest-compile-order.md)
+  - [Default compile hooks](./default-compile-hooks.md)
   - [Design constraints](./design-constraints/index.md)
   - [Legacy migration](./legacy-migration.md)

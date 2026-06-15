@@ -46,7 +46,7 @@ The hook **does not** transform:
 - Direct links to binary assets (for example `../figures/architecture.png`, `../figures/demo.mp4`) — use a captioned `.md` insert shard that embeds the media instead
 - External URLs, even when the path contains `diagrams/`
 - Links to missing insert files (left unchanged)
-- Body text when `inlineInserts` is not in `compile.hooks`
+- Body text when `inlineInserts` is disabled via `compile.hooks: { "inlineInserts": false }` or an explicit hook override that omits it
 
 ## inlineInserts first inline
 
@@ -102,17 +102,20 @@ Lookup order for insert shard paths:
 
 ## inlineInserts config
 
+Runs by default. Optional search roots:
+
 ```json
 {
   "name": "architecture-review",
   "compile": {
-    "hooks": ["stripAnchors", "inlineInserts", "reviewLinks"],
     "hooksConfig": {
       "inlineInserts": { "searchRoots": ["diagrams"] }
     }
   }
 }
 ```
+
+Opt out: `"hooks": { "inlineInserts": false }`. See [Default compile hooks](../../features/default-compile-hooks.md).
 
 ## inlineInserts compile example
 

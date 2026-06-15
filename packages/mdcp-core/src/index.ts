@@ -21,6 +21,11 @@ export {
   resolveUnderOutputDir,
 } from './config/load.js';
 export {
+  DEFAULT_COMPILE_HOOKS,
+  resolveCompileHooks,
+  type DefaultCompileHook,
+} from './config/resolve-compile-hooks.js';
+export {
   demoteHeadings,
   demoteExceptFirstH1,
   stripAboutThisGuideHeading,

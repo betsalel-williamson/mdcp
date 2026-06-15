@@ -28,17 +28,27 @@ If none of the above apply, inspect enabled MCP tool descriptors or run `gh --he
 
 ```text
 Integration branch=main (pull before branching)
-Feature branches=descriptive (e.g. docs/issue-39-llm-prompt-templates)
+Feature branches=descriptive (e.g. feature/issue-29-default-compile-hooks)
+One branch per WORK_ITEM=do not mix unrelated features, designs, or doc scopes in one PR
+Branch before work=create the feature branch before shards, tests, or code
 Commits=conventional; atomic and logically grouped
 Release notes=changeset in .changeset/ for user-facing doc changes
+Docs=describe current behavior only; removed or breaking behavior belongs in changeset release notes, not feature/client shards
 Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 ```
+
+## Workflow best practices
+
+1. **Load scope** — fetch WORK_ITEM (title, body, acceptance criteria) before planning or editing.
+2. **Branch first** — `git checkout main`, pull, then `git checkout -b feature/...` tied to the issue. Never start on `main`.
+3. **Stay focused** — one feature or design at a time. Treat acceptance criteria as the boundary unless WORK_ITEM explicitly expands scope.
+4. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record that in the changeset instead.
 
 ## Example prompt header
 
 ```text
 WORK_ITEM=39
-WORK_ITEM_LOOKUP=Branch from main (pull first). Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
+WORK_ITEM_LOOKUP=Branch from main (pull first). One issue per branch. Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
 ```
 
 For task-type prompt templates, read [LLM collaboration](../client-cli/llm-collaboration.md).

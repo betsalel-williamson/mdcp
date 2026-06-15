@@ -82,6 +82,12 @@ I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using
 
 Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](#feature-level-task-prompt-mdcp).
 
+#### Workflow best practices
+
+- **Branch first** — create a feature branch from updated `main` before shards, tests, or code (see [Agent work-item tracking](#agent-work-item-tracking))
+- **One issue per branch** — stay focused on a single feature, design, or doc scope; do not mix unrelated work in one PR
+- **Current behavior in docs** — shards describe the product as it works now; removed or breaking behavior belongs in the **changeset**, not `docs/features/` or `docs/client/`
+
 | Phase     | Where            | Holds                                                  |
 | --------- | ---------------- | ------------------------------------------------------ |
 | Document  | `docs/features/` | Capabilities, design, API surface, acceptance criteria |
@@ -172,6 +178,8 @@ When reviewing an agent's documentation PR:
 - Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`
 - Task prompts use only the top replace block — fill in `WORK_ITEM` and `WORK_ITEM_LOOKUP` before sending
+- One WORK_ITEM per PR — branch and scope match a single feature or design
+- Shards describe current behavior; breaking or removed behavior is in the changeset, not feature/client guides
 
 ### See also
 
@@ -583,7 +591,7 @@ Path resolution details: [Config essentials — path layout](#path-layout).
 
 ### Compile hooks
 
-Register hooks per guide in `guides[].compile.hooks`:
+Built-in hooks run **by default** on every guide — omit `compile.hooks` for the common case. See [Default compile hooks](#default-compile-hooks).
 
 | Hook            | Purpose                                                               |
 | --------------- | --------------------------------------------------------------------- |
@@ -592,11 +600,13 @@ Register hooks per guide in `guides[].compile.hooks`:
 | `codeEvidence`  | Resolve evidence links to GitHub line-number fragments                |
 | `reviewLinks`   | Rewrite review links; optional hooksConfig.reviewLinks.targetMonolith |
 
+Opt out per hook: `"hooks": { "codeEvidence": false }`. Replace the pipeline entirely with a string array when needed.
+
 Cross-guide `.md` links rewrite automatically from `compileOrder` and per-guide `compile.outputFile`. Hook specs: [Compile hooks](#developer-guide-1). Cross-monolith rewriting: [Cross-guide links](#cross-guide-link-rewriting).
 
 ### Multi-guide config
 
-Multi-guide repos typically set per-guide publish targets, `sectionsHeading`, and hooks:
+Multi-guide repos typically set per-guide publish targets and `sectionsHeading` — hooks need not be listed:
 
 ```json
 {
@@ -607,8 +617,7 @@ Multi-guide repos typically set per-guide publish targets, `sectionsHeading`, an
       "name": "glossary",
       "compile": {
         "outputFile": "glossary.md",
-        "sectionsHeading": "Sections",
-        "hooks": ["stripAnchors", "inlineInserts", "reviewLinks"]
+        "sectionsHeading": "Sections"
       }
     },
     {
@@ -619,7 +628,6 @@ Multi-guide repos typically set per-guide publish targets, `sectionsHeading`, an
         "outputFile": "architecture-review.md",
         "sectionsHeading": "Sections",
         "scopeRoot": ".",
-        "hooks": ["stripAnchors", "codeEvidence", "inlineInserts", "reviewLinks"],
         "hooksConfig": {
           "reviewLinks": { "targetMonolith": "architecture-review.md" }
         }

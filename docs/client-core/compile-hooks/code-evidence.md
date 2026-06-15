@@ -62,18 +62,16 @@ The hook **does not** transform:
 - Markdown shard links (`.md`)
 - External URLs
 - Source links when the file cannot be resolved and no line range appears in label or path
-- Body text when `codeEvidence` is not in `compile.hooks`
+- Body text when `codeEvidence` is disabled via `compile.hooks: { "codeEvidence": false }` or an explicit hook override that omits it
 
 ## codeEvidence config
 
-Minimal setup — add the hook name. Path rewriting uses the monolith or per-guide output path automatically:
+Runs by default — no hook list required. Path rewriting uses the monolith or per-guide output path automatically:
 
 ```json
 {
   "name": "architecture-review",
-  "compile": {
-    "hooks": ["stripAnchors", "codeEvidence"]
-  }
+  "compile": {}
 }
 ```
 
@@ -84,11 +82,12 @@ When the guide publishes to its own file instead of the monolith, set `compile.o
   "name": "architecture-review",
   "compile": {
     "scopeRoot": ".",
-    "outputFile": "architecture-review.md",
-    "hooks": ["stripAnchors", "codeEvidence"]
+    "outputFile": "architecture-review.md"
   }
 }
 ```
+
+Opt out: `"hooks": { "codeEvidence": false }`. See [Default compile hooks](../../features/default-compile-hooks.md).
 
 ## codeEvidence compile example
 

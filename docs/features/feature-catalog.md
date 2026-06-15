@@ -62,7 +62,7 @@ Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host rep
 
 ## Compile hooks (P2.2)
 
-Per-shard assembly via `guides[].compile.hooks` on [authored GFM](../glossary/index.md#gfm). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
+Per-shard assembly via built-in compile hooks on [authored GFM](../glossary/index.md#gfm). Hooks run by default; opt out per hook when needed. See [Default compile hooks](./default-compile-hooks.md). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
 
 Built-in hooks:
 

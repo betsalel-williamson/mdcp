@@ -42,8 +42,8 @@ const GuideSchema = z.object({
       outputFile: z.string().optional(),
       /** Apply global banner to this guide's output (default: true for monolith, false when outputFile is set). */
       includeBanner: z.boolean().optional(),
-      /** Named compile hooks (see compile/hooks.ts). */
-      hooks: z.array(z.string()).optional(),
+      /** Named compile hooks (see compile/hooks.ts). String array replaces defaults; object opts out. */
+      hooks: z.union([z.array(z.string()), z.record(z.string(), z.boolean())]).optional(),
       hooksConfig: z
         .object({
           reviewLinks: z
