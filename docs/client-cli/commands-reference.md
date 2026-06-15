@@ -16,7 +16,7 @@ Every command accepts:
 mdcp compile --config docs/mdcp.config.json --docs-root docs
 ```
 
-`--config` locates the file from where the command runs; `--docs-root` sets the shard tree root. These bases are independent — see [Config essentials](./config-essentials.md#config-vs-docs-root).
+`--config` locates the file from where the command runs; `--docs-root` sets the shard tree root. These bases are independent — see [Config essentials](./config-essentials.md#--config-vs---docs-root).
 
 ## Daily workflow
 

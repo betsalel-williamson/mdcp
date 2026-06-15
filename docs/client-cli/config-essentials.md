@@ -2,6 +2,8 @@
 
 ## `--config` vs `--docs-root`
 
+> **Link target:** On GitHub, this section's anchor is `#--config-vs---docs-root` (not `#config-vs-docs-root`).
+
 These two global options answer different questions:
 
 | Option            | Resolved from                                                                        | Purpose                                                     |
