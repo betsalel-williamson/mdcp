@@ -55,4 +55,21 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Require changeset when packages change
-        run: pnpm exec changeset status --since=${{ github.event.pull_request.base.sha }}
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          set +e
+          pnpm exec changeset status --since="$BASE"
+          STATUS=$?
+          set -e
+          if [ "$STATUS" -eq 0 ]; then
+            exit 0
+          fi
+          # Release PRs run `changeset version` in-branch: changesets are consumed and
+          # package versions bump, which makes `changeset status` fail even though the
+          # release notes are already in CHANGELOG. Allow when this PR deleted changesets.
+          CONSUMED=$(git diff --name-only --diff-filter=D "$BASE"..HEAD -- '.changeset/*.md' | wc -l | tr -d ' ')
+          if [ "$CONSUMED" -gt 0 ]; then
+            echo "Changesets consumed in this PR (release versioning) — skipping require-changeset check."
+            exit 0
+          fi
+          exit 1
