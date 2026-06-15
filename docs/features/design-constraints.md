@@ -34,7 +34,7 @@ Use `--require-lint` / `--require-vale` in CI.
 
 ## GFM scope
 
-Standard Markdown / GitHub Flavored Markdown only. No Pandoc, LaTeX, wikilinks.
+Standard Markdown / [GitHub Flavored Markdown (GFM)](./glossary.md#gfm) only. No Pandoc, LaTeX, wikilinks.
 
 ## Preprocessor / templating (out of scope)
 
@@ -55,6 +55,6 @@ Run preprocessing **before** shards are authored or committed (or regenerate sha
 - Parameterized partial includes beyond MDCP's captioned insert inlining ([`inlineInserts`](../client-core/compile-hooks/inline-inserts.md))
 - Build-time code generation that mutates shard markdown prior to `mdcp compile`
 
-**Not the same as compile hooks:** per-shard hooks ([`guides[].compile.hooks`](../client-core/compile-hooks/index.md)) rewrite link targets, inline captioned inserts, and apply documentation-specific assembly — they are not a general template language. Custom hooks transform already-authored GFM; they do not evaluate variables or branch on runtime context.
+**Not the same as compile hooks:** per-shard hooks ([`guides[].compile.hooks`](../client-core/compile-hooks/index.md)) rewrite link targets, inline captioned inserts, and apply documentation-specific assembly — they are not a general template language. Custom hooks transform [authored GFM](./glossary.md#gfm); they do not evaluate variables or branch on runtime context.
 
 **Non-goals:** no built-in variable engine, template parser, or preprocessor hook API in MDCP core.

@@ -7,6 +7,7 @@ Product documentation for **what mdcp is designed to do** — the docs-as-code p
 - [MDCP Feature Catalog](#table-of-contents)
   - [About this guide](./about-this-guide.md)
   - [Overview](./overview.md)
+  - [Glossary](./glossary.md)
   - [Personas and priority tiers](./personas-and-priority-tiers.md)
   - [Feature catalog](./feature-catalog.md)
   - [Manifest compile order](./manifest-compile-order.md)
