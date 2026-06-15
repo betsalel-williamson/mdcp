@@ -86,7 +86,7 @@ For prose linting (Vale), configure `vale` in `mdcp.config.json` separately; Val
 
 ## Example
 
-See [examples/sample-guides/mdcp.config.json](https://github.com/betsalel-williamson/mdcp/blob/main/examples/sample-guides/mdcp.config.json) in the mdcp repo (paths differ in the monorepo vs. a consumer install).
+See [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) in the mdcp repo (paths differ in the monorepo vs. a consumer install).
 
 ## License
 

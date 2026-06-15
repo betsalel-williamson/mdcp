@@ -1,6 +1,6 @@
 # MDCP Feature Catalog
 
-Product documentation for **what mdcp is designed to do** — the docs-as-code pipeline, how commands connect, and where to read implementation details.
+Product documentation for **what mdcp is designed to do** — the problems it solves, how commands connect, and where to read implementation details.
 
 **Start here:** [Overview](./overview.md) explains the mental model (shards → compile → validate → export), package roles, and a code map. The sections below go deeper on specific topics.
 

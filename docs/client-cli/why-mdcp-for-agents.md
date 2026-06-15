@@ -1,11 +1,28 @@
 # Why mdcp for coding agents
 
-**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks.
+**mdcp** splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
 
-## Why use it with coding agents?
+## The pain
 
-Agents edit individual `.md` shards instead of a monolithic README. mdcp compiles shards into a single guide, validates cross-references, and exports token-stripped context (`mdcp export --llm`) for the next agent turn. No custom bash or Python compile scripts to maintain.
+LLM pair-coding on a repo breaks down when documentation is a single monolith, unvalidated, and mixed up with implementation:
 
-**Get started:** copy the [bootstrap prompt](#bootstrap-prompt-copy-paste) below into Cursor Agent, Composer, Gemini CLI, or any shell-capable agent. Fill in `{{FEATURE}}` and `{{PERSONA}}`.
+| Pain                       | What goes wrong                                            | mdcp command                                                                                                                                     |
+| -------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Monolithic guides**      | Merge conflicts, missing sections, stale table of contents | `mdcp compile` stitches shards; `mdcp check` catches orphans                                                                                     |
+| **Broken cross-links**     | Agents guess `#anchor` slugs; links rot after edits        | `mdcp refs lookup` reads slugs from **compiled** output                                                                                          |
+| **Context overload**       | Entire README in every agent turn                          | `mdcp export --llm` strips tokens for scoped context                                                                                             |
+| **Docs drift**             | Shards and published output diverge silently               | `mdcp check` runs compile → refs → xrefs before merge                                                                                            |
+| **Custom compile scripts** | Bash/Python glue nobody owns                               | `compile`, `check`, and `@bwilliamson/mdcp-presets` replace one-offs                                                                             |
+| **Plan mixed with code**   | Agents re-implement from stale prose or skip user value    | Three-tier shards: `docs/features/` (plumbing), `docs/client/` (persona value), `docs/developer/` (repo workflow) — implementation stays in code |
 
-For depth on capabilities and design, read the [feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).
+Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way.
+
+## Typical agent loop
+
+Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile` → `mdcp check` → `mdcp export --llm` when the next turn needs doc context.
+
+## Get started
+
+First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](./llm-collaboration.md).
+
+For command and capability depth, read the [feature catalog](../features/feature-catalog.md).
