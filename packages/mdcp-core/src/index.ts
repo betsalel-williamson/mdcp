@@ -86,6 +86,20 @@ export {
 } from './refs/registry.js';
 export { lintXrefs } from './xrefs/lint.js';
 export {
+  lintLinks,
+  lintCompiledLinks,
+  lintShardLinks,
+  markBrokenLinks,
+  formatLinkIssue,
+  extractLinks,
+  validateCompiledLinkTarget,
+  collectShardProvenance,
+  type LinkIssue,
+  type LinkSeverity,
+  type LinkProvenance,
+  type LintLinksOptions,
+} from './links/lint.js';
+export {
   checkOrphans,
   checkOrphansForGuides,
   type OrphanIssue,
