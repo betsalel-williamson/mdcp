@@ -9,6 +9,7 @@ mdcp/
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
 │   └── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
+│   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)
 │   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md

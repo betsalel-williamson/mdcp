@@ -191,7 +191,7 @@ Set `guides[].compile.outputFile` to the README path; run `mdcp compile`; README
 
 ## Design boundaries (intentional limits)
 
-- **GFM only** — [GitHub Flavored Markdown](./glossary.md#gfm); no Pandoc, wikilinks, or required `{#heading-ids}`.
+- **GFM only** — [GitHub Flavored Markdown](../glossary/index.md#gfm); no Pandoc, wikilinks, or required `{#heading-ids}`.
 - **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used.
 - **GitHub slugs** — computed from compiled headings, not from author-supplied IDs.
 - **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.

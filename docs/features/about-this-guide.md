@@ -2,7 +2,7 @@
 
 **Audience:** coding agents and technical readers who need to understand what mdcp does — commands, design constraints, and migration from legacy tooling.
 
-This is the **product** guide: capabilities and behavior of the tool itself. Begin with [Overview](./overview.md) for the high-level pipeline and code map, then use the sections below for specifics. Spell out acronyms on first use and link them in the [Glossary](./glossary.md).
+This is the **product** guide: capabilities and behavior of the tool itself. Begin with [Overview](./overview.md) for the high-level pipeline and code map, then use the sections below for specifics. Spell out acronyms on first use and link them in the [Glossary](../glossary/index.md).
 
 For how to contribute to this repository (setup, tests, changesets, releases), read the [Developer Guide](../developer/index.md).
 

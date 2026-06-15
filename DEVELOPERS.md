@@ -67,6 +67,7 @@ mdcp/
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
 │   └── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
+│   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)
 │   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
@@ -140,12 +141,13 @@ This repo's documentation is sharded under [`docs/`](docs/). Shards are the **so
 
 ### Guide directories
 
-| Directory      | Audience                         | Output                                            |
-| -------------- | -------------------------------- | ------------------------------------------------- |
-| `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review) |
-| `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
-| `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
-| `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
+| Directory      | Audience                         | Output                                             |
+| -------------- | -------------------------------- | -------------------------------------------------- |
+| `glossary/`    | Shared terms (cross-guide)       | Stitched into `features` compile via manifest link |
+| `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review)  |
+| `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                       |
+| `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                      |
+| `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                     |
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 

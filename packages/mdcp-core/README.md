@@ -180,7 +180,7 @@ Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → 
 
 Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (anchor stripping, cross-guide rewrite, intra-guide rewrite, optional `publishPathRewrite`) run after all hooks complete.
 
-**Not general templating:** hooks rewrite links, inline captioned inserts, and apply other documentation-specific assembly on **already-authored [GFM](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/glossary.md#gfm)**. They do not substitute `{{variables}}`, evaluate `{% if %}` blocks, or replace a template engine. For that, run a preprocessor before shards are committed or a postprocessor after compile — see [Preprocessor / templating (out of scope)](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints.md#preprocessor-templating-out-of-scope).
+**Not general templating:** hooks rewrite links, inline captioned inserts, and apply other documentation-specific assembly on **already-authored [GFM](https://github.com/betsalel-williamson/mdcp/blob/main/docs/glossary/index.md#gfm)**. They do not substitute `{{variables}}`, evaluate `{% if %}` blocks, or replace a template engine. For that, run a preprocessor before shards are committed or a postprocessor after compile — see [Preprocessor / templating (out of scope)](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints.md#preprocessor-templating-out-of-scope).
 
 ### Architecture
 

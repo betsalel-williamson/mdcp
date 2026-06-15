@@ -36,13 +36,13 @@
     "markdownlint": {
       "shardsConfig": "../packages/mdcp-presets/markdownlint-shards.markdownlint-cli2.jsonc",
       "compiledConfig": "compiled-lint.markdownlint-cli2.jsonc",
-      "shardsGlobs": ["features", "developer", "client-cli", "client-core"]
+      "shardsGlobs": ["glossary", "features", "developer", "client-cli", "client-core"]
     },
     "xrefs": { "enabled": true }
   },
   "vale": {
     "config": ".vale.ini",
-    "scanGlobs": ["features", "developer", "client-cli", "client-core"]
+    "scanGlobs": ["glossary", "features", "developer", "client-cli", "client-core"]
   },
   "export": {
     "llm": {

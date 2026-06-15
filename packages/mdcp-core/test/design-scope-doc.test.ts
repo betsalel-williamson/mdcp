@@ -48,14 +48,15 @@ describe('design scope documentation (#26)', () => {
   });
 
   it('defines GFM and authored GFM in the product glossary', () => {
-    const glossary = readRepoDoc('docs/features/glossary.md');
+    const glossary = readRepoDoc('docs/glossary/index.md');
     expect(glossary).toContain('## GFM');
     expect(glossary).toContain('GitHub Flavored Markdown');
     expect(glossary).toContain('Authored GFM');
-    expect(designConstraints).toContain('[authored GFM](./glossary.md#gfm)');
-    expect(featureCatalog).toContain('[authored GFM](./glossary.md#gfm)');
+    expect(glossary).toContain('cross-guide artifact');
+    expect(designConstraints).toContain('[authored GFM](../glossary/index.md#gfm)');
+    expect(featureCatalog).toContain('[authored GFM](../glossary/index.md#gfm)');
     expect(compileHooks).toContain(
-      'https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/glossary.md#gfm',
+      'https://github.com/betsalel-williamson/mdcp/blob/main/docs/glossary/index.md#gfm',
     );
   });
 
