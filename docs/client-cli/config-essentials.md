@@ -57,6 +57,7 @@ docs/                          ← --docs-root
     guides.md                  ← optional monolith (when outputFile set)
     .caches/
       refs.json
+      backups/                 ← opt-in prior output (--backup)
 ```
 
 ### Guide = one subdirectory
@@ -75,7 +76,19 @@ Only directories listed in `compileOrder` are compiled and linted. Support folde
 | `refs.registryFile`   | `outputDir`   | `docs/_build/.caches/refs.json`     |
 | `compile.outputFile`  | `outputDir`   | `../../DEVELOPERS.md` from `_build` |
 
-Delete `_build/` to clean all generated output. `.caches/` holds derived state (refs registry) only.
+Delete `_build/` to clean all generated output. `.caches/` holds derived state (refs registry) and, when `--backup` is used, prior compile output under `backups/`. See [Compile output backup](../features/compile-output-backup.md).
+
+### Opt-in output backup
+
+Default: compile and export **overwrite** existing files (git is the safety net). Enable backup when working outside version control:
+
+```json
+{
+  "backup": { "enabled": true }
+}
+```
+
+Or pass `--backup` on the CLI (overrides config). Optional `backup.dir` (default `.caches/backups`) and `backup.ext`. Full spec: [Compile output backup](../features/compile-output-backup.md).
 
 ---
 

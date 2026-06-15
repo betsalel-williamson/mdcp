@@ -54,6 +54,25 @@ describe('MdcpConfigSchema', () => {
   it('rejects empty compileOrder', () => {
     expect(() => MdcpConfigSchema.parse({ compileOrder: [] })).toThrow();
   });
+
+  it('parses backup defaults', () => {
+    const cfg = MdcpConfigSchema.parse({
+      compileOrder: ['glossary'],
+    });
+    expect(cfg.backup.enabled).toBe(false);
+    expect(cfg.backup.dir).toBe('.caches/backups');
+    expect(cfg.backup.ext).toBe('');
+  });
+
+  it('parses explicit backup config', () => {
+    const cfg = MdcpConfigSchema.parse({
+      compileOrder: ['glossary'],
+      backup: { enabled: true, dir: 'archive', ext: '.bak' },
+    });
+    expect(cfg.backup.enabled).toBe(true);
+    expect(cfg.backup.dir).toBe('archive');
+    expect(cfg.backup.ext).toBe('.bak');
+  });
 });
 
 describe('loadConfig', () => {

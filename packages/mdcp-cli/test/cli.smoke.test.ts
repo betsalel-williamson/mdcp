@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -108,6 +108,84 @@ describe('cli smoke', () => {
         { encoding: 'utf-8', cwd: docs },
       );
       expect(existsSync(join(docs, '_build/compiled/.caches/refs.json'))).toBe(true);
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
+  it('creates cache backup on re-compile with --backup', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-backup-smoke-'));
+    try {
+      const guide = join(docs, 'g');
+      mkdirSync(guide, { recursive: true });
+      writeFileSync(join(guide, 'index.md'), '# Guide\n\n- [intro](introduction.md)\n');
+      writeFileSync(join(guide, 'introduction.md'), '# Guide\n\n## Hello\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '_build',
+          outputFile: 'guides.md',
+          compileOrder: ['g'],
+          guides: [{ name: 'g', path: 'g' }],
+          lint: { xrefs: { enabled: false } },
+        }),
+      );
+
+      execFileSync('node', [CLI, 'compile', '--config', 'mdcp.config.json', '--docs-root', docs], {
+        encoding: 'utf-8',
+        cwd: docs,
+      });
+      const outPath = join(docs, '_build', 'guides.md');
+      writeFileSync(outPath, 'stale monolith\n');
+
+      execFileSync(
+        'node',
+        [CLI, 'compile', '--config', 'mdcp.config.json', '--docs-root', docs, '--backup'],
+        { encoding: 'utf-8', cwd: docs },
+      );
+
+      const backupPath = join(docs, '_build', '.caches', 'backups', '_build', 'guides.md');
+      expect(existsSync(backupPath)).toBe(true);
+      expect(readFileSync(backupPath, 'utf-8')).toBe('stale monolith\n');
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
+  it('backs up existing llm export with --backup', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-backup-export-'));
+    try {
+      const guide = join(docs, 'g');
+      mkdirSync(guide, { recursive: true });
+      writeFileSync(join(guide, 'index.md'), '# Guide\n\n- [intro](introduction.md)\n');
+      writeFileSync(join(guide, 'introduction.md'), '# Guide\n\n## Hello\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '_build',
+          outputFile: 'guides.md',
+          compileOrder: ['g'],
+          guides: [{ name: 'g', path: 'g' }],
+        }),
+      );
+
+      execFileSync('node', [CLI, 'compile', '--config', 'mdcp.config.json', '--docs-root', docs], {
+        encoding: 'utf-8',
+        cwd: docs,
+      });
+
+      const llmPath = join(docs, '_build', 'guides.llm.md');
+      writeFileSync(llmPath, 'old llm export\n');
+
+      execFileSync(
+        'node',
+        [CLI, 'export', '--llm', '--backup', '--config', 'mdcp.config.json', '--docs-root', docs],
+        { encoding: 'utf-8', cwd: docs },
+      );
+
+      const backupPath = join(docs, '_build', '.caches', 'backups', '_build', 'guides.llm.md');
+      expect(existsSync(backupPath)).toBe(true);
+      expect(readFileSync(backupPath, 'utf-8')).toBe('old llm export\n');
     } finally {
       rmSync(docs, { recursive: true, force: true });
     }

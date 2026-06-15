@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -27,12 +27,17 @@ import {
   runPeer,
   shardFromMonolith,
   buildSlugRegistry,
+  resolveBackupOptions,
+  writeOutputFile,
   type MdcpConfig,
 } from '@bwilliamson/mdcp-core';
 
 interface GlobalOpts {
   config: string;
   docsRoot?: string;
+  backup?: boolean;
+  backupDir?: string;
+  backupExt?: string;
 }
 
 function getDocsRoot(opts: GlobalOpts): string {
@@ -72,7 +77,15 @@ function resolveLinkTarget(config: MdcpConfig, docsRoot: string): string | undef
   return resolveOutputPath(config, docsRoot);
 }
 
-function compileOptions(config: MdcpConfig, docsRoot: string) {
+function backupOptions(config: MdcpConfig, opts: GlobalOpts) {
+  return resolveBackupOptions(config, {
+    backup: opts.backup,
+    backupDir: opts.backupDir,
+    backupExt: opts.backupExt,
+  });
+}
+
+function compileOptions(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts) {
   return {
     guidesRoot: resolveDocsRoot(config, docsRoot),
     compileOrder: config.compileOrder,
@@ -80,21 +93,27 @@ function compileOptions(config: MdcpConfig, docsRoot: string) {
     guides: config.guides,
     docsRoot,
     config,
+    backup: backupOptions(config, globalOpts),
   };
 }
 
-function compileToString(config: MdcpConfig, docsRoot: string): string {
-  return compileGuides(compileOptions(config, docsRoot));
+function compileToString(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts): string {
+  return compileGuides(compileOptions(config, docsRoot, globalOpts));
 }
 
-function writeCompiled(config: MdcpConfig, docsRoot: string): string {
-  const opts = compileOptions(config, docsRoot);
-  const monolithPath = resolveOutputPath(config, docsRoot);
-  const results = writeCompiledGuides(opts, monolithPath);
+function logWritten(results: { path: string; lines: number; backupPath?: string }[]): void {
   for (const r of results) {
+    if (r.backupPath) console.log(`backed up → ${r.backupPath}`);
     console.log(`→ ${r.path} (${r.lines} lines)`);
   }
-  return compileToString(config, docsRoot);
+}
+
+function writeCompiled(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts): string {
+  const opts = compileOptions(config, docsRoot, globalOpts);
+  const monolithPath = resolveOutputPath(config, docsRoot);
+  const results = writeCompiledGuides(opts, monolithPath);
+  logWritten(results);
+  return compileToString(config, docsRoot, globalOpts);
 }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -113,7 +132,10 @@ program
     'config file (relative to invocation directory)',
     'mdcp.config.json',
   )
-  .option('--docs-root <path>', 'docs root (guide shard directories)');
+  .option('--docs-root <path>', 'docs root (guide shard directories)')
+  .option('--backup', 'Move existing output files to cache before overwrite')
+  .option('--backup-dir <path>', 'Backup directory relative to outputDir')
+  .option('--backup-ext <ext>', 'Suffix for backup filenames');
 
 program
   .command('compile')
@@ -121,7 +143,7 @@ program
   .action((_, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    writeCompiled(config, getDocsRoot(opts));
+    writeCompiled(config, getDocsRoot(opts), opts);
   });
 
 const refs = program.command('refs').description('Heading slug registry (JSON default)');
@@ -132,7 +154,7 @@ refs
   .action((_, cmd) => {
     const opts = cmd.parent.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const compiled = writeCompiled(config, getDocsRoot(opts));
+    const compiled = writeCompiled(config, getDocsRoot(opts), opts);
     const refsPath = resolveRefsPath(getDocsRoot(opts), config.outputDir, config.refs.registryFile);
     genRefsFromCompiled(compiled, refsPath);
     console.log(`Wrote ${refsPath}`);
@@ -144,7 +166,7 @@ refs
   .action((_, cmd) => {
     const opts = cmd.parent.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const compiled = compileToString(config, getDocsRoot(opts));
+    const compiled = compileToString(config, getDocsRoot(opts), opts);
     const refsPath = resolveRefsPath(getDocsRoot(opts), config.outputDir, config.refs.registryFile);
     const result = checkRefsRegistry(compiled, refsPath);
     console.log(result.message);
@@ -176,7 +198,7 @@ refs
   .action((query, lookupOpts, cmd) => {
     const opts = cmd.parent.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    const compiled = compileToString(config, getDocsRoot(opts));
+    const compiled = compileToString(config, getDocsRoot(opts), opts);
     const registry = buildSlugRegistry(compiled);
     const matches = lookupHeadings(registry, query);
     if (lookupOpts.format === 'table') {
@@ -197,7 +219,7 @@ program
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
     const docsRoot = getDocsRoot(opts);
-    let text = compileToString(config, docsRoot);
+    let text = compileToString(config, docsRoot, opts);
     if (exportOpts.llm) {
       text = stripForLlm(text, getLlmExportOptions(config));
     }
@@ -207,7 +229,12 @@ program
       const monolithPath = resolveOutputPath(config, docsRoot);
       const base = monolithPath ?? resolve(docsRoot, config.outputDir, 'guide.md');
       const outPath = base.replace(/\.md$/, '.llm.md');
-      writeFileSync(outPath, text, 'utf-8');
+      const { backupPath } = writeOutputFile(outPath, text, {
+        docsRoot,
+        outputDir: config.outputDir,
+        backup: backupOptions(config, opts),
+      });
+      if (backupPath) console.log(`backed up → ${backupPath}`);
       console.log(`→ ${outPath}`);
     }
   });
@@ -233,7 +260,7 @@ program
       if (r.exitCode !== 0) process.exit(r.exitCode);
     }
 
-    writeCompiled(config, getDocsRoot(opts));
+    writeCompiled(config, getDocsRoot(opts), opts);
 
     if (compiledCfg) {
       const r = runPeer(tool, {
@@ -270,7 +297,7 @@ program
   .action((_, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    writeCompiled(config, getDocsRoot(opts));
+    writeCompiled(config, getDocsRoot(opts), opts);
     const tool = findPeerBinary('markdown-link-check', getDocsRoot(opts));
     const target = resolveLinkTarget(config, getDocsRoot(opts));
     const linkCfg = config.lint?.links?.config;
@@ -360,7 +387,7 @@ program
     }
     if (failed) process.exit(1);
 
-    const compiled = writeCompiled(config, getDocsRoot(opts));
+    const compiled = writeCompiled(config, getDocsRoot(opts), opts);
 
     const refsPath = resolveRefsPath(getDocsRoot(opts), config.outputDir, config.refs.registryFile);
     genRefsFromCompiled(compiled, refsPath);

@@ -1,0 +1,97 @@
+# Compile output backup
+
+Specification for opt-in backup of existing compile and export targets before overwrite. Tests in `packages/mdcp-core/test/compile-backup.test.ts` and `packages/mdcp-cli/test/cli.smoke.test.ts` map to the sections below (docs first, then TDD).
+
+## Purpose
+
+Compile output paths can target existing files — monolith `outputFile`, per-guide `compile.outputFile`, and `mdcp export` `.llm.md` beside the compiled output. In a git-tracked repo, overwrite is the expected workflow: `git diff` is the safety net.
+
+For operators working **outside version control**, or who want a recoverable copy before a risky publish-path overwrite (for example `README.md`), opt-in backup moves the prior file into the gitignored cache tree under `outputDir`.
+
+## Overwrite default
+
+`mdcp compile` and `mdcp export` **overwrite** existing output files with no backup. No existence check, no sibling `.bak` files next to tracked publish targets.
+
+## Opt-in backup
+
+Enable with:
+
+- **CLI:** global `--backup` (plus optional `--backup-dir`, `--backup-ext`)
+- **Config:** top-level `backup.enabled: true` (CLI flags override config)
+
+When enabled and the target file already exists:
+
+1. Move the existing file to `{outputDir}/{backupDir}/{docsRoot-relative-key}{backupExt}`
+2. Write the new content to the target path
+3. Log `backed up → {backupPath}`
+
+When the target does not exist, write directly — no backup directory created.
+
+### Backup path layout
+
+| Piece           | Default                          | Resolved from                                             |
+| --------------- | -------------------------------- | --------------------------------------------------------- |
+| Backup root     | `.caches/backups`                | `outputDir` (same convention as `refs.registryFile`)      |
+| Backup file key | docsRoot-relative path to target | e.g. `_build/guides.md`, `../packages/mdcp-cli/README.md` |
+| Extension       | `''`                             | `backup.ext` or `--backup-ext`                            |
+
+```text
+docs/_build/                     ← outputDir
+  guides.md                      ← compile target
+  .caches/
+    refs.json                    ← refs registry (always)
+    backups/                     ← opt-in backups only
+      guides.md                  ← prior content when --backup used
+      ../packages/mdcp-cli/README.md
+```
+
+Delete `_build/` to clean generated output and all backups. Root `.gitignore` includes `.caches/` for legacy layouts where `outputDir` is `.`.
+
+## Config
+
+```json
+{
+  "backup": {
+    "enabled": false,
+    "dir": ".caches/backups",
+    "ext": ""
+  }
+}
+```
+
+| Field     | Default           | Role                                        |
+| --------- | ----------------- | ------------------------------------------- |
+| `enabled` | `false`           | Enable backup for all compile/export writes |
+| `dir`     | `.caches/backups` | Relative to `outputDir`                     |
+| `ext`     | `''`              | Suffix appended to backup filename          |
+
+Resolution order: explicit CLI flag > config > built-in default.
+
+## CLI flags
+
+Global options (all commands that write compile output):
+
+| Flag                  | Role                                                                 |
+| --------------------- | -------------------------------------------------------------------- |
+| `--backup`            | Enable backup (overrides `backup.enabled`)                           |
+| `--backup-dir <path>` | Backup directory relative to `outputDir` (default `.caches/backups`) |
+| `--backup-ext <ext>`  | Suffix on backup filename (default none)                             |
+
+Commands affected: `compile`, `export`, `refs gen`, `lint`, `links`, `check`.
+
+## Backup acceptance criteria
+
+- Default overwrite — new file written; no backup directory created
+- Default overwrite — existing file replaced; no backup created
+- Opt-in backup — existing file moved to cache mirror path; new content at target
+- Backup path uses docsRoot-relative key (publish paths outside `_build` land in cache, not beside tracked files)
+- Custom `backup.dir` and `backup.ext` respected
+- Config `backup` object parses with defaults (`enabled: false`, `dir: '.caches/backups'`, `ext: ''`)
+- CLI `mdcp compile --backup` creates cache backup on re-compile
+- CLI `mdcp export --llm --backup` backs up existing `.llm.md` export
+
+## Related
+
+- [Config essentials — path layout](../client-cli/config-essentials.md#path-layout)
+- [API — Compile](../client-core/api-compile.md)
+- GitHub issue [#20](https://github.com/betsalel-williamson/mdcp/issues/20)
