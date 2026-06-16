@@ -61,11 +61,9 @@ const GuideSchema = z.object({
         })
         .optional(),
       stripAnchors: z.boolean().default(true),
-      /** Rewrite shard-relative repo paths for publish outputs (e.g. DEVELOPERS.md). */
-      publishPathRewrite: z
+      links: z
         .object({
-          stripParentSegments: z.number().int().min(1).max(4),
-          oneLevelPrefix: z.string(),
+          markBroken: z.boolean().default(true),
         })
         .optional(),
     })
@@ -120,6 +118,8 @@ export const MdcpConfigSchema = z.object({
         .optional(),
       links: z
         .object({
+          enabled: z.boolean().default(true),
+          severity: z.enum(['error', 'warn']).default('error'),
           target: z.string().optional(),
           config: z.string().optional(),
         })

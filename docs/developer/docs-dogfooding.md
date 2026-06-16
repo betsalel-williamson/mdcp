@@ -14,7 +14,9 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 Config: [`docs/mdcp.config.json`](../mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
-Repo scripts use `--config docs/mdcp.config.json --docs-root docs`: the config path is resolved from the **repo root** (invocation directory), while `--docs-root docs` sets the shard tree root. See [Config essentials — path resolution](../client-cli/config-essentials.md#--docs-root-vs---config-path-resolution).
+Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).
+
+Repo scripts use `--config docs/mdcp.config.json --docs-root docs`: the config path is resolved from the **repo root** (invocation directory), while `--docs-root docs` sets the shard tree root. See [Config essentials — `--config` vs `--docs-root`](../client-cli/config-essentials.md#--config-vs---docs-root).
 
 The **features** compile (`docs/_build/guides.md`) is for reading through the stitched doc during review — edit shards, not the generated file. It is not committed.
 
@@ -38,5 +40,6 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
 - **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
 - **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
+- **link lint** — built-in validation runs on every `docs:check`; dogfood sets `lint.links.severity: "warn"` so publish outputs still report `missing publish path` diagnostics for `docs/features/` shard links without failing CI (see [Publish-only link policy](../features/link-validation.md#publish-only-link-policy))
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).

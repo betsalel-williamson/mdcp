@@ -10,21 +10,23 @@
       "compile": {
         "outputFile": "../../DEVELOPERS.md",
         "includeBanner": false,
-        "publishPathRewrite": { "stripParentSegments": 2, "oneLevelPrefix": "docs/" }
+        "crossGuideLinks": { "ignoreGuides": ["features"] }
       }
     },
     {
       "name": "client-cli",
       "compile": {
         "outputFile": "../../packages/mdcp-cli/README.md",
-        "includeBanner": false
+        "includeBanner": false,
+        "crossGuideLinks": { "ignoreGuides": ["features"] }
       }
     },
     {
       "name": "client-core",
       "compile": {
         "outputFile": "../../packages/mdcp-core/README.md",
-        "includeBanner": false
+        "includeBanner": false,
+        "crossGuideLinks": { "ignoreGuides": ["features"] }
       }
     }
   ],
@@ -38,6 +40,7 @@
       "compiledConfig": "compiled-lint.markdownlint-cli2.jsonc",
       "shardsGlobs": ["glossary", "features", "developer", "client-cli", "client-core"]
     },
+    "links": { "severity": "warn" },
     "xrefs": { "enabled": true }
   },
   "vale": {

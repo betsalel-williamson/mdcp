@@ -124,7 +124,7 @@ For each guide in `compileOrder`, core:
 1. **Reads section files** — from link order in the manifest (`index.md` / `shards.md`). See [Manifest compile order](./manifest-compile-order.md) when the manifest mixes preamble example links with a `## Sections` list (`compile.sectionsHeading`).
 2. **Transforms each shard** — demotes headings to fit the guide level; strips `about-this-guide` preamble; runs **compile hooks** (`stripAnchors`, `codeEvidence`, `inlineInserts`) by default — see [Default compile hooks](./default-compile-hooks.md). Cross-guide link rewrite runs at assembly — see [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md).
 3. **Assembles the guide body** — injects optional `compile.title` as a `##` heading followed by a blank line, then concatenates sections in order. When the first shard’s top heading matches the title, that duplicate heading is stripped.
-4. **Rewrites links** — cross-guide `.md` → `{outputFile}#slug` (or unchanged shard path when `compile.crossGuideLinks.ignoreGuides` applies); same-guide `./section.md` → in-document `#anchor`; optional `publishPathRewrite` for repo-root paths on publish outputs.
+4. **Rewrites links** — cross-guide `.md` → `{outputFile}#slug` (or unchanged shard path when `compile.crossGuideLinks.ignoreGuides` applies); publish outputs rebase remaining `../` paths from resolved absolute targets; same-guide `./section.md` → in-document `#anchor`. See [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).
 5. **Writes outputs** — monolith file and/or per-guide `compile.outputFile`.
 
 Guides with `compile.outputFile` are **excluded from the monolith** so you can publish npm READMEs, `DEVELOPERS.md`, or review monoliths side by side.
@@ -193,9 +193,9 @@ Set `guides[].compile.outputFile` to the README path; run `mdcp compile`; README
 
 - **[GFM](../glossary/index.md#gfm) only** — no Pandoc, wikilinks, or required `{#heading-ids}`
 - **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used
-- **GitHub slugs** — computed from compiled headings, not from author-supplied IDs
+- **GitHub slugs** — computed from compiled headings via [github-slugger](https://www.npmjs.com/package/github-slugger) (html-pipeline algorithm); see [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules)
 - **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.
-- **No preprocessor / templating** — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope)
+- **No preprocessor / templating** — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)
 
 Details: [Design constraints](./design-constraints/index.md).
 
@@ -207,4 +207,3 @@ Details: [Design constraints](./design-constraints/index.md).
 - **Config fields** — [API — Config](../client-core/api-config.md)
 - **Compile hooks** — [Compile hooks overview](../client-core/compile-hooks/index.md)
 - **Contributing to this repo** — [Developer guide](../developer/index.md)
-- **Migrating from legacy scripts** — [Legacy migration](./legacy-migration.md)

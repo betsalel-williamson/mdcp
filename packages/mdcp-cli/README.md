@@ -2,7 +2,7 @@
 
 ## Why mdcp for coding agents
 
-**MDCP** ([MarkDown Context Protocol](#mdcp)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
+**MDCP** ([MarkDown Context Protocol](../mdcp-core/README.md#mdcp)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
 
 ### The pain
 
@@ -25,31 +25,31 @@ Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile
 
 ### Get started
 
-First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](#getting-started-with-mdcp-bootstrap-prompt), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
+First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
 
-For command and capability depth, read the [feature catalog](#feature-catalog).
+For command and capability depth, read the [feature catalog](../../docs/features/feature-catalog.md).
 
 ## LLM collaboration
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
-**Source of truth:** copy-paste prompts live under [examples/prompts/](../../examples/prompts/). This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** copy-paste prompts live under [examples/prompts/](../../examples/prompts). This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ### Prompt library
 
-Copy from [examples/prompts/](../../examples/prompts/). Index: [README.md](#changesets).
+Copy from [examples/prompts/](../../examples/prompts). Index: [README.md](../../examples/prompts/README.md).
 
-- [getting-started-with-mdcp.prompt.md](#getting-started-with-mdcp-bootstrap-prompt) — first-time pipeline setup in a consumer repo
-- [doc-only-task.prompt.md](#doc-only-task-prompt-mdcp) — documentation-only work
-- [design-architecture-task.prompt.md](#design-architecture-task-prompt-mdcp) — RFCs, ADRs, data models
-- [feature-level-task.prompt.md](#feature-level-task-prompt-mdcp) — feature work, docs-first then TDD
-- [ux-task.prompt.md](#ux-task-prompt-mdcp) — UI flows and client-guide updates
+- [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md) — first-time pipeline setup in a consumer repo
+- [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md) — documentation-only work
+- [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — RFCs, ADRs, data models
+- [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — feature work, docs-first then TDD
+- [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UI flows and client-guide updates
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
 ### Bootstrap prompt (copy-paste)
 
-First-time setup for a consumer repo: [examples/prompts/getting-started-with-mdcp.prompt.md](#getting-started-with-mdcp-bootstrap-prompt).
+First-time setup for a consumer repo: [examples/prompts/getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md).
 
 Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring.
 
@@ -80,11 +80,11 @@ I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using
 
 ### Docs-first feature workflow
 
-Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](#feature-level-task-prompt-mdcp).
+Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md).
 
 #### Workflow best practices
 
-- **Branch first** — create a feature branch from updated `main` before shards, tests, or code (see [Agent work-item tracking](#agent-work-item-tracking))
+- **Branch first** — create a feature branch from updated `main` before shards, tests, or code (see [Agent work-item tracking](../../DEVELOPERS.md#agent-work-item-tracking))
 - **One issue per branch** — stay focused on a single feature, design, or doc scope; do not mix unrelated work in one PR
 - **Current behavior in docs** — shards describe the product as it works now; removed or breaking behavior belongs in the **changeset**, not `docs/features/` or `docs/client/`
 
@@ -94,7 +94,7 @@ Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`,
 | Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
 | Implement | Code + tests     | TDD against the documented contract                    |
 
-For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](#design-architecture-task-prompt-mdcp).
+For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md).
 
 #### Sharding keeps context lean
 
@@ -113,14 +113,14 @@ Task-type prompts include a **Replace before sending** block with `WORK_ITEM` an
 
 Point `WORK_ITEM_LOOKUP` at a shard under `docs/developer/` in your repo. The agent discovers GitHub MCP, `gh issue view`, Linear MCP, or other tools from that doc — not from the prompt template.
 
-This repository documents its stack in [Agent work-item tracking](#agent-work-item-tracking) — use that path in `WORK_ITEM_LOOKUP` when dogfooding mdcp.
+This repository documents its stack in [Agent work-item tracking](../../DEVELOPERS.md#agent-work-item-tracking) — use that path in `WORK_ITEM_LOOKUP` when dogfooding mdcp.
 
 ### Task-type prompt templates
 
-- [doc-only-task.prompt.md](#doc-only-task-prompt-mdcp) — technical writers; documentation, tutorials, guides
-- [design-architecture-task.prompt.md](#design-architecture-task-prompt-mdcp) — architects; RFCs, ADRs, data models before code
-- [feature-level-task.prompt.md](#feature-level-task-prompt-mdcp) — server-side or full-stack feature work
-- [ux-task.prompt.md](#ux-task-prompt-mdcp) — UX and frontend; flows, accessibility, client guides
+- [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md) — technical writers; documentation, tutorials, guides
+- [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
+- [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — server-side or full-stack feature work
+- [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
 
 ### Toolchain integration
 
@@ -162,11 +162,11 @@ Each guide directory needs:
 - Topic shards — one file per section (for example `authentication.md`)
 - Optional `about-this-guide.md` — preamble shard (persona, scope)
 
-When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](#manifest-compile-order)).
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](../../docs/features/manifest-compile-order.md)).
 
 Never hand-edit generated compile output or `refs.json`.
 
-**Worked example:** this repository dogfoods under [`docs/features/`](../features/), [`docs/developer/`](../developer/), and [`docs/client-cli/`](./), wired by [`docs/mdcp.config.json`](../mdcp.config.json). Minimal fixture: [examples/sample-guides](../../examples/sample-guides/).
+**Worked example:** this repository dogfoods under [`docs/features/`](../../docs/features), [`docs/developer/`](../../docs/developer), and [`docs/client-cli/`](./), wired by [`docs/mdcp.config.json`](../../docs/mdcp.config.json). Minimal fixture: [examples/sample-guides](../../examples/sample-guides).
 
 ### Human review checklist
 
@@ -185,7 +185,7 @@ When reviewing an agent's documentation PR:
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [Agent integration](#agent-integration) — npm scripts quick reference
-- [examples/prompts/](../../examples/prompts/) — copy-paste prompt files
+- [examples/prompts/](../../examples/prompts) — copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
 - [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
@@ -227,7 +227,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
-2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](../../examples/sample-guides/).
+2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](../../examples/sample-guides).
 
 3. Run:
 
@@ -292,9 +292,9 @@ mdcp check --require-lint
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [LLM collaboration](#llm-collaboration) — spec-driven workflow, prompts, toolchain integration
-- [Project README](#changesets) — concepts and design rationale
-- [Feature catalog](#feature-catalog) — full maintainer docs
-- [Sample guides](../../examples/sample-guides/)
+- [Project README](../../README.md) — concepts and design rationale
+- [Feature catalog](../../docs/features/feature-catalog.md) — full maintainer docs
+- [Sample guides](../../examples/sample-guides)
 
 ### License
 
@@ -341,11 +341,13 @@ docs/
 
 Publish outside `_build` (npm READMEs, repo-root docs) via `compile.outputFile` paths relative to `outputDir` (for example `../../packages/mdcp-cli/README.md`).
 
-When a manifest has preamble prose with example links, set `compile.sectionsHeading`. See [Manifest compile order](#manifest-compile-order).
+When a manifest has preamble prose with example links, set `compile.sectionsHeading`. See [Manifest compile order](../../docs/features/manifest-compile-order.md).
 
 ## Config essentials
 
 ### `--config` vs `--docs-root`
+
+> **Link target:** On GitHub, this section's anchor is `#--config-vs---docs-root` (not `#config-vs-docs-root`).
 
 These two global options answer different questions:
 
@@ -377,7 +379,7 @@ mdcp compile --config mdcp.config.json --docs-root .
 
 #### Programmatic API
 
-`loadConfig(configPath, configBase)` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root as `docsRoot` when resolving guide paths. See [API — Config](#api-config).
+`loadConfig(configPath, configBase)` mirrors the CLI: pass the invocation directory as `configBase`, and the docs root as `docsRoot` when resolving guide paths. See [API — Config](../mdcp-core/README.md#api--config).
 
 ### Path layout
 
@@ -421,7 +423,7 @@ Only directories listed in `compileOrder` are compiled and linted. Support folde
 | `refs.registryFile`   | `outputDir`   | `docs/_build/.caches/refs.json`     |
 | `compile.outputFile`  | `outputDir`   | `../../DEVELOPERS.md` from `_build` |
 
-Delete `_build/` to clean all generated output. `.caches/` holds derived state (refs registry) and, when `--backup` is used, prior compile output under `backups/`. See [Compile output backup](#compile-output-backup).
+Delete `_build/` to clean all generated output. `.caches/` holds derived state (refs registry) and, when `--backup` is used, prior compile output under `backups/`. See [Compile output backup](../../docs/features/compile-output-backup.md).
 
 #### Opt-in output backup
 
@@ -433,7 +435,30 @@ Default: compile and export **overwrite** existing files (git is the safety net)
 }
 ```
 
-Or pass `--backup` on the CLI (overrides config). Optional `backup.dir` (default `.caches/backups`) and `backup.ext`. Full spec: [Compile output backup](#compile-output-backup).
+Or pass `--backup` on the CLI (overrides config). Optional `backup.dir` (default `.caches/backups`) and `backup.ext`. Full spec: [Compile output backup](../../docs/features/compile-output-backup.md).
+
+#### Link validation
+
+Built-in internal link validation is on by default. Broken links emit **`BROKEN LINK`** markers in compiled output and fail `mdcp compile` / `mdcp check` (exit **1**). See [Link validation](../../docs/features/link-validation.md).
+
+```json
+{
+  "compile": { "links": { "markBroken": true } },
+  "lint": {
+    "links": {
+      "enabled": true,
+      "severity": "error"
+    }
+  }
+}
+```
+
+| Field                      | Default   | Role                                                  |
+| -------------------------- | --------- | ----------------------------------------------------- |
+| `compile.links.markBroken` | `true`    | Replace broken links with BROKEN LINK prose in output |
+| `lint.links.enabled`       | `true`    | Run built-in link validation                          |
+| `lint.links.severity`      | `"error"` | `"warn"` exits 0; use `--warn-broken-links` on CLI    |
+| `lint.links.config`        | —         | Peer `markdown-link-check` config only                |
 
 ---
 
@@ -474,7 +499,7 @@ Set top-level `outputFile` (for example `"guides.md"`) to also stitch guides **w
 
 #### `sectionsHeading`
 
-When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading`. See [Manifest compile order](#manifest-compile-order).
+When a manifest has preamble prose with example inline links before an ordered `## Sections` list, set `compile.sectionsHeading`. See [Manifest compile order](../../docs/features/manifest-compile-order.md).
 
 ```json
 {
@@ -506,6 +531,7 @@ Every command accepts:
 | --------------------- | ------------------ | -------------------------------------------------------------------------------- |
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
 | `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |
+| `--warn-broken-links` | off                | Report broken internal links but exit 0 (overrides `lint.links.severity`)        |
 
 **Repo-root npm scripts** typically use both flags:
 
@@ -521,24 +547,26 @@ mdcp compile --config docs/mdcp.config.json --docs-root docs
 # Regenerate the monolith from shards (link order from each guide's index.md / shards.md)
 mdcp compile
 
-# Full validation gate (orphans → compile → refs → xrefs; optional linters)
+# Full validation gate (orphans → compile → refs → links → xrefs; optional peer linters)
 mdcp check
 ```
 
+`mdcp compile` and `mdcp check` exit **1** when broken internal links are found (default). Use `--warn-broken-links` to surface `link-warn:` diagnostics without failing CI. See [Link validation](../../docs/features/link-validation.md).
+
 ### Command summary
 
-| Command                    | When you need it                                                     |
-| -------------------------- | -------------------------------------------------------------------- |
-| `mdcp compile`             | Regenerate the monolith from shards                                  |
-| `mdcp check`               | Full gate: orphans → compile → refs → xrefs; optional peer linters   |
-| `mdcp shard`               | Split a monolith into shards (requires `config.source`)              |
-| `mdcp refs list`           | List heading slugs from `refs.json` as JSON                          |
-| `mdcp refs lookup <query>` | Search compiled section titles while writing cross-links             |
-| `mdcp export --llm`        | Token-stripped compiled output for LLM context                       |
-| `mdcp lint`                | markdownlint-cli2 on shards and compiled output (peer, if installed) |
-| `mdcp prose`               | Vale prose lint (peer, if installed)                                 |
-| `mdcp links`               | markdown-link-check on compiled output (peer, if installed)          |
-| `mdcp fix`                 | Prettier + markdownlint `--fix` (install peers in host repo first)   |
+| Command                    | When you need it                                                           |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `mdcp compile`             | Regenerate the monolith from shards (exits 1 on broken links by default)   |
+| `mdcp check`               | Full gate: orphans → compile → refs → links → xrefs; optional peer linters |
+| `mdcp shard`               | Split a monolith into shards (requires `config.source`)                    |
+| `mdcp refs list`           | List heading slugs from `refs.json` as JSON                                |
+| `mdcp refs lookup <query>` | Search compiled section titles while writing cross-links                   |
+| `mdcp export --llm`        | Token-stripped compiled output for LLM context                             |
+| `mdcp lint`                | markdownlint-cli2 on shards and compiled output (peer, if installed)       |
+| `mdcp prose`               | Vale prose lint (peer, if installed)                                       |
+| `mdcp links`               | markdown-link-check on compiled output (peer, if installed)                |
+| `mdcp fix`                 | Prettier + markdownlint `--fix` (install peers in host repo first)         |
 
 ### Refs subcommands
 
@@ -561,7 +589,7 @@ mdcp refs lookup "authentication" --format json
 
 ## Cross-links and refs
 
-When writing `[link text](#anchor)` in a shard, the anchor must match the compiled heading slug. Look it up instead of guessing:
+When writing `` `[link text](#anchor)` `` in a shard, the anchor must match the compiled heading slug. Look it up instead of guessing:
 
 ```bash
 mdcp refs lookup "getting started" --format json
@@ -570,7 +598,24 @@ mdcp refs list
 
 The part after `#` must match how the compiled doc names that heading — which changes when shards are merged and headings shift level.
 
-Section links are derived from compiled headings using the same rules GitHub uses when rendering. No hand-maintained `` required.
+### Heading slugs (GitHub rules)
+
+MDCP derives `#fragment` targets from **compiled** heading text using the same algorithm GitHub applies when rendering READMEs and issues. There is no separate GFM spec for auto-generated heading IDs; the de-facto reference is GitHub's [html-pipeline `TableOfContentsFilter`](https://github.com/gjtorikian/html-pipeline/blob/main/lib/html/pipeline/toc_filter.rb). `@bwilliamson/mdcp-core` implements that behavior through the [`github-slugger`](https://www.npmjs.com/package/github-slugger) package.
+
+| Input                                      | Plain text used for slugging                | Example slug                            |
+| ------------------------------------------ | ------------------------------------------- | --------------------------------------- |
+| Heading `git status`                       | `git status` (inline markup stripped)       | `git-status`                            |
+| `Preprocessor / templating (out of scope)` | Punctuation removed; each space becomes `-` | `preprocessor--templating-out-of-scope` |
+| `` `--config` vs `--docs-root` ``          | Consecutive dashes preserved                | `--config-vs---docs-root`               |
+| Two `## Foo` headings in one guide         | Second occurrence disambiguated             | `foo`, then `foo-1`                     |
+
+**Authoring rules:**
+
+1. **Look up slugs** — run `mdcp refs lookup` or `mdcp refs list` after compile; do not hand-roll anchors from heading titles.
+2. **Prefer unique subheadings** — duplicate heading text in the same document produces `-1`, `-2` suffixes; the first `#slug` link may not reach later occurrences.
+3. **Explicit `` overrides** — when present on a heading line, that id is used instead of the auto slug (lowercased). Use sparingly; GitHub slugs are the default contract.
+
+`githubSlugify` and `buildSlugRegistry` in `@bwilliamson/mdcp-core` share this algorithm for link validation, `refs.json`, and compile-time slug maps. See [API — Refs and validation](../mdcp-core/README.md#heading-slugs-github-slugger).
 
 ## Consumer migration
 
@@ -586,13 +631,13 @@ mdcp check
 
 Compile order comes from link order in each guide's `index.md` or `shards.md`. List shards in the manifest in the order you want them stitched.
 
-When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` — see [Manifest compile order](#manifest-compile-order).
+When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` — see [Manifest compile order](../../docs/features/manifest-compile-order.md).
 
 After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — there is no separate manifest sync step.
 
 ### Output layout
 
-MDCP uses an NPM-style two-root layout. Full breaking-change table for upgrades from earlier releases: [Legacy migration — unified output layout](#unified-output-layout-breaking).
+MDCP uses an NPM-style two-root layout.
 
 | Concept          | Default                            | Notes                                                                    |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------ |
@@ -606,7 +651,7 @@ Path resolution details: [Config essentials — path layout](#path-layout).
 
 ### Compile hooks
 
-Built-in hooks run **by default** on every guide — omit `compile.hooks` for the common case. See [Default compile hooks](#default-compile-hooks).
+Built-in hooks run **by default** on every guide — omit `compile.hooks` for the common case. See [Default compile hooks](../../docs/features/default-compile-hooks.md).
 
 | Hook            | Purpose                                                               |
 | --------------- | --------------------------------------------------------------------- |
@@ -616,7 +661,7 @@ Built-in hooks run **by default** on every guide — omit `compile.hooks` for th
 
 Opt out per hook: `"hooks": { "codeEvidence": false }`. Replace the pipeline entirely with a string array when needed.
 
-Cross-guide `.md` links rewrite automatically at assembly from `compileOrder` and per-guide `compile.outputFile`. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard paths for listed guides — see [Cross-guide links](#cross-guide-link-rewriting). Hook specs: [Compile hooks](#developer-guide-1).
+Cross-guide `.md` links rewrite automatically at assembly from `compileOrder` and per-guide `compile.outputFile`. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard paths for listed guides — see [Cross-guide links](../mdcp-core/README.md#cross-guide-link-rewriting). Hook specs: [Compile hooks](../mdcp-core/README.md#developer-guide).
 
 ### Multi-guide config
 
@@ -679,7 +724,7 @@ When one compiled guide should link to live shard files for a specific guide ins
 }
 ```
 
-See [Cross-guide links](#cross-guide-ignore-example-mixed-monolith-and-shard-links).
+See [Cross-guide links](../mdcp-core/README.md#cross-guide-ignore-example-mixed-monolith-and-shard-links).
 
 - `compile.scopeRoot` helps resolve shard-relative paths in nested guide trees (for example `review/outcomes/FIND-004.md`).
 - `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard `.md` links for listed guides instead of monolith `#slug` targets.
@@ -693,7 +738,7 @@ See [Cross-guide links](#cross-guide-ignore-example-mixed-monolith-and-shard-lin
 4. Use `mdcp refs lookup` for cross-link slugs (no ``)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
-Maintainer port map from earlier MDCP layouts: [Legacy migration](#legacy-migration). Upgrading from 0.3.x `reviewLinks` config: [reviewLinks removal](#reviewlinks-removal-03x--next).
+Upgrade notes from earlier MDCP releases are in the package **changeset** files at release time, not in the feature catalog.
 
 ### Verification checklist
 
@@ -708,12 +753,12 @@ After setting up a consumer repo:
 
 These commands use tools installed in **your** repo (not bundled with mdcp):
 
-| Command      | Peer tool                       | Purpose                                                                        |
-| ------------ | ------------------------------- | ------------------------------------------------------------------------------ |
-| `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output                                                |
-| `mdcp prose` | `vale` (install separately)     | Prose style lint                                                               |
-| `mdcp links` | `markdown-link-check`           | Check links in compiled output (`lint.links` config required in `check`)       |
-| `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no mdcp config paths) |
+| Command      | Peer tool                       | Purpose                                                                   |
+| ------------ | ------------------------------- | ------------------------------------------------------------------------- |
+| `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output                                           |
+| `mdcp prose` | `vale` (install separately)     | Prose style lint                                                          |
+| `mdcp links` | `markdown-link-check`           | Optional HTTP URL checks (peer; not built-in internal link validation)    |
+| `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no config paths) |
 
 `mdcp fix` does not bundle formatters. Install **Prettier** and **markdownlint-cli2** in your repo first (`node_modules/.bin` or PATH). Each step is skipped with an info message if the peer is missing.
 
@@ -724,7 +769,7 @@ mdcp check --require-lint --require-vale   # CI gate with markdownlint + Vale
 mdcp check --skip-vale            # structural checks only
 ```
 
-`mdcp check` runs link checking only when **`lint.links.config`** is set in `mdcp.config.json` and `markdown-link-check` is installed. `mdcp links` always skips quietly if the peer is missing.
+`mdcp check` runs **built-in** internal link validation by default (`lint.links.enabled`). Peer `markdown-link-check` runs only when **`lint.links.config`** is set and the peer is installed. `mdcp links` always skips quietly if the peer is missing.
 
 Install npm peers with:
 
@@ -772,8 +817,8 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 ### Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](#preprocessor-templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 ### ignoreGuides
 
-Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](../mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. See [Cross-guide link rewriting](../mdcp-core/README.md#cross-guide-link-rewriting).

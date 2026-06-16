@@ -88,7 +88,7 @@ Rules:
 Within one guide:
 
 - First link to `../diagrams/flow.md` → inline under numbered heading
-- Later links to the same resolved file (any path spelling, with or without `#fragment`) → `[label](#diagram-1-…)`
+- Later links to the same resolved file (any path spelling, with or without `#fragment`) → `` `[label](#diagram-1-…)` ``
 - Same basename in different libraries (`diagrams/overview.md` vs `tables/overview.md`) → separate headings and anchors
 
 ## inlineInserts path resolution
@@ -156,7 +156,7 @@ Example fixture: [`examples/sample-guides/inserts-demo/`](../../../examples/samp
 ![Component map overview](./component-map.png)
 ```
 
-Catalog link `[Component map](../figures/component-map.md)` compiles to a numbered `#### Figure 1. …` heading followed by that image markdown.
+Catalog link `` `[Component map](../figures/component-map.md)` `` compiles to a numbered `#### Figure 1. …` heading followed by that image markdown.
 
 **Media with embedded video** — shard `media/walkthrough.md`:
 
@@ -164,4 +164,4 @@ Catalog link `[Component map](../figures/component-map.md)` compiles to a number
 <video src="./walkthrough.mp4" controls></video>
 ```
 
-Catalog link `[Walkthrough](../media/walkthrough.md)` compiles to `#### Media 1. Walkthrough` followed by the video embed.
+Catalog link `` `[Walkthrough](../media/walkthrough.md)` `` compiles to `#### Media 1. Walkthrough` followed by the video embed.

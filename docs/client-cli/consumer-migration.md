@@ -18,7 +18,7 @@ After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — the
 
 ## Output layout
 
-MDCP uses an NPM-style two-root layout. Full breaking-change table for upgrades from earlier releases: [Legacy migration — unified output layout](../features/legacy-migration.md#unified-output-layout-breaking).
+MDCP uses an NPM-style two-root layout.
 
 | Concept          | Default                            | Notes                                                                    |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------ |
@@ -119,7 +119,7 @@ See [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md#cross-
 4. Use `mdcp refs lookup` for cross-link slugs (no `{#heading-ids}`)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
-Maintainer port map from earlier MDCP layouts: [Legacy migration](../features/legacy-migration.md). Upgrading from 0.3.x `reviewLinks` config: [reviewLinks removal](../features/legacy-migration.md#reviewlinks-removal-03x--next).
+Upgrade notes from earlier MDCP releases are in the package **changeset** files at release time, not in the feature catalog.
 
 ## Verification checklist
 

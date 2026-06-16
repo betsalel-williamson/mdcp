@@ -70,7 +70,9 @@ if (docsChanged) {
   ensureCoreBuild();
   run('pnpm --filter @bwilliamson/mdcp-cli run build');
   run('pnpm run docs:compile:repo');
-  run('pnpm run docs:check:repo');
+  run(
+    'node packages/mdcp-cli/dist/cli.js check --config docs/mdcp.config.json --docs-root docs --require-lint --require-vale --warn-broken-links',
+  );
 }
 
 if (rootConfigChanged) {

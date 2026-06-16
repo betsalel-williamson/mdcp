@@ -2,6 +2,8 @@
 
 ## `--config` vs `--docs-root`
 
+> **Link target:** On GitHub, this section's anchor is `#--config-vs---docs-root` (not `#config-vs-docs-root`).
+
 These two global options answer different questions:
 
 | Option            | Resolved from                                                                        | Purpose                                                     |
@@ -89,6 +91,29 @@ Default: compile and export **overwrite** existing files (git is the safety net)
 ```
 
 Or pass `--backup` on the CLI (overrides config). Optional `backup.dir` (default `.caches/backups`) and `backup.ext`. Full spec: [Compile output backup](../features/compile-output-backup.md).
+
+### Link validation
+
+Built-in internal link validation is on by default. Broken links emit **`BROKEN LINK`** markers in compiled output and fail `mdcp compile` / `mdcp check` (exit **1**). See [Link validation](../features/link-validation.md).
+
+```json
+{
+  "compile": { "links": { "markBroken": true } },
+  "lint": {
+    "links": {
+      "enabled": true,
+      "severity": "error"
+    }
+  }
+}
+```
+
+| Field                      | Default   | Role                                                  |
+| -------------------------- | --------- | ----------------------------------------------------- |
+| `compile.links.markBroken` | `true`    | Replace broken links with BROKEN LINK prose in output |
+| `lint.links.enabled`       | `true`    | Run built-in link validation                          |
+| `lint.links.severity`      | `"error"` | `"warn"` exits 0; use `--warn-broken-links` on CLI    |
+| `lint.links.config`        | —         | Peer `markdown-link-check` config only                |
 
 ---
 

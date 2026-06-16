@@ -77,7 +77,15 @@ describe('cli smoke', () => {
   it('resolves --config from invocation directory, not --docs-root (#10)', () => {
     const out = execFileSync(
       'node',
-      [CLI, 'compile', '--config', 'docs/mdcp.config.json', '--docs-root', 'docs'],
+      [
+        CLI,
+        'compile',
+        '--config',
+        'docs/mdcp.config.json',
+        '--docs-root',
+        'docs',
+        '--warn-broken-links',
+      ],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     expect(out).toMatch(/guides\.md|→/);
@@ -309,6 +317,105 @@ describe('cli smoke', () => {
         [CLI, 'check', '--config', 'mdcp.config.json', '--docs-root', docs, '--require-lint'],
         { encoding: 'utf-8', cwd: docs },
       );
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
+  it('exits 1 on broken internal links by default', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-link-fail-'));
+    try {
+      mkdirSync(join(docs, 'g'), { recursive: true });
+      writeFileSync(join(docs, 'g', 'index.md'), '# G\n\n- [s](s.md)\n');
+      writeFileSync(join(docs, 'g', 's.md'), '# G\n\n## Hi\n\n[bad](#nope)\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['g'],
+          guides: [{ name: 'g', path: 'g' }],
+          refs: { registryFile: 'refs.json' },
+          lint: { links: { enabled: true }, xrefs: { enabled: false } },
+        }),
+      );
+
+      const r = spawnSync(
+        'node',
+        [CLI, 'check', '--config', 'mdcp.config.json', '--docs-root', docs, '--skip-vale'],
+        { encoding: 'utf-8', cwd: docs },
+      );
+      expect(r.status).toBe(1);
+      expect(r.stderr).toMatch(/link:/);
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
+  it('exits 0 with --warn-broken-links and prints link-warn', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-link-warn-'));
+    try {
+      mkdirSync(join(docs, 'g'), { recursive: true });
+      writeFileSync(join(docs, 'g', 'index.md'), '# G\n\n- [s](s.md)\n');
+      writeFileSync(join(docs, 'g', 's.md'), '# G\n\n## Hi\n\n[bad](#nope)\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['g'],
+          guides: [{ name: 'g', path: 'g' }],
+          refs: { registryFile: 'refs.json' },
+          lint: { links: { enabled: true }, xrefs: { enabled: false } },
+        }),
+      );
+
+      const r = spawnSync(
+        'node',
+        [
+          CLI,
+          'check',
+          '--config',
+          'mdcp.config.json',
+          '--docs-root',
+          docs,
+          '--skip-vale',
+          '--warn-broken-links',
+        ],
+        { encoding: 'utf-8', cwd: docs },
+      );
+      expect(r.status).toBe(0);
+      expect(r.stderr).toMatch(/link-warn:/);
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
+  it('mdcp compile exits 1 when output contains broken link', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-compile-link-'));
+    try {
+      mkdirSync(join(docs, 'g'), { recursive: true });
+      writeFileSync(join(docs, 'g', 'index.md'), '# G\n\n- [s](s.md)\n');
+      writeFileSync(join(docs, 'g', 's.md'), '# G\n\n## Hi\n\n[bad](#nope)\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['g'],
+          guides: [{ name: 'g', path: 'g' }],
+          refs: { registryFile: 'refs.json' },
+          lint: { links: { enabled: true } },
+        }),
+      );
+
+      const r = spawnSync(
+        'node',
+        [CLI, 'compile', '--config', 'mdcp.config.json', '--docs-root', docs],
+        { encoding: 'utf-8', cwd: docs },
+      );
+      expect(r.status).toBe(1);
+      expect(r.stderr).toMatch(/link:/);
     } finally {
       rmSync(docs, { recursive: true, force: true });
     }

@@ -73,6 +73,22 @@ describe('MdcpConfigSchema', () => {
     expect(cfg.backup.dir).toBe('archive');
     expect(cfg.backup.ext).toBe('.bak');
   });
+
+  it('parses link validation defaults', () => {
+    const cfg = MdcpConfigSchema.parse({
+      compileOrder: ['glossary'],
+      guides: [
+        {
+          name: 'glossary',
+          compile: { links: { markBroken: true } },
+        },
+      ],
+      lint: { links: { enabled: true, severity: 'error' } },
+    });
+    expect(cfg.guides?.[0].compile?.links?.markBroken).toBe(true);
+    expect(cfg.lint?.links?.enabled).toBe(true);
+    expect(cfg.lint?.links?.severity).toBe('error');
+  });
 });
 
 describe('loadConfig', () => {

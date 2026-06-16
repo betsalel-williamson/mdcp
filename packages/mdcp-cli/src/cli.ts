@@ -29,6 +29,11 @@ import {
   buildSlugRegistry,
   resolveBackupOptions,
   writeOutputFile,
+  compileGuideResults,
+  lintLinks,
+  formatLinkIssue,
+  type LinkIssue,
+  type LinkSeverity,
   type MdcpConfig,
 } from '@bwilliamson/mdcp-core';
 
@@ -38,6 +43,7 @@ interface GlobalOpts {
   backup?: boolean;
   backupDir?: string;
   backupExt?: string;
+  warnBrokenLinks?: boolean;
 }
 
 function getDocsRoot(opts: GlobalOpts): string {
@@ -83,6 +89,28 @@ function backupOptions(config: MdcpConfig, opts: GlobalOpts) {
     backupDir: opts.backupDir,
     backupExt: opts.backupExt,
   });
+}
+
+function resolveLinkSeverity(opts: GlobalOpts, config: MdcpConfig): LinkSeverity {
+  if (opts.warnBrokenLinks) return 'warn';
+  return config.lint?.links?.severity ?? 'error';
+}
+
+/** Print link diagnostics; returns true when caller should fail (severity error + issues). */
+function reportLinkIssues(issues: LinkIssue[], severity: LinkSeverity): boolean {
+  for (const issue of issues) {
+    console.error(formatLinkIssue(issue, severity));
+  }
+  return severity === 'error' && issues.length > 0;
+}
+
+function runBuiltInLinkLint(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts): boolean {
+  if (config.lint?.links?.enabled === false) return false;
+  const opts = compileOptions(config, docsRoot, globalOpts);
+  const results = compileGuideResults(opts);
+  const issues = lintLinks({ config, docsRoot, results, compileOptions: opts });
+  const severity = resolveLinkSeverity(globalOpts, config);
+  return reportLinkIssues(issues, severity);
 }
 
 function compileOptions(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts) {
@@ -135,7 +163,8 @@ program
   .option('--docs-root <path>', 'docs root (guide shard directories)')
   .option('--backup', 'Move existing output files to cache before overwrite')
   .option('--backup-dir <path>', 'Backup directory relative to outputDir')
-  .option('--backup-ext <ext>', 'Suffix for backup filenames');
+  .option('--backup-ext <ext>', 'Suffix for backup filenames')
+  .option('--warn-broken-links', 'Report broken links but exit 0');
 
 program
   .command('compile')
@@ -144,6 +173,7 @@ program
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
     writeCompiled(config, getDocsRoot(opts), opts);
+    if (runBuiltInLinkLint(config, getDocsRoot(opts), opts)) process.exit(1);
   });
 
 const refs = program.command('refs').description('Heading slug registry (JSON default)');
@@ -394,6 +424,8 @@ program
     const refsResult = checkRefsRegistry(compiled, refsPath);
     console.log(refsResult.message);
     if (!refsResult.ok) process.exit(1);
+
+    if (runBuiltInLinkLint(config, getDocsRoot(opts), opts)) failed = true;
 
     if (config.lint?.xrefs?.enabled !== false) {
       const xrefs = lintXrefs(xrefScanDirs(config, getDocsRoot(opts)));

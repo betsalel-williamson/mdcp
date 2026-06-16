@@ -12,8 +12,8 @@ Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard a
 
 ## Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../features/design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 ## ignoreGuides
 
-Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. See [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md).
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](../client-core/compile-hooks/publish-relative-links.md) still rebases the shard path for the publish file. See [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md).

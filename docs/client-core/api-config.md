@@ -36,7 +36,16 @@ Consumer path table: [Config essentials — path layout](../client-cli/config-es
 
 `compile.includeBanner` controls whether the global banner is prepended (defaults to `false` for per-guide outputs).
 
-`compile.publishPathRewrite` rewrites shard-relative repo paths in publish outputs. Intra-guide `./section.md` links rewrite to `#anchor` on every compile.
+### Publish outputs and link paths
+
+Guides with `compile.outputFile` publish outside the shard tree (npm READMEs, `DEVELOPERS.md`, and similar). Shard-authored `../` links are rebased automatically:
+
+- Resolve each link from the **shard file** to an absolute path
+- Emit a path **relative to the publish output file**
+
+No per-guide path-prefix config — output location and shard path supply the geometry. See [Publish-relative link rewriting](./compile-hooks/publish-relative-links.md) for intent, pass ordering, and dogfood examples.
+
+Intra-guide `./section.md` links still rewrite to `#anchor` on every compile (post-stitch pass).
 
 ## `compile.hooks`
 

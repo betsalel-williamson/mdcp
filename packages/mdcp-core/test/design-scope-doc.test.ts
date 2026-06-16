@@ -10,7 +10,7 @@ function readRepoDoc(...segments: string[]): string {
 }
 
 const PREPROCESSOR_HEADING = 'Preprocessor / templating (out of scope)';
-const PREPROCESSOR_SLUG = 'preprocessor-templating-out-of-scope';
+const PREPROCESSOR_SLUG = 'preprocessor--templating-out-of-scope';
 const PREPROCESSOR_SHARD = 'docs/features/design-constraints/preprocessor-templating.md';
 const GLOSSARY_MANIFEST = '../glossary/index.md';
 

@@ -30,7 +30,7 @@ mdcp export --llm --stdout --config mdcp.config.json
 
 ## Check gate (P0.4)
 
-Structural validation: orphans → compile → refs → xrefs; peer linters optional.
+Structural validation: orphans → compile → refs → **links** → xrefs; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md).
 
 ```bash
 mdcp check --require-lint
@@ -62,7 +62,7 @@ Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host rep
 
 ## Compile hooks (P2.2)
 
-Per-shard assembly via built-in compile hooks on [authored GFM](../glossary/index.md#gfm). Hooks run by default; opt out per hook when needed. See [Default compile hooks](./default-compile-hooks.md). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope).
+Per-shard assembly via built-in compile hooks on [authored GFM](../glossary/index.md#gfm). Hooks run by default; opt out per hook when needed. See [Default compile hooks](./default-compile-hooks.md). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 Built-in hooks:
 
@@ -70,7 +70,7 @@ Built-in hooks:
 - **`codeEvidence`** — rewrites repo source links to `#L` line fragments (symbol or line range in link text); rebases paths for the rendered output automatically. See [codeEvidence](../client-core/compile-hooks/code-evidence.md).
 - **`inlineInserts`** — inlines captioned insert shards from shared libraries (`diagrams/`, `tables/`, `figures/`, `media/`); shard bodies may include tables, prose, or media (images, video, audio); numbered `####` headings per kind (`Table 1. …`); first mention per guide inlines, later references back-link. Optional `hooksConfig.inlineInserts.searchRoots`. See [inlineInserts](../client-core/compile-hooks/inline-inserts.md).
 
-**Link rewriting at assembly time:** every compile builds a cross-guide link index from `compileOrder`, rewrites inter-guide `.md` links per shard, then rewrites same-guide `./section.md` links to in-document `#anchor` links. Optional `compile.crossGuideLinks.ignoreGuides` keeps shard `.md` paths for listed guides. See [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md). When `compile.publishPathRewrite` is set (repo dogfood: `developer` → `DEVELOPERS.md`), shard-relative `../` and `../../` paths are rewritten for publish targets.
+**Link rewriting at assembly time:** every compile builds a cross-guide link index from `compileOrder`, rewrites inter-guide `.md` links per shard, rebases remaining `../` file paths on publish outputs (`compile.outputFile`) via absolute-path resolution, then rewrites same-guide `./section.md` links to in-document `#anchor` links. Optional `compile.crossGuideLinks.ignoreGuides` keeps shard `.md` paths for listed guides (publish-relative still rebases them for publish files). See [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md) and [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).
 
 ## Agent integration (consumer repo)
 
@@ -89,6 +89,6 @@ Built-in hooks:
 - [GFM](../glossary/index.md#gfm) only — no Pandoc, no required `{#heading-ids}`
 - md-tree for split only — custom compile
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
-- No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor-templating-out-of-scope)
+- No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)
 
-Details in [Design constraints](./design-constraints/index.md) and [Legacy migration](./legacy-migration.md).
+Details in [Design constraints](./design-constraints/index.md).
