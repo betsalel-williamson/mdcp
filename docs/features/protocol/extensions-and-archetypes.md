@@ -23,7 +23,7 @@ The versioned llms-index in your **docs root** is a **fetched or generated proto
 | Agents **MUST NOT** hand-edit `mdcp.v*.llms.txt` for repo-specific improvements | Changes belong in shards or extensions                                            |
 | Broadly applicable improvements                                                 | Propose upstream to [spec/llms-index/](../../../spec/llms-index/) via PR          |
 | Project-specific guidance                                                       | `docs/extensions/` in your repo (local extension)                                 |
-| Regenerate repo copy                                                            | `mdcp export --llms-index --fetch --fetch-profile stable` after upstream adoption |
+| Regenerate repo copy                                                            | `mdcp export --llms-index --fetch --fetch-profile alpha` after upstream alpha pin |
 
 `mdcp export --llms-index` **without** `--fetch` may add a `## This repository` section — that is generated overlay, not a substitute for editing the canonical bootstrap in place.
 

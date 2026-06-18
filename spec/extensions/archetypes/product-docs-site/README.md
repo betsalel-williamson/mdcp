@@ -6,7 +6,7 @@ For products that publish human-facing docs via **MkDocs, Docusaurus, VitePress*
 
 ```text
 docs/
-  mdcp.v1.llms.txt
+  mdcp.v0.4.llms.txt
   extensions/
     publish-pipeline.md         # how compiled GFM feeds the site generator
   features/

@@ -35,6 +35,20 @@ Treat versions as:
 
 At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 
+## 0.4.0 open alpha milestone
+
+**0.4.0** is the first public alpha for external testers. It ships llms-index export, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy.
+
+| Track                  | 0.4.0 status                                                                                                    |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **npm packages**       | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee                                          |
+| **Protocol `0.4.0.0`** | Draft profile (`mdcp.v0.4.llms.txt`); first published llms-index spec; fetch via `--fetch-profile dev` / `vdev` |
+
+**Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, llms-index export, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
+| **Roadmap V1 phase** | Reference implementation shipped; not a semver 1.0 stability promise |
+
+**Path to 1.0.0:** npm and protocol graduate together when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
+
 ## When to add a changeset
 
 Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR changes:

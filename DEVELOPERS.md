@@ -42,7 +42,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ### Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([examples/prompts/](examples/prompts)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type prompts ([spec/task-prompts/](spec/task-prompts)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ### Daily commands
 
@@ -80,7 +80,7 @@ CI runs the full gate: `pnpm run check`.
 
 ## Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [examples/prompts/](examples/prompts) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/task-prompts/](spec/task-prompts) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 
@@ -294,6 +294,20 @@ Treat versions as:
 | **major** (within `0.x`) | Breaking CLI flags, config schema removals, output format changes consumers rely on | rename config key, change compiled heading rules         |
 
 At **1.0.0**, semver applies strictly: breaking changes require a major bump.
+
+### 0.4.0 open alpha milestone
+
+**0.4.0** is the first public alpha for external testers. It ships llms-index export, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy.
+
+| Track                  | 0.4.0 status                                                                                                    |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **npm packages**       | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee                                          |
+| **Protocol `0.4.0.0`** | Draft profile (`mdcp.v0.4.llms.txt`); first published llms-index spec; fetch via `--fetch-profile dev` / `vdev` |
+
+**Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, llms-index export, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
+| **Roadmap V1 phase** | Reference implementation shipped; not a semver 1.0 stability promise |
+
+**Path to 1.0.0:** npm and protocol graduate together when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
 
 ### When to add a changeset
 
@@ -546,7 +560,11 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 ## protocol version
 
-Four-part version for MDCP artifact and config compatibility (default `1.0.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 1.0.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v1.llms.txt` ≡ `1.0.0.0`).
+Four-part version for MDCP **artifact and config compatibility** (default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 0.4.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v0.4.llms.txt` ≡ `0.4.0.0`).
+
+**Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](#040-open-alpha-milestone).
+
+Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.0` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
 
 ## mdcp-llms-index
 

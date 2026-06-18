@@ -43,6 +43,6 @@ OpenAPI standardizes HTTP API contracts. MDCP standardizes **documentation conte
 
 ## Filename versioning (`mdcp.v*.llms.txt`)
 
-- Protocol version `1.0.0.0` → `mdcp.v1.llms.txt` or `mdcp.v1.0.0.0.llms.txt`
-- In-file header always four-part: `mdcp-llms-index: 1.0.0.0`
+- Protocol version `0.4.0.0` → `mdcp.v0.4.llms.txt` or `mdcp.v0.4.0.0.llms.txt`
+- In-file header always four-part: `mdcp-llms-index: 0.4.0.0`
 - Drop trailing `.0` segments in filename only

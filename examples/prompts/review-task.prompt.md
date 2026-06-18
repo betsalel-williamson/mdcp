@@ -14,7 +14,7 @@ REVIEW_NODE=
 
 **Role:** Act as an expert Security Architect and Systems Reviewer.
 
-**Setup:** Follow WORK_ITEM_LOOKUP above. Read `mdcp.v1.llms.txt` in the docs root when present — it is the agent index for query commands and prompt locations. Inspect the repository for the review playbook (`docs/review/`), scope, acceptance criteria, validation commands, and delivery conventions before editing. Treat `REVIEW_NODE` and acceptance criteria as the scope boundary — one manifest node per branch; do not expand into adjacent nodes unless WORK_ITEM explicitly includes them. Progress is computed from files on disk — run the repo's review commands; do not infer status from chat or prose.
+**Setup:** Follow WORK_ITEM_LOOKUP above. Read `mdcp.v0.4.llms.txt` in the docs root when present — it is the agent index for query commands and prompt locations. Inspect the repository for the review playbook (`docs/review/`), scope, acceptance criteria, validation commands, and delivery conventions before editing. Treat `REVIEW_NODE` and acceptance criteria as the scope boundary — one manifest node per branch; do not expand into adjacent nodes unless WORK_ITEM explicitly includes them. Progress is computed from files on disk — run the repo's review commands; do not infer status from chat or prose.
 
 **Plan:** Outline steps from WORK_ITEM, `REVIEW_NODE`, and repo context. Pull only the manifest node, checklist shards, evidence paths, and code needed for this session.
 

@@ -30,7 +30,7 @@ mdcp export --llm --stdout --config mdcp.config.json
 
 ## llms-index export (V1)
 
-Versioned agent bootstrap at docs root (`mdcp.v1.llms.txt`, protocol `1.0.0.0`).
+Versioned agent bootstrap at docs root (`mdcp.v0.4.llms.txt`, protocol `0.4.0.0`).
 
 ```bash
 mdcp export --llms-index --config mdcp.config.json --docs-root docs

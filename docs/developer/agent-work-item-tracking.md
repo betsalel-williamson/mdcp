@@ -1,6 +1,6 @@
 # Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [examples/prompts/](../../examples/prompts/) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/task-prompts/](../../spec/task-prompts/) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](./local-setup.md).
 

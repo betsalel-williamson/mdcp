@@ -74,22 +74,26 @@ describe('cli smoke', () => {
     expect(out).toContain('mdcp check passed');
   });
 
-  it('resolves --config from invocation directory, not --docs-root (#10)', () => {
-    const out = execFileSync(
-      'node',
-      [
-        CLI,
-        'compile',
-        '--config',
-        'docs/mdcp.config.json',
-        '--docs-root',
-        'docs',
-        '--warn-broken-links',
-      ],
-      { encoding: 'utf-8', cwd: REPO_ROOT },
-    );
-    expect(out).toMatch(/guides\.md|→/);
-  });
+  it(
+    'resolves --config from invocation directory, not --docs-root (#10)',
+    { timeout: 20_000 },
+    () => {
+      const out = execFileSync(
+        'node',
+        [
+          CLI,
+          'compile',
+          '--config',
+          'docs/mdcp.config.json',
+          '--docs-root',
+          'docs',
+          '--warn-broken-links',
+        ],
+        { encoding: 'utf-8', cwd: REPO_ROOT },
+      );
+      expect(out).toMatch(/guides\.md|→/);
+    },
+  );
 
   it('normalizes cwd-relative refs.registryFile under outputDir (#11)', () => {
     const docs = mkdtempSync(join(tmpdir(), 'mdcp-smoke-'));

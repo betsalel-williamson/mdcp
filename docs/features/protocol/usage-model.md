@@ -4,7 +4,7 @@ Operational roles for Markdown as Context. Parent: [GitHub #45](https://github.c
 
 ## Agent entrypoint
 
-Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `mdcp.v1.llms.txt` (protocol `1.0.0.0`). That file explains how to query without loading entire guides.
+Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `mdcp.v0.4.llms.txt` (protocol `0.4.0.0`). That file explains how to query without loading entire guides.
 
 ## Actors and obligations
 
@@ -21,7 +21,7 @@ Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `
 
 ### Minimal
 
-One guide, `compile` + `check`, monolith output. Fetch or copy `mdcp.v1.llms.txt` to docs root (`mdcp export --llms-index --fetch --fetch-ref v1.0.0`).
+One guide, `compile` + `check`, monolith output. Fetch or copy `mdcp.v0.4.llms.txt` to docs root (`mdcp export --llms-index --fetch --fetch-ref v0.4.0 --fetch-profile dev`).
 
 ### Standard
 
@@ -29,7 +29,7 @@ Multi-guide `compileOrder`, publish outputs (`compile.outputFile`), `refs lookup
 
 ### Agent-native
 
-Above plus `export --llm`, three-tier shards (`features` / `client` / `developer`), task prompts from `examples/prompts/`.
+Above plus `export --llm`, three-tier shards (`features` / `client` / `developer`), task prompts from `spec/task-prompts/` (cached at `.caches/mdcp/prompts/` after fetch).
 
 ## Coexistence
 
@@ -42,7 +42,7 @@ Above plus `export --llm`, three-tier shards (`features` / `client` / `developer
 ## Query preference order
 
 1. Read `mdcp.v*.llms.txt` in docs root (agent index)
-2. Load task prompt from `examples/prompts/` with `WORK_ITEM` set — see [Agent task prompts](./agent-task-prompts.md)
+2. Load task prompt from `.caches/mdcp/prompts/` (or [spec/task-prompts/](../../spec/task-prompts/)) with `WORK_ITEM` set — see [Agent task prompts](./agent-task-prompts.md)
 3. `mdcp refs lookup "<topic>"`
 4. Read one shard from lookup result
 5. `mdcp export --llm` only when broader context is required

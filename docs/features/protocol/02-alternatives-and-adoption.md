@@ -22,7 +22,7 @@ MDCP shards are [GFM-only](../design-constraints/gfm-scope.md). Adopters with Pa
 
 ## Bootstrap-first adoption
 
-1. Copy `mdcp.v1.llms.txt` into docs root **before** `mdcp.config.json` exists.
+1. Copy `mdcp.v0.4.llms.txt` into docs root **before** `mdcp.config.json` exists.
 2. Use your existing agent to shard a monolith and plan glossary entries.
 3. Wire mdcp, compile, validate, regenerate index with `mdcp export --llms-index`.
 

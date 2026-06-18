@@ -6,7 +6,7 @@ Normative profile for **copy-paste agent prompts** that drive shard authoring ac
 
 Prompts are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge.
 
-Reference copies live in [examples/prompts/](../../examples/prompts/). The canonical prompt list is embedded in [spec/llms-index/](../../spec/llms-index/) llms-index artifacts and summarized below. Consumer repos **MAY** vendor or link the same files.
+Reference copies live in [spec/task-prompts/](../../spec/task-prompts/). The canonical prompt list is embedded in [spec/llms-index/](../../spec/llms-index/) llms-index artifacts and summarized below. `mdcp export --llms-index --fetch` caches prompts under `.caches/mdcp/prompts/` in the consumer docs root.
 
 **Do not edit** fetched `mdcp.v*.llms.txt` for prompt or workflow changes — propose upstream or add [extensions](./extensions-and-archetypes.md) under `docs/extensions/`.
 
@@ -26,18 +26,18 @@ WORK_ITEM_LOOKUP=
 
 Agents **MUST** load the issue (or equivalent) before editing shards or code. One `WORK_ITEM` per branch.
 
-## Standard prompts (protocol 1.0.0.0)
+## Standard prompts (protocol 0.4.0.0)
 
-| Prompt file                                                                                       | Role                             | Primary guides                       |
-| ------------------------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
-| [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md) | Bootstrap pipeline               | all tiers                            |
-| [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md)               | Feature engineering              | `features/`, `client/`, code + tests |
-| [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md)                         | Technical writing                | `features/`, `client/`, `developer/` |
-| [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md)   | ADRs, RFCs                       | `features/protocol/`, `features/`    |
-| [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md)                                     | End-user experience              | `client/`                            |
-| [review-task.prompt.md](../../examples/prompts/review-task.prompt.md)                             | Architecture and security review | `review/`, `features/` (stubs)       |
+| Prompt file                                                                                        | Role                             | Primary guides                       |
+| -------------------------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
+| [getting-started-with-mdcp.prompt.md](../../spec/task-prompts/getting-started-with-mdcp.prompt.md) | Bootstrap pipeline               | all tiers                            |
+| [feature-level-task.prompt.md](../../spec/task-prompts/feature-level-task.prompt.md)               | Feature engineering              | `features/`, `client/`, code + tests |
+| [doc-only-task.prompt.md](../../spec/task-prompts/doc-only-task.prompt.md)                         | Technical writing                | `features/`, `client/`, `developer/` |
+| [design-architecture-task.prompt.md](../../spec/task-prompts/design-architecture-task.prompt.md)   | ADRs, RFCs                       | `features/protocol/`, `features/`    |
+| [ux-task.prompt.md](../../spec/task-prompts/ux-task.prompt.md)                                     | End-user experience              | `client/`                            |
+| [review-task.prompt.md](../../spec/task-prompts/review-task.prompt.md)                             | Architecture and security review | `review/`, `features/` (stubs)       |
 
-Index: [examples/prompts/README.md](../../examples/prompts/README.md).
+Index: [spec/task-prompts/README.md](../../spec/task-prompts/README.md). Cached in consumer repos at `.caches/mdcp/prompts/` after fetch.
 
 ## Three-tier authoring obligations
 
@@ -51,7 +51,7 @@ Shared terms: `docs/glossary/` — all prompts that introduce vocabulary.
 
 ## Feature-level workflow (normative summary)
 
-When using [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md):
+When using [feature-level-task.prompt.md](../../spec/task-prompts/feature-level-task.prompt.md):
 
 1. Branch from updated `main` for `WORK_ITEM`
 2. Load issue via `WORK_ITEM_LOOKUP`
@@ -63,14 +63,14 @@ When using [feature-level-task.prompt.md](../../examples/prompts/feature-level-t
 ## Entrypoint chain
 
 ```text
-mdcp.v1.llms.txt  →  task prompt (WORK_ITEM set)  →  shards  →  mdcp check
+mdcp.v0.4.llms.txt  →  .caches/mdcp/prompts/*.prompt.md (WORK_ITEM set)  →  shards  →  mdcp check
 ```
 
 The llms-index file points agents at prompts and query commands; prompts point at `WORK_ITEM_LOOKUP` for scope.
 
 ## Review workflow (normative summary)
 
-When using [review-task.prompt.md](../../examples/prompts/review-task.prompt.md):
+When using [review-task.prompt.md](../../spec/task-prompts/review-task.prompt.md):
 
 1. Branch per `REVIEW_NODE` (one manifest node per PR)
 2. Load `WORK_ITEM` via `WORK_ITEM_LOOKUP`

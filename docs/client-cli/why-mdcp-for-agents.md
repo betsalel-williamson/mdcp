@@ -23,6 +23,6 @@ Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile
 
 ## Get started
 
-First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](./llm-collaboration.md).
+First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../spec/task-prompts/getting-started-with-mdcp.prompt.md) (or load from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](./llm-collaboration.md).
 
 For command and capability depth, read the [feature catalog](../features/feature-catalog.md).

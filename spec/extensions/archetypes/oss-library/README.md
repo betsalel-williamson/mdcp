@@ -6,7 +6,7 @@ For publishable packages (npm, PyPI, crates.io) where **API truth lives in sourc
 
 ```text
 docs/
-  mdcp.v1.llms.txt              # fetched protocol index — do not edit locally
+  mdcp.v0.4.llms.txt              # fetched protocol index — do not edit locally
   extensions/
     index.md                    # local extension manifest (optional)
     api-pointer-conventions.md  # how shards link into src/

@@ -2,7 +2,7 @@
 
 Normative specification for the MarkDown Context Protocol. Parent: [GitHub #48](https://github.com/betsalel-williamson/mdcp/issues/48).
 
-> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before 1.0 final.
+> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before npm **1.0.0** / stable protocol promotion. npm **0.4.0** (open alpha) implements this draft profile; fetch via `--fetch-profile dev` / `vdev`.
 
 ## 1. Introduction
 
@@ -12,7 +12,9 @@ Conformance keywords: **MUST**, **SHOULD**, **MAY** (RFC 2119 sense).
 
 ## 2. Protocol version
 
-Conforming `mdcp.config.json` **MUST** declare `protocolVersion` as a four-part string (default `1.0.0.0`).
+Conforming `mdcp.config.json` **MUST** declare `protocolVersion` as a four-part string (default `0.4.0.0`).
+
+Published protocol artifacts start at **0.4.0.0** (`mdcp.v0.4.llms.txt`). Pre-0.4 tooling and doc-style evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the **0.4.0** [changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — not in prior llms-index artifacts.
 
 ## 3. Guide layout and three-tier authoring
 
@@ -31,9 +33,9 @@ Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split
 
 ## 4. Agent task prompts
 
-Copy-paste prompts in `examples/prompts/` are part of the MDCP 1.0 authoring profile. See [Agent task prompts](./agent-task-prompts.md).
+Copy-paste prompts in `spec/task-prompts/` are part of the MDCP 1.0 authoring profile (cached at `.caches/mdcp/prompts/` after fetch). See [Agent task prompts](./agent-task-prompts.md).
 
-Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md). Review work **SHOULD** use [review-task.prompt.md](../../examples/prompts/review-task.prompt.md) with `REVIEW_NODE` set.
+Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level-task.prompt.md](../../spec/task-prompts/feature-level-task.prompt.md). Review work **SHOULD** use [review-task.prompt.md](../../spec/task-prompts/review-task.prompt.md) with `REVIEW_NODE` set.
 
 ## 5. Extensions and immutability
 
@@ -49,20 +51,20 @@ Token-stripped compiled output for agents. Implemented by `mdcp export --llm`.
 
 Versioned agent bootstrap file in the docs root. **Canonical immutable artifacts** live in `spec/llms-index/` in the mdcp repository.
 
-| Rule        | Requirement                                                                    |
-| ----------- | ------------------------------------------------------------------------------ |
-| First line  | `mdcp-llms-index: {four-part version}`                                         |
-| Filename    | `mdcp.v{version}.llms.txt` — trailing `.0` segments **MAY** be omitted         |
-| Draft       | `mdcp.v{version}--draft.llms.txt` until adopted; then promote to stable        |
-| Profiles    | `vstable` symlink → adopted stable; `vdev` symlink → in-progress draft         |
-| Equivalence | `mdcp.v1.llms.txt` and `mdcp.v1.0.0.0.llms.txt` both denote protocol `1.0.0.0` |
-| Content     | Index only; **MUST NOT** embed full guide bodies                               |
-| Prompts     | **MUST** list all task-type prompts including `review-task.prompt.md`          |
-| Command     | `mdcp export --llms-index` or `--fetch` (upstream)                             |
+| Rule        | Requirement                                                                      |
+| ----------- | -------------------------------------------------------------------------------- |
+| First line  | `mdcp-llms-index: {four-part version}`                                           |
+| Filename    | `mdcp.v{version}.llms.txt` — trailing `.0` segments **MAY** be omitted           |
+| Draft       | `mdcp.v{version}--draft.llms.txt` until adopted; then promote to stable          |
+| Profiles    | `valpha`, `vdev`; `vstable` reserved for npm 1.0.0                               |
+| Equivalence | `mdcp.v0.4.llms.txt` and `mdcp.v0.4.0.0.llms.txt` both denote protocol `0.4.0.0` |
+| Content     | Index only; **MUST NOT** embed full guide bodies                                 |
+| Prompts     | **MUST** list all task-type prompts including `review-task.prompt.md`            |
+| Command     | `mdcp export --llms-index` or `--fetch` (upstream)                               |
 
-**Upstream fetch (`--fetch`):** Pull from `spec/llms-index/vstable` (default) or `vdev`. `ref` **MAY** be `latest`, a tag, or branch. `export.llmsIndex.upstream` **MAY** set `repo`, `ref`, `profile`, and `path`. See [spec/llms-index/README.md](../../../spec/llms-index/README.md).
+**Upstream fetch (`--fetch`):** Pull from `spec/llms-index/vdev` (default) or `valpha`. `ref` **MAY** be `latest`, a tag, or branch. `export.llmsIndex.upstream` **MAY** set `repo`, `ref`, `profile` (`alpha`|`dev`), and `path`. See [spec/llms-index/README.md](../../../spec/llms-index/README.md).
 
-Schema: [spec/schemas/mdcp-llms-index-1.0.0.0.schema.json](../../../spec/schemas/mdcp-llms-index-1.0.0.0.schema.json)
+Schema: [spec/schemas/mdcp-llms-index-0.4.0.0.schema.json](../../../spec/schemas/mdcp-llms-index-0.4.0.0.schema.json)
 
 ## Appendix A (informative)
 

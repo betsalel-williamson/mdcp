@@ -2,6 +2,8 @@
 
 **mdcp** is a protocol for repository documentation context — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks. The CLI is one surface for `compile`, `check`, `refs lookup`, and `export --llm`.
 
+> **Open alpha (0.4.0).** MDCP is moving fast — this release is a working foundation for early adopters. Tooling and the draft protocol profile may change in 0.5+. Pin `@bwilliamson/mdcp-cli@0.4.0`. Use `mdcp export --llms-index --fetch --fetch-profile dev` for the in-progress bootstrap. Feedback welcome via [GitHub Issues](https://github.com/betsalel-williamson/mdcp/issues) before npm 1.0.
+
 Shards are the **source of truth**. Generated output includes a local `docs/guides.md` (features review — gitignored), `docs/refs.json` (gitignored), [`DEVELOPERS.md`](DEVELOPERS.md) (from `docs/developer/`), and npm package READMEs compiled from `docs/client-cli/` and `docs/client-core/`.
 
 ## Quick start
