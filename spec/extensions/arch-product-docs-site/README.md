@@ -1,4 +1,4 @@
-# Archetype: Product docs site
+# Archetype: Product docs site (`arch-product-docs-site`)
 
 For products that publish human-facing docs via **MkDocs, Docusaurus, VitePress**, or similar while keeping MDCP shards as the authoring source of truth.
 
@@ -22,11 +22,11 @@ site/                             # downstream publish (not MDCP source of truth
 | MDCP compile | Agents, CI, `mdcp check` | `guides.md`, package READMEs                   |
 | Site build   | Human readers on the web | MkDocs/Docusaurus (downstream of compiled GFM) |
 
-Shards stay GFM. The formatting extension documents heading rules, admonition mapping, and link policies for your chosen site generator.
+Shards stay GFM. A `format-*` extension documents heading rules, admonition mapping, and link policies for your chosen site generator.
 
-## Formatting extension (stub)
+## Formatting extensions
 
-See [spec/extensions/formatting/](../../formatting/) for shared lint presets. Product teams add `docs/extensions/docusaurus-mapping.md` (or similar) locally when proprietary theme rules apply.
+See [format/](../format/) for the formatting extension slot and naming (`format-docusaurus`, `format-mkdocs`, …). Product teams add `docs/extensions/docusaurus-mapping.md` (or similar) locally when proprietary theme rules apply.
 
 ## Agent workflow
 
@@ -34,3 +34,7 @@ See [spec/extensions/formatting/](../../formatting/) for shared lint presets. Pr
 2. Load task prompt with `WORK_ITEM`.
 3. Edit `client/` and `features/` shards.
 4. `mdcp check` before PR; site CI runs after compile.
+
+## Catalog id
+
+`arch-product-docs-site` — doc-only archetype today; versioned fetchable packs **MAY** ship under `arch-product-docs-site/{version}/` later.

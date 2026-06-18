@@ -13,20 +13,37 @@ PERSONA=
 
 Set up a sharded documentation pipeline using **mdcp** for FEATURE above.
 
-**First step:** Fetch or copy `mdcp.v0.4.llms.txt` into your docs root before full tooling is wired.
+**First step (phase 1 — day zero):** Fetch agent index + extension caches before full tooling is wired:
 
 ```bash
-# Pinned stable protocol bootstrap (recommended)
-mdcp export --llms-index --fetch --fetch-profile dev --fetch-ref v0.4.0 --docs-root docs
-
 # In-progress protocol (vdev) from upstream main
 mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs
 
-# Fork / local mdcp development
-mdcp export --llms-index --fetch --fetch-repo owner/fork --fetch-ref my-branch --fetch-profile dev --docs-root docs
+# Pinned open-alpha release (recommended after config exists — phase 2)
+mdcp export --llms-index --fetch --fetch-ref v0.4.0 --docs-root docs
 ```
 
-Manual copy: [mdcp repository `docs/mdcp.v0.4.llms.txt`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.v0.4.llms.txt) or `examples/sample-guides/`. Fetch also caches task prompts to `.caches/mdcp/prompts/`. Point the agent at the llms-index for adoption and query instructions.
+**Phase 2 — pin protocol profile + extensions:** Add `mdcp.config.json`, then re-fetch:
+
+```json
+{
+  "protocol": {
+    "profile": "alpha",
+    "ref": "v0.4.0"
+  },
+  "extensions": {
+    "packs": [{ "id": "prompts-mdcp-defaults", "enabled": true, "version": "0.4.0.0" }]
+  }
+}
+```
+
+Set `protocol.ref` to your feature branch when the `valpha` symlink is not on `main` yet (dogfood only).
+
+```bash
+mdcp export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
+```
+
+Manual copy: [mdcp repository `docs/mdcp.v0.4.llms.txt`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.v0.4.llms.txt) or `examples/sample-guides/`. Fetch caches versioned task prompts to `.caches/mdcp/prompts/` (protocol **0.4.0.0**, path `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` upstream).
 
 **Setup:** Inspect this repository — package manager, existing docs layout, and developer docs — before changing files. Do not assume a specific host, script runner, or optional linter; discover what the repo already uses.
 
@@ -67,4 +84,4 @@ Use mdcp commands only — do not create custom compile or lint scripts.
 
 **Cross-links:** Run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)`. The slug must match **compiled** output, not the shard alone.
 
-**Next steps:** After the pipeline exists, load task-type prompts from `.caches/mdcp/prompts/` (cached by `mdcp export --llms-index --fetch`) or from [spec/task-prompts/README.md](../../spec/task-prompts/README.md) in the mdcp repo. Each task uses one WORK_ITEM per branch — branch from updated `main` before editing. Document work-item tracking once per repo under `docs/developer/` so agents know how to load tracker issues (see [Agent work-item tracking](../../docs/developer/agent-work-item-tracking.md) in the mdcp repo).
+**Next steps:** After the pipeline exists, load task-type prompts from `.caches/mdcp/prompts/` (cached by `mdcp export --llms-index --fetch`) or from [spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md) in the mdcp repo. Each task uses one WORK_ITEM per branch — branch from updated `main` before editing. Document work-item tracking once per repo under `docs/developer/` so agents know how to load tracker issues (see [Agent work-item tracking](../../docs/developer/agent-work-item-tracking.md) in the mdcp repo).

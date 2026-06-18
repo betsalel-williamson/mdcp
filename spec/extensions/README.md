@@ -14,37 +14,57 @@ Optional packs that extend the **protocol core** without forking it. The core st
 
 **Agents must not edit fetched `mdcp.v*.llms.txt` in a consumer docs root.** Put repo-specific agent guidance in `docs/extensions/` or normative shards.
 
-## Extension kinds
+## Layout
+
+Each extension is a **flat top-level id** under `spec/extensions/`. Versioned fetchable packs use `{id}/{version}/`; doc-only archetypes may ship a README at `{id}/README.md` until a versioned pack exists.
 
 ```
 spec/extensions/
-  README.md                 # this file
-  archetypes/               # project-class starter patterns
-  formatting/               # lint/style packs per doc framework (stubs)
+  manifest.json                 # flat catalog: id, tags, description, versions[]
+  prompts-mdcp-defaults/        # default prompts pack
+    0.4.0.0/
+      manifest.json
+      README.md
+      *.prompt.md
+  arch-oss-library/             # doc-only archetype (example)
+    README.md
+  arch-product-docs-site/
+    README.md
+  format/                       # formatting extension index (doc-only)
+    README.md
+  format-docusaurus/            # future versioned formatting pack
+    1.0.0/
+      manifest.json
+      …
 ```
 
-| Kind            | Directory           | Purpose                                                                       |
-| --------------- | ------------------- | ----------------------------------------------------------------------------- |
-| Archetype       | `archetypes/`       | Guide layout, glossary seeds, workflow for a project class                    |
-| Formatting      | `formatting/`       | Markdownlint/Vale presets aligned to a publish stack                          |
-| Pointer profile | (within archetypes) | Shards link to source files; agents read code instead of duplicating API text |
+### Extension id prefixes
+
+| Prefix     | Example ids                          | Purpose                                     |
+| ---------- | ------------------------------------ | ------------------------------------------- |
+| `prompts-` | `prompts-mdcp-defaults`              | Agent prompt packs (mdcp defaults + custom) |
+| `arch-`    | `arch-oss-library`                   | Project-class starter patterns              |
+| `format-`  | `format-docusaurus`, `format-mkdocs` | Lint/style presets per publish stack        |
+
+### Catalog (`manifest.json`)
+
+The root catalog is a flat index of extension ids, human descriptions, tags, and published version entries (with `protocolVersionRange`, and `revoked` flags). Entries with empty `versions[]` are doc-only until a fetchable release ships. See **[FORMAT.md](./FORMAT.md)** and **[SECURITY.md](./SECURITY.md)**.
 
 ## Use an extension
 
-1. Read the archetype or pack README.
-2. Copy patterns into your repo (`docs/features/`, `docs/client/`, etc.).
-3. Add local-only files under `docs/extensions/` when needed.
-4. Link extension shards from your guide `index.md` manifests.
+1. Read the extension README under `{id}/` or `{id}/{version}/`.
+2. For fetchable packs: enable in `mdcp.config.json` (optionally pin `version`), then `mdcp export --llms-index --fetch`.
+3. For doc-only archetypes: copy patterns into your repo; link from guide `index.md` manifests.
 
 ## Publish an extension
 
 1. Fork the mdcp repository.
-2. Add or extend under `spec/extensions/` with a README explaining scope, conformance expectations, and example `mdcp.config.json` snippets when relevant.
-3. Open a PR — broadly useful packs merge here; niche packs can stay as linked examples in the PR description.
+2. Add `spec/extensions/{id}/{version}/` (or `{id}/README.md` for doc-only) and register in `manifest.json`.
+3. Open a PR — broadly useful packs merge here.
 
 ## Proprietary local extensions
 
-You **do not** have to contribute extensions back. MIT-licensed mdcp imposes no copyleft on your `docs/extensions/` tree. We encourage sharing archetypes that help whole industries (healthcare compliance templates, game-engine doc layouts, etc.), but proprietary packs are a first-class use case.
+You **do not** have to contribute extensions back. MIT-licensed mdcp imposes no copyleft on your `docs/extensions/` tree.
 
 ## SOLID alignment
 
@@ -52,4 +72,4 @@ Extensions follow the [protocol SOLID principles](../../docs/features/protocol/e
 
 ## Status
 
-V1 ships the **directory and archetype stubs**. Automated `extensions` config in `mdcp.config.json` and MCP discovery of extension packs are future work (V2+).
+Open alpha (0.4.0) ships the **catalog + semver extension packs** under `spec/extensions/`. Enable and pin packs in `mdcp.config.json`. MCP discovery of extension packs is future work (V2+).

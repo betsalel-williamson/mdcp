@@ -1,4 +1,4 @@
-# Archetype: OSS library
+# Archetype: OSS library (`arch-oss-library`)
 
 For publishable packages (npm, PyPI, crates.io) where **API truth lives in source** and documentation shards hold intent, stability guarantees, and migration notes.
 
@@ -42,4 +42,8 @@ Agents use `mdcp refs lookup "SessionStore"` for compiled anchors and open the l
 ## Extension hooks
 
 - Add `docs/extensions/api-pointer-conventions.md` for language-specific path rules.
-- Optional formatting pack under `spec/extensions/formatting/` for JavaDoc-style cross-links in compiled README output (future).
+- Optional formatting pack under `spec/extensions/format-*` for JavaDoc-style cross-links in compiled README output (future).
+
+## Catalog id
+
+`arch-oss-library` — doc-only archetype today; versioned fetchable packs **MAY** ship under `arch-oss-library/{version}/` later.
