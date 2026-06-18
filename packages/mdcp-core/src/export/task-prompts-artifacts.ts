@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
 import { LLMS_INDEX_PROTOCOL_VERSION } from './llms-index-artifacts.js';
 
-/** Versioned meta task prompts shipped with the protocol spec. */
-export const TASK_PROMPTS_SPEC_DIR = 'spec/task-prompts';
+/** Versioned default mdcp prompts extension 0.4.0.0 (`spec/extensions/prompts-mdcp-defaults/0.4.0.0`). */
+export const TASK_PROMPTS_SPEC_DIR = 'spec/extensions/prompts-mdcp-defaults/0.4.0.0';
 
 /** Default cache under docs root (populated by `mdcp export --llms-index --fetch`). */
 export const DEFAULT_TASK_PROMPTS_CACHE_DIR = '.caches/mdcp/prompts';

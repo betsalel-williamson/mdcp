@@ -4,7 +4,16 @@ export {
   type MdcpConfigInput,
   type GuideConfig,
   type GuideConfigInput,
+  type ExtensionSource,
+  type ExtensionPack,
 } from './config/schema.js';
+export {
+  resolveProtocolFetch,
+  resolveProtocolSource,
+  resolveLlmsIndexOutputFilename,
+  type ProtocolFetch,
+  type ProtocolSource,
+} from './config/protocol-source.js';
 export {
   loadConfig,
   resolveOutputPath,
@@ -127,6 +136,7 @@ export {
   type LlmsIndexFilenameOptions,
 } from './export/llms-index-artifacts.js';
 export {
+  AUTHORITATIVE_PROTOCOL_REPO,
   DEFAULT_LLMS_INDEX_UPSTREAM_REPO,
   DEFAULT_LLMS_INDEX_UPSTREAM_REF,
   buildGithubRawUrl,
@@ -152,14 +162,59 @@ export {
 export {
   fetchTaskPromptsFromUpstream,
   copyTaskPromptsFromLocalSpec,
+  cacheEnabledExtensions,
+  copyEnabledExtensionsFromLocalSpec,
+  resolveEnabledExtensionPacks,
+  resolveExtensionPackById,
   type TaskPromptsFetchOptions,
   type TaskPromptsFetchResult,
+  type ExtensionCacheOptions,
+  type ExtensionCacheResult,
+  type ExtensionPackCacheResult,
+  type CachedExtensionPackManifest,
+  type ResolvedExtensionPack,
 } from './export/task-prompts-fetch.js';
+export {
+  BUILTIN_EXTENSION_PACK_IDS,
+  DEFAULT_PROMPTS_EXTENSION_ID,
+  REFERENCE_EXTENSIONS_CATALOG,
+  getBuiltinExtensionDefaults,
+  isBuiltinExtensionPackId,
+  type BuiltinExtensionPackId,
+} from './extensions/builtins.js';
+export {
+  parseExtensionsCatalog,
+  parseExtensionPackManifest,
+  selectCompatibleExtensionVersion,
+  resolveExtensionPackPath,
+  resolveProtocolVersionRange,
+  isProtocolCompatible,
+  EXTENSIONS_CATALOG_FILE,
+  EXTENSIONS_SPEC_DIR,
+  type ExtensionsCatalog,
+  type ExtensionCatalogEntry,
+  type ExtensionVersionEntry,
+  type ExtensionPackManifest,
+} from './extensions/catalog.js';
+export {
+  protocolSatisfiesRange,
+  protocolVersionToSemver,
+  normalizeProtocolVersionRange,
+  isSemverRangeSyntax,
+  compareExtensionVersion,
+} from './extensions/protocol-version-range.js';
+export {
+  resolveExtensionProtocolVersion,
+  resolveExtensionFetchRef,
+  loadExtensionsCatalog,
+} from './extensions/version.js';
+export { buildExtensionFileUrl } from './extensions/source-url.js';
 export {
   abbreviateProtocolVersion,
   expandProtocolVersion,
   parseLlmsIndexFilename,
   isLlmsIndexDraftFilename,
+  protocolVersionToReleaseRef,
 } from './export/protocol-version.js';
 export { findPeerBinary, runPeer, type PeerTool } from './peers/resolve.js';
 export { shardFromMonolith, runMdTree, type ShardGuideMapping } from './shard/orchestrator.js';

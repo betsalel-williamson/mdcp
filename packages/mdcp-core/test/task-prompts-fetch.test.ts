@@ -28,9 +28,10 @@ describe('task-prompts fetch', () => {
       }
       const manifest = JSON.parse(
         readFileSync(join(result.cacheDir, 'manifest.json'), 'utf-8'),
-      ) as { protocolVersion: string; prompts: string[] };
+      ) as { version: string; protocolVersion: string; files: string[] };
+      expect(manifest.version).toBe('0.4.0.0');
       expect(manifest.protocolVersion).toBe('0.4.0.0');
-      expect(manifest.prompts).toEqual([...STANDARD_TASK_PROMPT_FILES]);
+      expect(manifest.files).toEqual([...STANDARD_TASK_PROMPT_FILES]);
     } finally {
       rmSync(docsRoot, { recursive: true, force: true });
     }
@@ -40,7 +41,19 @@ describe('task-prompts fetch', () => {
     const docsRoot = mkdtempSync(join(tmpdir(), 'mdcp-prompts-remote-'));
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-      expect(url).toContain('/owner/mdcp/v0.4.0/spec/task-prompts/');
+      if (url.endsWith('manifest.json')) {
+        return new Response(
+          JSON.stringify({
+            id: 'prompts-mdcp-defaults',
+            version: '0.4.0.0',
+            protocolVersionRange: '0.4.0.0',
+            revoked: false,
+            files: [...STANDARD_TASK_PROMPT_FILES],
+          }),
+          { status: 200 },
+        );
+      }
+      expect(url).toContain('/owner/mdcp/v0.4.0/spec/extensions/prompts-mdcp-defaults/0.4.0.0/');
       return new Response(`# ${url}\n`, { status: 200 });
     });
 
@@ -52,7 +65,7 @@ describe('task-prompts fetch', () => {
         fetch: fetchMock,
       });
       expect(result.files).toHaveLength(STANDARD_TASK_PROMPT_FILES.length);
-      expect(fetchMock).toHaveBeenCalledTimes(STANDARD_TASK_PROMPT_FILES.length);
+      expect(fetchMock).toHaveBeenCalledTimes(STANDARD_TASK_PROMPT_FILES.length + 1);
     } finally {
       rmSync(docsRoot, { recursive: true, force: true });
     }
