@@ -203,6 +203,13 @@ export {
 } from './extensions/version.js';
 export { buildExtensionFileUrl } from './extensions/source-url.js';
 export {
+  scanPackFileReferences,
+  scanPackReferences,
+  formatExternalReferenceWarning,
+  type PackExternalReference,
+  type ExternalReferenceKind,
+} from './extensions/scan-pack-references.js';
+export {
   abbreviateProtocolVersion,
   expandProtocolVersion,
   parseLlmsIndexFilename,

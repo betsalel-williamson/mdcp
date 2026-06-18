@@ -14,6 +14,9 @@ import { resolveEnabledExtensionPacks, type ResolvedExtensionPack } from './reso
 import { isBuiltinExtensionPackId } from './builtins.js';
 import { buildExtensionFileUrl } from './source-url.js';
 import { resolveExtensionFetchRef } from './version.js';
+import { scanPackReferences, type PackExternalReference } from './scan-pack-references.js';
+
+export { formatExternalReferenceWarning } from './scan-pack-references.js';
 
 export interface ExtensionCacheOptions {
   docsRoot: string;
@@ -27,9 +30,12 @@ export interface ExtensionCacheOptions {
 
 export interface ExtensionPackCacheResult {
   id: string;
+  version: string;
   cacheDir: string;
   files: string[];
   manifestPath: string;
+  selfContained: boolean;
+  externalReferences: PackExternalReference[];
 }
 
 export interface ExtensionCacheResult {
@@ -48,6 +54,8 @@ export interface CachedExtensionPackManifest {
   source: { repo: string; ref: string; baseUrl?: string };
   path: string;
   files: string[];
+  selfContained: boolean;
+  externalReferences: PackExternalReference[];
 }
 
 async function resolvePackRef(
@@ -122,6 +130,7 @@ function writePackManifest(
   pack: ResolvedExtensionPack,
   ref: string,
   files: string[],
+  scan: { selfContained: boolean; externalReferences: PackExternalReference[] },
 ): string {
   const manifest: CachedExtensionPackManifest = {
     id: pack.id,
@@ -137,6 +146,8 @@ function writePackManifest(
     },
     path: pack.path,
     files,
+    selfContained: scan.selfContained,
+    externalReferences: scan.externalReferences,
   };
   const manifestPath = join(cacheDir, 'manifest.json');
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf-8');
@@ -158,6 +169,8 @@ async function cacheExtensionPack(
     pending.push({ filename, text: await readPackFile(pack, filename, ref, options) });
   }
 
+  const scan = scanPackReferences(pending.map(({ filename, text }) => ({ filename, text })));
+
   const written: string[] = [];
   for (const { filename, text } of pending) {
     const outPath = join(cacheDir, filename);
@@ -166,9 +179,17 @@ async function cacheExtensionPack(
     written.push(outPath);
   }
 
-  const manifestPath = writePackManifest(cacheDir, pack, ref, pack.files);
+  const manifestPath = writePackManifest(cacheDir, pack, ref, pack.files, scan);
 
-  return { id: pack.id, cacheDir, files: written, manifestPath };
+  return {
+    id: pack.id,
+    version: pack.version,
+    cacheDir,
+    files: written,
+    manifestPath,
+    selfContained: scan.selfContained,
+    externalReferences: scan.externalReferences,
+  };
 }
 
 /** Fetch or copy all enabled extension packs into docs-root cache directories. */
@@ -193,15 +214,27 @@ export function copyExtensionPackFromLocalSpec(
 ): ExtensionPackCacheResult {
   const cacheDir = resolve(docsRoot, pack.cacheDir);
   mkdirSync(cacheDir, { recursive: true });
+  const pending: { filename: string; text: string }[] = [];
   const written: string[] = [];
   for (const filename of pack.files) {
     const src = join(repoRoot, pack.path, filename);
     const dest = join(cacheDir, filename);
+    const text = readFileSync(src, 'utf-8');
+    pending.push({ filename, text });
     copyFileSync(src, dest);
     written.push(dest);
   }
-  const manifestPath = writePackManifest(cacheDir, pack, 'local', pack.files);
-  return { id: pack.id, cacheDir, files: written, manifestPath };
+  const scan = scanPackReferences(pending);
+  const manifestPath = writePackManifest(cacheDir, pack, 'local', pack.files, scan);
+  return {
+    id: pack.id,
+    version: pack.version,
+    cacheDir,
+    files: written,
+    manifestPath,
+    selfContained: scan.selfContained,
+    externalReferences: scan.externalReferences,
+  };
 }
 
 export function copyEnabledExtensionsFromLocalSpec(

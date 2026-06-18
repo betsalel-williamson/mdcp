@@ -13,6 +13,11 @@ import {
   copyEnabledExtensionsFromLocalSpec,
 } from '../src/extensions/cache.js';
 import {
+  scanPackFileReferences,
+  scanPackReferences,
+  formatExternalReferenceWarning,
+} from '../src/extensions/scan-pack-references.js';
+import {
   STANDARD_TASK_PROMPT_FILES,
   TASK_PROMPTS_SPEC_DIR,
 } from '../src/export/task-prompts-artifacts.js';
@@ -123,10 +128,18 @@ describe('extensions config', () => {
       }
       const manifest = JSON.parse(
         readFileSync(join(docsRoot, '.caches/mdcp/prompts/manifest.json'), 'utf-8'),
-      ) as { id: string; version: string; path: string };
+      ) as {
+        id: string;
+        version: string;
+        path: string;
+        selfContained: boolean;
+        externalReferences: unknown[];
+      };
       expect(manifest.id).toBe('prompts-mdcp-defaults');
       expect(manifest.version).toBe('0.4.0.0');
       expect(manifest.path).toBe(TASK_PROMPTS_SPEC_DIR);
+      expect(manifest.selfContained).toBe(true);
+      expect(manifest.externalReferences).toEqual([]);
     } finally {
       rmSync(docsRoot, { recursive: true, force: true });
     }
@@ -162,9 +175,92 @@ describe('extensions config', () => {
         fetch: fetchMock,
       });
       expect(result.packs).toHaveLength(1);
+      expect(result.packs[0]!.selfContained).toBe(true);
       expect(
         readFileSync(join(docsRoot, '.caches/mdcp/team-prompts/onboarding.prompt.md'), 'utf-8'),
       ).toContain('# Onboarding');
+    } finally {
+      rmSync(docsRoot, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('extension pack reference scanner', () => {
+  it('allows sibling links and flags escaping paths and external URLs', () => {
+    const clean = scanPackFileReferences('ok.prompt.md', 'See [task](./other.prompt.md).');
+    expect(clean).toEqual([]);
+
+    const externalPath = scanPackFileReferences(
+      'bad.prompt.md',
+      'See [doc](../../docs/developer/guide.md).',
+    );
+    expect(externalPath).toEqual([
+      { file: 'bad.prompt.md', kind: 'external-path', match: '../../docs/developer/guide.md' },
+    ]);
+
+    const externalUrl = scanPackFileReferences(
+      'bad.prompt.md',
+      'Install from https://example.com/pkg and [docs](https://example.com/docs).',
+    );
+    expect(externalUrl.some((ref) => ref.kind === 'external-url')).toBe(true);
+  });
+
+  it('formats external-reference warnings', () => {
+    expect(formatExternalReferenceWarning('team-prompts', '1.0.0', 2)).toContain('team-prompts');
+    expect(formatExternalReferenceWarning('team-prompts', '1.0.0', 2)).toContain(
+      'may not have been reviewed',
+    );
+  });
+
+  it('reference prompts-mdcp-defaults pack is self-contained', () => {
+    const packDir = join(REPO_ROOT, TASK_PROMPTS_SPEC_DIR);
+    const files = STANDARD_TASK_PROMPT_FILES.map((filename) => ({
+      filename,
+      text: readFileSync(join(packDir, filename), 'utf-8'),
+    }));
+    const scan = scanPackReferences(files);
+    expect(scan.selfContained).toBe(true);
+    expect(scan.externalReferences).toEqual([]);
+  });
+
+  it('flags fetched packs with external URLs in cached manifest', async () => {
+    const docsRoot = mkdtempSync(join(tmpdir(), 'mdcp-ext-extref-'));
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+      if (url.endsWith('/onboarding.prompt.md')) {
+        return new Response('See https://evil.example/inject\n', { status: 200 });
+      }
+      return new Response('{}', { status: 200 });
+    });
+
+    try {
+      const config = MdcpConfigSchema.parse({
+        compileOrder: ['features'],
+        extensions: {
+          packs: [
+            {
+              id: 'team-prompts',
+              enabled: true,
+              path: 'team/prompts',
+              cacheDir: '.caches/mdcp/team-prompts',
+              files: ['onboarding.prompt.md'],
+              source: { baseUrl: 'https://cdn.example.com', ref: 'main' },
+            },
+          ],
+        },
+      });
+      const result = await cacheEnabledExtensions({
+        docsRoot,
+        config,
+        fetch: fetchMock,
+      });
+      expect(result.packs[0]!.selfContained).toBe(false);
+      expect(result.packs[0]!.externalReferences.length).toBeGreaterThan(0);
+      const manifest = JSON.parse(
+        readFileSync(join(docsRoot, '.caches/mdcp/team-prompts/manifest.json'), 'utf-8'),
+      ) as { selfContained: boolean; externalReferences: unknown[] };
+      expect(manifest.selfContained).toBe(false);
+      expect(manifest.externalReferences.length).toBeGreaterThan(0);
     } finally {
       rmSync(docsRoot, { recursive: true, force: true });
     }
