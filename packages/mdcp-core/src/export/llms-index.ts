@@ -1,13 +1,7 @@
 import { resolve } from 'node:path';
 import type { MdcpConfig } from '../config/schema.js';
 import { abbreviateProtocolVersion } from './protocol-version.js';
-import {
-  defaultLlmsIndexFilename,
-  LLMS_INDEX_PROFILE_DEV,
-  LLMS_INDEX_PROFILE_STABLE,
-  LLMS_INDEX_PROTOCOL_VERSION,
-  LLMS_INDEX_SPEC_DIR,
-} from './llms-index-artifacts.js';
+import { defaultLlmsIndexFilename, LLMS_INDEX_PROTOCOL_VERSION } from './llms-index-artifacts.js';
 
 export { defaultLlmsIndexFilename, LLMS_INDEX_PROTOCOL_VERSION } from './llms-index-artifacts.js';
 
@@ -18,124 +12,98 @@ export interface LlmsIndexOptions {
   scripts?: Record<string, string>;
 }
 
-const STATIC_SECTIONS = `## What MDCP is
+const STATIC_SECTIONS = `## Sharded documentation
 
-**MarkDown Context Protocol** — a protocol for repository documentation context. Shards are the **source of truth**; compiled monoliths and publish outputs are **generated**. Documentation carries context and the high-level plan; code carries implementation detail.
+**MarkDown Context Protocol (MDCP)** keeps documentation in small **shard** files — one topic per \`.md\`. Guide manifests (\`index.md\` or \`shards.md\`) define compile order. Monoliths and publish outputs are **generated**; shards are the source of truth. Documentation holds context and plan; code holds implementation.
 
-## Adoption path
+## Getting started
 
-1. **Copy this file** into your docs root, fetch the canonical spec artifact (\`mdcp export --llms-index --fetch\`), or generate with \`mdcp export --llms-index\` after config exists. **Do not hand-edit** the fetched \`mdcp.v*.llms.txt\` for repo-specific content — use \`docs/extensions/\` and your shards instead.
-2. **Start a glossary** under \`docs/glossary/\` — define domain terms and disambiguate legacy names before feature shards.
-3. **Shard your docs** — one topic per \`.md\` file; list shards in each guide's \`index.md\` or \`shards.md\`.
-4. **Add \`mdcp.config.json\`** — set \`compileOrder\`, per-guide \`compile.outputFile\` when publishing READMEs.
+1. Keep this file in your docs root as the agent entrypoint.
+2. **Glossary first** — \`docs/glossary/\`, one term per shard; disambiguate legacy names before feature shards.
+3. **Shard your docs** — split monoliths into topic files; list them in each guide manifest.
+4. **Wire \`mdcp.config.json\`** — \`compileOrder\`, optional per-guide \`compile.outputFile\` for published READMEs.
 5. **Compile and validate** — \`mdcp compile\` then \`mdcp check\`.
-6. **Query on demand** — use the commands below; do not dump entire guides into agent context.
+6. **Query on demand** — use the commands below; load one shard at a time, not entire guides.
 
-Bootstrap without tooling: split an existing monolith manually or with \`mdcp shard\` when a \`source\` monolith is configured.
+No tooling yet? Split manually or run \`mdcp shard\` when a \`source\` monolith is configured.
 
 ## Repo layout (template)
 
 \`\`\`text
 docs/
-  mdcp.v1.llms.txt          # this file (agent entrypoint)
-  mdcp.config.json          # wiring (after adoption)
-  glossary/                 # shared terms (start here)
-    index.md                # master index
-    index-*.md              # optional sub-indexes (group N terms each)
-    *.md                    # one term per shard
-  features/                 # capabilities, design, acceptance criteria
-    index.md
-    *.md                      # shards
-  client/                   # end-user value (optional)
-  developer/                # repo workflow (optional)
+  mdcp.v0.4.llms.txt       # this file — agent entrypoint
+  mdcp.config.json         # compile wiring
+  glossary/
+    index.md               # term manifest
+    *.md                   # one term per shard
+  features/
+    index.md               # guide manifest
+    *.md                   # topic shards
+  client/                  # optional — end-user docs
+  developer/               # optional — repo workflow
+  extensions/              # optional — repo-specific agent rules
 \`\`\`
 
-## Query instructions (prefer smallest context)
+## Query context (prefer smallest unit)
 
 When \`mdcp\` is installed and configured:
 
-1. **Section lookup** (smallest useful unit):
+1. **Section lookup** — smallest useful hit:
    \`\`\`bash
    mdcp refs lookup "<topic>" --format json --config <config> --docs-root <docs-root>
    \`\`\`
-2. **Read one shard** — open the \`.md\` path from lookup or manifest; do not read whole monoliths.
-3. **Broader context** (last resort):
+2. **Read one shard** — open the \`.md\` path from lookup or the guide manifest; never read whole monoliths into context.
+3. **Broader export** (last resort):
    \`\`\`bash
    mdcp export --llm --stdout --config <config> --docs-root <docs-root>
    \`\`\`
-4. **Regenerate or refresh this index** after config changes:
+4. **Refresh this index** after \`compileOrder\` or script changes:
    \`\`\`bash
    mdcp export --llms-index --config <config> --docs-root <docs-root>
    \`\`\`
-   Pin immutable protocol bootstrap from the mdcp spec directory (day zero, no config required):
-   \`\`\`bash
-   mdcp export --llms-index --fetch --fetch-profile stable --docs-root <docs-root>
-   mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>
-   mdcp export --llms-index --fetch --fetch-ref v1.0.0 --fetch-profile stable --docs-root <docs-root>
-   \`\`\`
-   Override upstream repo during protocol development:
-   \`\`\`bash
-   mdcp export --llms-index --fetch --fetch-repo owner/fork --fetch-ref my-branch --fetch-profile dev --docs-root <docs-root>
-   \`\`\`
-   Canonical artifacts live in the mdcp repository at \`${LLMS_INDEX_SPEC_DIR}/\` — adopted \`mdcp.v{n}.llms.txt\`, in-progress \`mdcp.v{n}--draft.llms.txt\`, symlinks \`${LLMS_INDEX_PROFILE_STABLE}\` (stable) and \`${LLMS_INDEX_PROFILE_DEV}\` (draft).
+
+Day zero (no local config): \`mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>\` — also caches versioned task prompts under \`.caches/mdcp/prompts/\`.
 
 ## Glossary
 
-Maintain \`docs/glossary/\` for acronyms and domain vocabulary — one term per \`.md\` shard, grouped by \`index.md\` and optional sub-indexes (\`index-protocol.md\`, \`index-format.md\`, etc.). Link \`../glossary/index.md\` from each guide manifest; transitive manifest links pull term shards into compile output. When the same term means different things in legacy systems, add a disambiguation entry and link from feature shards on first use.
+Maintain \`docs/glossary/\` for shared vocabulary — one term per shard, grouped by \`index.md\`. Link \`../glossary/index.md\` from guide manifests so terms compile into the guides that need them. When a term meant different things in legacy systems, add a disambiguation shard and link it on first use in feature docs.
 
 ## Validation
 
-Run \`mdcp check\` before trusting compiled output. Shards and manifest are authoritative — do not hand-edit generated compile output.
+Run \`mdcp check\` before trusting compiled output. Do not hand-edit generated compile output — fix shards and recompile.
 
-## Agent task prompts
+## Task prompts
 
-Task-type prompts in \`examples/prompts/\` are part of the MDCP 1.0 authoring profile (normative table in \`docs/features/protocol/agent-task-prompts.md\`). Each **MUST** set \`WORK_ITEM\` and \`WORK_ITEM_LOOKUP\` before sending. Review work **MUST** use \`review-task.prompt.md\` and **MAY** set \`REVIEW_NODE=\` in the Replace block.
+Versioned **meta-level** authoring instructions (feature, doc-only, design, UX, review, bootstrap). Host agent systems **MAY** replace them with local prompts; written shards **SHOULD** still follow the layout and validation in this index.
 
-| Task | Prompt |
-| ---- | ------ |
-| Bootstrap pipeline | \`getting-started-with-mdcp.prompt.md\` |
-| Feature (docs + code) | \`feature-level-task.prompt.md\` |
-| Documentation only | \`doc-only-task.prompt.md\` |
-| Architecture / ADR | \`design-architecture-task.prompt.md\` |
-| End-user UX | \`ux-task.prompt.md\` |
-| Architecture / security review | \`review-task.prompt.md\` |
+After \`mdcp export --llms-index --fetch\`, prompts are cached at \`.caches/mdcp/prompts/\` (see \`manifest.json\`). Upstream source: \`spec/task-prompts/\` in the mdcp repository.
 
-Workflow: read this index → load \`WORK_ITEM\` via lookup shard → edit \`features/\`, \`client/\`, \`developer/\`, \`review/\`, or \`docs/extensions/\` shards → \`mdcp check\`.
+Set \`WORK_ITEM\` and \`WORK_ITEM_LOOKUP\` in each prompt header before sending.
 
-## Extensions and archetypes
+| Task | Cached path |
+| ---- | ----------- |
+| Bootstrap sharded docs | \`.caches/mdcp/prompts/getting-started-with-mdcp.prompt.md\` |
+| Feature (docs + code) | \`.caches/mdcp/prompts/feature-level-task.prompt.md\` |
+| Documentation only | \`.caches/mdcp/prompts/doc-only-task.prompt.md\` |
+| Architecture / ADR | \`.caches/mdcp/prompts/design-architecture-task.prompt.md\` |
+| End-user UX | \`.caches/mdcp/prompts/ux-task.prompt.md\` |
+| Review | \`.caches/mdcp/prompts/review-task.prompt.md\` |
 
-The protocol core stays versioned and broadly applicable. Project-specific rules (doc framework formatting, pointer-shard conventions, proprietary review gates) belong in \`docs/extensions/\` or published packs under \`spec/extensions/\` — fork, use locally, or contribute back (no obligation under MIT).
+Typical flow: read this index → load cached prompt → \`refs lookup\` for \`WORK_ITEM\` scope → edit shards under \`features/\`, \`client/\`, \`developer/\`, or \`review/\` → \`mdcp check\`.
 
-| Layer | Location |
-| ----- | -------- |
-| Protocol index | \`spec/llms-index/\` — do not patch locally; refetch or PR upstream |
-| Local extension | \`docs/extensions/\` in your repo |
-| Shared archetypes | \`spec/extensions/archetypes/\` (OSS library, product docs site, …) |
+## Repo-specific guidance
 
-Read \`docs/features/protocol/extensions-and-archetypes.md\` for SOLID principles and governance vision.
+Rules that apply only to your project (formatting quirks, review gates, pointer-shard conventions) belong in \`docs/extensions/\` shards — not in this bootstrap file.
 
-## Integration with other doc systems
+## Downstream publish
 
-MDCP shards are **GFM**. You do not need to abandon Pandoc, MkDocs, Docusaurus, or other publish stacks:
-
-- Compile to GFM monolith or per-guide outputs; feed downstream pipelines from compiled files.
-- Keep separate guides for agent-only context vs public site content when scopes differ.
-
-## Filename versioning
-
-- Protocol version \`1.0.0.0\` may appear as \`mdcp.v1.llms.txt\` or \`mdcp.v1.0.0.0.llms.txt\` (trailing \`.0\` segments omitted in filename).
-- In-progress spec work uses \`mdcp.v{n}--draft.llms.txt\` until adopted; then publish immutable \`mdcp.v{n}.llms.txt\` under \`${LLMS_INDEX_SPEC_DIR}/\`.
-- In-file \`mdcp-llms-index\` header always uses the full four-part version.
-
-## Normative spec
-
-Immutable llms-index artifacts: \`${LLMS_INDEX_SPEC_DIR}/\` (symlinks \`${LLMS_INDEX_PROFILE_STABLE}\`, \`${LLMS_INDEX_PROFILE_DEV}\`). Extensions: \`spec/extensions/\`. Authoring profile: \`docs/features/protocol/agent-task-prompts.md\`. Full specification: \`docs/features/protocol/mdcp-1.0-spec.md\`.
+Shards are **GFM**. Compiled output can feed MkDocs, Docusaurus, Pandoc, or other site generators. Keep separate guides when agent-only context and public-site content differ in scope.
 `;
 
 function formatRepoSection(config: MdcpConfig, options: LlmsIndexOptions): string {
   const lines: string[] = ['## This repository', ''];
 
-  lines.push(`- **Protocol version:** ${LLMS_INDEX_PROTOCOL_VERSION}`);
+  lines.push(`- **Index version:** ${LLMS_INDEX_PROTOCOL_VERSION}`);
   if (options.configPath) {
     lines.push(`- **Config:** \`${options.configPath}\``);
   }
@@ -172,7 +140,7 @@ export function buildLlmsIndex(config?: MdcpConfig, options: LlmsIndexOptions = 
   const abbrev = abbreviateProtocolVersion(LLMS_INDEX_PROTOCOL_VERSION);
   const header = `mdcp-llms-index: ${LLMS_INDEX_PROTOCOL_VERSION}`;
 
-  const parts = [header, '', `# MDCP agent index (v${abbrev})`, ''];
+  const parts = [header, '', `# Sharded docs agent index (v${abbrev})`, ''];
 
   if (config) {
     parts.push(formatRepoSection(config, options));
@@ -186,7 +154,7 @@ export function buildLlmsIndex(config?: MdcpConfig, options: LlmsIndexOptions = 
 export function getLlmsIndexOutputFile(config: MdcpConfig, docsRoot: string): string {
   const file =
     config.export?.llmsIndex?.outputFile ??
-    defaultLlmsIndexFilename(config.protocolVersion ?? '1.0.0.0');
+    defaultLlmsIndexFilename(config.protocolVersion ?? LLMS_INDEX_PROTOCOL_VERSION);
   if (file.startsWith('/')) return file;
   return resolve(docsRoot, file);
 }
