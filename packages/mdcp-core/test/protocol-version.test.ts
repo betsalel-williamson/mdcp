@@ -3,6 +3,7 @@ import {
   abbreviateProtocolVersion,
   expandProtocolVersion,
   parseLlmsIndexFilename,
+  isLlmsIndexDraftFilename,
 } from '../src/export/protocol-version.js';
 
 describe('protocol version helpers', () => {
@@ -21,6 +22,12 @@ describe('protocol version helpers', () => {
     expect(parseLlmsIndexFilename('mdcp.v1.llms.txt')).toBe('1.0.0.0');
     expect(parseLlmsIndexFilename('mdcp.v1.0.0.0.llms.txt')).toBe('1.0.0.0');
     expect(parseLlmsIndexFilename('mdcp.v1.2.llms.txt')).toBe('1.2.0.0');
+    expect(parseLlmsIndexFilename('mdcp.v1--draft.llms.txt')).toBe('1.0.0.0');
     expect(parseLlmsIndexFilename('llms.txt')).toBeNull();
+  });
+
+  it('detects draft filenames', () => {
+    expect(isLlmsIndexDraftFilename('mdcp.v1--draft.llms.txt')).toBe(true);
+    expect(isLlmsIndexDraftFilename('mdcp.v1.llms.txt')).toBe(false);
   });
 });

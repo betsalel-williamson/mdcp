@@ -16,9 +16,14 @@ export function abbreviateProtocolVersion(version: string): string {
   return parts.join('.');
 }
 
-/** Parse `mdcp.v{version}.llms.txt` filename; returns normalized four-part version or null. */
+/** Parse `mdcp.v{version}[--draft].llms.txt`; returns normalized four-part version or null. */
 export function parseLlmsIndexFilename(filename: string): string | null {
-  const match = /^mdcp\.v([\d.]+)\.llms\.txt$/i.exec(filename);
+  const match = /^mdcp\.v([\d.]+)(?:--draft)?\.llms\.txt$/i.exec(filename);
   if (!match) return null;
   return expandProtocolVersion(match[1]!);
+}
+
+/** True when filename uses the in-progress `--draft` suffix (not yet adopted as stable). */
+export function isLlmsIndexDraftFilename(filename: string): boolean {
+  return /^mdcp\.v[\d.]+--draft\.llms\.txt$/i.test(filename);
 }

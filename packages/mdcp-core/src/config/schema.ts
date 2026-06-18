@@ -159,6 +159,19 @@ export const MdcpConfigSchema = z.object({
         .object({
           /** Output path relative to docs root (default mdcp.v1.llms.txt). */
           outputFile: z.string().optional(),
+          /** Fetch canonical bootstrap from GitHub instead of generating locally. */
+          upstream: z
+            .object({
+              /** GitHub owner/repo (default betsalel-williamson/mdcp). */
+              repo: z.string().default('betsalel-williamson/mdcp'),
+              /** `main`, `latest` (latest release tag), branch, or tag (e.g. v1.0.0). */
+              ref: z.string().default('main'),
+              /** Path in upstream repo; default spec/llms-index/vstable. */
+              path: z.string().optional(),
+              /** `stable` (vstable) or `dev` (vdev) under spec/llms-index/. */
+              profile: z.enum(['stable', 'dev']).optional(),
+            })
+            .optional(),
         })
         .optional(),
     })

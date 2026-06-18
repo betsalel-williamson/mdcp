@@ -25,6 +25,9 @@ import {
   getLlmExportOptions,
   buildLlmsIndex,
   getLlmsIndexOutputFile,
+  defaultLlmsIndexFilename,
+  fetchLlmsIndexFromUpstream,
+  resolveLlmsIndexFetchOptions,
   findPeerBinary,
   runPeer,
   shardFromMonolith,
@@ -54,6 +57,14 @@ function getDocsRoot(opts: GlobalOpts): string {
 
 function getConfig(opts: GlobalOpts) {
   return loadConfig(opts.config, process.cwd());
+}
+
+function tryLoadConfig(opts: GlobalOpts): MdcpConfig | undefined {
+  try {
+    return loadConfig(opts.config, process.cwd());
+  } catch {
+    return undefined;
+  }
 }
 
 function valeScanPaths(config: MdcpConfig, docsRoot: string): string[] {
@@ -247,13 +258,55 @@ program
   .description('Export compiled document')
   .option('--llm', 'Token-optimized output for LLM context')
   .option('--llms-index', 'Write mdcp.v*.llms.txt agent index for docs root')
+  .option('--fetch', 'Fetch mdcp.v*.llms.txt from upstream GitHub (see --fetch-repo, --fetch-ref)')
+  .option('--fetch-repo <repo>', 'Upstream owner/repo (default betsalel-williamson/mdcp)')
+  .option(
+    '--fetch-ref <ref>',
+    'Upstream git ref: main, latest (release tag), branch, or tag (e.g. v1.0.0)',
+  )
+  .option(
+    '--fetch-profile <profile>',
+    'Spec artifact profile: stable (vstable) or dev (vdev); default stable',
+  )
+  .option('--fetch-path <path>', 'Path in upstream repo (default spec/llms-index/vstable or vdev)')
+  .option('--fetch-local', 'Read from local spec/llms-index/ in repo root instead of GitHub')
   .option('--stdout', 'Write to stdout instead of file')
-  .action((exportOpts, cmd) => {
+  .action(async (exportOpts, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
-    const config = getConfig(opts);
     const docsRoot = getDocsRoot(opts);
 
     if (exportOpts.llmsIndex) {
+      if (exportOpts.fetch) {
+        const config = tryLoadConfig(opts);
+        const fetchOptions = resolveLlmsIndexFetchOptions(config, {
+          repo: exportOpts.fetchRepo,
+          ref: exportOpts.fetchRef,
+          path: exportOpts.fetchPath,
+          profile: exportOpts.fetchProfile,
+        });
+        if (exportOpts.fetchLocal) {
+          fetchOptions.localRepoRoot = process.cwd();
+        }
+        const { text, url, ref } = await fetchLlmsIndexFromUpstream(fetchOptions);
+        if (exportOpts.stdout) {
+          process.stdout.write(text);
+          return;
+        }
+        const outPath = config
+          ? getLlmsIndexOutputFile(config, docsRoot)
+          : resolve(docsRoot, defaultLlmsIndexFilename());
+        const { backupPath } = writeOutputFile(outPath, text, {
+          docsRoot,
+          outputDir: config?.outputDir ?? '_build',
+          backup: config ? backupOptions(config, opts) : resolveBackupOptions(undefined, opts),
+        });
+        if (backupPath) console.log(`backed up → ${backupPath}`);
+        console.log(`fetched ${url} (${ref})`);
+        console.log(`→ ${outPath}`);
+        return;
+      }
+
+      const config = getConfig(opts);
       let scripts: Record<string, string> | undefined;
       try {
         const pkgPath = resolve(process.cwd(), 'package.json');
@@ -283,6 +336,7 @@ program
       return;
     }
 
+    const config = getConfig(opts);
     let text = compileToString(config, docsRoot, opts);
     if (exportOpts.llm) {
       text = stripForLlm(text, getLlmExportOptions(config));

@@ -109,16 +109,39 @@ export {
 export { stripForLlm, getLlmExportOptions } from './export/llm.js';
 export {
   buildLlmsIndex,
-  defaultLlmsIndexFilename,
   getLlmsIndexOutputFile,
   getLlmsIndexOptions,
-  LLMS_INDEX_PROTOCOL_VERSION,
   type LlmsIndexOptions,
 } from './export/llms-index.js';
+export {
+  LLMS_INDEX_PROTOCOL_VERSION,
+  LLMS_INDEX_SPEC_DIR,
+  LLMS_INDEX_PROFILE_STABLE,
+  LLMS_INDEX_PROFILE_DEV,
+  defaultLlmsIndexFilename,
+  resolveLlmsIndexProfilePath,
+  resolveLlmsIndexSpecPath,
+  resolveLlmsIndexSpecFile,
+  type LlmsIndexProfile,
+  type LlmsIndexFilenameOptions,
+} from './export/llms-index-artifacts.js';
+export {
+  DEFAULT_LLMS_INDEX_UPSTREAM_REPO,
+  DEFAULT_LLMS_INDEX_UPSTREAM_REF,
+  buildGithubRawUrl,
+  parseLlmsIndexHeader,
+  resolveUpstreamPath,
+  fetchLlmsIndexFromUpstream,
+  resolveLlmsIndexFetchOptions,
+  type LlmsIndexUpstreamOptions,
+  type LlmsIndexFetchOptions,
+  type LlmsIndexFetchResult,
+} from './export/llms-index-fetch.js';
 export {
   abbreviateProtocolVersion,
   expandProtocolVersion,
   parseLlmsIndexFilename,
+  isLlmsIndexDraftFilename,
 } from './export/protocol-version.js';
 export { findPeerBinary, runPeer, type PeerTool } from './peers/resolve.js';
 export { shardFromMonolith, runMdTree, type ShardGuideMapping } from './shard/orchestrator.js';

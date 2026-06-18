@@ -29,5 +29,14 @@ describe('buildLlmsIndex', () => {
   it('default filename abbreviates protocol version', () => {
     expect(defaultLlmsIndexFilename('1.0.0.0')).toBe('mdcp.v1.llms.txt');
     expect(defaultLlmsIndexFilename('1.2.0.0')).toBe('mdcp.v1.2.llms.txt');
+    expect(defaultLlmsIndexFilename('1.0.0.0', { draft: true })).toBe('mdcp.v1--draft.llms.txt');
+  });
+
+  it('includes review-task in agent prompt table', () => {
+    const text = buildLlmsIndex();
+    expect(text).toContain('review-task.prompt.md');
+    expect(text).toContain('agent-task-prompts.md');
+    expect(text).toContain('docs/extensions/');
+    expect(text).toContain('Do not hand-edit');
   });
 });
