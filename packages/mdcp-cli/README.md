@@ -25,7 +25,7 @@ Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile
 
 ### Get started
 
-First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../spec/task-prompts/getting-started-with-mdcp.prompt.md) (or load from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
+First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) (or load from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
 
 For command and capability depth, read the [feature catalog](../../docs/features/feature-catalog.md).
 
@@ -33,30 +33,30 @@ For command and capability depth, read the [feature catalog](../../docs/features
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
-**Source of truth:** versioned prompts live under [spec/task-prompts/](../../spec/task-prompts). `mdcp export --llms-index --fetch` caches them at `.caches/mdcp/prompts/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). `mdcp export --llms-index --fetch` caches them at `.caches/mdcp/prompts/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ### Prompt library
 
-Copy from [spec/task-prompts/](../../spec/task-prompts). Index: [README.md](../../spec/task-prompts/README.md).
+Copy from [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). Index: [README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
 
-- [getting-started-with-mdcp.prompt.md](../../spec/task-prompts/getting-started-with-mdcp.prompt.md) — first-time pipeline setup in a consumer repo
-- [doc-only-task.prompt.md](../../spec/task-prompts/doc-only-task.prompt.md) — documentation-only work
-- [design-architecture-task.prompt.md](../../spec/task-prompts/design-architecture-task.prompt.md) — RFCs, ADRs, data models
-- [feature-level-task.prompt.md](../../spec/task-prompts/feature-level-task.prompt.md) — feature work, docs-first then TDD
-- [ux-task.prompt.md](../../spec/task-prompts/ux-task.prompt.md) — UI flows and client-guide updates
-- [review-task.prompt.md](../../spec/task-prompts/review-task.prompt.md) — architecture and security review; one node per PR; atomic findings
+- [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) — first-time pipeline setup in a consumer repo
+- [doc-only-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/doc-only-task.prompt.md) — documentation-only work
+- [design-architecture-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/design-architecture-task.prompt.md) — RFCs, ADRs, data models
+- [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md) — feature work, docs-first then TDD
+- [ux-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/ux-task.prompt.md) — UI flows and client-guide updates
+- [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md) — architecture and security review; one node per PR; atomic findings
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
 ### Bootstrap prompt (copy-paste)
 
-First-time setup for a consumer repo: [getting-started-with-mdcp.prompt.md](../../spec/task-prompts/getting-started-with-mdcp.prompt.md).
+First-time setup for a consumer repo: [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md).
 
 Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring.
 
 ### Follow-up prompts
 
-Use these after the pipeline exists (inline here — not duplicated in `spec/task-prompts/`).
+Use these after the pipeline exists (inline here — not duplicated in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`).
 
 **Add documentation for a new feature:**
 
@@ -81,7 +81,7 @@ I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using
 
 ### Docs-first feature workflow
 
-Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../spec/task-prompts/feature-level-task.prompt.md).
+Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md).
 
 #### Workflow best practices
 
@@ -95,12 +95,12 @@ Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`,
 | Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
 | Implement | Code + tests     | TDD against the documented contract                    |
 
-For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](../../spec/task-prompts/design-architecture-task.prompt.md).
+For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/design-architecture-task.prompt.md).
 
 #### Sharding keeps context lean
 
 - **Core workflow** — bootstrap prompt and repo script wiring
-- **On demand** — task-type prompts from `.caches/mdcp/prompts/` or `spec/task-prompts/`; load only what the current task needs
+- **On demand** — task-type prompts from `.caches/mdcp/prompts/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; load only what the current task needs
 - **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
 
 Prefer structured prompts over permanently importing rigid always-on rules into every repo.
@@ -118,17 +118,17 @@ This repository documents its stack in [Agent work-item tracking](../../DEVELOPE
 
 ### Task-type prompt templates
 
-- [doc-only-task.prompt.md](../../spec/task-prompts/doc-only-task.prompt.md) — technical writers; documentation, tutorials, guides
-- [design-architecture-task.prompt.md](../../spec/task-prompts/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
-- [feature-level-task.prompt.md](../../spec/task-prompts/feature-level-task.prompt.md) — server-side or full-stack feature work
-- [ux-task.prompt.md](../../spec/task-prompts/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
-- [review-task.prompt.md](../../spec/task-prompts/review-task.prompt.md) — security and systems review; atomic findings, checklist evidence, feature stubs
+- [doc-only-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/doc-only-task.prompt.md) — technical writers; documentation, tutorials, guides
+- [design-architecture-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
+- [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md) — server-side or full-stack feature work
+- [ux-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
+- [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md) — security and systems review; atomic findings, checklist evidence, feature stubs
 
 ### Toolchain integration
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — paste prompts from `.caches/mdcp/prompts/` or `spec/task-prompts/`; reference shard files for context; run the repo's doc check before ending a turn
+- **Cursor / Composer** — paste prompts from `.caches/mdcp/prompts/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — `mdcp refs lookup "topic" --format json` before inserting fragment links
@@ -187,7 +187,7 @@ When reviewing an agent's documentation PR:
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [Agent integration](#agent-integration) — npm scripts quick reference
-- [spec/task-prompts/](../../spec/task-prompts) — versioned copy-paste prompt files
+- [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0) — versioned copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
 - [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
@@ -233,7 +233,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ### Quick start
 
-**Agent index (optional day zero)** — fetch the draft bootstrap into your docs root (`mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs`). Agents read it for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/task-prompts/](../../spec/task-prompts/README.md).
+**Agent index (optional day zero)** — fetch the draft bootstrap into your docs root (`mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs`). Agents read it for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 

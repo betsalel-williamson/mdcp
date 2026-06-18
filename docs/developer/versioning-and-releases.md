@@ -49,6 +49,18 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 
 **Path to 1.0.0:** npm and protocol graduate together when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
 
+### Open alpha (0.4.0) release checklist
+
+While developing on a feature branch, this repo **dogfoods** upstream refs pointed at that branch (see [`docs/mdcp.config.json`](../mdcp.config.json) — `protocol.ref`). Push the branch before remote `--fetch` can resolve extension packs and llms-index artifacts.
+
+**Before tagging `v0.4.0` and publishing the open alpha**, update pinned refs from the working branch to the alpha release tag:
+
+- **`docs/mdcp.config.json`** — `protocol.ref`: feature branch → `v0.4.0`
+- **`spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md`** — phase-2 example `ref`: feature branch → `v0.4.0`
+- **Consumer install docs** — `--fetch-ref` examples → `v0.4.0` + `--fetch-profile alpha`
+
+Then run `pnpm spec:sync-llms-index`, `pnpm docs:compile:repo`, and verify `pnpm docs:check`. Protocol version stays **`0.4.0.0`**; only git `ref` pins move from branch to tag.
+
 ## When to add a changeset
 
 Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR changes:

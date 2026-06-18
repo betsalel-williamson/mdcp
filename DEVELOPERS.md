@@ -42,7 +42,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ### Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([spec/task-prompts/](spec/task-prompts)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type prompts ([spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ### Daily commands
 
@@ -80,7 +80,7 @@ CI runs the full gate: `pnpm run check`.
 
 ## Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/task-prompts/](spec/task-prompts) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 
@@ -228,6 +228,12 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
+#### Upstream refs (dogfood)
+
+While the open-alpha work lands on a feature branch, `mdcp.config.json` sets **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** to that branch so `mdcp export --llms-index --fetch` and extension cache pulls match in-flight spec changes after you push.
+
+At **npm 0.4.0** publish, retarget both refs to **`v0.4.0`** — see [Open alpha (0.4.0) release checklist](#open-alpha-040-release-checklist). Local `--fetch-local` from repo root still copies from `spec/` without GitHub.
+
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](./packages/mdcp-core/README.md#publish-relative-link-rewriting).
 
 Repo scripts use `--config docs/mdcp.config.json --docs-root docs`: the config path is resolved from the **repo root** (invocation directory), while `--docs-root docs` sets the shard tree root. See [Config essentials — `--config` vs `--docs-root`](./packages/mdcp-cli/README.md#--config-vs---docs-root).
@@ -308,6 +314,18 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 | **Roadmap V1 phase** | Reference implementation shipped; not a semver 1.0 stability promise |
 
 **Path to 1.0.0:** npm and protocol graduate together when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
+
+#### Open alpha (0.4.0) release checklist
+
+While developing on a feature branch, this repo **dogfoods** upstream refs pointed at that branch (see [`docs/mdcp.config.json`](docs/mdcp.config.json) — `protocol.ref`). Push the branch before remote `--fetch` can resolve extension packs and llms-index artifacts.
+
+**Before tagging `v0.4.0` and publishing the open alpha**, update pinned refs from the working branch to the alpha release tag:
+
+- **`docs/mdcp.config.json`** — `protocol.ref`: feature branch → `v0.4.0`
+- **`spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md`** — phase-2 example `ref`: feature branch → `v0.4.0`
+- **Consumer install docs** — `--fetch-ref` examples → `v0.4.0` + `--fetch-profile alpha`
+
+Then run `pnpm spec:sync-llms-index`, `pnpm docs:compile:repo`, and verify `pnpm docs:check`. Protocol version stays **`0.4.0.0`**; only git `ref` pins move from branch to tag.
 
 ### When to add a changeset
 

@@ -8,10 +8,23 @@ mdcp-llms-index: 0.4.0.0
 
 ## Getting started
 
+**Bootstrap (two phases until config exists):**
+
+1. **Day zero** — fetch agent index + default extension caches (no config yet):
+   ```bash
+   mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>
+   ```
+2. **Pin versions** — add `mdcp.config.json` with `protocolVersion` and `extensions.protocolVersion` matching the `mdcp-llms-index:` header in the fetched file. Set `extensions.defaultSource.ref` to the release tag for that protocol (e.g. `0.4.0.0` → `v0.4.0`). Re-fetch with `--config` so extension `manifest.json` files record the pinned version:
+   ```bash
+   mdcp export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
+   ```
+
+Then:
+
 1. Keep this file in your docs root as the agent entrypoint.
 2. **Glossary first** — `docs/glossary/`, one term per shard; disambiguate legacy names before feature shards.
 3. **Shard your docs** — split monoliths into topic files; list them in each guide manifest.
-4. **Wire `mdcp.config.json`** — `compileOrder`, optional per-guide `compile.outputFile` for published READMEs.
+4. **Wire `mdcp.config.json`** — `compileOrder`, `extensions` packs, optional per-guide `compile.outputFile`.
 5. **Compile and validate** — `mdcp compile` then `mdcp check`.
 6. **Query on demand** — use the commands below; load one shard at a time, not entire guides.
 
@@ -52,7 +65,7 @@ When `mdcp` is installed and configured:
    mdcp export --llms-index --config <config> --docs-root <docs-root>
    ```
 
-Day zero (no local config): `mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>` — also caches versioned task prompts under `.caches/mdcp/prompts/`.
+Day zero (no local config): `mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>` — caches default extension packs. After `mdcp.config.json` exists, pin `protocolVersion` / `extensions.protocolVersion` and re-fetch with a release `ref` (see **Bootstrap** above).
 
 ## Glossary
 
@@ -66,7 +79,7 @@ Run `mdcp check` before trusting compiled output. Do not hand-edit generated com
 
 Versioned **meta-level** authoring instructions (feature, doc-only, design, UX, review, bootstrap). Host agent systems **MAY** replace them with local prompts; written shards **SHOULD** still follow the layout and validation in this index.
 
-After `mdcp export --llms-index --fetch`, prompts are cached at `.caches/mdcp/prompts/` (see `manifest.json`). Upstream source: `spec/task-prompts/` in the mdcp repository.
+After fetch, enabled extension packs from `mdcp.config.json` are cached under each pack's `cacheDir` (default `prompts-mdcp-defaults` → `.caches/mdcp/prompts/`). Each `manifest.json` records `protocolVersion` — it **MUST** match `extensions.protocolVersion` in config. Default source is GitHub raw (`ref` pinned to the release tag for that protocol, e.g. `v0.4.0` for `0.4.0.0`); packs **MAY** set `source.baseUrl` for other hosts.
 
 Set `WORK_ITEM` and `WORK_ITEM_LOOKUP` in each prompt header before sending.
 

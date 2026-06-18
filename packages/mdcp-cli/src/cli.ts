@@ -28,9 +28,9 @@ import {
   defaultLlmsIndexFilename,
   fetchLlmsIndexFromUpstream,
   resolveLlmsIndexFetchOptions,
-  fetchTaskPromptsFromUpstream,
-  copyTaskPromptsFromLocalSpec,
-  TASK_PROMPTS_SPEC_DIR,
+  cacheEnabledExtensions,
+  copyEnabledExtensionsFromLocalSpec,
+  resolveEnabledExtensionPacks,
   parseLlmsIndexProfile,
   findPeerBinary,
   runPeer,
@@ -294,14 +294,18 @@ program
           fetchOptions.localRepoRoot = process.cwd();
         }
         const { text, url, ref } = await fetchLlmsIndexFromUpstream(fetchOptions);
-        const promptResult = await fetchTaskPromptsFromUpstream({
-          ...fetchOptions,
+        const extResult = await cacheEnabledExtensions({
           docsRoot,
+          config,
+          localRepoRoot: fetchOptions.localRepoRoot,
           resolvedRef: ref === 'local' ? undefined : ref,
+          fetch: fetchOptions.fetch,
         });
         if (exportOpts.stdout) {
           process.stdout.write(text);
-          console.error(`→ ${promptResult.cacheDir} (${promptResult.files.length} task prompts)`);
+          for (const pack of extResult.packs) {
+            console.error(`→ ${pack.cacheDir} (${pack.files.length} files, ${pack.id})`);
+          }
           return;
         }
         const outPath = config
@@ -315,7 +319,9 @@ program
         if (backupPath) console.log(`backed up → ${backupPath}`);
         console.log(`fetched ${url} (${ref})`);
         console.log(`→ ${outPath}`);
-        console.log(`→ ${promptResult.cacheDir} (${promptResult.files.length} task prompts)`);
+        for (const pack of extResult.packs) {
+          console.log(`→ ${pack.cacheDir} (${pack.files.length} files, ${pack.id})`);
+        }
         return;
       }
 
@@ -346,10 +352,13 @@ program
       });
       if (backupPath) console.log(`backed up → ${backupPath}`);
       console.log(`→ ${outPath}`);
-      const specPromptsDir = join(process.cwd(), TASK_PROMPTS_SPEC_DIR);
-      if (existsSync(specPromptsDir)) {
-        const promptResult = copyTaskPromptsFromLocalSpec(process.cwd(), docsRoot);
-        console.log(`→ ${promptResult.cacheDir} (${promptResult.files.length} task prompts)`);
+      const enabledPacks = resolveEnabledExtensionPacks(config);
+      const hasLocalPacks = enabledPacks.some((pack) => existsSync(join(process.cwd(), pack.path)));
+      if (hasLocalPacks) {
+        const extResult = copyEnabledExtensionsFromLocalSpec(process.cwd(), docsRoot, config);
+        for (const pack of extResult.packs) {
+          console.log(`→ ${pack.cacheDir} (${pack.files.length} files, ${pack.id})`);
+        }
       }
       return;
     }

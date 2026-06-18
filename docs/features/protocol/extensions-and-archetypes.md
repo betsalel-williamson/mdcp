@@ -55,16 +55,46 @@ Published and community extensions live under [`spec/extensions/`](../../../spec
 - **Contribute back** via PR when an extension is broadly useful — we want shared archetypes to grow.
 - **No obligation** — mdcp uses **MIT**; local-only proprietary extensions are explicitly encouraged when they encode competitive or regulated workflow detail.
 
-V1 does not yet wire extensions into `mdcp.config.json`; list extension shards from your guide `index.md` like any other shard. Config hooks are planned as the extension catalog matures.
+V1 wires **extension packs** into `mdcp.config.json` — enable built-in packs (such as `prompts-mdcp-defaults`) or add custom packs with alternate `baseUrl` sources. List extension shards from your guide `index.md` like any other shard when the pack is doc-only.
+
+```json
+{
+  "protocolVersion": "0.4.0.0",
+  "protocol": {
+    "fetch": { "ref": "v0.4.0", "profile": "dev" }
+  },
+  "extensions": {
+    "packs": [
+      { "id": "prompts-mdcp-defaults", "enabled": true, "version": "0.4.0.0" },
+      {
+        "id": "team-prompts",
+        "enabled": true,
+        "path": "prompts",
+        "cacheDir": ".caches/mdcp/team-prompts",
+        "files": ["feature.prompt.md"],
+        "source": { "baseUrl": "https://cdn.example.com/my-org" }
+      }
+    ]
+  }
+}
+```
+
+**Bootstrap:** Phase 1 — `mdcp export --llms-index --fetch` without config (defaults). Phase 2 — add config with `protocol.profile` (and `protocol.ref` when not on `main`), re-fetch with `--config`.
+
+**Security:** Default fetch uses the authoritative [`betsalel-williamson/mdcp`](https://github.com/betsalel-williamson/mdcp) repo. Per-pack `source` overrides and third-party URLs are a prompt-injection risk — see [spec/extensions/SECURITY.md](../../../spec/extensions/SECURITY.md). Future work: trusted-source allowlist and sandboxed fetch.
+
+Built-in ids (such as `prompts-mdcp-defaults`) resolve paths under `spec/extensions/{id}/{version}/` from the root catalog ([FORMAT.md](../../../spec/extensions/FORMAT.md)). Each cache dir writes `manifest.json` with extension `version`, `protocolVersionRange`, upstream `ref`, and `files[]`. Revoked catalog entries **MUST NOT** be fetched.
 
 ## Archetypes
 
 An **archetype** is a documented bundle: guide layout, glossary seeds, optional prompts, and extension pointers for one project class.
 
-| Archetype                                                                   | When to use                   | Shard emphasis                                              |
-| --------------------------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------- |
-| [OSS library](../../../spec/extensions/archetypes/oss-library/)             | npm/crates publishable API    | Pointer shards to `src/`; minimal duplication of signatures |
-| [Product docs site](../../../spec/extensions/archetypes/product-docs-site/) | MkDocs, Docusaurus, VitePress | Formatting extension + client guide tier                    |
+| Archetype                                                             | Extension id             | When to use                   | Shard emphasis                                              |
+| --------------------------------------------------------------------- | ------------------------ | ----------------------------- | ----------------------------------------------------------- |
+| [OSS library](../../../spec/extensions/arch-oss-library/)             | `arch-oss-library`       | npm/crates publishable API    | Pointer shards to `src/`; minimal duplication of signatures |
+| [Product docs site](../../../spec/extensions/arch-product-docs-site/) | `arch-product-docs-site` | MkDocs, Docusaurus, VitePress | `format-*` extension + client guide tier                    |
+
+Formatting packs use the `format-*` prefix — see [format/](../../../spec/extensions/format/).
 
 Start from an archetype README, copy patterns into `docs/`, then customize under `docs/extensions/`.
 

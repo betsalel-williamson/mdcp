@@ -39,7 +39,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ## Quick start
 
-**Agent index (optional day zero)** — fetch the draft bootstrap into your docs root (`mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs`). Agents read it for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/task-prompts/](../../spec/task-prompts/README.md).
+**Agent index (optional day zero)** — fetch the draft bootstrap into your docs root (`mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs`). Agents read it for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 

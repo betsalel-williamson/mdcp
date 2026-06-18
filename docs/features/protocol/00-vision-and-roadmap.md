@@ -65,7 +65,7 @@ MDCP is **not** an MCP server. MCP delivers runtime access; MDCP enforces shard 
 
 MDCP authoring is [GFM-only](../design-constraints/gfm-scope.md). Compiled GFM output can feed Pandoc, MkDocs, Docusaurus, or other publish pipelines. Agent-only guides and publish-only guides may differ in scope.
 
-Task-type prompts in `spec/task-prompts/` are part of the V1 authoring profile — [Agent task prompts](./agent-task-prompts.md).
+Task-type prompts in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` are part of the V1 authoring profile — [Agent task prompts](./agent-task-prompts.md).
 
 ## Related issues
 

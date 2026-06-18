@@ -42,8 +42,17 @@ mdcp export --llms-index --fetch --fetch-local --fetch-profile dev --docs-root d
 
 Config:
 
-- `export.llmsIndex.outputFile` — default `mdcp.v0.4.llms.txt` under docs root
-- `export.llmsIndex.upstream` — default fetch source (`repo`, `ref`, `profile: alpha|dev`, optional `path`)
+Config (optional after day zero):
+
+- `protocol.profile` — `alpha` (`valpha`) or `dev` (`vdev`) under `spec/llms-index/`
+- `protocol.ref` — optional branch or tag when the profile symlink is not on `main` (dogfood / pre-release)
+- `protocol.llmsIndex.outputFile` — default `mdcp.v0.4.llms.txt` under docs root
+- `extensions.packs[]` — enabled packs and optional per-pack `version` / `source` override
+
+Do **not** duplicate fetch fields under `extensions` — use `protocol.profile` + `protocol.ref`. See [Extension fetch security](../../../spec/extensions/SECURITY.md) before overriding `repo` or `baseUrl`.
+
+Legacy `protocol.fetch`, `protocol.source`, `export.llmsIndex.upstream`, and `extensions.defaultSource` are still read when flat `protocol.profile` / `protocol.ref` are omitted.
+
 - Spec artifacts: [`spec/llms-index/`](../../spec/llms-index/README.md)
 
 ## Design
@@ -59,7 +68,7 @@ Config:
 
 ## Agent workflow
 
-Use [feature-level-task.prompt.md](../../spec/task-prompts/feature-level-task.prompt.md) with `WORK_ITEM` set to the bootstrap issue (or `.caches/mdcp/prompts/feature-level-task.prompt.md` after fetch). Load scope via [Agent work-item tracking](../developer/agent-work-item-tracking.md).
+Use [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md) with `WORK_ITEM` set to the bootstrap issue (or `.caches/mdcp/prompts/feature-level-task.prompt.md` after fetch). Load scope via [Agent work-item tracking](../developer/agent-work-item-tracking.md).
 
 ## Out of scope (V1)
 

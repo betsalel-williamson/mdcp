@@ -1,5 +1,8 @@
 {
-  "protocolVersion": "0.4.0.0",
+  "protocol": {
+    "profile": "alpha",
+    "ref": "feature/issue-58-open-alpha-0.4"
+  },
   "outputDir": "_build",
   "outputFile": "guides.md",
   "compileOrder": ["features", "developer", "client-cli", "client-core"],
@@ -57,5 +60,8 @@
       "stripBanner": true,
       "collapseBlankLines": true
     }
+  },
+  "extensions": {
+    "packs": [{ "id": "prompts-mdcp-defaults", "enabled": true, "version": "0.4.0.0" }]
   }
 }

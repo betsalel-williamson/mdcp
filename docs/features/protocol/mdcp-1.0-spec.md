@@ -33,9 +33,9 @@ Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split
 
 ## 4. Agent task prompts
 
-Copy-paste prompts in `spec/task-prompts/` are part of the MDCP 1.0 authoring profile (cached at `.caches/mdcp/prompts/` after fetch). See [Agent task prompts](./agent-task-prompts.md).
+Copy-paste prompts in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` are part of the MDCP 1.0 authoring profile (cached at `.caches/mdcp/prompts/` after fetch). See [Agent task prompts](./agent-task-prompts.md).
 
-Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level-task.prompt.md](../../spec/task-prompts/feature-level-task.prompt.md). Review work **SHOULD** use [review-task.prompt.md](../../spec/task-prompts/review-task.prompt.md) with `REVIEW_NODE` set.
+Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md). Review work **SHOULD** use [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md) with `REVIEW_NODE` set.
 
 ## 5. Extensions and immutability
 
@@ -47,7 +47,9 @@ Fetched `mdcp.v*.llms.txt` in a consumer docs root **MUST NOT** be hand-edited b
 
 Token-stripped compiled output for agents. Implemented by `mdcp export --llm`.
 
-### 9.2 llms-index export (`export.llmsIndex`)
+### 9.2 llms-index export (`protocol.llmsIndex`)
+
+**Upstream fetch (`--fetch`):** Pull from `spec/llms-index/vdev` (default) or `valpha`. `protocol.profile` + optional `protocol.ref` select the symlink and branch; optional `repo` / `path` for advanced overrides. Legacy `protocol.fetch` still honored. See [spec/llms-index/README.md](../../../spec/llms-index/README.md) and [SECURITY.md](../../../spec/extensions/SECURITY.md).
 
 Versioned agent bootstrap file in the docs root. **Canonical immutable artifacts** live in `spec/llms-index/` in the mdcp repository.
 
@@ -61,8 +63,6 @@ Versioned agent bootstrap file in the docs root. **Canonical immutable artifacts
 | Content     | Index only; **MUST NOT** embed full guide bodies                                 |
 | Prompts     | **MUST** list all task-type prompts including `review-task.prompt.md`            |
 | Command     | `mdcp export --llms-index` or `--fetch` (upstream)                               |
-
-**Upstream fetch (`--fetch`):** Pull from `spec/llms-index/vdev` (default) or `valpha`. `ref` **MAY** be `latest`, a tag, or branch. `export.llmsIndex.upstream` **MAY** set `repo`, `ref`, `profile` (`alpha`|`dev`), and `path`. See [spec/llms-index/README.md](../../../spec/llms-index/README.md).
 
 Schema: [spec/schemas/mdcp-llms-index-0.4.0.0.schema.json](../../../spec/schemas/mdcp-llms-index-0.4.0.0.schema.json)
 
