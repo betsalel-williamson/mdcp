@@ -9,6 +9,7 @@
   - [Project layout](./project-layout.md)
   - [Config essentials](./config-essentials.md)
   - [Commands reference](./commands-reference.md)
+  - [Compile and the refs registry](./compile-refs-registry.md)
   - [Cross-links and refs](./cross-links-and-refs.md)
   - [Consumer migration](./consumer-migration.md)
   - [Optional linters](./optional-linters.md)

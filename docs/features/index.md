@@ -15,6 +15,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
   - [Default compile hooks](./default-compile-hooks.md)
   - [Compile output backup](./compile-output-backup.md)
   - [Link validation](./link-validation.md)
+  - [Refs registry path](./refs-registry-path.md)
   - [Design constraints](./design-constraints/index.md)
   - [Protocol](./protocol/00-vision-and-roadmap.md)
     - [Vision and roadmap](./protocol/00-vision-and-roadmap.md)
