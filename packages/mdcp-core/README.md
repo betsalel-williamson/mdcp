@@ -38,6 +38,21 @@ The open-alpha CLI and core library are a working foundation, not a slide deck:
 
 Integrate programmatically with `@bwilliamson/mdcp-core` for compile, refs, validation, and LLM export in CI, editors, and custom tooling. Consumer workflow: [Why mdcp for coding agents](../mdcp-cli/README.md#why-mdcp-for-coding-agents), [Alternatives and adoption](../../docs/features/protocol/02-alternatives-and-adoption.md).
 
+### So what — how do I use this in my project?
+
+Start with [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli) in **any** repository — monorepo or single app, any language or framework. mdcp cares about your **documentation shards and compile pipeline**, not your application architecture. Add `@bwilliamson/mdcp-core` later when you need programmatic compile, refs, or export in CI or custom tooling.
+
+1. `npm install -D @bwilliamson/mdcp-cli`
+2. Copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) (or load it from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
+
+Fetch the bootstrap index and prompts into your docs root:
+
+```bash
+mdcp export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs
+```
+
+CLI walkthrough: [Install and quick start](../mdcp-cli/README.md#install-and-quick-start).
+
 ### Where it is going
 
 Like [OpenAPI](https://www.openapis.org/) standardized HTTP API contracts, MDCP is evolving into an open contract for **documentation context** — intent, design, and terminology you can share with other systems. That benefits inter-agent development (validated shards and glossaries instead of re-crawling ad hoc prose) and human-in-the-loop verification: reviewers read the same compiled context agents use and confirm the system behaves as documented. Roadmap: [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).

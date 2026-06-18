@@ -38,6 +38,21 @@ The open-alpha CLI is a working foundation, not a slide deck:
 
 Task prompts and a bootstrap index get you started in a consumer repo without inventing workflow from scratch: [Why mdcp for coding agents](#why-mdcp-for-coding-agents), [LLM collaboration](#llm-collaboration), [Alternatives and adoption](../../docs/features/protocol/02-alternatives-and-adoption.md).
 
+### So what — how do I use this in my project?
+
+[`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli) is an npm package you add to **any** repository — monorepo or single app, Node, Python, Rust, Go, or mixed stacks. mdcp cares about your **documentation shards and compile pipeline**, not your application architecture.
+
+1. `npm install -D @bwilliamson/mdcp-cli`
+2. Copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) (or load it from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
+
+Fetch the bootstrap index and prompts into your docs root:
+
+```bash
+mdcp export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs
+```
+
+Prefer manual steps? See [Install and quick start](#install-and-quick-start).
+
 ### Where it is going
 
 Like [OpenAPI](https://www.openapis.org/) standardized HTTP API contracts, MDCP is evolving into an open contract for **documentation context** — intent, design, and terminology you can share with other systems. That benefits inter-agent development (validated shards and glossaries instead of re-crawling ad hoc prose) and human-in-the-loop verification: reviewers read the same compiled context agents use and confirm the system behaves as documented. Roadmap: [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
@@ -236,7 +251,9 @@ When reviewing an agent's documentation PR:
 
 ## Install and quick start
 
-This package installs the `mdcp` command for use in your repo or CI.
+This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
+
+**Fastest path:** copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent for first-time setup. More context: [So what — how do I use this in my project?](#so-what--how-do-i-use-this-in-my-project).
 
 ### Requirements
 

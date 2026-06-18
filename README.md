@@ -36,6 +36,14 @@ The goal is to **reduce friction between** durable context and active work: smal
 
 Task prompts and a bootstrap index get you started in a consumer repo without inventing workflow from scratch: [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md), [LLM collaboration](docs/client-cli/llm-collaboration.md), [Alternatives and adoption](docs/features/protocol/02-alternatives-and-adoption.md).
 
+**So what — how do I use this in my project?** Install [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli) in **any** repository — monorepo or single app, any language or stack. mdcp cares about your documentation shards and compile pipeline, not your application architecture.
+
+```bash
+npm install -D @bwilliamson/mdcp-cli
+```
+
+Copy [getting-started-with-mdcp.prompt.md](spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it walks through config, shard layout, and first `mdcp check`. Or fetch prompts with `mdcp export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs`. Details: [Install and quick start](docs/client-cli/install-and-quick-start.md).
+
 **Where it is going:** Like [OpenAPI](https://www.openapis.org/) standardized HTTP API contracts, MDCP is evolving into an open contract for **documentation context** — intent, design, and terminology you can share with other systems. That benefits inter-agent development (validated shards and glossaries instead of re-crawling ad hoc prose) and human-in-the-loop verification: reviewers read the same compiled context agents use and confirm the system behaves as documented. Roadmap: [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md).
 
 > **Open alpha (0.4.0).** MDCP is moving fast — this release is a working foundation for early adopters. Tooling and the draft protocol profile may change in 0.5+. Pin `@bwilliamson/mdcp-cli@0.4.0`. Fetch the agent bootstrap with `mdcp export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs`. There is **no API stability guarantee** until npm 1.0.
