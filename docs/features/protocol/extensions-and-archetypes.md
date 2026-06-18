@@ -21,7 +21,7 @@ The versioned llms-index in your **docs root** is a **fetched or generated proto
 | Rule                                                                            | Detail                                                                            |
 | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | Agents **MUST NOT** hand-edit `mdcp.v*.llms.txt` for repo-specific improvements | Changes belong in shards or extensions                                            |
-| Broadly applicable improvements                                                 | Propose upstream to [spec/llms-index/](../../../spec/llms-index/) via PR          |
+| Broadly applicable improvements                                                 | Propose upstream to `spec/llms-index/` via PR                                     |
 | Project-specific guidance                                                       | `docs/extensions/` in your repo (local extension)                                 |
 | Regenerate repo copy                                                            | `mdcp export --llms-index --fetch --fetch-profile alpha` after upstream alpha pin |
 
@@ -31,13 +31,13 @@ The versioned llms-index in your **docs root** is a **fetched or generated proto
 
 Design constraints for the protocol and its ecosystem — analogous to SOLID in software design, applied to **documentation context contracts**.
 
-| Principle                 | MDCP meaning                                                                                                                   |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **S**ingle responsibility | llms-index = entrypoint and query instructions; shards = intent; code = implementation; extensions = vertical overlays         |
-| **O**pen/closed           | Core protocol versioned and stable; extend through [spec/extensions/](../../../spec/extensions/) without forking the base spec |
-| **L**iskov substitution   | Optional extensions **MUST NOT** break core `mdcp check` when disabled; archetypes compose on top of conforming layouts        |
-| **I**nterface segregation | Export profiles (`--llm`, `--llms-index`), compile hooks, and archetype packs are separate opt-in surfaces                     |
-| **D**ependency inversion  | Agents and CI depend on **compiled contracts** and `refs lookup`, not ad-hoc README prose or host-specific rules               |
+| Principle                 | MDCP meaning                                                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **S**ingle responsibility | llms-index = entrypoint and query instructions; shards = intent; code = implementation; extensions = vertical overlays  |
+| **O**pen/closed           | Core protocol versioned and stable; extend through `spec/extensions/` without forking the base spec                     |
+| **L**iskov substitution   | Optional extensions **MUST NOT** break core `mdcp check` when disabled; archetypes compose on top of conforming layouts |
+| **I**nterface segregation | Export profiles (`--llm`, `--llms-index`), compile hooks, and archetype packs are separate opt-in surfaces              |
+| **D**ependency inversion  | Agents and CI depend on **compiled contracts** and `refs lookup`, not ad-hoc README prose or host-specific rules        |
 
 ## Extensions directory
 
@@ -89,12 +89,14 @@ Built-in ids (such as `prompts-mdcp-defaults`) resolve paths under `spec/extensi
 
 An **archetype** is a documented bundle: guide layout, glossary seeds, optional prompts, and extension pointers for one project class.
 
-| Archetype                                                             | Extension id             | When to use                   | Shard emphasis                                              |
-| --------------------------------------------------------------------- | ------------------------ | ----------------------------- | ----------------------------------------------------------- |
-| [OSS library](../../../spec/extensions/arch-oss-library/)             | `arch-oss-library`       | npm/crates publishable API    | Pointer shards to `src/`; minimal duplication of signatures |
-| [Product docs site](../../../spec/extensions/arch-product-docs-site/) | `arch-product-docs-site` | MkDocs, Docusaurus, VitePress | `format-*` extension + client guide tier                    |
+| Archetype         | Extension id             | When to use                   | Shard emphasis                                              |
+| ----------------- | ------------------------ | ----------------------------- | ----------------------------------------------------------- |
+| OSS library       | `arch-oss-library`       | npm/crates publishable API    | Pointer shards to `src/`; minimal duplication of signatures |
+| Product docs site | `arch-product-docs-site` | MkDocs, Docusaurus, VitePress | `format-*` extension + client guide tier                    |
 
-Formatting packs use the `format-*` prefix — see [format/](../../../spec/extensions/format/).
+Archetype READMEs live under `spec/extensions/` — for example `arch-oss-library/` and `arch-product-docs-site/`.
+
+Formatting packs use the `format-*` prefix — see `spec/extensions/format/`.
 
 Start from an archetype README, copy patterns into `docs/`, then customize under `docs/extensions/`.
 

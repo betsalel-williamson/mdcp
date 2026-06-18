@@ -47,7 +47,7 @@ Config (optional after day zero):
 - `protocol.llmsIndex.outputFile` — default `mdcp.v0.4.llms.txt` under docs root
 - `extensions.packs[]` — enabled packs and optional per-pack `version` / `source` override
 
-Do **not** duplicate fetch fields under `extensions` — use `protocol.profile` + `protocol.ref`. See [Extension fetch security](../../../spec/extensions/SECURITY.md) before overriding `repo` or `baseUrl`.
+Do **not** duplicate fetch fields under `extensions` — use `protocol.profile` + `protocol.ref`. See [Extension fetch security](../../spec/extensions/SECURITY.md) before overriding `repo` or `baseUrl`.
 
 - Spec artifacts: [`spec/llms-index/`](../../spec/llms-index/README.md)
 
