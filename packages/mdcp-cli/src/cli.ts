@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -28,6 +28,10 @@ import {
   defaultLlmsIndexFilename,
   fetchLlmsIndexFromUpstream,
   resolveLlmsIndexFetchOptions,
+  fetchTaskPromptsFromUpstream,
+  copyTaskPromptsFromLocalSpec,
+  TASK_PROMPTS_SPEC_DIR,
+  parseLlmsIndexProfile,
   findPeerBinary,
   runPeer,
   shardFromMonolith,
@@ -266,9 +270,9 @@ program
   )
   .option(
     '--fetch-profile <profile>',
-    'Spec artifact profile: stable (vstable) or dev (vdev); default stable',
+    'Spec artifact profile: alpha (valpha) or dev (vdev); default dev',
   )
-  .option('--fetch-path <path>', 'Path in upstream repo (default spec/llms-index/vstable or vdev)')
+  .option('--fetch-path <path>', 'Path in upstream repo (default spec/llms-index/vdev or valpha)')
   .option('--fetch-local', 'Read from local spec/llms-index/ in repo root instead of GitHub')
   .option('--stdout', 'Write to stdout instead of file')
   .action(async (exportOpts, cmd) => {
@@ -282,14 +286,22 @@ program
           repo: exportOpts.fetchRepo,
           ref: exportOpts.fetchRef,
           path: exportOpts.fetchPath,
-          profile: exportOpts.fetchProfile,
+          profile: exportOpts.fetchProfile
+            ? parseLlmsIndexProfile(exportOpts.fetchProfile)
+            : undefined,
         });
         if (exportOpts.fetchLocal) {
           fetchOptions.localRepoRoot = process.cwd();
         }
         const { text, url, ref } = await fetchLlmsIndexFromUpstream(fetchOptions);
+        const promptResult = await fetchTaskPromptsFromUpstream({
+          ...fetchOptions,
+          docsRoot,
+          resolvedRef: ref === 'local' ? undefined : ref,
+        });
         if (exportOpts.stdout) {
           process.stdout.write(text);
+          console.error(`→ ${promptResult.cacheDir} (${promptResult.files.length} task prompts)`);
           return;
         }
         const outPath = config
@@ -303,6 +315,7 @@ program
         if (backupPath) console.log(`backed up → ${backupPath}`);
         console.log(`fetched ${url} (${ref})`);
         console.log(`→ ${outPath}`);
+        console.log(`→ ${promptResult.cacheDir} (${promptResult.files.length} task prompts)`);
         return;
       }
 
@@ -333,6 +346,11 @@ program
       });
       if (backupPath) console.log(`backed up → ${backupPath}`);
       console.log(`→ ${outPath}`);
+      const specPromptsDir = join(process.cwd(), TASK_PROMPTS_SPEC_DIR);
+      if (existsSync(specPromptsDir)) {
+        const promptResult = copyTaskPromptsFromLocalSpec(process.cwd(), docsRoot);
+        console.log(`→ ${promptResult.cacheDir} (${promptResult.files.length} task prompts)`);
+      }
       return;
     }
 

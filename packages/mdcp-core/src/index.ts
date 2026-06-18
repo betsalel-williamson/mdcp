@@ -116,12 +116,13 @@ export {
 export {
   LLMS_INDEX_PROTOCOL_VERSION,
   LLMS_INDEX_SPEC_DIR,
-  LLMS_INDEX_PROFILE_STABLE,
+  LLMS_INDEX_PROFILE_ALPHA,
   LLMS_INDEX_PROFILE_DEV,
   defaultLlmsIndexFilename,
   resolveLlmsIndexProfilePath,
   resolveLlmsIndexSpecPath,
   resolveLlmsIndexSpecFile,
+  parseLlmsIndexProfile,
   type LlmsIndexProfile,
   type LlmsIndexFilenameOptions,
 } from './export/llms-index-artifacts.js';
@@ -131,12 +132,29 @@ export {
   buildGithubRawUrl,
   parseLlmsIndexHeader,
   resolveUpstreamPath,
+  resolveUpstreamRef,
   fetchLlmsIndexFromUpstream,
   resolveLlmsIndexFetchOptions,
   type LlmsIndexUpstreamOptions,
   type LlmsIndexFetchOptions,
   type LlmsIndexFetchResult,
 } from './export/llms-index-fetch.js';
+export {
+  TASK_PROMPTS_SPEC_DIR,
+  DEFAULT_TASK_PROMPTS_CACHE_DIR,
+  STANDARD_TASK_PROMPT_FILES,
+  defaultTaskPromptManifest,
+  resolveTaskPromptsCacheDir,
+  resolveTaskPromptSpecPath,
+  type StandardTaskPromptFile,
+  type TaskPromptManifest,
+} from './export/task-prompts-artifacts.js';
+export {
+  fetchTaskPromptsFromUpstream,
+  copyTaskPromptsFromLocalSpec,
+  type TaskPromptsFetchOptions,
+  type TaskPromptsFetchResult,
+} from './export/task-prompts-fetch.js';
 export {
   abbreviateProtocolVersion,
   expandProtocolVersion,
