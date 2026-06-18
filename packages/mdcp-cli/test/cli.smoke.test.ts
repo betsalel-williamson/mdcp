@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFile, execFileSync, spawnSync } from 'node:child_process';
+import { promisify } from 'node:util';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { existsSync, mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
@@ -10,6 +11,12 @@ const CLI = join(__dirname, '../dist/cli.js');
 const REPO_ROOT = join(__dirname, '../../..');
 const FIXTURE = join(REPO_ROOT, 'examples/sample-guides');
 const SAMPLE_CONFIG = 'examples/sample-guides/mdcp.config.json';
+const execFileAsync = promisify(execFile);
+
+async function runCli(args: string[], cwd: string): Promise<string> {
+  const { stdout } = await execFileAsync('node', [CLI, ...args], { encoding: 'utf-8', cwd });
+  return stdout;
+}
 const SHARDS_PRESET = join(
   REPO_ROOT,
   'packages/mdcp-presets/markdownlint-shards.markdownlint-cli2.jsonc',
@@ -74,21 +81,34 @@ describe('cli smoke', () => {
     expect(out).toContain('mdcp check passed');
   });
 
-  it('resolves --config from invocation directory, not --docs-root (#10)', () => {
-    const out = execFileSync(
-      'node',
-      [
-        CLI,
-        'compile',
-        '--config',
-        'docs/mdcp.config.json',
-        '--docs-root',
-        'docs',
-        '--warn-broken-links',
-      ],
-      { encoding: 'utf-8', cwd: REPO_ROOT },
-    );
-    expect(out).toMatch(/guides\.md|→/);
+  it('resolves --config from invocation directory, not --docs-root (#10)', async () => {
+    const project = mkdtempSync(join(tmpdir(), 'mdcp-config-cwd-'));
+    try {
+      const docs = join(project, 'docs');
+      const guide = join(docs, 'g');
+      mkdirSync(guide, { recursive: true });
+      writeFileSync(join(guide, 'index.md'), '# Guide\n\n- [section](section.md)\n');
+      writeFileSync(join(guide, 'section.md'), '# Guide\n\n## Hello\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '_build',
+          outputFile: 'guides.md',
+          compileOrder: ['g'],
+          guides: [{ name: 'g', path: 'g' }],
+          lint: { xrefs: { enabled: false }, links: { enabled: false } },
+        }),
+      );
+
+      const out = await runCli(
+        ['compile', '--config', 'docs/mdcp.config.json', '--docs-root', 'docs'],
+        project,
+      );
+      expect(out).toMatch(/guides\.md|→/);
+      expect(existsSync(join(docs, '_build', 'guides.md'))).toBe(true);
+    } finally {
+      rmSync(project, { recursive: true, force: true });
+    }
   });
 
   it('normalizes cwd-relative refs.registryFile under outputDir (#11)', () => {

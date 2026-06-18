@@ -28,6 +28,16 @@ Token-stripped context for agents.
 mdcp export --llm --stdout --config mdcp.config.json
 ```
 
+## llms-index export (V1)
+
+Versioned agent bootstrap at docs root (`mdcp.v0.4.llms.txt`, protocol `0.4.0.0`).
+
+```bash
+mdcp export --llms-index --config mdcp.config.json --docs-root docs
+```
+
+Drop the static file in any docs root before config exists; regenerate after `compileOrder` changes. See [Vision and roadmap](./protocol/00-vision-and-roadmap.md).
+
 ## Check gate (P0.4)
 
 Structural validation: orphans → compile → refs → **links** → xrefs; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md).
@@ -62,7 +72,7 @@ Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host rep
 
 ## Compile hooks (P2.2)
 
-Per-shard assembly via built-in compile hooks on [authored GFM](../glossary/index.md#gfm). Hooks run by default; opt out per hook when needed. See [Default compile hooks](./default-compile-hooks.md). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
+Per-shard assembly via built-in compile hooks on [authored GFM](../glossary/authored-gfm.md). Hooks run by default; opt out per hook when needed. See [Default compile hooks](./default-compile-hooks.md). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 Built-in hooks:
 
@@ -86,7 +96,7 @@ Built-in hooks:
 
 ## Design constraints (summary)
 
-- [GFM](../glossary/index.md#gfm) only — no Pandoc, no required `{#heading-ids}`
+- [GFM](../glossary/gfm.md) only — no Pandoc, no required `{#heading-ids}`
 - md-tree for split only — custom compile
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
 - No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)

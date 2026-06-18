@@ -1,16 +1,20 @@
 import { describe, it, expect } from 'vitest';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkOrphans } from '../src/validate/orphans.js';
+import { checkOrphansForGuides } from '../src/validate/orphans.js';
 import { buildSlugRegistry } from '../src/refs/slugs.js';
 import { compileGuides } from '../src/compile/assemble.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURE = join(__dirname, '../../../examples/sample-guides');
 
-describe('checkOrphans', () => {
+describe('checkOrphansForGuides', () => {
   it('reports no orphans for sample fixture', () => {
-    const issues = checkOrphans(FIXTURE, ['overview', 'admin-guide', 'developer-guide']);
+    const issues = checkOrphansForGuides([
+      { name: 'overview', dir: join(FIXTURE, 'overview') },
+      { name: 'admin-guide', dir: join(FIXTURE, 'admin-guide') },
+      { name: 'developer-guide', dir: join(FIXTURE, 'developer-guide') },
+    ]);
     expect(issues).toEqual([]);
   });
 });

@@ -182,8 +182,16 @@ export function rewriteIntraGuideFileLinks(
   return rewriteMarkdownLinkLines(markdown, INTRA_GUIDE_MD_LINK_RE, (originalMatch, m) => {
     const file = m[2];
     const fragment = m[3];
-    const resolved = resolve(guideDir, file.replace(/^\.\//, ''));
-    const slug = slugByPath.get(resolved);
+    const normalized = file.replace(/^\.\//, '');
+    let slug = slugByPath.get(resolve(guideDir, normalized));
+    if (!slug) {
+      for (const [path, pathSlug] of slugByPath) {
+        if (basename(path) === normalized) {
+          slug = pathSlug;
+          break;
+        }
+      }
+    }
     if (!slug) return originalMatch;
     if (fragment) return `${linkPrefixFromMatch(originalMatch, file)}#${fragment.slice(1)})`;
     return `${linkPrefixFromMatch(originalMatch, file)}#${slug})`;

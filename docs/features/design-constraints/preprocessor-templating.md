@@ -17,6 +17,6 @@ Run preprocessing **before** shards are authored or committed (or regenerate sha
 - Parameterized partial includes beyond MDCP's captioned insert inlining ([`inlineInserts`](../../client-core/compile-hooks/inline-inserts.md))
 - Build-time code generation that mutates shard markdown prior to `mdcp compile`
 
-**Not compile hooks:** [`guides[].compile.hooks`](../../client-core/compile-hooks/index.md) assemble [authored GFM](../../glossary/index.md#gfm) — link rewrites, insert inlining, and similar — not a template engine.
+**Not compile hooks:** [`guides[].compile.hooks`](../../client-core/compile-hooks/index.md) assemble [authored GFM](../../glossary/authored-gfm.md) — link rewrites, insert inlining, and similar — not a template engine.
 
 **Non-goals:** no built-in variable engine, template parser, or preprocessor hook API in MDCP core.

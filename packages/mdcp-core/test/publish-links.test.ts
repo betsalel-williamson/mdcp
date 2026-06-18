@@ -32,6 +32,22 @@ describe('publish link rewriting', () => {
     expect(out).not.toMatch(/\]\(\.\/llm-collaboration\.md\)/);
   });
 
+  it('rewrites co-compiled glossary shard links by basename', () => {
+    const guideDir = '/fake/developer';
+    const glossaryDir = '/fake/glossary';
+    const slugByPath = new Map([
+      [resolve(glossaryDir, 'mdcp.md'), 'mdcp'],
+      [resolve(glossaryDir, 'gfm.md'), 'gfm'],
+    ]);
+
+    const out = rewriteIntraGuideFileLinks(
+      '- [MDCP](./mdcp.md)\n- [GFM](./gfm.md)\n',
+      slugByPath,
+      guideDir,
+    );
+    expect(out).toBe('- [MDCP](#mdcp)\n- [GFM](#gfm)\n');
+  });
+
   it('rewrites shard-relative repo paths for publish outputs', () => {
     withTmpDir('mdcp-publish-rel-root-', (work) => {
       const docsDeveloper = join(work, 'docs', 'developer');

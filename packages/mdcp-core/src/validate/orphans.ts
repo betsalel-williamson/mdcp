@@ -81,16 +81,6 @@ export function checkOrphansForGuides(guides: GuideDirEntry[]): OrphanIssue[] {
   return issues;
 }
 
-/** @deprecated Use checkOrphansForGuides with explicit guide dirs. */
-export function checkOrphans(guidesRoot: string, compileOrder: string[]): OrphanIssue[] {
-  return checkOrphansForGuides(
-    compileOrder.map((name) => ({
-      name,
-      dir: join(guidesRoot, name),
-    })),
-  );
-}
-
 export function guideDirEntriesFromNames(guidesRoot: string, names: string[]): GuideDirEntry[] {
   return names.map((name) => ({
     name,

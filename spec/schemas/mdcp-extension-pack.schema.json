@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/betsalel-williamson/mdcp/spec/schemas/mdcp-extension-pack.schema.json",
+  "title": "MDCP extension pack manifest",
+  "description": "Per-version manifest at spec/extensions/{id}/{version}/manifest.json",
+  "type": "object",
+  "required": ["id", "version", "protocolVersionRange", "files"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "version": { "type": "string" },
+    "protocolVersionRange": { "type": "string" },
+    "revoked": { "type": "boolean", "default": false },
+    "revokedReason": { "type": "string" },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    }
+  }
+}

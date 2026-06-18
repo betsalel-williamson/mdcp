@@ -2,7 +2,7 @@
 
 ## Why mdcp for coding agents
 
-**MDCP** ([MarkDown Context Protocol](../mdcp-core/README.md#mdcp)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
+**MDCP** ([MarkDown Context Protocol](#mdcp)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
 
 ### The pain
 
@@ -25,7 +25,7 @@ Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile
 
 ### Get started
 
-First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
+First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) (or load from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
 
 For command and capability depth, read the [feature catalog](../../docs/features/feature-catalog.md).
 
@@ -33,29 +33,30 @@ For command and capability depth, read the [feature catalog](../../docs/features
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
-**Source of truth:** copy-paste prompts live under [examples/prompts/](../../examples/prompts). This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). `mdcp export --llms-index --fetch` caches them at `.caches/mdcp/prompts/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ### Prompt library
 
-Copy from [examples/prompts/](../../examples/prompts). Index: [README.md](../../examples/prompts/README.md).
+Copy from [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). Index: [README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
 
-- [getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md) — first-time pipeline setup in a consumer repo
-- [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md) — documentation-only work
-- [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — RFCs, ADRs, data models
-- [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — feature work, docs-first then TDD
-- [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UI flows and client-guide updates
+- [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) — first-time pipeline setup in a consumer repo
+- [doc-only-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/doc-only-task.prompt.md) — documentation-only work
+- [design-architecture-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/design-architecture-task.prompt.md) — RFCs, ADRs, data models
+- [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md) — feature work, docs-first then TDD
+- [ux-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/ux-task.prompt.md) — UI flows and client-guide updates
+- [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md) — architecture and security review; one node per PR; atomic findings
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
 ### Bootstrap prompt (copy-paste)
 
-First-time setup for a consumer repo: [examples/prompts/getting-started-with-mdcp.prompt.md](../../examples/prompts/getting-started-with-mdcp.prompt.md).
+First-time setup for a consumer repo: [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md).
 
 Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring.
 
 ### Follow-up prompts
 
-Use these after the pipeline exists (inline here — not duplicated in `examples/prompts/`).
+Use these after the pipeline exists (inline here — not duplicated in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`).
 
 **Add documentation for a new feature:**
 
@@ -80,7 +81,7 @@ I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using
 
 ### Docs-first feature workflow
 
-Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md).
+Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md).
 
 #### Workflow best practices
 
@@ -94,12 +95,12 @@ Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`,
 | Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
 | Implement | Code + tests     | TDD against the documented contract                    |
 
-For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md).
+For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/design-architecture-task.prompt.md).
 
 #### Sharding keeps context lean
 
 - **Core workflow** — bootstrap prompt and repo script wiring
-- **On demand** — task-type prompts from `examples/prompts/`; load only what the current task needs
+- **On demand** — task-type prompts from `.caches/mdcp/prompts/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; load only what the current task needs
 - **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
 
 Prefer structured prompts over permanently importing rigid always-on rules into every repo.
@@ -117,16 +118,17 @@ This repository documents its stack in [Agent work-item tracking](../../DEVELOPE
 
 ### Task-type prompt templates
 
-- [doc-only-task.prompt.md](../../examples/prompts/doc-only-task.prompt.md) — technical writers; documentation, tutorials, guides
-- [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
-- [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — server-side or full-stack feature work
-- [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
+- [doc-only-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/doc-only-task.prompt.md) — technical writers; documentation, tutorials, guides
+- [design-architecture-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
+- [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md) — server-side or full-stack feature work
+- [ux-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
+- [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md) — security and systems review; atomic findings, checklist evidence, feature stubs
 
 ### Toolchain integration
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — paste prompts from `examples/prompts/`; reference shard files for context; run the repo's doc check before ending a turn
+- **Cursor / Composer** — paste prompts from `.caches/mdcp/prompts/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — `mdcp refs lookup "topic" --format json` before inserting fragment links
@@ -185,7 +187,7 @@ When reviewing an agent's documentation PR:
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [Agent integration](#agent-integration) — npm scripts quick reference
-- [examples/prompts/](../../examples/prompts) — copy-paste prompt files
+- [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0) — versioned copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
 - [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
@@ -213,7 +215,13 @@ npm install -g @bwilliamson/mdcp-cli
 
 ### Stability
 
-**Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. CLI commands, flags, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Pin a specific version and read package changelogs before upgrading.
+**Open alpha (0.4.0).** MDCP is moving fast — this release is a working foundation for early adopters. Tooling and the draft protocol profile may change in 0.5+. Pin a specific version:
+
+```bash
+npm install -D @bwilliamson/mdcp-cli@0.4.0
+```
+
+**Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. CLI commands, flags, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read package changelogs before upgrading.
 
 Optional lint tooling (install in your repo when you want `mdcp lint`, `mdcp prose`, or `mdcp check --require-lint`):
 
@@ -224,6 +232,8 @@ npm install -D markdownlint-cli2 @bwilliamson/mdcp-presets
 For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https://vale.sh/docs/vale-cli/installation/) separately so `vale` is on your `PATH`.
 
 ### Quick start
+
+**Agent index (optional day zero)** — fetch the draft bootstrap into your docs root (`mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs`). Agents read it for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
@@ -807,18 +817,66 @@ The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (
 
 Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
 
-### MDCP
+Each term is its own shard under `docs/glossary/`. For large glossaries, split manifests across sub-index files (for example `index-protocol.md`, `index-format.md`) and set `compile.scopeRoot` to `glossary` so transitive links pull term shards into other guides. Read [domain glossary](#domain-glossary).
+
+### Protocol terms
+
+- [MDCP](#mdcp)
+- [protocol version](#protocol-version)
+- [mdcp-llms-index](#mdcp-llms-index)
+
+### Format and compile terms
+
+- [GFM](#gfm)
+- [Authored GFM](#authored-gfm)
+- [ignoreGuides](#ignoreguides)
+
+## MDCP
 
 **MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
 
-### GFM
+## domain glossary
+
+Per-repository glossary shards under `docs/glossary/` for acronyms and product vocabulary. When legacy systems reuse the same term for different concepts, add a **disambiguation** entry and link from feature shards on first use. Start the glossary before large feature shards when migrating or onboarding new projects.
+
+### One term per shard
+
+Each definition lives in its own `.md` file with a single `#` heading (the term). Link the term from feature shards on first use, for example `[GFM](./gfm.md)` or `../glossary/gfm.md` from another guide.
+
+### Multiple index files
+
+When a glossary grows beyond a comfortable manifest size, group entries in sub-index manifests:
+
+| File                | Role                                                                                     |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| `index.md`          | Master index — preamble plus links to every term shard (required for cross-guide stitch) |
+| `index-protocol.md` | Example sub-index — protocol-related terms only                                          |
+| `index-format.md`   | Example sub-index — format and compile terms                                             |
+
+**Stitched into other guides:** link `../glossary/index.md` from each guide `index.md`. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
+
+**Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.
+
+## protocol version
+
+Four-part version for MDCP **artifact and config compatibility** (default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 0.4.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v0.4.llms.txt` ≡ `0.4.0.0`).
+
+**Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](../../DEVELOPERS.md#040-open-alpha-milestone).
+
+Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.0` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
+
+## mdcp-llms-index
+
+Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. Read [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
+
+## GFM
 
 **GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
 
-### Authored GFM
+## Authored GFM
 
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; read [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
-### ignoreGuides
+## ignoreGuides
 
-Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](../mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. See [Cross-guide link rewriting](../mdcp-core/README.md#cross-guide-link-rewriting).
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](../mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](../mdcp-core/README.md#cross-guide-link-rewriting).

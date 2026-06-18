@@ -1,0 +1,21 @@
+# domain glossary
+
+Per-repository glossary shards under `docs/glossary/` for acronyms and product vocabulary. When legacy systems reuse the same term for different concepts, add a **disambiguation** entry and link from feature shards on first use. Start the glossary before large feature shards when migrating or onboarding new projects.
+
+## One term per shard
+
+Each definition lives in its own `.md` file with a single `#` heading (the term). Link the term from feature shards on first use, for example `[GFM](./gfm.md)` or `../glossary/gfm.md` from another guide.
+
+## Multiple index files
+
+When a glossary grows beyond a comfortable manifest size, group entries in sub-index manifests:
+
+| File                | Role                                                                                     |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| `index.md`          | Master index — preamble plus links to every term shard (required for cross-guide stitch) |
+| `index-protocol.md` | Example sub-index — protocol-related terms only                                          |
+| `index-format.md`   | Example sub-index — format and compile terms                                             |
+
+**Stitched into other guides:** link `../glossary/index.md` from each guide `index.md`. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
+
+**Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.

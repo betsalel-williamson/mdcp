@@ -1,6 +1,6 @@
 # Overview
 
-**mdcp** ([MarkDown Context Protocol](../glossary/index.md#mdcp)) helps teams maintain large documentation in **small shard files**, **compile them into canonical outputs**, and **validate before merge**. It is built for LLM-assisted authoring, human review, and compiled output for agents and end-user readers.
+**mdcp** ([MarkDown Context Protocol](../glossary/mdcp.md)) helps teams maintain large documentation in **small shard files**, **compile them into canonical outputs**, and **validate before merge**. It is built for LLM-assisted authoring, human review, and compiled output for agents and end-user readers.
 
 This page is the **mental model** for the whole system. Use it to orient yourself before diving into command details, API modules, or config fields.
 
@@ -191,7 +191,7 @@ Set `guides[].compile.outputFile` to the README path; run `mdcp compile`; README
 
 ## Design boundaries (intentional limits)
 
-- **[GFM](../glossary/index.md#gfm) only** — no Pandoc, wikilinks, or required `{#heading-ids}`
+- **[GFM](../glossary/gfm.md) only** — no Pandoc, wikilinks, or required `{#heading-ids}`
 - **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used
 - **GitHub slugs** — computed from compiled headings via [github-slugger](https://www.npmjs.com/package/github-slugger) (html-pipeline algorithm); see [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules)
 - **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.

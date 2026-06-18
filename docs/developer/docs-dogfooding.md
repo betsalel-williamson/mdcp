@@ -6,13 +6,19 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 | Directory      | Audience                         | Output                                            |
 | -------------- | -------------------------------- | ------------------------------------------------- |
-| `glossary/`    | Shared terms (cross-guide)       | Stitched into every guide via manifest link       |
+| `glossary/`    | Shared terms (cross-guide)       | One shard per term; scoped transitive stitch      |
 | `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review) |
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
 | `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
 
 Config: [`docs/mdcp.config.json`](../mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
+
+### Upstream refs (dogfood)
+
+While the open-alpha work lands on a feature branch, `mdcp.config.json` sets **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** to that branch so `mdcp export --llms-index --fetch` and extension cache pulls match in-flight spec changes after you push.
+
+At **npm 0.4.0** publish, retarget both refs to **`v0.4.0`** — see [Open alpha (0.4.0) release checklist](./versioning-and-releases.md#open-alpha-040-release-checklist). Local `--fetch-local` from repo root still copies from `spec/` without GitHub.
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).
 

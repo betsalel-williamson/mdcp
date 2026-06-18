@@ -6,7 +6,7 @@
 
 Replace `reviewLinks` compile hook with assembly-time `compile.crossGuideLinks.ignoreGuides`.
 
-**Changed (pre-1.0 API):**
+**Changed (breaking):**
 
 - Remove `reviewLinks` from the default compile hook pipeline
 - Remove `hooksConfig.reviewLinks` and `targetMonolith`

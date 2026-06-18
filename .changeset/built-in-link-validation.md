@@ -22,7 +22,7 @@ Add built-in internal link validation with BROKEN LINK markers, publish-only lin
 - Inline-code-safe link rewriters — labels containing `]` inside backticks no longer break cross-guide and publish-relative regex passes
 - Cross-publish README validation — when multiple publish outputs share `README.md`, fragment matching disambiguates sibling package links (e.g. `../mdcp-core/README.md#cross-guide-link-rewriting`)
 
-**Changed (pre-1.0 API):**
+**Changed (breaking):**
 
 - Remove `compile.publishPathRewrite` — geometry now comes from per-shard resolution against `compile.outputFile`
 - `mdcp check` now fails on dead internal links without requiring `markdown-link-check` or `lint.links.config`

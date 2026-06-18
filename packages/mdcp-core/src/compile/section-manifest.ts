@@ -59,7 +59,7 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
   const text = readFileSync(indexPath, 'utf-8');
   const scopedText = manifestTextForSections(text, options.sectionsHeading);
 
-  const resolved = resolveManifestPaths(guideDir, scopedText, options);
+  const resolved = resolveManifestPaths(guideDir, scopedText, {});
   if (resolved.length > 0) return resolved;
 
   return readdirSync(guideDir)
