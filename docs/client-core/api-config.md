@@ -63,4 +63,4 @@ Assembly-time cross-guide link options on the **compiling** guide (not a compile
 
 - **`ignoreGuides`** — `string[]` of guide names whose cross-guide shard links keep source `.md` paths instead of rewriting to monolith `#slug` targets
 
-See [Cross-guide link rewriting](./compile-hooks/cross-guide-links.md) and [ignoreGuides](../glossary/index.md#ignoreguides).
+See [Cross-guide link rewriting](./compile-hooks/cross-guide-links.md) and [ignoreGuides](../glossary/ignore-guides.md).

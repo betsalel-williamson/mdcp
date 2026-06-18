@@ -6,7 +6,7 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 | Directory      | Audience                         | Output                                            |
 | -------------- | -------------------------------- | ------------------------------------------------- |
-| `glossary/`    | Shared terms (cross-guide)       | Stitched into every guide via manifest link       |
+| `glossary/`    | Shared terms (cross-guide)       | One shard per term; scoped transitive stitch      |
 | `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review) |
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |

@@ -33,7 +33,7 @@ describe('design scope documentation (#26)', () => {
   const gfmScopeShard = readRepoDoc('docs/features/design-constraints/gfm-scope.md');
   const featureCatalog = readRepoDoc('docs/features/feature-catalog.md');
   const compileHooks = readRepoDoc('docs/client-core/compile-hooks/index.md');
-  const glossary = readRepoDoc('docs/glossary/index.md');
+  const glossaryIndex = readRepoDoc('docs/glossary/index.md');
 
   it('uses the GitHub slug for the preprocessor heading', () => {
     expect(githubSlugify(PREPROCESSOR_HEADING)).toBe(PREPROCESSOR_SLUG);
@@ -63,24 +63,28 @@ describe('design scope documentation (#26)', () => {
     expect(featureCatalog).toContain(
       `./design-constraints/preprocessor-templating.md#${PREPROCESSOR_SLUG}`,
     );
-    expect(featureCatalog).toContain('[authored GFM](../glossary/index.md#gfm)');
-    expect(compileHooks).toContain('[authored GFM](../glossary/index.md#gfm)');
+    expect(featureCatalog).toContain('[authored GFM](../glossary/authored-gfm.md)');
+    expect(compileHooks).toContain('[authored GFM](../glossary/authored-gfm.md)');
     expect(compileHooks).toContain(
       `../../features/design-constraints/preprocessor-templating.md#${PREPROCESSOR_SLUG}`,
     );
   });
 
   it('defines GFM and authored GFM in the shared glossary', () => {
-    expect(glossary).toContain('## GFM');
-    expect(glossary).toContain('## Authored GFM');
-    expect(glossary).toContain('GitHub Flavored Markdown');
-    expect(gfmScopeShard).toContain('[GFM](../../glossary/index.md#gfm)');
+    const gfm = readRepoDoc('docs/glossary/gfm.md');
+    const authoredGfm = readRepoDoc('docs/glossary/authored-gfm.md');
+    expect(gfm).toContain('# GFM');
+    expect(authoredGfm).toContain('# Authored GFM');
+    expect(gfm).toContain('GitHub Flavored Markdown');
+    expect(gfmScopeShard).toContain('[GFM](../../glossary/gfm.md)');
   });
 
   it('lists glossary in every guide manifest', () => {
     for (const indexPath of GUIDE_INDEXES) {
       expect(readRepoDoc(indexPath)).toContain(GLOSSARY_MANIFEST);
     }
+    expect(glossaryIndex).toContain('index-protocol.md');
+    expect(glossaryIndex).toContain('index-format.md');
   });
 
   it('stitches glossary into every compiled guide output', () => {

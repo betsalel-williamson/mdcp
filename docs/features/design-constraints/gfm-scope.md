@@ -1,3 +1,3 @@
 # GFM scope
 
-[GFM](../../glossary/index.md#gfm) only. No Pandoc, LaTeX, wikilinks.
+[GFM](../../glossary/gfm.md) only. No Pandoc, LaTeX, wikilinks.
