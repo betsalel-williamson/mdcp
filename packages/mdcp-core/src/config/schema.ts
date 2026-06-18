@@ -71,6 +71,8 @@ const GuideSchema = z.object({
 });
 
 export const MdcpConfigSchema = z.object({
+  /** Four-part protocol version for conforming repositories (default 1.0.0.0). */
+  protocolVersion: z.string().default('1.0.0.0'),
   source: z.string().optional(),
   /** Generated output root relative to docs root (default `_build`). */
   outputDir: z.string().default('_build'),
@@ -153,6 +155,12 @@ export const MdcpConfigSchema = z.object({
           skipIndexFiles: true,
           collapseBlankLines: true,
         }),
+      llmsIndex: z
+        .object({
+          /** Output path relative to docs root (default mdcp.v1.llms.txt). */
+          outputFile: z.string().optional(),
+        })
+        .optional(),
     })
     .optional(),
 });

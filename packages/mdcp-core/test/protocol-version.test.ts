@@ -1,0 +1,26 @@
+import { describe, expect, it } from 'vitest';
+import {
+  abbreviateProtocolVersion,
+  expandProtocolVersion,
+  parseLlmsIndexFilename,
+} from '../src/export/protocol-version.js';
+
+describe('protocol version helpers', () => {
+  it('abbreviates trailing zeros', () => {
+    expect(abbreviateProtocolVersion('1.0.0.0')).toBe('1');
+    expect(abbreviateProtocolVersion('1.2.0.0')).toBe('1.2');
+    expect(abbreviateProtocolVersion('1.2.3.4')).toBe('1.2.3.4');
+  });
+
+  it('expands to four parts', () => {
+    expect(expandProtocolVersion('1')).toBe('1.0.0.0');
+    expect(expandProtocolVersion('1.2')).toBe('1.2.0.0');
+  });
+
+  it('parses llms index filenames', () => {
+    expect(parseLlmsIndexFilename('mdcp.v1.llms.txt')).toBe('1.0.0.0');
+    expect(parseLlmsIndexFilename('mdcp.v1.0.0.0.llms.txt')).toBe('1.0.0.0');
+    expect(parseLlmsIndexFilename('mdcp.v1.2.llms.txt')).toBe('1.2.0.0');
+    expect(parseLlmsIndexFilename('llms.txt')).toBeNull();
+  });
+});

@@ -107,5 +107,18 @@ export {
   type GuideDirEntry,
 } from './validate/orphans.js';
 export { stripForLlm, getLlmExportOptions } from './export/llm.js';
+export {
+  buildLlmsIndex,
+  defaultLlmsIndexFilename,
+  getLlmsIndexOutputFile,
+  getLlmsIndexOptions,
+  LLMS_INDEX_PROTOCOL_VERSION,
+  type LlmsIndexOptions,
+} from './export/llms-index.js';
+export {
+  abbreviateProtocolVersion,
+  expandProtocolVersion,
+  parseLlmsIndexFilename,
+} from './export/protocol-version.js';
 export { findPeerBinary, runPeer, type PeerTool } from './peers/resolve.js';
 export { shardFromMonolith, runMdTree, type ShardGuideMapping } from './shard/orchestrator.js';
