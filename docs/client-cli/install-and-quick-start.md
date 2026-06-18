@@ -33,6 +33,8 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ## Quick start
 
+0. **Agent index (optional day zero)** — copy [mdcp.v1.llms.txt](../../examples/sample-guides/mdcp.v1.llms.txt) into your docs root. Agents read it for query commands and [task prompts](../../examples/prompts/README.md) before full tooling is wired.
+
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
 2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](../../examples/sample-guides/).

@@ -13,6 +13,8 @@ PERSONA=
 
 Set up a sharded documentation pipeline using **mdcp** for FEATURE above.
 
+**First step:** Copy `mdcp.v1.llms.txt` from the [mdcp repository](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.v1.llms.txt) (or upstream examples) into your docs root. Point the agent at that file for adoption and query instructions before full tooling is wired.
+
 **Setup:** Inspect this repository — package manager, existing docs layout, and developer docs — before changing files. Do not assume a specific host, script runner, or optional linter; discover what the repo already uses.
 
 **Plan:** Outline install, config, guide layout, and validation steps from repo context and mdcp documentation, then execute.

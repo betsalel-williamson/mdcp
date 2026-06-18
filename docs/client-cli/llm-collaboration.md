@@ -13,6 +13,7 @@ Copy from [examples/prompts/](../../examples/prompts/). Index: [README.md](../..
 - [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — RFCs, ADRs, data models
 - [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — feature work, docs-first then TDD
 - [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UI flows and client-guide updates
+- [review-task.prompt.md](../../examples/prompts/review-task.prompt.md) — architecture and security review; one node per PR; atomic findings
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
@@ -90,6 +91,7 @@ This repository documents its stack in [Agent work-item tracking](../developer/a
 - [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
 - [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — server-side or full-stack feature work
 - [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
+- [review-task.prompt.md](../../examples/prompts/review-task.prompt.md) — security and systems review; atomic findings, checklist evidence, feature stubs
 
 ## Toolchain integration
 

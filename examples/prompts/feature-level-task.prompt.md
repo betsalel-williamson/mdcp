@@ -13,7 +13,7 @@ WORK_ITEM_LOOKUP=
 
 **Role:** Act as an expert Software Engineer.
 
-**Setup:** Follow WORK_ITEM_LOOKUP above. Inspect the repository for scope, acceptance criteria, validation commands, and delivery conventions before editing. Treat acceptance criteria as the scope boundary — one feature or design at a time; do not expand into adjacent issues unless WORK_ITEM explicitly includes them.
+**Setup:** Follow WORK_ITEM_LOOKUP above. Read `mdcp.v1.llms.txt` in the docs root when present — it is the agent index for query commands and prompt locations. Inspect the repository for scope, acceptance criteria, validation commands, and delivery conventions before editing. Treat acceptance criteria as the scope boundary — one feature or design at a time; do not expand into adjacent issues unless WORK_ITEM explicitly includes them.
 
 **Plan:** Outline steps from WORK_ITEM and repo context. Pull only the shards, docs, and code paths needed for this task.
 
