@@ -164,10 +164,10 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
     compiled = stripExplicitAnchorMarkers(compiled);
   }
 
-  const slugByBasename = buildSectionSlugMap(files);
-  compiled = rewriteIntraGuideFileLinks(compiled, slugByBasename);
+  const slugByPath = buildSectionSlugMap(files);
+  compiled = rewriteIntraGuideFileLinks(compiled, slugByPath, guideDir);
 
-  const intraSlugs = new Set(slugByBasename.values());
+  const intraSlugs = new Set(slugByPath.values());
   const assemblingGuide = options.guideName ?? guideName;
   if (options.linkIndex && assemblingGuide) {
     for (const entry of options.linkIndex.values()) {

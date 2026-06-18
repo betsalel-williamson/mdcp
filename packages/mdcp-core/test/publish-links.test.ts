@@ -1,18 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import {
+  buildSectionSlugMap,
   rewriteIntraGuideFileLinks,
   rewritePublishRelativeLinks,
 } from '../src/compile/publish-links.js';
+import { compileGuideResults } from '../src/compile/assemble.js';
 import { withTmpDir } from './helpers/tmp-dir.js';
 
 describe('publish link rewriting', () => {
   it('rewrites intra-guide .md links to in-document anchors', () => {
-    const slugByBasename = new Map([
-      ['install-and-quick-start.md', 'install-and-quick-start'],
-      ['llm-collaboration.md', 'llm-collaboration'],
-      ['agent-integration.md', 'agent-integration'],
+    const guideDir = '/fake/guide';
+    const slugByPath = new Map([
+      [resolve(guideDir, 'install-and-quick-start.md'), 'install-and-quick-start'],
+      [resolve(guideDir, 'llm-collaboration.md'), 'llm-collaboration'],
+      [resolve(guideDir, 'agent-integration.md'), 'agent-integration'],
     ]);
 
     const input =
@@ -20,7 +23,7 @@ describe('publish link rewriting', () => {
       'Also see [Agent integration](./agent-integration.md#scripts).\n' +
       'External [Feature catalog](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/feature-catalog.md).\n';
 
-    const out = rewriteIntraGuideFileLinks(input, slugByBasename);
+    const out = rewriteIntraGuideFileLinks(input, slugByPath, guideDir);
     expect(out).toContain('[LLM collaboration](#llm-collaboration)');
     expect(out).toContain('[Agent integration](#scripts)');
     expect(out).toContain(
@@ -101,6 +104,83 @@ describe('publish link rewriting', () => {
 
       expect(out).toContain('[Cross-guide](../mdcp-core/README.md#cross-guide-link-rewriting)');
       expect(out).toContain('[Features](../../docs/features/feature-catalog.md)');
+    });
+  });
+
+  it('buildSectionSlugMap keys by full path so nested index.md files get distinct slugs', () => {
+    withTmpDir('mdcp-slug-index-collision-', (work) => {
+      const guideDir = join(work, 'client-core');
+      const hooksDir = join(guideDir, 'compile-hooks');
+      mkdirSync(hooksDir, { recursive: true });
+      writeFileSync(join(guideDir, 'index.md'), '# Client core\n');
+      writeFileSync(join(hooksDir, 'index.md'), '# Compile hooks — overview\n');
+
+      const slugByPath = buildSectionSlugMap([
+        join(guideDir, 'index.md'),
+        join(hooksDir, 'index.md'),
+      ]);
+
+      expect(slugByPath.get(resolve(guideDir, 'index.md'))).toBe('client-core');
+      expect(slugByPath.get(resolve(hooksDir, 'index.md'))).toBe('compile-hooks--overview');
+    });
+  });
+
+  it('rewrites nested index.md intra-guide links using full path slug', () => {
+    withTmpDir('mdcp-intra-nested-index-', (work) => {
+      const guideDir = join(work, 'client-core');
+      const hooksDir = join(guideDir, 'compile-hooks');
+      mkdirSync(hooksDir, { recursive: true });
+      writeFileSync(join(guideDir, 'index.md'), '# Client core\n');
+      writeFileSync(join(hooksDir, 'index.md'), '# Compile hooks — overview\n');
+
+      const slugByPath = buildSectionSlugMap([
+        join(guideDir, 'index.md'),
+        join(hooksDir, 'index.md'),
+      ]);
+
+      const input = 'See [Compile hooks](./compile-hooks/index.md).';
+      const out = rewriteIntraGuideFileLinks(input, slugByPath, guideDir);
+      expect(out).toBe('See [Compile hooks](#compile-hooks--overview).');
+    });
+  });
+
+  it('rewrites cross-guide links when label contains ] inside inline code', () => {
+    withTmpDir('mdcp-bracket-label-', (work) => {
+      mkdirSync(join(work, 'features', 'design-constraints'), { recursive: true });
+      mkdirSync(join(work, 'client-core', 'compile-hooks'), { recursive: true });
+
+      writeFileSync(
+        join(work, 'features', 'index.md'),
+        '# Features\n\n## Sections\n\n- [Constraints](./design-constraints/preprocessor-templating.md)\n',
+      );
+      writeFileSync(
+        join(work, 'features', 'design-constraints', 'preprocessor-templating.md'),
+        '# Preprocessor\n\n[`guides[].compile.hooks`](../../client-core/compile-hooks/index.md)\n',
+      );
+      writeFileSync(
+        join(work, 'client-core', 'index.md'),
+        '# Core\n\n## Sections\n\n- [Hooks](./compile-hooks/index.md)\n',
+      );
+      writeFileSync(join(work, 'client-core', 'compile-hooks', 'index.md'), '# Compile hooks\n');
+
+      const results = compileGuideResults({
+        guidesRoot: work,
+        compileOrder: ['features', 'client-core'],
+        docsRoot: work,
+        config: {
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['features', 'client-core'],
+        },
+        guides: [
+          { name: 'features' },
+          { name: 'client-core', compile: { outputFile: 'README.md' } },
+        ],
+      });
+
+      const features = results.find((r) => r.name === 'features')!.text;
+      expect(features).toContain('[`guides[].compile.hooks`](README.md#compile-hooks)');
+      expect(features).not.toContain('compile-hooks/index.md');
     });
   });
 });

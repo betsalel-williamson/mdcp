@@ -4,6 +4,7 @@ import { githubSlugify } from '../refs/slugs.js';
 import { extractFirstHeading } from './compile-title.js';
 import { demoteHeadings, stripAboutThisGuideHeading } from './headings.js';
 import { defaultSearchRoots, resolveRelativeFile } from './hooks/path-resolve.js';
+import { maskInlineCode } from '../links/extract.js';
 import type { GuideLinkIndex, GuideLinkEntry } from './guide-link-index.js';
 
 function sectionBodyForSlug(filename: string, content: string): string {
@@ -27,6 +28,45 @@ const CROSS_GUIDE_MD_LINK_RE =
   /(\[[^\]]*\]\()((?!https?:)(?:(?:\.\.\/)+|\.\/)[^)#/\s][^)#]*\.md)(#[^)]*)?\)/g;
 const FIND_FILE_RE = /^FIND-\d+\.md$/i;
 
+/** Apply a link regex line-wise with inline-code masking (labels may contain `]` inside backticks). */
+function rewriteMarkdownLinkLines(
+  markdown: string,
+  re: RegExp,
+  replace: (originalMatch: string, masked: RegExpMatchArray) => string,
+): string {
+  const lines = markdown.split('\n');
+  let inFence = false;
+
+  return lines
+    .map((line) => {
+      const stripped = line.trim();
+      if (stripped.startsWith('```')) {
+        inFence = !inFence;
+        return line;
+      }
+      if (inFence) return line;
+
+      const masked = maskInlineCode(line);
+      let out = line;
+      const lineRe = new RegExp(re.source, re.flags);
+      const matches = [...masked.matchAll(lineRe)];
+      for (const m of matches.reverse()) {
+        const start = m.index!;
+        const originalMatch = line.slice(start, start + m[0].length);
+        out = out.slice(0, start) + replace(originalMatch, m) + out.slice(start + m[0].length);
+      }
+      return out;
+    })
+    .join('\n');
+}
+
+function linkPrefixFromMatch(originalMatch: string, url: string): string {
+  const marker = `](${url}`;
+  const idx = originalMatch.indexOf(marker);
+  if (idx === -1) return originalMatch.slice(0, originalMatch.lastIndexOf('(') + 1);
+  return originalMatch.slice(0, idx + 2);
+}
+
 function slugForDemotedSection(filename: string, processed: string): string | null {
   if (FIND_FILE_RE.test(filename)) {
     return githubSlugify(filename.replace(/\.md$/i, ''));
@@ -36,10 +76,10 @@ function slugForDemotedSection(filename: string, processed: string): string | nu
   return heading.anchor ?? githubSlugify(heading.text);
 }
 
-/** Map shard basenames to GitHub-style slugs for the first heading after compile demotion. */
+/** Map shard file paths to GitHub-style slugs for the first heading after compile demotion. */
 export function buildSectionSlugMap(sectionPaths: string[]): Map<string, string> {
   const slugCounts = new Map<string, number>();
-  const slugByBasename = new Map<string, string>();
+  const slugByPath = new Map<string, string>();
 
   for (const filePath of sectionPaths) {
     const name = basename(filePath);
@@ -52,10 +92,10 @@ export function buildSectionSlugMap(sectionPaths: string[]): Map<string, string>
     const count = slugCounts.get(base) ?? 0;
     slugCounts.set(base, count + 1);
     const slug = count === 0 ? base : `${base}-${count}`;
-    slugByBasename.set(name, slug);
+    slugByPath.set(resolve(filePath), slug);
   }
 
-  return slugByBasename;
+  return slugByPath;
 }
 
 const PUBLISH_RELATIVE_LINK_RE = /(\[[^\]]*\]\()((?!https?:|\/\/|mailto:)(?:\.\.\/)+[^)]+)\)/g;
@@ -117,32 +157,36 @@ export function rewritePublishRelativeLinks(
   const outputAbs = resolve(options.currentOutputFile);
   if (!isAbsolute(outputAbs)) return markdown;
 
-  return markdown.replace(PUBLISH_RELATIVE_LINK_RE, (match, prefix, target) => {
+  return rewriteMarkdownLinkLines(markdown, PUBLISH_RELATIVE_LINK_RE, (originalMatch, m) => {
+    const target = m[2];
     const { path: filePart, suffix } = parseLinkPath(target);
-    if (!filePart) return match;
+    if (!filePart) return originalMatch;
 
     const resolved = resolvePublishLinkTarget(filePart, options);
-    if (!resolved) return match;
-    if (isOtherPublishOutput(resolved, options)) return match;
-    if (skipPublishRelativeRewrite(resolved, options)) return match;
+    if (!resolved) return originalMatch;
+    if (isOtherPublishOutput(resolved, options)) return originalMatch;
+    if (skipPublishRelativeRewrite(resolved, options)) return originalMatch;
 
     const fromDir = dirname(outputAbs);
     const rel = relative(fromDir, resolve(resolved)).replace(/\\/g, '/');
-    return `${prefix}${rel}${suffix})`;
+    return `${linkPrefixFromMatch(originalMatch, target)}${rel}${suffix})`;
   });
 }
 
 /** Rewrite same-guide shard links to in-document anchors for publish outputs (npm READMEs). */
 export function rewriteIntraGuideFileLinks(
   markdown: string,
-  slugByBasename: Map<string, string>,
+  slugByPath: Map<string, string>,
+  guideDir: string,
 ): string {
-  return markdown.replace(INTRA_GUIDE_MD_LINK_RE, (match, prefix, file, fragment) => {
-    const name = basename(file.split('/').pop() ?? file);
-    const slug = slugByBasename.get(name);
-    if (!slug) return match;
-    if (fragment) return `${prefix}#${fragment.slice(1)})`;
-    return `${prefix}#${slug})`;
+  return rewriteMarkdownLinkLines(markdown, INTRA_GUIDE_MD_LINK_RE, (originalMatch, m) => {
+    const file = m[2];
+    const fragment = m[3];
+    const resolved = resolve(guideDir, file.replace(/^\.\//, ''));
+    const slug = slugByPath.get(resolved);
+    if (!slug) return originalMatch;
+    if (fragment) return `${linkPrefixFromMatch(originalMatch, file)}#${fragment.slice(1)})`;
+    return `${linkPrefixFromMatch(originalMatch, file)}#${slug})`;
   });
 }
 
@@ -221,10 +265,17 @@ export function rewriteCrossGuideFileLinks(
   markdown: string,
   options: CrossGuideLinkRewriteOptions,
 ): string {
-  return markdown.replace(CROSS_GUIDE_MD_LINK_RE, (match, prefix, file, fragment) => {
+  return rewriteMarkdownLinkLines(markdown, CROSS_GUIDE_MD_LINK_RE, (originalMatch, m) => {
+    const file = m[2];
+    const fragment = m[3];
     const hit = resolveIndexedMarkdownLink(file, fragment, options);
-    if (!hit) return match;
-    if (options.ignoreGuides?.includes(hit.entry.guideName)) return match;
-    return formatCrossGuideTarget(prefix, hit.anchor, hit.entry, options);
+    if (!hit) return originalMatch;
+    if (options.ignoreGuides?.includes(hit.entry.guideName)) return originalMatch;
+    return formatCrossGuideTarget(
+      linkPrefixFromMatch(originalMatch, file),
+      hit.anchor,
+      hit.entry,
+      options,
+    );
   });
 }
