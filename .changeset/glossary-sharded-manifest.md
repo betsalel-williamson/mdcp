@@ -1,7 +1,7 @@
 ---
-'@bwilliamson/mdcp-core': major
-'@bwilliamson/mdcp-cli': major
-'@bwilliamson/mdcp-presets': major
+'@bwilliamson/mdcp-core': minor
+'@bwilliamson/mdcp-cli': minor
+'@bwilliamson/mdcp-presets': minor
 ---
 
 Sharded glossary layout and compile manifest scope behavior (docs dogfood; protocol 1.0 glossary profile).

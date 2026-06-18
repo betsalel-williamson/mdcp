@@ -1,7 +1,7 @@
 ---
-'@bwilliamson/mdcp-core': major
-'@bwilliamson/mdcp-cli': major
-'@bwilliamson/mdcp-presets': major
+'@bwilliamson/mdcp-core': minor
+'@bwilliamson/mdcp-cli': minor
+'@bwilliamson/mdcp-presets': minor
 ---
 
 Replace `reviewLinks` compile hook with assembly-time `compile.crossGuideLinks.ignoreGuides`.

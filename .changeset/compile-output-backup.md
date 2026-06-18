@@ -1,7 +1,7 @@
 ---
-'@bwilliamson/mdcp-core': major
-'@bwilliamson/mdcp-cli': major
-'@bwilliamson/mdcp-presets': major
+'@bwilliamson/mdcp-core': minor
+'@bwilliamson/mdcp-cli': minor
+'@bwilliamson/mdcp-presets': minor
 ---
 
 Add opt-in compile output backup before overwrite.

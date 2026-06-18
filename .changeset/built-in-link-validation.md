@@ -1,7 +1,7 @@
 ---
-'@bwilliamson/mdcp-core': major
-'@bwilliamson/mdcp-cli': major
-'@bwilliamson/mdcp-presets': major
+'@bwilliamson/mdcp-core': minor
+'@bwilliamson/mdcp-cli': minor
+'@bwilliamson/mdcp-presets': minor
 ---
 
 Add built-in internal link validation with BROKEN LINK markers, publish-only link policy, and publish-relative path rewriting.
