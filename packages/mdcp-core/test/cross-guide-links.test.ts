@@ -501,4 +501,32 @@ describe('cross-guide link rewriting', () => {
       expect(out).toBe('See [Section A](../out-a/README.md#section-a).');
     });
   });
+
+  it('buildGuideLinkIndex excludes repo files outside guide directories', () => {
+    withTmpDir('mdcp-index-external-', (work) => {
+      mkdirSync(join(work, 'features'), { recursive: true });
+      mkdirSync(join(work, 'examples', 'prompts'), { recursive: true });
+
+      writeFileSync(
+        join(work, 'features', 'index.md'),
+        '# Features\n\n## Sections\n\n- [Overview](./overview.md)\n',
+      );
+      writeFileSync(
+        join(work, 'features', 'overview.md'),
+        '# Overview\n\nPrompts: [README](../../examples/prompts/README.md)\n',
+      );
+      writeFileSync(join(work, 'examples', 'prompts', 'README.md'), '# Prompt templates\n');
+
+      const index = buildGuideLinkIndex({
+        guidesRoot: work,
+        compileOrder: ['features'],
+        docsRoot: work,
+        config: { outputDir: '.', outputFile: 'guides.md', compileOrder: ['features'] },
+        guides: [{ name: 'features' }],
+      });
+
+      expect(index.has(join(work, 'features', 'overview.md'))).toBe(true);
+      expect(index.has(join(work, 'examples', 'prompts', 'README.md'))).toBe(false);
+    });
+  });
 });

@@ -1,5 +1,5 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join, resolve, dirname } from 'node:path';
 
 const FILE_LINK_RE = /\[[^\]]*\]\(([^)]+\.md)(?:#[^)]*)?\)/g;
 const SLUG_LINK_RE = /\]\(#([^)]+)\)/g;
@@ -66,4 +66,35 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
     .filter((n: string) => n.endsWith('.md') && n !== manifestName && n !== 'shards.md')
     .sort()
     .map((n: string) => join(guideDir, n));
+}
+
+/** Manifest sections plus shards reachable via transitive `.md` links within the guide tree. */
+export function linkedSectionFiles(guideDir: string, options: SectionFilesOptions = {}): string[] {
+  const guideRoot = resolve(guideDir);
+  const scope = options.scopeRoot ? resolve(options.scopeRoot) : null;
+
+  function inScope(filePath: string): boolean {
+    const abs = resolve(filePath);
+    if (abs === guideRoot || abs.startsWith(`${guideRoot}/`)) return true;
+    if (scope && (abs === scope || abs.startsWith(`${scope}/`))) return true;
+    return false;
+  }
+
+  const collected = new Set(sectionFiles(guideDir, options));
+  const queue = [...collected];
+
+  while (queue.length > 0) {
+    const filePath = queue.shift()!;
+    const text = readFileSync(filePath, 'utf-8');
+    for (const match of text.matchAll(FILE_LINK_RE)) {
+      const rel = match[1].split('#')[0];
+      const resolved = resolve(dirname(filePath), rel);
+      if (!inScope(resolved)) continue;
+      if (!existsSync(resolved) || collected.has(resolved)) continue;
+      collected.add(resolved);
+      queue.push(resolved);
+    }
+  }
+
+  return [...collected];
 }
