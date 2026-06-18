@@ -9,10 +9,8 @@ export {
 } from './config/schema.js';
 export {
   resolveProtocolFetch,
-  resolveProtocolSource,
   resolveLlmsIndexOutputFilename,
   type ProtocolFetch,
-  type ProtocolSource,
 } from './config/protocol-source.js';
 export {
   loadConfig,

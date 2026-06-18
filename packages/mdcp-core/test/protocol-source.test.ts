@@ -28,22 +28,14 @@ describe('protocol fetch config', () => {
     expect(resolveProtocolFetch(config).ref).toBe('main');
   });
 
-  it('reads legacy protocol.fetch', () => {
+  it('uses optional protocol.repo override', () => {
     const config = MdcpConfigSchema.parse({
       compileOrder: ['features'],
-      protocol: { fetch: { ref: 'v0.4.0', profile: 'alpha' } },
+      protocol: { repo: 'org/fork', ref: 'v0.4.0', profile: 'alpha' },
     });
+    expect(resolveProtocolFetch(config).repo).toBe('org/fork');
     expect(resolveProtocolFetch(config).ref).toBe('v0.4.0');
     expect(resolveProtocolFetch(config).profile).toBe('alpha');
-  });
-
-  it('prefers flat protocol.profile over legacy fetch', () => {
-    const config = MdcpConfigSchema.parse({
-      compileOrder: ['features'],
-      protocol: { profile: 'dev', ref: 'feature/new', fetch: { ref: 'old', profile: 'alpha' } },
-    });
-    expect(resolveProtocolFetch(config).ref).toBe('feature/new');
-    expect(resolveProtocolFetch(config).profile).toBe('dev');
   });
 
   it('passes profile to llms-index fetch options', () => {

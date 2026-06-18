@@ -184,5 +184,5 @@ export function getLlmsIndexOutputFile(config: MdcpConfig, docsRoot: string): st
 }
 
 export function getLlmsIndexOptions(config: MdcpConfig) {
-  return config.protocol?.llmsIndex ?? config.export?.llmsIndex ?? {};
+  return config.protocol?.llmsIndex ?? {};
 }

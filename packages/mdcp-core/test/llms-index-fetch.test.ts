@@ -52,7 +52,9 @@ describe('llms-index fetch', () => {
     const config = MdcpConfigSchema.parse({
       compileOrder: ['features'],
       protocol: {
-        fetch: { repo: 'org/mdcp', ref: 'v0.4.0', profile: 'alpha' },
+        repo: 'org/mdcp',
+        ref: 'v0.4.0',
+        profile: 'alpha',
       },
     });
     expect(resolveLlmsIndexFetchOptions(config)).toEqual({

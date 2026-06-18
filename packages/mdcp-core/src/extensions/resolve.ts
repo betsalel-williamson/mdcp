@@ -31,13 +31,6 @@ export interface ResolvedExtensionPack {
 
 function defaultSourceFromConfig(config: MdcpConfig | undefined): ResolvedExtensionSource {
   const protocol = resolveProtocolFetch(config);
-  const extDefault = config?.extensions?.defaultSource;
-  if (extDefault?.baseUrl) {
-    return normalizeExtensionSource(extDefault, { repo: protocol.repo, ref: protocol.ref });
-  }
-  if (extDefault?.repo || extDefault?.ref) {
-    return normalizeExtensionSource(extDefault, { repo: protocol.repo, ref: protocol.ref });
-  }
   return { repo: protocol.repo, ref: protocol.ref };
 }
 

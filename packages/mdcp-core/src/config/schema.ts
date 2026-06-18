@@ -93,24 +93,6 @@ export const MdcpConfigSchema = z.object({
           outputFile: z.string().optional(),
         })
         .optional(),
-      /** @deprecated Use `protocol.profile` + `protocol.ref`. */
-      fetch: z
-        .object({
-          repo: z.string().default('betsalel-williamson/mdcp'),
-          ref: z.string().default('main'),
-          profile: z.enum(['alpha', 'dev']).optional(),
-          path: z.string().optional(),
-        })
-        .optional(),
-      /** @deprecated Use `protocol.profile` + `protocol.ref`. */
-      source: z
-        .object({
-          repo: z.string().default('betsalel-williamson/mdcp'),
-          ref: z.string().default('main'),
-          profile: z.enum(['alpha', 'dev']).optional(),
-          path: z.string().optional(),
-        })
-        .optional(),
     })
     .optional(),
 
@@ -196,38 +178,12 @@ export const MdcpConfigSchema = z.object({
           skipIndexFiles: true,
           collapseBlankLines: true,
         }),
-      llmsIndex: z
-        .object({
-          /** @deprecated Use `protocol.llmsIndex.outputFile`. */
-          outputFile: z.string().optional(),
-          /** @deprecated Use `protocol.source`. */
-          upstream: z
-            .object({
-              repo: z.string().default('betsalel-williamson/mdcp'),
-              ref: z.string().default('main'),
-              path: z.string().optional(),
-              profile: z.enum(['alpha', 'dev']).optional(),
-            })
-            .optional(),
-        })
-        .optional(),
     })
     .optional(),
 
   /** Optional extension packs (prompts, archetypes) cached for agents. */
   extensions: z
     .object({
-      /** @deprecated Duplicate of root `protocolVersion` — ignored when root is set. */
-      protocolVersion: z.string().optional(),
-      /** @deprecated Use `protocol.fetch` — per-pack `source` overrides still apply. */
-      defaultSource: z
-        .object({
-          repo: z.string().default('betsalel-williamson/mdcp'),
-          ref: z.string().default('main'),
-          /** Raw HTTP(S) base URL; files load from `{baseUrl}/{pack.path}/{filename}`. */
-          baseUrl: z.string().url().optional(),
-        })
-        .optional(),
       packs: z
         .array(
           z.object({

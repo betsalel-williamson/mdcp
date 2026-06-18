@@ -13,31 +13,18 @@ export interface ProtocolFetch {
   path?: string;
 }
 
-/**
- * Resolve protocol fetch: `protocol.profile` + optional `protocol.ref` (branch override).
- * Legacy `protocol.fetch` / `export.llmsIndex.upstream` still honored.
- */
+/** Resolve protocol fetch from flat `protocol.profile`, `protocol.ref`, and optional overrides. */
 export function resolveProtocolFetch(config: MdcpConfig | undefined): ProtocolFetch {
   const protocol = config?.protocol;
-  const legacy = protocol?.fetch ?? protocol?.source ?? config?.export?.llmsIndex?.upstream;
-  const extDefault = config?.extensions?.defaultSource;
-
-  const profile = protocol?.profile ?? legacy?.profile ?? ('dev' as LlmsIndexProfile);
 
   return {
-    repo: protocol?.repo ?? legacy?.repo ?? extDefault?.repo ?? AUTHORITATIVE_PROTOCOL_REPO,
-    ref: protocol?.ref ?? legacy?.ref ?? extDefault?.ref ?? DEFAULT_LLMS_INDEX_UPSTREAM_REF,
-    profile,
-    path: protocol?.path ?? legacy?.path,
+    repo: protocol?.repo ?? AUTHORITATIVE_PROTOCOL_REPO,
+    ref: protocol?.ref ?? DEFAULT_LLMS_INDEX_UPSTREAM_REF,
+    profile: protocol?.profile ?? ('dev' as LlmsIndexProfile),
+    path: protocol?.path,
   };
 }
 
-/** @deprecated Use `resolveProtocolFetch`. */
-export const resolveProtocolSource = resolveProtocolFetch;
-
-/** @deprecated Use `ProtocolFetch`. */
-export type ProtocolSource = ProtocolFetch;
-
 export function resolveLlmsIndexOutputFilename(config: MdcpConfig | undefined): string | undefined {
-  return config?.protocol?.llmsIndex?.outputFile ?? config?.export?.llmsIndex?.outputFile;
+  return config?.protocol?.llmsIndex?.outputFile;
 }

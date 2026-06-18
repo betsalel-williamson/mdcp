@@ -23,12 +23,12 @@ describe('extensions config', () => {
   it('parses extensions with enabled packs', () => {
     const config = MdcpConfigSchema.parse({
       compileOrder: ['features'],
-      protocol: { fetch: { repo: 'org/mdcp', ref: 'v0.4.0' } },
+      protocol: { repo: 'org/mdcp', ref: 'v0.4.0' },
       extensions: {
         packs: [{ id: 'prompts-mdcp-defaults', enabled: true }],
       },
     });
-    expect(config.protocol?.fetch?.repo).toBe('org/mdcp');
+    expect(config.protocol?.repo).toBe('org/mdcp');
     expect(config.extensions?.packs?.[0]?.id).toBe('prompts-mdcp-defaults');
   });
 
@@ -51,7 +51,7 @@ describe('extensions config', () => {
     const config = MdcpConfigSchema.parse({
       compileOrder: ['features'],
       protocolVersion: '0.4.0.0',
-      protocol: { fetch: { ref: 'main' } },
+      protocol: { ref: 'main' },
     });
     const packs = resolveEnabledExtensionPacks(config, { repoRoot: REPO_ROOT });
     expect(packs[0]!.protocolVersion).toBe('0.4.0.0');
@@ -72,7 +72,7 @@ describe('extensions config', () => {
     const config = MdcpConfigSchema.parse({
       compileOrder: ['features'],
       protocolVersion: '0.4.0.0',
-      protocol: { fetch: { ref: 'main' } },
+      protocol: { ref: 'main' },
     });
     expect(resolveExtensionFetchRef(config)).toBe('v0.4.0');
   });
