@@ -4,13 +4,11 @@
   "title": "MDCP extension pack manifest",
   "description": "Per-version manifest at spec/extensions/{id}/{version}/manifest.json",
   "type": "object",
-  "required": ["id", "version", "files"],
+  "required": ["id", "version", "protocolVersionRange", "files"],
   "properties": {
     "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
     "version": { "type": "string" },
     "protocolVersionRange": { "type": "string" },
-    "minProtocolVersion": { "type": "string" },
-    "maxProtocolVersion": { "type": "string" },
     "revoked": { "type": "boolean", "default": false },
     "revokedReason": { "type": "string" },
     "files": {
@@ -18,6 +16,5 @@
       "minItems": 1,
       "items": { "type": "string" }
     }
-  },
-  "oneOf": [{ "required": ["protocolVersionRange"] }, { "required": ["minProtocolVersion"] }]
+  }
 }

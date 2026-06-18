@@ -96,11 +96,9 @@ Top-level discovery index. **MUST** include `catalogVersion` (semver of the cata
 | `extensions[].description`                     | yes      | Short human summary                                  |
 | `extensions[].tags`                            | yes      | Discovery tags                                       |
 | `extensions[].versions[].version`              | yes      | Published extension semver                           |
-| `extensions[].versions[].protocolVersionRange` | yes\*    | npm semver range of supported MDCP protocol versions |
+| `extensions[].versions[].protocolVersionRange` | yes      | npm semver range of supported MDCP protocol versions |
 | `extensions[].versions[].revoked`              | no       | When `true`, pack **MUST NOT** be fetched            |
 | `extensions[].versions[].revokedReason`        | no       | Explanation for maintainers and agents               |
-
-\* Legacy `minProtocolVersion` / `maxProtocolVersion` are supported for migration (see below) but **SHOULD** be replaced by `protocolVersionRange`.
 
 ## Per-version manifest (`{id}/{version}/manifest.json`)
 
@@ -120,7 +118,7 @@ Authoritative record for one extension release. **MUST** mirror catalog fields f
 | ---------------------- | -------- | --------------------------------------------- |
 | `id`                   | yes      | Must match parent directory and catalog entry |
 | `version`              | yes      | Must match parent directory name              |
-| `protocolVersionRange` | yes\*    | npm semver range (see below)                  |
+| `protocolVersionRange` | yes      | npm semver range (see below)                  |
 | `revoked`              | no       | When `true`, fetch **MUST** fail              |
 | `revokedReason`        | no       | Human-readable revocation note                |
 | `files`                | yes      | Filenames cached relative to this directory   |
@@ -163,28 +161,6 @@ Examples for a consumer with `"protocolVersion": "0.4.0.0"`:
 | `*`                    | yes                | yes                | yes                | yes                |
 
 When `extensions.packs[].version` is omitted in `mdcp.config.json`, mdcp selects the **newest non-revoked** extension version whose `protocolVersionRange` satisfies root `protocolVersion`.
-
-## Legacy min / max fields (deprecated)
-
-Older manifests used point comparisons:
-
-```json
-{
-  "minProtocolVersion": "0.4.0.0",
-  "maxProtocolVersion": "0.4.0.0"
-}
-```
-
-Implementations **MAY** synthesize a range:
-
-| Fields                                                    | Synthesized range                                  |
-| --------------------------------------------------------- | -------------------------------------------------- |
-| `min` only (bare version)                                 | `>=min`                                            |
-| `max` only (bare version)                                 | `<=max`                                            |
-| `min` and `max` (bare versions)                           | `min - max` (semver hyphen range)                  |
-| `min` contains range operators (`^`, `~`, `*`, `>`, etc.) | `min` is the full range; `max` **MUST NOT** be set |
-
-New manifests **SHOULD** use `protocolVersionRange` only.
 
 ## Revocation
 
@@ -237,6 +213,6 @@ Tests: `packages/mdcp-core/test/extensions.test.ts`, `packages/mdcp-core/test/pr
 
 ## Changelog
 
-| Catalog version | Changes                                                                                 |
-| --------------- | --------------------------------------------------------------------------------------- |
-| `0.4.0.0`       | Initial semver layout; `protocolVersionRange` with npm semver; legacy min/max synthesis |
+| Catalog version | Changes                                                       |
+| --------------- | ------------------------------------------------------------- |
+| `0.4.0.0`       | Initial semver layout; `protocolVersionRange` with npm semver |

@@ -67,15 +67,12 @@ describe('protocol version semver ranges', () => {
     expect(isSemverRangeSyntax('0.4.0.0')).toBe(false);
   });
 
-  it('synthesizes legacy min/max into semver ranges', () => {
-    expect(
-      resolveProtocolVersionRange({
-        minProtocolVersion: '0.4.0.0',
-        maxProtocolVersion: '0.4.0.0',
-      }),
-    ).toBe('0.4.0-0 - 0.4.0-0');
-    expect(resolveProtocolVersionRange({ minProtocolVersion: '^0.4.0.0' })).toBe('^0.4.0.0');
-    expect(isProtocolCompatible('0.4.0.5', { minProtocolVersion: '^0.4.0.0' })).toBe(true);
+  it('requires protocolVersionRange on extension entries', () => {
+    expect(() => resolveProtocolVersionRange({ protocolVersionRange: '' })).toThrow(
+      /requires protocolVersionRange/,
+    );
+    expect(resolveProtocolVersionRange({ protocolVersionRange: '^0.4.0.0' })).toBe('^0.4.0-0');
+    expect(isProtocolCompatible('0.4.0.5', { protocolVersionRange: '^0.4.0.0' })).toBe(true);
   });
 
   it('selects extension version by protocol range', () => {

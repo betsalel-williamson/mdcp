@@ -1,6 +1,5 @@
 import {
   compareExtensionVersion,
-  isSemverRangeSyntax,
   normalizeProtocolVersionRange,
   protocolSatisfiesRange,
 } from './protocol-version-range.js';
@@ -11,11 +10,7 @@ export const EXTENSIONS_CATALOG_FILE = `${EXTENSIONS_SPEC_DIR}/manifest.json`;
 export interface ExtensionVersionEntry {
   version: string;
   /** npm semver range — canonical protocol compatibility (see spec/extensions/FORMAT.md). */
-  protocolVersionRange?: string;
-  /** @deprecated Use `protocolVersionRange`. Bare version or range when range field omitted. */
-  minProtocolVersion?: string;
-  /** @deprecated Use `protocolVersionRange`. Upper bound when synthesizing a hyphen range. */
-  maxProtocolVersion?: string;
+  protocolVersionRange: string;
   revoked?: boolean;
   revokedReason?: string;
 }
@@ -35,9 +30,7 @@ export interface ExtensionsCatalog {
 export interface ExtensionPackManifest {
   id: string;
   version: string;
-  protocolVersionRange?: string;
-  minProtocolVersion?: string;
-  maxProtocolVersion?: string;
+  protocolVersionRange: string;
   revoked?: boolean;
   revokedReason?: string;
   files: string[];
@@ -53,46 +46,18 @@ export function resolveExtensionPackManifestPath(extensionId: string, version: s
 
 /** Resolve effective semver range from catalog or pack manifest fields. */
 export function resolveProtocolVersionRange(
-  entry: Pick<
-    ExtensionVersionEntry,
-    'protocolVersionRange' | 'minProtocolVersion' | 'maxProtocolVersion'
-  >,
+  entry: Pick<ExtensionVersionEntry | ExtensionPackManifest, 'protocolVersionRange'>,
 ): string {
-  if (entry.protocolVersionRange) return entry.protocolVersionRange;
-
-  const min = entry.minProtocolVersion?.trim();
-  const max = entry.maxProtocolVersion?.trim();
-
-  if (min && isSemverRangeSyntax(min)) {
-    if (max) {
-      throw new Error(
-        'protocolVersionRange or minProtocolVersion alone is required — do not combine a range min with maxProtocolVersion',
-      );
-    }
-    return min;
+  const range = entry.protocolVersionRange?.trim();
+  if (!range) {
+    throw new Error('Extension version entry requires protocolVersionRange');
   }
-
-  if (min && max) return normalizeProtocolVersionRange(`${min} - ${max}`);
-  if (min) {
-    return isSemverRangeSyntax(min) || min.includes('>') || min.includes('<')
-      ? normalizeProtocolVersionRange(min)
-      : normalizeProtocolVersionRange(`>=${min}`);
-  }
-  if (max) {
-    return max.includes('>') || max.includes('<')
-      ? normalizeProtocolVersionRange(max)
-      : normalizeProtocolVersionRange(`<=${max}`);
-  }
-
-  throw new Error('Extension version entry requires protocolVersionRange or minProtocolVersion');
+  return normalizeProtocolVersionRange(range);
 }
 
 export function isProtocolCompatible(
   protocolVersion: string,
-  entry: Pick<
-    ExtensionVersionEntry | ExtensionPackManifest,
-    'protocolVersionRange' | 'minProtocolVersion' | 'maxProtocolVersion'
-  >,
+  entry: Pick<ExtensionVersionEntry | ExtensionPackManifest, 'protocolVersionRange'>,
 ): boolean {
   return protocolSatisfiesRange(protocolVersion, resolveProtocolVersionRange(entry));
 }
@@ -110,10 +75,8 @@ export function parseExtensionPackManifest(raw: unknown): ExtensionPackManifest 
   if (!data?.id || !data?.version || !data?.files?.length) {
     throw new Error('Extension pack manifest requires id, version, and files[]');
   }
-  if (!data.protocolVersionRange && !data.minProtocolVersion) {
-    throw new Error(
-      'Extension pack manifest requires protocolVersionRange (or legacy minProtocolVersion)',
-    );
+  if (!data.protocolVersionRange) {
+    throw new Error('Extension pack manifest requires protocolVersionRange');
   }
   resolveProtocolVersionRange(data);
   return data;

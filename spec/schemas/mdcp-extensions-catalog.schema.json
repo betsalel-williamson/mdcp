@@ -30,16 +30,13 @@
     },
     "versionEntry": {
       "type": "object",
-      "required": ["version"],
+      "required": ["version", "protocolVersionRange"],
       "properties": {
         "version": { "type": "string" },
         "protocolVersionRange": { "type": "string" },
-        "minProtocolVersion": { "type": "string" },
-        "maxProtocolVersion": { "type": "string" },
         "revoked": { "type": "boolean", "default": false },
         "revokedReason": { "type": "string" }
-      },
-      "oneOf": [{ "required": ["protocolVersionRange"] }, { "required": ["minProtocolVersion"] }]
+      }
     }
   }
 }
