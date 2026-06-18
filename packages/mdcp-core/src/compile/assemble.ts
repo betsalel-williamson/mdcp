@@ -12,7 +12,7 @@ import {
   rewritePublishRelativeLinks,
 } from './publish-links.js';
 import { buildGuideLinkIndex, type GuideLinkIndex } from './guide-link-index.js';
-import { sectionFiles } from './section-manifest.js';
+import { linkedSectionFiles } from './section-manifest.js';
 import type { GuideConfig, GuideConfigInput, MdcpConfigInput } from '../config/schema.js';
 import {
   resolveGuideLinkBase,
@@ -25,7 +25,7 @@ import { collectShardProvenance } from '../links/validate-shards.js';
 import { markBrokenLinks } from '../links/mark-broken.js';
 import type { LinkProvenance } from '../links/mark-broken.js';
 
-export { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
+export { sectionFiles, linkedSectionFiles, type SectionFilesOptions } from './section-manifest.js';
 export {
   buildGuideLinkIndex,
   type GuideLinkIndex,
@@ -77,7 +77,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
   const parts: string[] = [];
 
   const useTitle = options.title;
-  const files = sectionFiles(guideDir, {
+  const files = linkedSectionFiles(guideDir, {
     manifest: manifestName,
     scopeRoot: options.scopeRoot,
     sectionsHeading: options.sectionsHeading,
@@ -164,10 +164,10 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
     compiled = stripExplicitAnchorMarkers(compiled);
   }
 
-  const slugByBasename = buildSectionSlugMap(files);
-  compiled = rewriteIntraGuideFileLinks(compiled, slugByBasename);
+  const slugByPath = buildSectionSlugMap(files);
+  compiled = rewriteIntraGuideFileLinks(compiled, slugByPath, guideDir);
 
-  const intraSlugs = new Set(slugByBasename.values());
+  const intraSlugs = new Set(slugByPath.values());
   const assemblingGuide = options.guideName ?? guideName;
   if (options.linkIndex && assemblingGuide) {
     for (const entry of options.linkIndex.values()) {

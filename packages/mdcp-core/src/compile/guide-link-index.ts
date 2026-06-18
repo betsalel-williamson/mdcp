@@ -1,7 +1,6 @@
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve, basename, dirname } from 'node:path';
+import { resolve, basename } from 'node:path';
 import { buildSectionSlugMap } from './publish-links.js';
-import { sectionFiles, type SectionFilesOptions } from './section-manifest.js';
+import { sectionFiles, linkedSectionFiles } from './section-manifest.js';
 import { resolveUnderOutputDir, defaultGuideOutputFile } from '../config/paths.js';
 import type { CompileOptions } from './assemble.js';
 
@@ -16,29 +15,16 @@ export interface GuideLinkEntry {
 /** Absolute shard path → compiled output target. */
 export type GuideLinkIndex = Map<string, GuideLinkEntry>;
 
-const FILE_LINK_RE = /\[[^\]]*\]\(([^)]+\.md)(?:#[^)]*)?\)/g;
-
-function collectLinkedSectionPaths(guideDir: string, options: SectionFilesOptions): string[] {
-  const scope = options.scopeRoot ? resolve(options.scopeRoot) : null;
-  const collected = new Set(sectionFiles(guideDir, options));
-  const queue = [...collected];
-
-  while (queue.length > 0) {
-    const filePath = queue.shift()!;
-    const text = readFileSync(filePath, 'utf-8');
-    for (const match of text.matchAll(FILE_LINK_RE)) {
-      const rel = match[1].split('#')[0];
-      const resolved = resolve(dirname(filePath), rel);
-      if (scope && !resolved.startsWith(scope + '/') && resolved !== scope) {
-        continue;
-      }
-      if (!existsSync(resolved) || collected.has(resolved)) continue;
-      collected.add(resolved);
-      queue.push(resolved);
-    }
-  }
-
-  return [...collected];
+function isIndexableShardPath(
+  filePath: string,
+  guideDirs: Map<string, string>,
+  compileOrder: string[],
+  guidesRoot: string,
+): boolean {
+  const abs = resolve(filePath);
+  const glossaryDir = resolve(guidesRoot, 'glossary');
+  if (abs === glossaryDir || abs.startsWith(`${glossaryDir}/`)) return true;
+  return guideForShardPath(abs, guideDirs, compileOrder) !== undefined;
 }
 
 function resolveGuideDir(
@@ -136,15 +122,18 @@ export function buildGuideLinkIndex(
     const guideDir = guideDirs.get(name)!;
     const scopeRoot = compile?.scopeRoot ? resolve(cwd, compile.scopeRoot) : undefined;
 
-    const files = collectLinkedSectionPaths(guideDir, {
+    const files = linkedSectionFiles(guideDir, {
       manifest: compile?.manifest,
       scopeRoot,
       sectionsHeading: compile?.sectionsHeading,
     });
-    const slugByBasename = buildSectionSlugMap(files);
+    const slugByPath = buildSectionSlugMap(files);
 
     for (const filePath of files) {
-      const slug = slugByBasename.get(basename(filePath));
+      if (!isIndexableShardPath(filePath, guideDirs, options.compileOrder, options.guidesRoot)) {
+        continue;
+      }
+      const slug = slugByPath.get(resolve(filePath));
       if (!slug) continue;
 
       const owner = resolveShardOwner(

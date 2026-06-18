@@ -912,12 +912,12 @@ Nested shards use more `../` segments in source; per-shard resolution still yiel
 
 When `compile.crossGuideLinks.ignoreGuides` keeps a cross-guide link as a shard `.md` path, publish-relative still rebases that path for the publish file. Example: `client-cli` with `ignoreGuides: ["features"]` compiles `../features/feature-catalog.md` to `../../docs/features/feature-catalog.md` in the package README.
 
-Link validation may still report **`missing publish path`** for those targets — that is policy (publish output should not link into unpublished shard trees), not a rewrite failure. See [Link validation](../../docs/features/link-validation.md#publish-only-link-policy).
+Link validation accepts those shard paths when the target guide is listed in `ignoreGuides` on the compiling guide. See [Link validation](../../docs/features/link-validation.md#publish-only-link-policy).
 
 ### Related
 
 - [Cross-guide link rewriting](#cross-guide-link-rewriting) — indexed `.md` between guides
-- [Compile hooks — overview](#developer-guide) — assembly pipeline
+- [Compile hooks — overview](#compile-hooks) — assembly pipeline
 - [API — Config](#api--config) — `compile.outputFile`
 - [codeEvidence](#codeevidence) — separate path rebase for repo source evidence links
 
@@ -931,7 +931,7 @@ Link validation may still report **`missing publish path`** for those targets �
 ### Further reading
 
 - [Project README](../../README.md)
-- [Design constraints](#compile-hooks)
+- [Design constraints](../../docs/features/design-constraints/index.md)
 - [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
 
 ### License

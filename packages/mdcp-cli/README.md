@@ -661,7 +661,7 @@ Built-in hooks run **by default** on every guide — omit `compile.hooks` for th
 
 Opt out per hook: `"hooks": { "codeEvidence": false }`. Replace the pipeline entirely with a string array when needed.
 
-Cross-guide `.md` links rewrite automatically at assembly from `compileOrder` and per-guide `compile.outputFile`. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard paths for listed guides — see [Cross-guide links](../mdcp-core/README.md#cross-guide-link-rewriting). Hook specs: [Compile hooks](../mdcp-core/README.md#developer-guide).
+Cross-guide `.md` links rewrite automatically at assembly from `compileOrder` and per-guide `compile.outputFile`. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard paths for listed guides — see [Cross-guide links](../mdcp-core/README.md#cross-guide-link-rewriting). Hook specs: [Compile hooks](../mdcp-core/README.md#compile-hooks).
 
 ### Multi-guide config
 
