@@ -40,6 +40,6 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
 - **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
 - **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
-- **link lint** — built-in validation runs on every `docs:check`; dogfood sets `lint.links.severity: "warn"` so publish outputs still report `missing publish path` diagnostics for `docs/features/` shard links without failing CI (see [Publish-only link policy](../features/link-validation.md#publish-only-link-policy))
+- **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](../features/link-validation.md#publish-only-link-policy)
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
