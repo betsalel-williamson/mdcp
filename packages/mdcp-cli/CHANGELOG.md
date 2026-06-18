@@ -1,5 +1,9 @@
 # @bwilliamson/mdcp-cli
 
+## 0.4.0-build.3
+
+Add a "So what — how do I use this in my project?" section to npm READMEs and the root README, pointing to the getting-started bootstrap prompt and clarifying that mdcp is stack-agnostic.
+
 ## 0.4.0-build.2
 
 Expand Why MDCP documentation in npm READMEs: scope boundaries (what MDCP does not replace), flow-state framing, and complement to checked-in prompts and playbooks.
