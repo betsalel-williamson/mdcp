@@ -9,6 +9,19 @@ Normative layout and manifest schema for versioned extension packs under `spec/e
 - **Revocation** — maintainers can mark compromised packs (e.g. prompt injection) as `revoked` without forking the protocol core.
 - **Flat catalog** — one root index for discovery; per-version manifests for fetch and cache verification.
 
+## Self-containment
+
+Extension packs are pasted into agent context. Fetchable files listed in `manifest.files[]` **SHOULD** be **self-contained**: everything an agent needs to follow the prompt is shipped in the pack directory.
+
+| Rule              | Requirement                                                                                                                                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Sibling links     | Markdown links in `files[]` **SHOULD** target only sibling files in the same `{id}/{version}/` directory (e.g. `./feature-level-task.prompt.md`).                                                                                    |
+| Escaping paths    | Relative links that leave the pack directory (`../`) **MUST NOT** appear in fetchable files.                                                                                                                                         |
+| External URLs     | `http://` and `https://` links **SHOULD NOT** appear in default/reference prompt packs. Community packs **MAY** include them but **MUST** expect fetch-time flagging (see [SECURITY.md](./SECURITY.md#in-pack-external-references)). |
+| README dependency | `README.md` in the version directory is for discovery; if it is not listed in `files[]`, fetchable prompts **MUST NOT** depend on it.                                                                                                |
+
+Fetch implementations scan pack content at cache time, record `selfContained` and `externalReferences[]` in the cached manifest, and warn when external references are present.
+
 ## Directory layout
 
 ```

@@ -37,14 +37,33 @@ Individual packs **MAY** set their own `extensions.packs[].source` (`repo`, `ref
 
 **Do not** point default prompt packs at unknown third-party repos without review.
 
+## In-pack external references
+
+Even when fetch source is trusted, **links inside pack files** can pull **secondary content** into agent context that the pack publisher did not ship or review:
+
+- **External URLs** (`https://…`) — agents may fetch or summarize remote pages with instructions outside your review gate.
+- **Escaping relative links** (`../docs/…`, `../../spec/…`) — resolve to paths that do not exist in consumer caches, or to monorepo-only files consumers never fetched.
+- **Upstream path prose** — references like `spec/extensions/…` or "in the mdcp repo" assume a layout consumer repos do not have.
+
+**Goal:** self-contained, safe prompts that reduce **prompt-poisoning** risk. A publisher vouches for the bytes in `manifest.files[]` only — not for linked or implied secondary content.
+
+| Mitigation          | Behavior                                                                                                                                       |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Self-containment    | Default packs (e.g. `prompts-mdcp-defaults`) ship with zero external references.                                                               |
+| Fetch-time flagging | `mdcp export --llms-index --fetch` scans pack files; cached `manifest.json` records `selfContained` and `externalReferences[]`.                |
+| CLI warning         | When `externalReferences` is non-empty, mdcp prints a stderr warning so maintainers know unreviewed secondary content may enter agent context. |
+| Revocation          | Compromised pack content → `revoked: true` on catalog and per-version manifest (see [Revocation](#revocation)).                                |
+
+Normative layout rules: [FORMAT.md — Self-containment](./FORMAT.md#self-containment).
+
 ## Threat model
 
-| Risk                                     | Mitigation (today)                                                                 | Planned                                                 |
-| ---------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| Prompt injection in fetched `.prompt.md` | Catalog `revoked` flag; pin pack `version`; review before enabling custom `source` | Automated content scanning                              |
-| Arbitrary repo / URL fetch               | Documented warning; defaults to authoritative repo                                 | **Allowlist** in config (`extensions.trustedSources[]`) |
-| Typosquat extension ids                  | Catalog in `spec/extensions/manifest.json`                                         | Signature verification                                  |
-| Compromised upstream branch              | Pin `ref` to release tags in production; branch pins for dogfood only              | Immutable release attestations                          |
+| Risk                                     | Mitigation (today)                                                                                                         | Planned                                                 |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Prompt injection in fetched `.prompt.md` | Catalog `revoked` flag; pin pack `version`; review before enabling custom `source`; fetch-time external-reference warnings | Automated content scanning                              |
+| Arbitrary repo / URL fetch               | Documented warning; defaults to authoritative repo                                                                         | **Allowlist** in config (`extensions.trustedSources[]`) |
+| Typosquat extension ids                  | Catalog in `spec/extensions/manifest.json`                                                                                 | Signature verification                                  |
+| Compromised upstream branch              | Pin `ref` to release tags in production; branch pins for dogfood only                                                      | Immutable release attestations                          |
 
 ## Future: trusted-source allowlist
 
