@@ -40,7 +40,6 @@
       "compiledConfig": "compiled-lint.markdownlint-cli2.jsonc",
       "shardsGlobs": ["glossary", "features", "developer", "client-cli", "client-core"]
     },
-    "links": { "severity": "warn" },
     "xrefs": { "enabled": true }
   },
   "vale": {
