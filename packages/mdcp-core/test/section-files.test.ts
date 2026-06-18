@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { sectionFiles } from '../src/compile/assemble.js';
+import { sectionFiles, linkedSectionFiles } from '../src/compile/assemble.js';
 import { useTmpDir } from './helpers/tmp-dir.js';
 
 describe('sectionFiles', () => {
@@ -40,7 +40,7 @@ describe('sectionFiles', () => {
     ]);
   });
 
-  it('resolves parent-relative manifest links with scopeRoot', () => {
+  it('resolves parent-relative manifest links', () => {
     const child = join(work.path, 'compiled');
     const sibling = join(work.path, 'sibling');
     mkdirSync(child, { recursive: true });
@@ -53,5 +53,26 @@ describe('sectionFiles', () => {
       scopeRoot: work.path,
     });
     expect(files).toEqual([resolve(sibling, 'doc.md')]);
+  });
+
+  it('pulls transitive glossary shards with scopeRoot without filtering the guide manifest', () => {
+    const guide = join(work.path, 'developer');
+    const glossary = join(work.path, 'glossary');
+    mkdirSync(guide, { recursive: true });
+    mkdirSync(glossary, { recursive: true });
+    writeFileSync(
+      join(guide, 'index.md'),
+      '# Dev\n\n- [About](./about.md)\n- [Glossary](../glossary/index.md)\n',
+    );
+    writeFileSync(join(guide, 'about.md'), '# About\n');
+    writeFileSync(join(glossary, 'index.md'), '# Glossary\n\n- [Term](./term.md)\n');
+    writeFileSync(join(glossary, 'term.md'), '# Term\n');
+
+    const files = linkedSectionFiles(guide, { scopeRoot: glossary });
+    expect(files).toEqual([
+      resolve(guide, 'about.md'),
+      resolve(glossary, 'index.md'),
+      resolve(glossary, 'term.md'),
+    ]);
   });
 });
