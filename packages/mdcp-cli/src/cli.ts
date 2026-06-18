@@ -23,6 +23,8 @@ import {
   lintXrefs,
   stripForLlm,
   getLlmExportOptions,
+  buildLlmsIndex,
+  getLlmsIndexOutputFile,
   findPeerBinary,
   runPeer,
   shardFromMonolith,
@@ -244,11 +246,43 @@ program
   .command('export')
   .description('Export compiled document')
   .option('--llm', 'Token-optimized output for LLM context')
+  .option('--llms-index', 'Write mdcp.v*.llms.txt agent index for docs root')
   .option('--stdout', 'Write to stdout instead of file')
   .action((exportOpts, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
     const docsRoot = getDocsRoot(opts);
+
+    if (exportOpts.llmsIndex) {
+      let scripts: Record<string, string> | undefined;
+      try {
+        const pkgPath = resolve(process.cwd(), 'package.json');
+        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8')) as {
+          scripts?: Record<string, string>;
+        };
+        scripts = pkg.scripts;
+      } catch {
+        scripts = undefined;
+      }
+      const text = buildLlmsIndex(config, {
+        configPath: opts.config,
+        scripts,
+      });
+      if (exportOpts.stdout) {
+        process.stdout.write(text);
+        return;
+      }
+      const outPath = getLlmsIndexOutputFile(config, docsRoot);
+      const { backupPath } = writeOutputFile(outPath, text, {
+        docsRoot,
+        outputDir: config.outputDir,
+        backup: backupOptions(config, opts),
+      });
+      if (backupPath) console.log(`backed up → ${backupPath}`);
+      console.log(`→ ${outPath}`);
+      return;
+    }
+
     let text = compileToString(config, docsRoot, opts);
     if (exportOpts.llm) {
       text = stripForLlm(text, getLlmExportOptions(config));
