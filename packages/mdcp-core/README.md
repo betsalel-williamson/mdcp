@@ -228,10 +228,10 @@ Consumer docs: [Cross-links and refs — heading slugs](../mdcp-cli/README.md#he
 
 ### Validation
 
-| Export                                  | Purpose                                 |
-| --------------------------------------- | --------------------------------------- |
-| `checkOrphans`, `checkOrphansForGuides` | Detect unlinked or missing shard files  |
-| `lintXrefs`                             | Chapter-style cross-reference detection |
+| Export                  | Purpose                                 |
+| ----------------------- | --------------------------------------- |
+| `checkOrphansForGuides` | Detect unlinked or missing shard files  |
+| `lintXrefs`             | Chapter-style cross-reference detection |
 
 ## API — Export, shard, and peers
 

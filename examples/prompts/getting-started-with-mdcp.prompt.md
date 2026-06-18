@@ -28,10 +28,12 @@ mdcp export --llms-index --fetch --fetch-ref v0.4.0 --docs-root docs
 ```json
 {
   "protocolVersion": "0.4.0.0",
+  "protocol": {
+    "profile": "alpha",
+    "ref": "v0.4.0"
+  },
   "extensions": {
-    "protocolVersion": "0.4.0.0",
-    "defaultSource": { "repo": "betsalel-williamson/mdcp", "ref": "v0.4.0" },
-    "packs": [{ "id": "prompts-mdcp-defaults", "enabled": true }]
+    "packs": [{ "id": "prompts-mdcp-defaults", "enabled": true, "version": "0.4.0.0" }]
   }
 }
 ```

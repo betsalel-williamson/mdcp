@@ -59,7 +59,7 @@ Consumer docs: [Cross-links and refs — heading slugs](../client-cli/cross-link
 
 ## Validation
 
-| Export                                  | Purpose                                 |
-| --------------------------------------- | --------------------------------------- |
-| `checkOrphans`, `checkOrphansForGuides` | Detect unlinked or missing shard files  |
-| `lintXrefs`                             | Chapter-style cross-reference detection |
+| Export                  | Purpose                                 |
+| ----------------------- | --------------------------------------- |
+| `checkOrphansForGuides` | Detect unlinked or missing shard files  |
+| `lintXrefs`             | Chapter-style cross-reference detection |

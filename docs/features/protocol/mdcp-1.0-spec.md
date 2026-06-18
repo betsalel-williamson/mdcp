@@ -49,7 +49,7 @@ Token-stripped compiled output for agents. Implemented by `mdcp export --llm`.
 
 ### 9.2 llms-index export (`protocol.llmsIndex`)
 
-**Upstream fetch (`--fetch`):** Pull from `spec/llms-index/vdev` (default) or `valpha`. `protocol.profile` + optional `protocol.ref` select the symlink and branch; optional `repo` / `path` for advanced overrides. Legacy `protocol.fetch` still honored. See [spec/llms-index/README.md](../../../spec/llms-index/README.md) and [SECURITY.md](../../../spec/extensions/SECURITY.md).
+**Upstream fetch (`--fetch`):** Pull from `spec/llms-index/vdev` (default) or `valpha`. `protocol.profile` + optional `protocol.ref` select the symlink and branch; optional `repo` / `path` for advanced overrides. See [spec/llms-index/README.md](../../../spec/llms-index/README.md) and [SECURITY.md](../../../spec/extensions/SECURITY.md).
 
 Versioned agent bootstrap file in the docs root. **Canonical immutable artifacts** live in `spec/llms-index/` in the mdcp repository.
 

@@ -40,8 +40,6 @@ mdcp export --llms-index --fetch --fetch-repo owner/fork --fetch-ref my-branch -
 mdcp export --llms-index --fetch --fetch-local --fetch-profile dev --docs-root docs
 ```
 
-Config:
-
 Config (optional after day zero):
 
 - `protocol.profile` — `alpha` (`valpha`) or `dev` (`vdev`) under `spec/llms-index/`
@@ -50,8 +48,6 @@ Config (optional after day zero):
 - `extensions.packs[]` — enabled packs and optional per-pack `version` / `source` override
 
 Do **not** duplicate fetch fields under `extensions` — use `protocol.profile` + `protocol.ref`. See [Extension fetch security](../../../spec/extensions/SECURITY.md) before overriding `repo` or `baseUrl`.
-
-Legacy `protocol.fetch`, `protocol.source`, `export.llmsIndex.upstream`, and `extensions.defaultSource` are still read when flat `protocol.profile` / `protocol.ref` are omitted.
 
 - Spec artifacts: [`spec/llms-index/`](../../spec/llms-index/README.md)
 
