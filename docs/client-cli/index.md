@@ -1,6 +1,7 @@
 # @bwilliamson/mdcp-cli
 
 - [@bwilliamson/mdcp-cli](#table-of-contents)
+  - [Why MDCP](./why-mdcp-overview.md)
   - [Why mdcp for coding agents](./why-mdcp-for-agents.md)
   - [LLM collaboration](./llm-collaboration.md)
   - [Install and quick start](./install-and-quick-start.md)

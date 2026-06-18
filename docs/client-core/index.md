@@ -1,6 +1,7 @@
 # @bwilliamson/mdcp-core
 
 - [@bwilliamson/mdcp-core](#table-of-contents)
+  - [Why MDCP](./why-mdcp-overview.md)
   - [Overview](./overview.md)
   - [Glossary](../glossary/index.md)
   - [Quick example](./quick-example.md)
