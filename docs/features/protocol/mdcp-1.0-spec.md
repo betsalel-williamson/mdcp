@@ -27,11 +27,17 @@ Conforming repositories **SHOULD** organize shards into guides listed in `compil
 
 Each guide **MUST** have a manifest (`index.md` or `shards.md`) defining compile order.
 
+Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split manifests across `index.md` and sub-index files (for example `index-protocol.md`) that link term shards; transitive manifest links include terms in compile output.
+
 ## 4. Agent task prompts
 
 Copy-paste prompts in `examples/prompts/` are part of the MDCP 1.0 authoring profile. See [Agent task prompts](./agent-task-prompts.md).
 
 Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md). Review work **SHOULD** use [review-task.prompt.md](../../examples/prompts/review-task.prompt.md) with `REVIEW_NODE` set.
+
+## 5. Extensions and immutability
+
+Fetched `mdcp.v*.llms.txt` in a consumer docs root **MUST NOT** be hand-edited by agents for repo-specific content. Project overlays belong in `docs/extensions/` or normative shards. Broadly applicable changes belong in upstream [spec/llms-index/](../../../spec/llms-index/). Extension packs and archetypes: [Extensions and archetypes](./extensions-and-archetypes.md), [spec/extensions/](../../../spec/extensions/).
 
 ## 9. Export profiles
 
@@ -41,15 +47,20 @@ Token-stripped compiled output for agents. Implemented by `mdcp export --llm`.
 
 ### 9.2 llms-index export (`export.llmsIndex`)
 
-Versioned agent bootstrap file in the docs root.
+Versioned agent bootstrap file in the docs root. **Canonical immutable artifacts** live in `spec/llms-index/` in the mdcp repository.
 
 | Rule        | Requirement                                                                    |
 | ----------- | ------------------------------------------------------------------------------ |
 | First line  | `mdcp-llms-index: {four-part version}`                                         |
 | Filename    | `mdcp.v{version}.llms.txt` — trailing `.0` segments **MAY** be omitted         |
+| Draft       | `mdcp.v{version}--draft.llms.txt` until adopted; then promote to stable        |
+| Profiles    | `vstable` symlink → adopted stable; `vdev` symlink → in-progress draft         |
 | Equivalence | `mdcp.v1.llms.txt` and `mdcp.v1.0.0.0.llms.txt` both denote protocol `1.0.0.0` |
 | Content     | Index only; **MUST NOT** embed full guide bodies                               |
-| Command     | `mdcp export --llms-index`                                                     |
+| Prompts     | **MUST** list all task-type prompts including `review-task.prompt.md`          |
+| Command     | `mdcp export --llms-index` or `--fetch` (upstream)                             |
+
+**Upstream fetch (`--fetch`):** Pull from `spec/llms-index/vstable` (default) or `vdev`. `ref` **MAY** be `latest`, a tag, or branch. `export.llmsIndex.upstream` **MAY** set `repo`, `ref`, `profile`, and `path`. See [spec/llms-index/README.md](../../../spec/llms-index/README.md).
 
 Schema: [spec/schemas/mdcp-llms-index-1.0.0.0.schema.json](../../../spec/schemas/mdcp-llms-index-1.0.0.0.schema.json)
 

@@ -17,6 +17,7 @@ MDCP inverts the model: **small shards** are the source of truth; agents pull **
 | Document before build/migrate  | Capture context in shards before greenfield work or migrations                                            |
 | Granular, safe context         | `refs lookup` → single shard; `export --llm` only when broader context is needed                          |
 | Open standard                  | Reference implementation is `@bwilliamson/mdcp-cli` / `mdcp-core`; protocol is implementable without them |
+| Extensions over core           | `docs/extensions/` locally; shared packs in `spec/extensions/`                                            |
 
 ## Phased delivery
 
@@ -38,12 +39,13 @@ MDCP inverts the model: **small shards** are the source of truth; agents pull **
 
 Drop **`mdcp.v1.llms.txt`** in your docs root before full MDCP setup. The file is a **short index** (~80–200 lines), not a context dump.
 
-| Convention     | Rule                                                                                                      |
-| -------------- | --------------------------------------------------------------------------------------------------------- |
-| Filename       | `mdcp.v{version}.llms.txt` — trailing `.0` segments may be omitted (`v1` ≡ `1.0.0.0`)                     |
-| In-file header | Always four-part: `mdcp-llms-index: 1.0.0.0`                                                              |
-| Location       | Docs root (`--docs-root`)                                                                                 |
-| Modes          | **Static bootstrap** (copy on day zero) or **generated** (`mdcp export --llms-index` after config exists) |
+| Convention     | Rule                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------- |
+| Filename       | `mdcp.v{version}.llms.txt` — trailing `.0` segments may be omitted (`v1` ≡ `1.0.0.0`) |
+| In-file header | Always four-part: `mdcp-llms-index: 1.0.0.0`                                          |
+| Location       | Docs root (`--docs-root`)                                                             |
+| Modes          | Fetch `spec/llms-index/vstable` or `mdcp export --llms-index` (repo overlay)          |
+| Immutability   | Do not hand-edit fetched index — use shards and extensions doc                        |
 
 ## Positioning
 
@@ -66,7 +68,9 @@ Task-type prompts in `examples/prompts/` are part of the V1 authoring profile �
 ## Related issues
 
 - Protocol formalization epic: [GitHub #44](https://github.com/betsalel-williamson/mdcp/issues/44)
-- V1 bootstrap implementation: tracked under #44 child issues
+- V1 bootstrap: [#58](https://github.com/betsalel-williamson/mdcp/issues/58) (shipped)
+- V2 MCP server: [#59](https://github.com/betsalel-williamson/mdcp/issues/59)
+- V3 hosted API: [#60](https://github.com/betsalel-williamson/mdcp/issues/60)
 - Scope ADR: [#46](https://github.com/betsalel-williamson/mdcp/issues/46)
 - Usage model: [#45](https://github.com/betsalel-williamson/mdcp/issues/45)
 - Normative spec: [#48](https://github.com/betsalel-williamson/mdcp/issues/48)

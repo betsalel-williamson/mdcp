@@ -23,3 +23,4 @@ Product documentation for **what mdcp is designed to do** — the problems it so
     - [Usage model](./protocol/usage-model.md)
     - [MDCP 1.0 spec (draft)](./protocol/mdcp-1.0-spec.md)
     - [Agent task prompts](./protocol/agent-task-prompts.md)
+    - [Extensions and archetypes](./protocol/extensions-and-archetypes.md)

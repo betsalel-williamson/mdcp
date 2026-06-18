@@ -72,7 +72,7 @@ Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host rep
 
 ## Compile hooks (P2.2)
 
-Per-shard assembly via built-in compile hooks on [authored GFM](../glossary/index.md#gfm). Hooks run by default; opt out per hook when needed. See [Default compile hooks](./default-compile-hooks.md). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
+Per-shard assembly via built-in compile hooks on [authored GFM](../glossary/authored-gfm.md). Hooks run by default; opt out per hook when needed. See [Default compile hooks](./default-compile-hooks.md). Not a preprocessor or template engine — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 Built-in hooks:
 
@@ -96,7 +96,7 @@ Built-in hooks:
 
 ## Design constraints (summary)
 
-- [GFM](../glossary/index.md#gfm) only — no Pandoc, no required `{#heading-ids}`
+- [GFM](../glossary/gfm.md) only — no Pandoc, no required `{#heading-ids}`
 - md-tree for split only — custom compile
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
 - No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)

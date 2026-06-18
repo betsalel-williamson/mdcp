@@ -21,7 +21,7 @@ Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `
 
 ### Minimal
 
-One guide, `compile` + `check`, monolith output. Copy `mdcp.v1.llms.txt` to docs root.
+One guide, `compile` + `check`, monolith output. Fetch or copy `mdcp.v1.llms.txt` to docs root (`mdcp export --llms-index --fetch --fetch-ref v1.0.0`).
 
 ### Standard
 

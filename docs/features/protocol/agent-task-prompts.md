@@ -6,7 +6,9 @@ Normative profile for **copy-paste agent prompts** that drive shard authoring ac
 
 Prompts are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge.
 
-Reference copies live in [examples/prompts/](../../examples/prompts/). Consumer repos **MAY** vendor or link the same files.
+Reference copies live in [examples/prompts/](../../examples/prompts/). The canonical prompt list is embedded in [spec/llms-index/](../../spec/llms-index/) llms-index artifacts and summarized below. Consumer repos **MAY** vendor or link the same files.
+
+**Do not edit** fetched `mdcp.v*.llms.txt` for prompt or workflow changes — propose upstream or add [extensions](./extensions-and-archetypes.md) under `docs/extensions/`.
 
 ## Required prompt shape
 

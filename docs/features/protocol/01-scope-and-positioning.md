@@ -36,8 +36,10 @@ OpenAPI standardizes HTTP API contracts. MDCP standardizes **documentation conte
 | Layer                     | Owner                                             |
 | ------------------------- | ------------------------------------------------- |
 | Normative spec (MDCP 1.0) | `docs/features/protocol/` + `spec/schemas/`       |
+| Protocol artifacts        | `spec/llms-index/`, `spec/conformance/`           |
+| Extension packs           | `spec/extensions/` + local `docs/extensions/`     |
 | Reference implementation  | `@bwilliamson/mdcp-cli`, `@bwilliamson/mdcp-core` |
-| Extensions                | MCP adapter, hosted API (V2/V3)                   |
+| Delivery adapters (V2/V3) | MCP server, hosted API                            |
 
 ## Filename versioning (`mdcp.v*.llms.txt`)
 
