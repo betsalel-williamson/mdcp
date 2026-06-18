@@ -1,0 +1,90 @@
+mdcp-llms-index: 1.0.0.0
+
+# MDCP agent index (v1)
+
+## What MDCP is
+
+**MarkDown Context Protocol** — a protocol for repository documentation context. Shards are the **source of truth**; compiled monoliths and publish outputs are **generated**. Documentation carries context and the high-level plan; code carries implementation detail.
+
+## Adoption path
+
+1. **Copy this file** into your docs root (or generate with `mdcp export --llms-index` after config exists).
+2. **Start a glossary** under `docs/glossary/` — define domain terms and disambiguate legacy names before feature shards.
+3. **Shard your docs** — one topic per `.md` file; list shards in each guide's `index.md` or `shards.md`.
+4. **Add `mdcp.config.json`** — set `compileOrder`, per-guide `compile.outputFile` when publishing READMEs.
+5. **Compile and validate** — `mdcp compile` then `mdcp check`.
+6. **Query on demand** — use the commands below; do not dump entire guides into agent context.
+
+Bootstrap without tooling: split an existing monolith manually or with `mdcp shard` when a `source` monolith is configured.
+
+## Repo layout (template)
+
+```text
+docs/
+  mdcp.v1.llms.txt          # this file (agent entrypoint)
+  mdcp.config.json          # wiring (after adoption)
+  glossary/                 # shared terms (start here)
+    index.md
+  features/                 # capabilities, design, acceptance criteria
+    index.md
+    *.md                      # shards
+  client/                   # end-user value (optional)
+  developer/                # repo workflow (optional)
+```
+
+## Query instructions (prefer smallest context)
+
+When `mdcp` is installed and configured:
+
+1. **Section lookup** (smallest useful unit):
+   ```bash
+   mdcp refs lookup "<topic>" --format json --config <config> --docs-root <docs-root>
+   ```
+2. **Read one shard** — open the `.md` path from lookup or manifest; do not read whole monoliths.
+3. **Broader context** (last resort):
+   ```bash
+   mdcp export --llm --stdout --config <config> --docs-root <docs-root>
+   ```
+4. **Regenerate this index** after config changes:
+   ```bash
+   mdcp export --llms-index --config <config> --docs-root <docs-root>
+   ```
+
+## Glossary
+
+Maintain `docs/glossary/` for acronyms and domain vocabulary. When the same term means different things in legacy systems, add a disambiguation entry and link from feature shards on first use.
+
+## Validation
+
+Run `mdcp check` before trusting compiled output. Shards and manifest are authoritative — do not hand-edit generated compile output.
+
+## Agent task prompts
+
+Task-type prompts in `examples/prompts/` are part of MDCP 1.0 authoring. Each **MUST** set `WORK_ITEM` and `WORK_ITEM_LOOKUP` before sending.
+
+| Task | Prompt |
+| ---- | ------ |
+| Bootstrap pipeline | `getting-started-with-mdcp.prompt.md` |
+| Feature (docs + code) | `feature-level-task.prompt.md` |
+| Documentation only | `doc-only-task.prompt.md` |
+| Architecture / ADR | `design-architecture-task.prompt.md` |
+| End-user UX | `ux-task.prompt.md` |
+| Architecture / security review | `review-task.prompt.md` |
+
+Workflow: read this index → load `WORK_ITEM` via lookup shard → edit `features/`, `client/`, `developer/`, or `review/` shards → `mdcp check`.
+
+## Integration with other doc systems
+
+MDCP shards are **GFM**. You do not need to abandon Pandoc, MkDocs, Docusaurus, or other publish stacks:
+
+- Compile to GFM monolith or per-guide outputs; feed downstream pipelines from compiled files.
+- Keep separate guides for agent-only context vs public site content when scopes differ.
+
+## Filename versioning
+
+- Protocol version `1.0.0.0` may appear as `mdcp.v1.llms.txt` or `mdcp.v1.0.0.0.llms.txt` (trailing `.0` segments omitted in filename).
+- In-file `mdcp-llms-index` header always uses the full four-part version.
+
+## Normative spec
+
+MDCP 1.0 specification and artifact schemas are tracked in the mdcp repository protocol formalization program (GitHub issue #44).

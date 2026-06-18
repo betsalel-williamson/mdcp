@@ -44,6 +44,7 @@ Copy from [examples/prompts/](../../examples/prompts). Index: [README.md](../../
 - [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — RFCs, ADRs, data models
 - [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — feature work, docs-first then TDD
 - [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UI flows and client-guide updates
+- [review-task.prompt.md](../../examples/prompts/review-task.prompt.md) — architecture and security review; one node per PR; atomic findings
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
@@ -121,6 +122,7 @@ This repository documents its stack in [Agent work-item tracking](../../DEVELOPE
 - [design-architecture-task.prompt.md](../../examples/prompts/design-architecture-task.prompt.md) — architects; RFCs, ADRs, data models before code
 - [feature-level-task.prompt.md](../../examples/prompts/feature-level-task.prompt.md) — server-side or full-stack feature work
 - [ux-task.prompt.md](../../examples/prompts/ux-task.prompt.md) — UX and frontend; flows, accessibility, client guides
+- [review-task.prompt.md](../../examples/prompts/review-task.prompt.md) — security and systems review; atomic findings, checklist evidence, feature stubs
 
 ### Toolchain integration
 
@@ -224,6 +226,8 @@ npm install -D markdownlint-cli2 @bwilliamson/mdcp-presets
 For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https://vale.sh/docs/vale-cli/installation/) separately so `vale` is on your `PATH`.
 
 ### Quick start
+
+0. **Agent index (optional day zero)** — copy [mdcp.v1.llms.txt](../../examples/sample-guides/mdcp.v1.llms.txt) into your docs root. Agents read it for query commands and [task prompts](../../examples/prompts/README.md) before full tooling is wired.
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
@@ -822,3 +826,15 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 ### ignoreGuides
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](../mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. See [Cross-guide link rewriting](../mdcp-core/README.md#cross-guide-link-rewriting).
+
+### protocol version
+
+Four-part version for MDCP artifact and config compatibility (default `1.0.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 1.0.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v1.llms.txt` ≡ `1.0.0.0`).
+
+### mdcp-llms-index
+
+Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. See [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
+
+### domain glossary
+
+Per-repository glossary shards under `docs/glossary/` for acronyms and product vocabulary. When legacy systems reuse the same term for different concepts, add a **disambiguation** entry and link from feature shards on first use. Start the glossary before large feature shards when migrating or onboarding new projects.

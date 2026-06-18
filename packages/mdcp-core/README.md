@@ -42,6 +42,18 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](#publish-relative-link-rewriting) still rebases the shard path for the publish file. See [Cross-guide link rewriting](#cross-guide-link-rewriting).
 
+### protocol version
+
+Four-part version for MDCP artifact and config compatibility (default `1.0.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 1.0.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v1.llms.txt` ≡ `1.0.0.0`).
+
+### mdcp-llms-index
+
+Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. See [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
+
+### domain glossary
+
+Per-repository glossary shards under `docs/glossary/` for acronyms and product vocabulary. When legacy systems reuse the same term for different concepts, add a **disambiguation** entry and link from feature shards on first use. Start the glossary before large feature shards when migrating or onboarding new projects.
+
 ## Quick example
 
 ```typescript
