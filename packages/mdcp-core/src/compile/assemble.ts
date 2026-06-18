@@ -261,7 +261,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       stripAnchors: compile?.stripAnchors,
       outputBasename,
       outputFile: linkBase,
-      publishOutputFile: publishOnly ? linkBase : undefined,
+      publishOutputFile: linkBase,
       config: options.config,
       linkIndex,
       ignoreGuides: compile?.crossGuideLinks?.ignoreGuides,
