@@ -14,10 +14,20 @@ mdcp-llms-index: 0.4.0.0
    ```bash
    mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>
    ```
-2. **Pin versions** — add `mdcp.config.json` with `protocolVersion` and `extensions.protocolVersion` matching the `mdcp-llms-index:` header in the fetched file. Set `extensions.defaultSource.ref` to the release tag for that protocol (e.g. `0.4.0.0` → `v0.4.0`). Re-fetch with `--config` so extension `manifest.json` files record the pinned version:
-   ```bash
-   mdcp export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
+2. **Pin fetch** — add `mdcp.config.json` with the protocol profile and optional branch override:
+   ```json
+   {
+     "protocol": {
+       "profile": "alpha",
+       "ref": "feature/my-branch"
+     }
+   }
    ```
+   `profile` selects `valpha` (`alpha`) or `vdev` (`dev`). Omit `ref` for `main` or a release tag (`v0.4.0`). Set `ref` only when the symlink is not on `main` yet (dogfood / pre-release). Protocol version is read from the fetched `mdcp-llms-index:` header — no separate pin needed.
+   ```bash
+   mdcp export --llms-index --fetch --config docs/mdcp.config.json --docs-root docs
+   ```
+   Default repo is `betsalel-williamson/mdcp` — override only with care ([SECURITY.md](../../../spec/extensions/SECURITY.md)).
 
 Then:
 
@@ -65,7 +75,7 @@ When `mdcp` is installed and configured:
    mdcp export --llms-index --config <config> --docs-root <docs-root>
    ```
 
-Day zero (no local config): `mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>` — caches default extension packs. After `mdcp.config.json` exists, pin `protocolVersion` / `extensions.protocolVersion` and re-fetch with a release `ref` (see **Bootstrap** above).
+Day zero (no local config): `mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>` — caches default extension packs. After `mdcp.config.json` exists, set `protocol.profile` (and `protocol.ref` when not on `main`), then re-fetch (see **Bootstrap** above).
 
 ## Glossary
 
@@ -79,7 +89,7 @@ Run `mdcp check` before trusting compiled output. Do not hand-edit generated com
 
 Versioned **meta-level** authoring instructions (feature, doc-only, design, UX, review, bootstrap). Host agent systems **MAY** replace them with local prompts; written shards **SHOULD** still follow the layout and validation in this index.
 
-After fetch, enabled extension packs from `mdcp.config.json` are cached under each pack's `cacheDir` (default `prompts-mdcp-defaults` → `.caches/mdcp/prompts/`). Each `manifest.json` records `protocolVersion` — it **MUST** match `extensions.protocolVersion` in config. Default source is GitHub raw (`ref` pinned to the release tag for that protocol, e.g. `v0.4.0` for `0.4.0.0`); packs **MAY** set `source.baseUrl` for other hosts.
+After fetch, enabled extension packs from `mdcp.config.json` are cached under each pack's `cacheDir` (default `prompts-mdcp-defaults` → `.caches/mdcp/prompts/`). Default fetch follows `protocol.profile` + optional `protocol.ref`; individual packs **MAY** override `source` — treat third-party repos as untrusted ([SECURITY.md](../../../spec/extensions/SECURITY.md)).
 
 Set `WORK_ITEM` and `WORK_ITEM_LOOKUP` in each prompt header before sending.
 

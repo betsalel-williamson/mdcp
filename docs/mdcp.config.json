@@ -1,7 +1,7 @@
 {
   "protocol": {
     "profile": "alpha",
-    "ref": "feature/issue-58-open-alpha-0.4"
+    "ref": "v0.4.0"
   },
   "outputDir": "_build",
   "outputFile": "guides.md",

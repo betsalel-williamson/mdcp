@@ -223,6 +223,10 @@ npm install -D @bwilliamson/mdcp-cli@0.4.0
 
 **Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. CLI commands, flags, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read package changelogs before upgrading.
 
+#### Get involved
+
+Visit [github.com/betsalel-williamson/mdcp](https://github.com/betsalel-williamson/mdcp), **star** the repo to follow progress, and **open or comment on [GitHub Issues](https://github.com/betsalel-williamson/mdcp/issues)** with feedback, adoption stories, or bugs.
+
 Optional lint tooling (install in your repo when you want `mdcp lint`, `mdcp prose`, or `mdcp check --require-lint`):
 
 ```bash
@@ -233,7 +237,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ### Quick start
 
-**Agent index (optional day zero)** — fetch the draft bootstrap into your docs root (`mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs`). Agents read it for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
+**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`mdcp export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
