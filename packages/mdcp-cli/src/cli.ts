@@ -30,6 +30,7 @@ import {
   resolveLlmsIndexFetchOptions,
   cacheEnabledExtensions,
   copyEnabledExtensionsFromLocalSpec,
+  formatExternalReferenceWarning,
   resolveEnabledExtensionPacks,
   parseLlmsIndexProfile,
   findPeerBinary,
@@ -68,6 +69,18 @@ function tryLoadConfig(opts: GlobalOpts): MdcpConfig | undefined {
     return loadConfig(opts.config, process.cwd());
   } catch {
     return undefined;
+  }
+}
+
+function warnExtensionExternalReferences(
+  packs: { id: string; version: string; externalReferences: { length: number } }[],
+): void {
+  for (const pack of packs) {
+    if (pack.externalReferences.length > 0) {
+      console.error(
+        formatExternalReferenceWarning(pack.id, pack.version, pack.externalReferences.length),
+      );
+    }
   }
 }
 
@@ -301,6 +314,7 @@ program
           resolvedRef: ref === 'local' ? undefined : ref,
           fetch: fetchOptions.fetch,
         });
+        warnExtensionExternalReferences(extResult.packs);
         if (exportOpts.stdout) {
           process.stdout.write(text);
           for (const pack of extResult.packs) {
@@ -356,6 +370,7 @@ program
       const hasLocalPacks = enabledPacks.some((pack) => existsSync(join(process.cwd(), pack.path)));
       if (hasLocalPacks) {
         const extResult = copyEnabledExtensionsFromLocalSpec(process.cwd(), docsRoot, config);
+        warnExtensionExternalReferences(extResult.packs);
         for (const pack of extResult.packs) {
           console.log(`→ ${pack.cacheDir} (${pack.files.length} files, ${pack.id})`);
         }
