@@ -23,6 +23,12 @@ export function parseLlmsIndexFilename(filename: string): string | null {
   return expandProtocolVersion(match[1]!);
 }
 
+/** Map four-part protocol version to npm release tag (e.g. `0.4.0.0` → `v0.4.0`). */
+export function protocolVersionToReleaseRef(protocolVersion: string): string {
+  const parts = expandProtocolVersion(protocolVersion).split('.');
+  return `v${parts.slice(0, 3).join('.')}`;
+}
+
 /** True when filename uses the in-progress `--draft` suffix (not yet adopted as stable). */
 export function isLlmsIndexDraftFilename(filename: string): boolean {
   return /^mdcp\.v[\d.]+--draft\.llms\.txt$/i.test(filename);

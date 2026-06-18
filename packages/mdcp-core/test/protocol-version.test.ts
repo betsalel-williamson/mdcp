@@ -4,6 +4,7 @@ import {
   expandProtocolVersion,
   parseLlmsIndexFilename,
   isLlmsIndexDraftFilename,
+  protocolVersionToReleaseRef,
 } from '../src/export/protocol-version.js';
 
 describe('protocol version helpers', () => {
@@ -34,5 +35,10 @@ describe('protocol version helpers', () => {
     expect(isLlmsIndexDraftFilename('mdcp.v0.4--draft.llms.txt')).toBe(true);
     expect(isLlmsIndexDraftFilename('mdcp.v1--draft.llms.txt')).toBe(true);
     expect(isLlmsIndexDraftFilename('mdcp.v0.4.llms.txt')).toBe(false);
+  });
+
+  it('maps protocol version to npm release ref', () => {
+    expect(protocolVersionToReleaseRef('0.4.0.0')).toBe('v0.4.0');
+    expect(protocolVersionToReleaseRef('1.0.0.0')).toBe('v1.0.0');
   });
 });

@@ -1,6 +1,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { expandProtocolVersion } from './protocol-version.js';
 import type { MdcpConfig } from '../config/schema.js';
+import { resolveProtocolFetch } from '../config/protocol-source.js';
 import {
   resolveLlmsIndexProfilePath,
   resolveLlmsIndexSpecFile,
@@ -9,6 +10,8 @@ import {
 } from './llms-index-artifacts.js';
 
 export const DEFAULT_LLMS_INDEX_UPSTREAM_REPO = 'betsalel-williamson/mdcp';
+/** Authoritative GitHub repo for protocol artifacts and default extension packs. */
+export const AUTHORITATIVE_PROTOCOL_REPO = DEFAULT_LLMS_INDEX_UPSTREAM_REPO;
 export const DEFAULT_LLMS_INDEX_UPSTREAM_REF = 'main';
 
 export interface LlmsIndexUpstreamOptions {
@@ -139,12 +142,12 @@ export function resolveLlmsIndexFetchOptions(
   config: MdcpConfig | undefined,
   overrides: LlmsIndexUpstreamOptions = {},
 ): LlmsIndexFetchOptions {
-  const upstream = config?.export?.llmsIndex?.upstream;
-  const profileRaw = overrides.profile ?? upstream?.profile;
+  const source = resolveProtocolFetch(config);
+  const profileRaw = overrides.profile ?? source.profile;
   return {
-    repo: overrides.repo ?? upstream?.repo,
-    ref: overrides.ref ?? upstream?.ref,
-    path: overrides.path ?? upstream?.path,
+    repo: overrides.repo ?? source.repo,
+    ref: overrides.ref ?? source.ref,
+    path: overrides.path ?? source.path,
     profile: profileRaw !== undefined ? parseLlmsIndexProfile(profileRaw) : undefined,
     protocolVersion: config?.protocolVersion,
   };

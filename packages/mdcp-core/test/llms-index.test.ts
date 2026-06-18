@@ -12,7 +12,10 @@ describe('buildLlmsIndex', () => {
     expect(text.startsWith(`mdcp-llms-index: ${LLMS_INDEX_PROTOCOL_VERSION}`)).toBe(true);
     expect(text).toContain('## Task prompts');
     expect(text).toContain('.caches/mdcp/prompts/feature-level-task.prompt.md');
-    expect(text).toContain('spec/task-prompts/');
+    expect(text).toContain('Bootstrap');
+    expect(text).toContain('protocol.profile');
+    expect(text).toContain('protocol.ref');
+    expect(text).not.toContain('extensions.protocolVersion');
     expect(text).toContain('mdcp refs lookup');
     expect(text).not.toContain('## Normative spec');
     expect(text).not.toContain('agent-task-prompts.md');

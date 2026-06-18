@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 import type { MdcpConfig } from '../config/schema.js';
+import { resolveLlmsIndexOutputFilename } from '../config/protocol-source.js';
 import { abbreviateProtocolVersion } from './protocol-version.js';
 import { defaultLlmsIndexFilename, LLMS_INDEX_PROTOCOL_VERSION } from './llms-index-artifacts.js';
 
@@ -18,10 +19,33 @@ const STATIC_SECTIONS = `## Sharded documentation
 
 ## Getting started
 
+**Bootstrap (two phases until config exists):**
+
+1. **Day zero** — fetch agent index + default extension caches (no config yet):
+   \`\`\`bash
+   mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>
+   \`\`\`
+2. **Pin fetch** — add \`mdcp.config.json\` with the protocol profile and optional branch override:
+   \`\`\`json
+   {
+     "protocol": {
+       "profile": "alpha",
+       "ref": "feature/my-branch"
+     }
+   }
+   \`\`\`
+   \`profile\` selects \`valpha\` (\`alpha\`) or \`vdev\` (\`dev\`). Omit \`ref\` for \`main\` or a release tag (\`v0.4.0\`). Set \`ref\` only when the symlink is not on \`main\` yet (dogfood / pre-release). Protocol version is read from the fetched \`mdcp-llms-index:\` header — no separate pin needed.
+   \`\`\`bash
+   mdcp export --llms-index --fetch --config docs/mdcp.config.json --docs-root docs
+   \`\`\`
+   Default repo is \`betsalel-williamson/mdcp\` — override only with care ([SECURITY.md](../../../spec/extensions/SECURITY.md)).
+
+Then:
+
 1. Keep this file in your docs root as the agent entrypoint.
 2. **Glossary first** — \`docs/glossary/\`, one term per shard; disambiguate legacy names before feature shards.
 3. **Shard your docs** — split monoliths into topic files; list them in each guide manifest.
-4. **Wire \`mdcp.config.json\`** — \`compileOrder\`, optional per-guide \`compile.outputFile\` for published READMEs.
+4. **Wire \`mdcp.config.json\`** — \`compileOrder\`, \`extensions\` packs, optional per-guide \`compile.outputFile\`.
 5. **Compile and validate** — \`mdcp compile\` then \`mdcp check\`.
 6. **Query on demand** — use the commands below; load one shard at a time, not entire guides.
 
@@ -62,7 +86,7 @@ When \`mdcp\` is installed and configured:
    mdcp export --llms-index --config <config> --docs-root <docs-root>
    \`\`\`
 
-Day zero (no local config): \`mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>\` — also caches versioned task prompts under \`.caches/mdcp/prompts/\`.
+Day zero (no local config): \`mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>\` — caches default extension packs. After \`mdcp.config.json\` exists, set \`protocol.profile\` (and \`protocol.ref\` when not on \`main\`), then re-fetch (see **Bootstrap** above).
 
 ## Glossary
 
@@ -76,7 +100,7 @@ Run \`mdcp check\` before trusting compiled output. Do not hand-edit generated c
 
 Versioned **meta-level** authoring instructions (feature, doc-only, design, UX, review, bootstrap). Host agent systems **MAY** replace them with local prompts; written shards **SHOULD** still follow the layout and validation in this index.
 
-After \`mdcp export --llms-index --fetch\`, prompts are cached at \`.caches/mdcp/prompts/\` (see \`manifest.json\`). Upstream source: \`spec/task-prompts/\` in the mdcp repository.
+After fetch, enabled extension packs from \`mdcp.config.json\` are cached under each pack's \`cacheDir\` (default \`prompts-mdcp-defaults\` → \`.caches/mdcp/prompts/\`). Default fetch follows \`protocol.profile\` + optional \`protocol.ref\`; individual packs **MAY** override \`source\` — treat third-party repos as untrusted ([SECURITY.md](../../../spec/extensions/SECURITY.md)).
 
 Set \`WORK_ITEM\` and \`WORK_ITEM_LOOKUP\` in each prompt header before sending.
 
@@ -153,12 +177,12 @@ export function buildLlmsIndex(config?: MdcpConfig, options: LlmsIndexOptions = 
 
 export function getLlmsIndexOutputFile(config: MdcpConfig, docsRoot: string): string {
   const file =
-    config.export?.llmsIndex?.outputFile ??
+    resolveLlmsIndexOutputFilename(config) ??
     defaultLlmsIndexFilename(config.protocolVersion ?? LLMS_INDEX_PROTOCOL_VERSION);
   if (file.startsWith('/')) return file;
   return resolve(docsRoot, file);
 }
 
 export function getLlmsIndexOptions(config: MdcpConfig) {
-  return config.export?.llmsIndex ?? {};
+  return config.protocol?.llmsIndex ?? config.export?.llmsIndex ?? {};
 }

@@ -51,10 +51,8 @@ describe('llms-index fetch', () => {
   it('merges config upstream with CLI overrides', () => {
     const config = MdcpConfigSchema.parse({
       compileOrder: ['features'],
-      export: {
-        llmsIndex: {
-          upstream: { repo: 'org/mdcp', ref: 'v0.4.0', profile: 'alpha' },
-        },
+      protocol: {
+        fetch: { repo: 'org/mdcp', ref: 'v0.4.0', profile: 'alpha' },
       },
     });
     expect(resolveLlmsIndexFetchOptions(config)).toEqual({
