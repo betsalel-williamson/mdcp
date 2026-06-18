@@ -83,8 +83,3 @@ export function lintXrefs(scanRoots: string[]): string[] {
   }
   return issues;
 }
-
-/** @deprecated Use lintXrefs with absolute scan roots. */
-export function lintXrefsLegacy(guidesRoot: string, scanDirs: string[]): string[] {
-  return lintXrefs(scanDirs.map((d) => join(guidesRoot, d)));
-}
