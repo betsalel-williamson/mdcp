@@ -10,33 +10,19 @@ Contributors are expected to follow the [Contributor Covenant Code of Conduct](C
 
 Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
 
-### MDCP
+Each term is its own shard under `docs/glossary/`. For large glossaries, split manifests across sub-index files (for example `index-protocol.md`, `index-format.md`) and set `compile.scopeRoot` to `glossary` so transitive links pull term shards into other guides. Read [domain glossary](#domain-glossary).
 
-**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
+### Protocol terms
 
-### GFM
+- [MDCP](#mdcp)
+- [protocol version](#protocol-version)
+- [mdcp-llms-index](#mdcp-llms-index)
 
-**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+### Format and compile terms
 
-### Authored GFM
-
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; see [Preprocessor / templating (out of scope)](docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
-
-### ignoreGuides
-
-Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](./packages/mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. See [Cross-guide link rewriting](./packages/mdcp-core/README.md#cross-guide-link-rewriting).
-
-### protocol version
-
-Four-part version for MDCP artifact and config compatibility (default `1.0.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 1.0.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v1.llms.txt` ≡ `1.0.0.0`).
-
-### mdcp-llms-index
-
-Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. See [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md).
-
-### domain glossary
-
-Per-repository glossary shards under `docs/glossary/` for acronyms and product vocabulary. When legacy systems reuse the same term for different concepts, add a **disambiguation** entry and link from feature shards on first use. Start the glossary before large feature shards when migrating or onboarding new projects.
+- [GFM](#gfm)
+- [Authored GFM](#authored-gfm)
+- [ignoreGuides](#ignoreguides)
 
 ## Local setup
 
@@ -234,7 +220,7 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 | Directory      | Audience                         | Output                                            |
 | -------------- | -------------------------------- | ------------------------------------------------- |
-| `glossary/`    | Shared terms (cross-guide)       | Stitched into every guide via manifest link       |
+| `glossary/`    | Shared terms (cross-guide)       | One shard per term; scoped transitive stitch      |
 | `features/`    | Tool capabilities, migration map | `docs/_build/guides.md` (gitignored local review) |
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
@@ -531,3 +517,49 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+
+## domain glossary
+
+Per-repository glossary shards under `docs/glossary/` for acronyms and product vocabulary. When legacy systems reuse the same term for different concepts, add a **disambiguation** entry and link from feature shards on first use. Start the glossary before large feature shards when migrating or onboarding new projects.
+
+### One term per shard
+
+Each definition lives in its own `.md` file with a single `#` heading (the term). Link the term from feature shards on first use, for example `[GFM](./gfm.md)` or `../glossary/gfm.md` from another guide.
+
+### Multiple index files
+
+When a glossary grows beyond a comfortable manifest size, group entries in sub-index manifests:
+
+| File                | Role                                                                                     |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| `index.md`          | Master index — preamble plus links to every term shard (required for cross-guide stitch) |
+| `index-protocol.md` | Example sub-index — protocol-related terms only                                          |
+| `index-format.md`   | Example sub-index — format and compile terms                                             |
+
+**Stitched into other guides:** link `../glossary/index.md` from each guide `index.md`. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
+
+**Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.
+
+## MDCP
+
+**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
+
+## protocol version
+
+Four-part version for MDCP artifact and config compatibility (default `1.0.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 1.0.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v1.llms.txt` ≡ `1.0.0.0`).
+
+## mdcp-llms-index
+
+Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. Read [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md).
+
+## GFM
+
+**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+
+## Authored GFM
+
+Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; read [Preprocessor / templating (out of scope)](docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
+
+## ignoreGuides
+
+Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](./packages/mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](./packages/mdcp-core/README.md#cross-guide-link-rewriting).
