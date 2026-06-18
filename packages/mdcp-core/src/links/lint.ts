@@ -40,11 +40,11 @@ function disallowedShardPathsForPublisher(
   const absDocsRoot = resolve(docsRoot);
 
   for (const name of config.compileOrder) {
+    if (ignoreGuides.has(name)) continue;
+
     const cfg = getGuideConfig(config, name);
     const compile = cfg?.compile;
-    const unpublished = !compile?.outputFile;
-    const ignored = ignoreGuides.has(name);
-    if (!unpublished && !ignored) continue;
+    if (compile?.outputFile) continue;
 
     const guideDir = resolveGuideDir(name, config, absDocsRoot);
     for (const shardPath of linkIndex.keys()) {
@@ -74,6 +74,11 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
       .filter((r) => r.publishOnly)
       .map((r) => resolve(resolveUnderOutputDir(absDocsRoot, outputDir, r.outputFile))),
   );
+  if (config.outputFile !== undefined) {
+    allowedPublishPaths.add(
+      resolve(resolveUnderOutputDir(absDocsRoot, outputDir, config.outputFile)),
+    );
+  }
 
   let linkIndex: GuideLinkIndex | undefined;
   if (options.compileOptions) {

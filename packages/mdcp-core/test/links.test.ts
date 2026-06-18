@@ -332,7 +332,7 @@ describe('compileGuideResults link validation e2e', () => {
     });
   });
 
-  it('ignoreGuides keeps shard paths and lint flags them in publish output', () => {
+  it('ignoreGuides keeps shard paths and lint accepts them in publish output', () => {
     withTmpDir('mdcp-ignore-features-', (work) => {
       const docsRoot = join(work, 'docs');
       mkdirSync(join(docsRoot, 'features'), { recursive: true });
@@ -388,6 +388,16 @@ describe('compileGuideResults link validation e2e', () => {
           compileOrder: ['features', 'client-cli'],
           outputDir: '.',
           outputFile: 'guides.md',
+          guides: [
+            { name: 'features' },
+            {
+              name: 'client-cli',
+              compile: {
+                outputFile: '../../packages/cli/README.md',
+                crossGuideLinks: { ignoreGuides: ['features'] },
+              },
+            },
+          ],
         }),
         docsRoot,
         results,
@@ -400,7 +410,7 @@ describe('compileGuideResults link validation e2e', () => {
             i.kind === 'missing publish path' &&
             i.originalTarget.includes('feature-catalog.md'),
         ),
-      ).toBe(true);
+      ).toBe(false);
     });
   });
 
@@ -482,21 +492,11 @@ describe('compileGuideResults link validation e2e', () => {
         const docsRoot = join(work, 'docs');
         mkdirSync(join(docsRoot, 'features'), { recursive: true });
         mkdirSync(join(docsRoot, 'client-cli'), { recursive: true });
-        mkdirSync(join(work, 'packages', 'cli'), { recursive: true });
-
-        writeFileSync(
-          join(docsRoot, 'features', 'index.md'),
-          '# Features\n\n- [Legacy](./legacy.md)\n',
-        );
+        const publishOut = join(work, 'packages', 'cli', 'README.md');
+        mkdirSync(dirname(publishOut), { recursive: true });
+        writeFileSync(join(docsRoot, 'features', 'index.md'), '# Features\n');
         writeFileSync(join(docsRoot, 'features', 'legacy.md'), '# Legacy\n');
-        writeFileSync(
-          join(docsRoot, 'client-cli', 'index.md'),
-          '# CLI\n\n- [Consumer](./consumer.md)\n',
-        );
-        writeFileSync(
-          join(docsRoot, 'client-cli', 'consumer.md'),
-          '## Consumer\n\n[Legacy](../features/legacy.md)\n',
-        );
+        writeFileSync(join(docsRoot, 'client-cli', 'index.md'), '# CLI\n');
 
         const compileOptions = {
           guidesRoot: 'docs',
@@ -511,20 +511,29 @@ describe('compileGuideResults link validation e2e', () => {
             { name: 'features' },
             {
               name: 'client-cli',
-              compile: {
-                outputFile: '../../packages/cli/README.md',
-                crossGuideLinks: { ignoreGuides: ['features'] },
-              },
+              compile: { outputFile: '../../packages/cli/README.md' },
             },
           ],
         };
 
-        const results = compileGuideResults(compileOptions);
+        const results = [
+          {
+            name: 'client-cli',
+            text: '[Legacy](../../docs/features/legacy.md)\n',
+            outputFile: '../../packages/cli/README.md',
+            publishOnly: true,
+            includeBanner: false,
+          },
+        ];
         const issues = lintLinks({
           config: MdcpConfigSchema.parse({
             compileOrder: ['features', 'client-cli'],
             outputDir: '.',
             outputFile: 'guides.md',
+            guides: [
+              { name: 'features' },
+              { name: 'client-cli', compile: { outputFile: '../../packages/cli/README.md' } },
+            ],
           }),
           docsRoot: 'docs',
           results,
