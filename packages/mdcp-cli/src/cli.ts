@@ -202,8 +202,11 @@ program
   .action((_, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    writeCompiled(config, getDocsRoot(opts), opts);
-    if (runBuiltInLinkLint(config, getDocsRoot(opts), opts)) process.exit(1);
+    const docsRoot = getDocsRoot(opts);
+    const compiled = writeCompiled(config, docsRoot, opts);
+    const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
+    genRefsFromCompiled(compiled, refsPath);
+    if (runBuiltInLinkLint(config, docsRoot, opts)) process.exit(1);
   });
 
 const refs = program.command('refs').description('Heading slug registry (JSON default)');
