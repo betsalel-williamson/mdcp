@@ -71,8 +71,8 @@ const GuideSchema = z.object({
 });
 
 export const MdcpConfigSchema = z.object({
-  /** Four-part protocol version for conforming repositories (default 1.0.0.0). */
-  protocolVersion: z.string().default('1.0.0.0'),
+  /** Four-part protocol version for conforming repositories (default 0.4.0.0). */
+  protocolVersion: z.string().default('0.4.0.0'),
   source: z.string().optional(),
   /** Generated output root relative to docs root (default `_build`). */
   outputDir: z.string().default('_build'),
@@ -157,19 +157,19 @@ export const MdcpConfigSchema = z.object({
         }),
       llmsIndex: z
         .object({
-          /** Output path relative to docs root (default mdcp.v1.llms.txt). */
+          /** Output path relative to docs root (default mdcp.v0.4.llms.txt). */
           outputFile: z.string().optional(),
           /** Fetch canonical bootstrap from GitHub instead of generating locally. */
           upstream: z
             .object({
               /** GitHub owner/repo (default betsalel-williamson/mdcp). */
               repo: z.string().default('betsalel-williamson/mdcp'),
-              /** `main`, `latest` (latest release tag), branch, or tag (e.g. v1.0.0). */
+              /** `main`, `latest` (latest release tag), branch, or tag (e.g. v0.4.0). */
               ref: z.string().default('main'),
-              /** Path in upstream repo; default spec/llms-index/vstable. */
+              /** Path in upstream repo; default spec/llms-index/vdev. */
               path: z.string().optional(),
-              /** `stable` (vstable) or `dev` (vdev) under spec/llms-index/. */
-              profile: z.enum(['stable', 'dev']).optional(),
+              /** `alpha` (valpha) or `dev` (vdev) under spec/llms-index/. */
+              profile: z.enum(['alpha', 'dev']).optional(),
             })
             .optional(),
         })

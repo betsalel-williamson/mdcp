@@ -1,6 +1,6 @@
-mdcp-llms-index: 1.0.0.0
+mdcp-llms-index: 0.4.0.0
 
-# MDCP agent index (v1)
+# MDCP agent index (v0.4)
 
 ## Adoption path
 

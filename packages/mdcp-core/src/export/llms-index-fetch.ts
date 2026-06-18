@@ -4,6 +4,7 @@ import type { MdcpConfig } from '../config/schema.js';
 import {
   resolveLlmsIndexProfilePath,
   resolveLlmsIndexSpecFile,
+  parseLlmsIndexProfile,
   type LlmsIndexProfile,
 } from './llms-index-artifacts.js';
 
@@ -17,7 +18,7 @@ export interface LlmsIndexUpstreamOptions {
   ref?: string;
   /** Path inside the upstream repo; overrides profile and version defaults. */
   path?: string;
-  /** `stable` (`vstable`) or `dev` (`vdev`) symlink under spec/llms-index/. */
+  /** `alpha` (`valpha`) or `dev` (`vdev`) symlink under spec/llms-index/. */
   profile?: LlmsIndexProfile;
   protocolVersion?: string;
 }
@@ -45,8 +46,8 @@ export function parseLlmsIndexHeader(text: string): string | null {
 
 export function resolveUpstreamPath(options: LlmsIndexFetchOptions): string {
   if (options.path) return options.path.replace(/^\//, '');
-  if (options.profile) return resolveLlmsIndexProfilePath(options.profile);
-  return resolveLlmsIndexProfilePath('stable');
+  const profile = parseLlmsIndexProfile(options.profile);
+  return resolveLlmsIndexProfilePath(profile);
 }
 
 export function buildGithubRawUrl(repo: string, ref: string, path: string): string {
@@ -54,7 +55,7 @@ export function buildGithubRawUrl(repo: string, ref: string, path: string): stri
   return `https://raw.githubusercontent.com/${repo}/${ref}/${cleanPath}`;
 }
 
-async function resolveUpstreamRef(
+export async function resolveUpstreamRef(
   repo: string,
   ref: string,
   fetchFn: typeof fetch,
@@ -85,7 +86,7 @@ async function resolveUpstreamRef(
 
 function readLocalLlmsIndexSpec(options: LlmsIndexFetchOptions): LlmsIndexFetchResult {
   const repoRoot = options.localRepoRoot ?? process.cwd();
-  const profile = options.profile ?? 'stable';
+  const profile = options.profile ?? 'dev';
   const filePath = options.path
     ? resolveLlmsIndexSpecFile(repoRoot, options.path)
     : resolveLlmsIndexSpecFile(repoRoot, profile);
@@ -139,11 +140,12 @@ export function resolveLlmsIndexFetchOptions(
   overrides: LlmsIndexUpstreamOptions = {},
 ): LlmsIndexFetchOptions {
   const upstream = config?.export?.llmsIndex?.upstream;
+  const profileRaw = overrides.profile ?? upstream?.profile;
   return {
     repo: overrides.repo ?? upstream?.repo,
     ref: overrides.ref ?? upstream?.ref,
     path: overrides.path ?? upstream?.path,
-    profile: overrides.profile ?? upstream?.profile,
+    profile: profileRaw !== undefined ? parseLlmsIndexProfile(profileRaw) : undefined,
     protocolVersion: config?.protocolVersion,
   };
 }
