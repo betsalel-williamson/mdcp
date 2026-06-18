@@ -16,18 +16,17 @@ Set up a sharded documentation pipeline using **mdcp** for FEATURE above.
 **First step (phase 1 — day zero):** Fetch agent index + extension caches before full tooling is wired:
 
 ```bash
-# In-progress protocol (vdev) from upstream main
+# In-progress protocol (vdev profile)
 mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs
 
 # Pinned open-alpha release (recommended after config exists — phase 2)
 mdcp export --llms-index --fetch --fetch-ref v0.4.0 --docs-root docs
 ```
 
-**Phase 2 — pin protocol + extensions:** Add `mdcp.config.json` with matching versions, then re-fetch:
+**Phase 2 — pin protocol profile + extensions:** Add `mdcp.config.json`, then re-fetch:
 
 ```json
 {
-  "protocolVersion": "0.4.0.0",
   "protocol": {
     "profile": "alpha",
     "ref": "v0.4.0"
@@ -38,11 +37,13 @@ mdcp export --llms-index --fetch --fetch-ref v0.4.0 --docs-root docs
 }
 ```
 
+Set `protocol.ref` to your feature branch when the `valpha` symlink is not on `main` yet (dogfood only).
+
 ```bash
 mdcp export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
 ```
 
-Manual copy: [mdcp repository `docs/mdcp.v0.4.llms.txt`](https://github.com/betsalel-williamson/mdcp/blob/main/docs/mdcp.v0.4.llms.txt) or `examples/sample-guides/`. Fetch caches versioned task prompts to `.caches/mdcp/prompts/` (protocol **0.4.0.0**, path `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` upstream).
+Run `mdcp export --llms-index` to write the agent index (`mdcp.v*.llms.txt`) under the docs root. `mdcp export --llms-index --fetch` also caches versioned task prompts to `.caches/mdcp/prompts/`.
 
 **Setup:** Inspect this repository — package manager, existing docs layout, and developer docs — before changing files. Do not assume a specific host, script runner, or optional linter; discover what the repo already uses.
 
@@ -62,11 +63,11 @@ Use mdcp commands only — do not create custom compile or lint scripts.
    Optional peers (install only what you need; wire preset paths in `mdcp.config.json` under `lint.markdownlint`):
    - **`markdownlint-cli2`** — shard and compiled markdown lint (`mdcp lint`; `mdcp check --require-lint` in CI)
    - **`prettier`** — repo formatting (`mdcp fix` runs `prettier --write .` when installed)
-   - **`vale`** — prose style lint (`mdcp prose`; `mdcp check --require-vale` in CI). Install on `PATH` separately ([Vale installation](https://vale.sh/docs/vale-cli/installation/) — Homebrew, Chocolatey, Snap, or GitHub release). Add `.vale.ini`, then run `vale sync`.
+   - **`vale`** — prose style lint (`mdcp prose`; `mdcp check --require-vale` in CI). Install on `PATH` separately per the official Vale CLI installation guide. Add `.vale.ini`, then run `vale sync`.
 
    Example npm devDependencies: `markdownlint-cli2`, `prettier`, `@bwilliamson/mdcp-presets`
 
-2. **Config** — Add `mdcp.config.json` under the docs root. Start from mdcp sample config in this repo or upstream mdcp examples; set `compileOrder`, guides, and lint paths for your layout.
+2. **Config** — Add `mdcp.config.json` under the docs root. Start from your repo's docs layout; use mdcp documentation for sample `mdcp.config.json`. Set `compileOrder`, guides, and lint paths for your layout.
 
 3. **Scripts** — Wire `mdcp compile`, `mdcp check`, `mdcp export --llm`, and `mdcp refs lookup` into this repo's script runner (discover naming from existing `package.json` or developer docs). When optional linters are installed, use `mdcp check --require-lint` and/or `--require-vale` for CI gates.
 
@@ -83,4 +84,4 @@ Use mdcp commands only — do not create custom compile or lint scripts.
 
 **Cross-links:** Run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)`. The slug must match **compiled** output, not the shard alone.
 
-**Next steps:** After the pipeline exists, load task-type prompts from `.caches/mdcp/prompts/` (cached by `mdcp export --llms-index --fetch`) or from [spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md) in the mdcp repo. Each task uses one WORK_ITEM per branch — branch from updated `main` before editing. Document work-item tracking once per repo under `docs/developer/` so agents know how to load tracker issues (see [Agent work-item tracking](../../docs/developer/agent-work-item-tracking.md) in the mdcp repo).
+**Next steps:** After the pipeline exists, load task-type prompts from `.caches/mdcp/prompts/` (same directory after `mdcp export --llms-index --fetch`): [feature-level-task.prompt.md](./feature-level-task.prompt.md), [doc-only-task.prompt.md](./doc-only-task.prompt.md), [design-architecture-task.prompt.md](./design-architecture-task.prompt.md), [ux-task.prompt.md](./ux-task.prompt.md), [review-task.prompt.md](./review-task.prompt.md). Each task uses one `WORK_ITEM` per branch — branch from updated `main` before editing. Add a `docs/developer/` shard (for example `agent-work-item-tracking.md`) documenting tracker host, issue id format, and how agents load scope; set `WORK_ITEM_LOOKUP` in each task prompt to that shard path.

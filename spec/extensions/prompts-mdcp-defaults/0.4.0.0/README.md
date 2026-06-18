@@ -45,8 +45,6 @@ Host-specific agent systems **MAY** substitute their own prompts. Written shards
 | [ux-task.prompt.md](./ux-task.prompt.md)                                     | UI flows and client guides            |
 | [review-task.prompt.md](./review-task.prompt.md)                             | Architecture and security review      |
 
-Normative profile: [docs/features/protocol/agent-task-prompts.md](../../../docs/features/protocol/agent-task-prompts.md).
-
 ## Maintainer sync
 
 When editing prompts here, run `pnpm spec:sync-llms-index` if the llms-index task table changed, and `pnpm docs:compile:repo` so dogfooded docs stay aligned.
