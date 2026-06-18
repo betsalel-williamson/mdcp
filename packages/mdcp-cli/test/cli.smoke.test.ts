@@ -111,6 +111,43 @@ describe('cli smoke', () => {
     }
   });
 
+  it('writes refs.registryFile under outputDir after compile when guides use nested outputFile (#62)', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-smoke-'));
+    try {
+      const guide = join(docs, 'guide-a');
+      mkdirSync(guide, { recursive: true });
+      writeFileSync(join(guide, 'index.md'), '# Guide A\n\n- [Section one](section-1.md)\n');
+      writeFileSync(join(guide, 'section-1.md'), '# Section one\n\nBody text.\n');
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '_build',
+          compileOrder: ['guide-a'],
+          guides: [{ name: 'guide-a', compile: { outputFile: 'compiled/guide-a.md' } }],
+          refs: { registryFile: '.caches/refs.json' },
+          lint: { links: { enabled: false }, xrefs: { enabled: false } },
+        }),
+      );
+
+      execFileSync('node', [CLI, 'compile', '--config', 'mdcp.config.json', '--docs-root', docs], {
+        encoding: 'utf-8',
+        cwd: docs,
+      });
+
+      expect(existsSync(join(docs, '_build/.caches/refs.json'))).toBe(true);
+      expect(existsSync(join(docs, '_build/compiled/refs.json'))).toBe(false);
+
+      const listed = execFileSync(
+        'node',
+        [CLI, 'refs', 'list', '--config', 'mdcp.config.json', '--docs-root', docs],
+        { encoding: 'utf-8', cwd: docs },
+      );
+      expect(listed).toContain('section-one');
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
   it('normalizes cwd-relative refs.registryFile under outputDir (#11)', () => {
     const docs = mkdtempSync(join(tmpdir(), 'mdcp-smoke-'));
     try {
