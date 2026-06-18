@@ -1,5 +1,9 @@
 # @bwilliamson/mdcp-cli
 
+## 0.4.0-build.2
+
+Expand Why MDCP documentation in npm READMEs: scope boundaries (what MDCP does not replace), flow-state framing, and complement to checked-in prompts and playbooks.
+
 ## 0.4.0-build.1
 
 Add Why MDCP overview to root README and compiled npm package READMEs — problem statement, alternatives comparison, adopt-today benefits, and OpenAPI-style future vision for documentation context.
