@@ -46,19 +46,21 @@ During the **0.4.0 open alpha**, prefer **`dev`** (in-progress draft). Use **`al
 
 ```bash
 # In-progress spec (recommended during 0.4 alpha)
-mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs-root docs
 
 # Pinned open-alpha artifact (valpha)
-mdcp export --llms-index --fetch --fetch-profile alpha --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --docs-root docs
 
 # Pin to release tag
-mdcp export --llms-index --fetch --fetch-ref v0.4.0 --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --fetch-profile dev --docs-root docs
 
 # Local mdcp checkout (no network)
-mdcp export --llms-index --fetch --fetch-local --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-local --fetch-profile dev --docs-root docs
 ```
 
 GitHub raw path: `spec/llms-index/valpha` or `spec/llms-index/vdev`. **`vstable`** is reserved for npm **1.0.0**.
+
+**Note:** The **v0.4.0** release tag stores `valpha` / `vdev` as git symlinks; [raw.githubusercontent.com](https://raw.githubusercontent.com/betsalel-williamson/mdcp/v0.4.0/spec/llms-index/valpha) returns the target filename only (`mdcp.v0.4.llms.txt`). `mdcp export --llms-index --fetch` follows that indirection automatically. On `main`, profile pointers are real files (see `pnpm spec:sync-llms-index`).
 
 ## Authoring profile
 

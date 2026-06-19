@@ -3,7 +3,9 @@ import {
   buildGithubRawUrl,
   fetchLlmsIndexFromUpstream,
   parseLlmsIndexHeader,
+  parseLlmsIndexSymlinkTarget,
   resolveLlmsIndexFetchOptions,
+  resolveLlmsIndexSymlinkTargetPath,
   resolveUpstreamPath,
 } from '../src/export/llms-index-fetch.js';
 import { MdcpConfigSchema } from '../src/config/schema.js';
@@ -27,6 +29,21 @@ describe('llms-index fetch', () => {
   it('parses mdcp-llms-index header', () => {
     expect(parseLlmsIndexHeader(SAMPLE_INDEX)).toBe('0.4.0.0');
     expect(parseLlmsIndexHeader('# no header\n')).toBeNull();
+  });
+
+  it('parses GitHub raw symlink target for profile pointers', () => {
+    expect(parseLlmsIndexSymlinkTarget('mdcp.v0.4.llms.txt')).toBe('mdcp.v0.4.llms.txt');
+    expect(parseLlmsIndexSymlinkTarget('mdcp.v0.4--draft.llms.txt')).toBe(
+      'mdcp.v0.4--draft.llms.txt',
+    );
+    expect(parseLlmsIndexSymlinkTarget(SAMPLE_INDEX)).toBeNull();
+    expect(parseLlmsIndexSymlinkTarget('../evil.llms.txt')).toBeNull();
+  });
+
+  it('resolves symlink target path under spec/llms-index', () => {
+    expect(
+      resolveLlmsIndexSymlinkTargetPath(`${LLMS_INDEX_SPEC_DIR}/valpha`, 'mdcp.v0.4.llms.txt'),
+    ).toBe(`${LLMS_INDEX_SPEC_DIR}/mdcp.v0.4.llms.txt`);
   });
 
   it('builds GitHub raw URL', () => {
@@ -94,6 +111,29 @@ describe('llms-index fetch', () => {
     expect(result.protocolVersion).toBe('0.4.0.0');
     expect(result.ref).toBe('v0.4.0');
     expect(result.text).toContain('## What MDCP is');
+  });
+
+  it('follows GitHub raw symlink body when profile pointer is a symlink (v0.4.0 tag)', async () => {
+    const fetchMock = mockFetch(async (url) => {
+      if (url.endsWith('/spec/llms-index/valpha')) {
+        return new Response('mdcp.v0.4.llms.txt', { status: 200 });
+      }
+      if (url.endsWith('/spec/llms-index/mdcp.v0.4.llms.txt')) {
+        return new Response(SAMPLE_INDEX, { status: 200 });
+      }
+      throw new Error(`unexpected fetch: ${url}`);
+    });
+
+    const result = await fetchLlmsIndexFromUpstream({
+      ref: 'v0.4.0',
+      profile: 'alpha',
+      fetch: fetchMock,
+    });
+    expect(result.protocolVersion).toBe('0.4.0.0');
+    expect(result.url).toBe(
+      'https://raw.githubusercontent.com/betsalel-williamson/mdcp/v0.4.0/spec/llms-index/mdcp.v0.4.llms.txt',
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it('resolves latest to newest release tag', async () => {

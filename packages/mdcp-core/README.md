@@ -48,7 +48,7 @@ Start with [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/
 Fetch the bootstrap index and prompts into your docs root:
 
 ```bash
-mdcp export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs
 ```
 
 CLI walkthrough: [Install and quick start](../mdcp-cli/README.md#install-and-quick-start).

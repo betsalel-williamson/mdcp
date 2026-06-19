@@ -29,15 +29,15 @@ Agents and humans get a **short, self-contained entrypoint** (~60–100 lines) f
 mdcp export --llms-index --config docs/mdcp.config.json --docs-root docs
 
 # Fetch canonical bootstrap from spec/llms-index (day zero — no config required)
-mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs
-mdcp export --llms-index --fetch --fetch-profile alpha --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --docs-root docs
 
 # Pin to release tag (recommended for 0.4.0 adopters)
-mdcp export --llms-index --fetch --fetch-ref v0.4.0 --fetch-profile alpha --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --fetch-profile alpha --docs-root docs
 
 # Fork / local protocol development
-mdcp export --llms-index --fetch --fetch-repo owner/fork --fetch-ref my-branch --fetch-profile dev --docs-root docs
-mdcp export --llms-index --fetch --fetch-local --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-repo owner/fork --fetch-ref my-branch --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-local --fetch-profile dev --docs-root docs
 ```
 
 Config (optional after day zero):

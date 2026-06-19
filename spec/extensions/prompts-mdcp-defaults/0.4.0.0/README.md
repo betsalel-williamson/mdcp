@@ -9,7 +9,7 @@ Other prompt packs use the `prompts-*` prefix (e.g. `prompts-acme-internal` for 
 **Phase 1 — day zero (no config):**
 
 ```bash
-mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs-root docs
 ```
 
 **Phase 2 — pin protocol profile + extensions in `mdcp.config.json`, then re-fetch:**
@@ -27,7 +27,7 @@ mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs
 ```
 
 ```bash
-mdcp export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
 ```
 
 Prompts cache to `.caches/mdcp/prompts/` (`manifest.json` records extension `version`, `protocolVersion`, and upstream `ref`).

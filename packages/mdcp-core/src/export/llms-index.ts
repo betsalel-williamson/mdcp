@@ -6,6 +6,12 @@ import { defaultLlmsIndexFilename, LLMS_INDEX_PROTOCOL_VERSION } from './llms-in
 
 export { defaultLlmsIndexFilename, LLMS_INDEX_PROTOCOL_VERSION } from './llms-index-artifacts.js';
 
+/** npm package name for the CLI (consumer install / npx). */
+export const MDCP_CLI_PACKAGE = '@bwilliamson/mdcp-cli';
+
+/** Run CLI without a prior install (day-zero bootstrap). */
+export const MDCP_CLI_NPX = `npx ${MDCP_CLI_PACKAGE}`;
+
 export interface LlmsIndexOptions {
   /** Path to mdcp.config.json relative to repo root or invocation dir. */
   configPath?: string;
@@ -23,7 +29,7 @@ const STATIC_SECTIONS = `## Sharded documentation
 
 1. **Day zero** — fetch agent index + default extension caches (no config yet):
    \`\`\`bash
-   mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>
+   ${MDCP_CLI_NPX} export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>
    \`\`\`
 2. **Pin fetch** — add \`mdcp.config.json\` with the protocol profile and optional branch override:
    \`\`\`json
@@ -36,7 +42,7 @@ const STATIC_SECTIONS = `## Sharded documentation
    \`\`\`
    \`profile\` selects \`valpha\` (\`alpha\`) or \`vdev\` (\`dev\`). Omit \`ref\` for \`main\` or a release tag (\`v0.4.0\`). Set \`ref\` only when the symlink is not on \`main\` yet (dogfood / pre-release). Protocol version is read from the fetched \`mdcp-llms-index:\` header — no separate pin needed.
    \`\`\`bash
-   mdcp export --llms-index --fetch --config docs/mdcp.config.json --docs-root docs
+   ${MDCP_CLI_NPX} export --llms-index --fetch --config docs/mdcp.config.json --docs-root docs
    \`\`\`
    Default repo is \`betsalel-williamson/mdcp\` — override only with care ([SECURITY.md](../../../spec/extensions/SECURITY.md)).
 
@@ -49,7 +55,7 @@ Then:
 5. **Compile and validate** — \`mdcp compile\` then \`mdcp check\`.
 6. **Query on demand** — use the commands below; load one shard at a time, not entire guides.
 
-No tooling yet? Split manually or run \`mdcp shard\` when a \`source\` monolith is configured.
+No tooling yet? Split manually or run \`${MDCP_CLI_NPX} shard\` when a \`source\` monolith is configured.
 
 ## Repo layout (template)
 
@@ -86,7 +92,7 @@ When \`mdcp\` is installed and configured:
    mdcp export --llms-index --config <config> --docs-root <docs-root>
    \`\`\`
 
-Day zero (no local config): \`mdcp export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>\` — caches default extension packs. After \`mdcp.config.json\` exists, set \`protocol.profile\` (and \`protocol.ref\` when not on \`main\`), then re-fetch (see **Bootstrap** above).
+Day zero (no local config): \`${MDCP_CLI_NPX} export --llms-index --fetch --fetch-profile dev --docs-root <docs-root>\` — caches default extension packs. After \`mdcp.config.json\` exists, set \`protocol.profile\` (and \`protocol.ref\` when not on \`main\`), then re-fetch (see **Bootstrap** above).
 
 ## Glossary
 

@@ -126,6 +126,8 @@ export {
   buildLlmsIndex,
   getLlmsIndexOutputFile,
   getLlmsIndexOptions,
+  MDCP_CLI_NPX,
+  MDCP_CLI_PACKAGE,
   type LlmsIndexOptions,
 } from './export/llms-index.js';
 export {
@@ -147,6 +149,8 @@ export {
   DEFAULT_LLMS_INDEX_UPSTREAM_REF,
   buildGithubRawUrl,
   parseLlmsIndexHeader,
+  parseLlmsIndexSymlinkTarget,
+  resolveLlmsIndexSymlinkTargetPath,
   resolveUpstreamPath,
   resolveUpstreamRef,
   fetchLlmsIndexFromUpstream,
