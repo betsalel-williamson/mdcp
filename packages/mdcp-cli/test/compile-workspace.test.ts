@@ -32,12 +32,12 @@ describe('compile-once per command (#64 P0)', () => {
     );
   }
 
-  it('compileWorkspace invokes compileGuideResults once', () => {
+  it('compileWorkspace invokes compileGuideResultsWithContext once', () => {
     const docs = mkdtempSync(join(tmpdir(), 'mdcp-perf-'));
     try {
       writeMinimalFixture(docs);
       const config = mdcpCore.loadConfig('mdcp.config.json', docs);
-      const spy = vi.spyOn(mdcpCore, 'compileGuideResults');
+      const spy = vi.spyOn(mdcpCore, 'compileGuideResultsWithContext');
 
       const workspace = compileWorkspace(config, docs, {});
       writeCompiledFromWorkspace(config, docs, workspace);

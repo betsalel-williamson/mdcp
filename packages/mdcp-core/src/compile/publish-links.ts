@@ -1,23 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { basename, dirname, relative, resolve, isAbsolute } from 'node:path';
-import { githubSlugify } from '../refs/slugs.js';
-import { extractFirstHeading } from './compile-title.js';
-import { demoteHeadings, stripAboutThisGuideHeading } from './headings.js';
 import { defaultSearchRoots, resolveRelativeFile } from './hooks/path-resolve.js';
 import { maskInlineCode } from '../links/extract.js';
 import type { GuideLinkIndex, GuideLinkEntry } from './guide-link-index.js';
-
-function sectionBodyForSlug(filename: string, content: string): string {
-  if (filename === 'about-this-guide.md') {
-    const body = stripAboutThisGuideHeading(content);
-    return body.trim() ? demoteHeadings(body, 1) : body;
-  }
-  return demoteHeadings(content, 1);
-}
+import { sectionBodyForSlug, slugForDemotedSection } from './section-slug.js';
+import { assignSectionSlugs, type ShardCache } from './shard-cache.js';
 
 /** Slug for a shard file after compile demotion (shared by index build and hooks). */
-export function slugForSectionFile(filePath: string): string | null {
+export function slugForSectionFile(filePath: string, cache?: ShardCache): string | null {
   const name = basename(filePath);
+  if (cache) {
+    const absPath = resolve(filePath);
+    const cached = cache.get(absPath);
+    if (cached) return cached.slug;
+  }
   const raw = readFileSync(filePath, 'utf-8').trim();
   const processed = sectionBodyForSlug(name, raw);
   return slugForDemotedSection(name, processed);
@@ -26,8 +22,6 @@ export function slugForSectionFile(filePath: string): string | null {
 const INTRA_GUIDE_MD_LINK_RE = /(\[[^\]]*\]\()((?!https?:)(?:\.\/)?[^)#/\s][^)#]*\.md)(#[^)]*)?\)/g;
 const CROSS_GUIDE_MD_LINK_RE =
   /(\[[^\]]*\]\()((?!https?:)(?:(?:\.\.\/)+|\.\/)[^)#/\s][^)#]*\.md)(#[^)]*)?\)/g;
-const FIND_FILE_RE = /^FIND-\d+\.md$/i;
-
 /** Apply a link regex line-wise with inline-code masking (labels may contain `]` inside backticks). */
 function rewriteMarkdownLinkLines(
   markdown: string,
@@ -67,35 +61,13 @@ function linkPrefixFromMatch(originalMatch: string, url: string): string {
   return originalMatch.slice(0, idx + 2);
 }
 
-function slugForDemotedSection(filename: string, processed: string): string | null {
-  if (FIND_FILE_RE.test(filename)) {
-    return githubSlugify(filename.replace(/\.md$/i, ''));
-  }
-  const heading = extractFirstHeading(processed);
-  if (!heading.text) return null;
-  return heading.anchor ?? githubSlugify(heading.text);
-}
-
 /** Map shard file paths to GitHub-style slugs for the first heading after compile demotion. */
-export function buildSectionSlugMap(sectionPaths: string[]): Map<string, string> {
-  const slugCounts = new Map<string, number>();
-  const slugByPath = new Map<string, string>();
-
-  for (const filePath of sectionPaths) {
-    const name = basename(filePath);
-    const raw = readFileSync(filePath, 'utf-8').trim();
-    const processed = sectionBodyForSlug(name, raw);
-    const baseSlug = slugForDemotedSection(name, processed);
-    if (!baseSlug) continue;
-
-    const base = baseSlug;
-    const count = slugCounts.get(base) ?? 0;
-    slugCounts.set(base, count + 1);
-    const slug = count === 0 ? base : `${base}-${count}`;
-    slugByPath.set(resolve(filePath), slug);
-  }
-
-  return slugByPath;
+export function buildSectionSlugMap(
+  sectionPaths: string[],
+  cache?: ShardCache,
+  preambleSection = 'about-this-guide.md',
+): Map<string, string> {
+  return assignSectionSlugs(sectionPaths, cache, preambleSection);
 }
 
 const PUBLISH_RELATIVE_LINK_RE = /(\[[^\]]*\]\()((?!https?:|\/\/|mailto:)(?:\.\.\/)+[^)]+)\)/g;

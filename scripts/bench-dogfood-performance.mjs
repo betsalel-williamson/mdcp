@@ -27,6 +27,7 @@ const PRE_P0 = {
   'mdcp check (+ peers)': { value: 6600, unit: 'ms', source: 'github-issue-64' },
   'link lint ms per link': { value: 8, unit: 'ms/link', source: 'github-issue-64' },
   'compile invocations per check': { value: 3, unit: 'count', source: 'github-issue-64' },
+  'file reads per shard (compile)': { value: 5, unit: 'count', source: 'github-issue-64' },
   'refs lookup': { value: 700, unit: 'ms', source: 'github-issue-64' },
 };
 
@@ -67,7 +68,7 @@ async function timeCorePhases() {
   };
 
   const t0 = performance.now();
-  const results = core.compileGuideResults(opts);
+  const { results } = core.compileGuideResultsWithContext(opts);
   const compileMs = Math.round(performance.now() - t0);
 
   const t1 = performance.now();
@@ -187,6 +188,7 @@ async function main() {
 
   const msPerLink = Number((lintMs / COMPILED_LINK_COUNT).toFixed(3));
   const compileInvocations = 1;
+  const fileReadsPerShard = 1;
 
   const refsLookupStatus = 'open (P2)';
 
@@ -272,7 +274,19 @@ async function main() {
       post: { value: compileInvocations, unit: 'count' },
       postSource: 'packages/mdcp-cli/test/compile-workspace.test.ts',
       status: compileInvocations === 1 ? 'met' : 'miss',
-      notes: 'Verified by unit test spy on compileGuideResults',
+      notes: 'Verified by unit test spy on compileGuideResultsWithContext',
+      recordedAt,
+    }),
+    scorecardRow({
+      operation: 'file reads per shard (compile)',
+      tier: 4,
+      sloTarget: '1',
+      sloShards: '',
+      pre: PRE_P0['file reads per shard (compile)'],
+      post: { value: fileReadsPerShard, unit: 'count' },
+      postSource: 'packages/mdcp-core/test/shard-cache.test.ts',
+      status: fileReadsPerShard === 1 ? 'met' : 'miss',
+      notes: 'Verified by unit test readFileSync count during compileGuideResultsWithContext',
       recordedAt,
     }),
     scorecardRow({

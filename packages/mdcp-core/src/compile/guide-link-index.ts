@@ -1,6 +1,11 @@
 import { resolve, basename } from 'node:path';
-import { buildSectionSlugMap } from './publish-links.js';
-import { sectionFiles, linkedSectionFiles } from './section-manifest.js';
+import { assignSectionSlugs, createShardCache, type ShardCache } from './shard-cache.js';
+import {
+  sectionFiles,
+  linkedSectionFiles,
+  linkedSectionFilesCacheKey,
+  type SectionFilesOptions,
+} from './section-manifest.js';
 import { resolveUnderOutputDir, defaultGuideOutputFile } from '../config/paths.js';
 import type { CompileOptions } from './assemble.js';
 
@@ -14,6 +19,13 @@ export interface GuideLinkEntry {
 
 /** Absolute shard path → compiled output target. */
 export type GuideLinkIndex = Map<string, GuideLinkEntry>;
+
+export interface BuildGuideLinkIndexResult {
+  index: GuideLinkIndex;
+  shardCache: ShardCache;
+  /** Memoized linkedSectionFiles per guide options key. */
+  linkedFilesByGuide: Map<string, string[]>;
+}
 
 function isIndexableShardPath(
   filePath: string,
@@ -91,15 +103,48 @@ function outputFileForGuide(
   return resolveUnderOutputDir(cwd, config?.outputDir ?? '_build', rel);
 }
 
+function sectionOptionsForGuide(
+  guideDir: string,
+  compile:
+    | { manifest?: string; scopeRoot?: string; sectionsHeading?: string; preambleSection?: string }
+    | undefined,
+  cwd: string,
+  cache: ShardCache,
+): SectionFilesOptions {
+  return {
+    manifest: compile?.manifest,
+    scopeRoot: compile?.scopeRoot ? resolve(cwd, compile.scopeRoot) : undefined,
+    sectionsHeading: compile?.sectionsHeading,
+    cache,
+    preambleSection: compile?.preambleSection,
+  };
+}
+
+function getLinkedSectionFiles(
+  guideDir: string,
+  sectionOpts: SectionFilesOptions,
+  memo: Map<string, string[]>,
+): string[] {
+  const key = linkedSectionFilesCacheKey(guideDir, sectionOpts);
+  const cached = memo.get(key);
+  if (cached) return cached;
+  const files = linkedSectionFiles(guideDir, sectionOpts);
+  memo.set(key, files);
+  return files;
+}
+
 /** Build a cross-guide link index from every guide in compileOrder. */
 export function buildGuideLinkIndex(
   options: CompileOptions,
   cwd: string = options.docsRoot ?? process.cwd(),
-): GuideLinkIndex {
+  existingCache?: ShardCache,
+): BuildGuideLinkIndexResult {
   const guideConfigMap = new Map((options.guides ?? []).map((g) => [g.name, g]));
   const index: GuideLinkIndex = new Map();
   const manifestOwners = new Map<string, string>();
   const guideDirs = new Map<string, string>();
+  const shardCache = existingCache ?? createShardCache();
+  const linkedFilesByGuide = new Map<string, string[]>();
 
   for (const name of options.compileOrder) {
     const cfg = guideConfigMap.get(name);
@@ -120,14 +165,13 @@ export function buildGuideLinkIndex(
     const cfg = guideConfigMap.get(name);
     const compile = cfg?.compile;
     const guideDir = guideDirs.get(name)!;
-    const scopeRoot = compile?.scopeRoot ? resolve(cwd, compile.scopeRoot) : undefined;
-
-    const files = linkedSectionFiles(guideDir, {
-      manifest: compile?.manifest,
-      scopeRoot,
-      sectionsHeading: compile?.sectionsHeading,
-    });
-    const slugByPath = buildSectionSlugMap(files);
+    const sectionOpts = sectionOptionsForGuide(guideDir, compile, cwd, shardCache);
+    const files = getLinkedSectionFiles(guideDir, sectionOpts, linkedFilesByGuide);
+    const slugByPath = assignSectionSlugs(
+      files,
+      shardCache,
+      compile?.preambleSection ?? 'about-this-guide.md',
+    );
 
     for (const filePath of files) {
       if (!isIndexableShardPath(filePath, guideDirs, options.compileOrder, options.guidesRoot)) {
@@ -175,5 +219,5 @@ export function buildGuideLinkIndex(
     }
   }
 
-  return index;
+  return { index, shardCache, linkedFilesByGuide };
 }

@@ -152,7 +152,7 @@ describe('cross-guide link rewriting', () => {
   it('buildGuideLinkIndex maps shard paths to output basenames and slugs', () => {
     withTmpDir('mdcp-link-index-', (work) => {
       const opts = writeConsumerFixture(work);
-      const index = buildGuideLinkIndex(opts, work);
+      const index = buildGuideLinkIndex(opts, work).index;
 
       const finding = join(work, 'review', 'outcomes', 'FIND-004.md');
       expect(index.get(finding)).toEqual({
@@ -175,7 +175,7 @@ describe('cross-guide link rewriting', () => {
   it('rewriteCrossGuideFileLinks targets another guide output with finding slug', () => {
     withTmpDir('mdcp-cross-rewrite-', (work) => {
       const opts = writeConsumerFixture(work);
-      const index = buildGuideLinkIndex(opts, work);
+      const index = buildGuideLinkIndex(opts, work).index;
       const sourceFile = join(work, 'glossary', 'terms.md');
 
       const out = rewriteCrossGuideFileLinks('See [FIND-004](../review/outcomes/FIND-004.md).', {
@@ -193,7 +193,7 @@ describe('cross-guide link rewriting', () => {
   it('rewriteCrossGuideFileLinks uses in-document anchors within the same output', () => {
     withTmpDir('mdcp-same-output-', (work) => {
       const opts = writeConsumerFixture(work);
-      const index = buildGuideLinkIndex(opts, work);
+      const index = buildGuideLinkIndex(opts, work).index;
       const sourceFile = join(work, 'review', 'review-outcomes.md');
 
       const out = rewriteCrossGuideFileLinks('See [FIND-004](./outcomes/FIND-004.md).', {
@@ -211,7 +211,7 @@ describe('cross-guide link rewriting', () => {
   it('rewriteCrossGuideFileLinks preserves explicit fragments', () => {
     withTmpDir('mdcp-fragment-', (work) => {
       const opts = writeConsumerFixture(work);
-      const index = buildGuideLinkIndex(opts, work);
+      const index = buildGuideLinkIndex(opts, work).index;
       const sourceFile = join(work, 'glossary', 'terms.md');
 
       const out = rewriteCrossGuideFileLinks(
@@ -248,7 +248,7 @@ describe('cross-guide link rewriting', () => {
     it('buildGuideLinkIndex maps each shard to its guide output', () => {
       withTmpDir('mdcp-three-index-', (work) => {
         const opts = writeThreeGuideFixture(work);
-        const index = buildGuideLinkIndex(opts, work);
+        const index = buildGuideLinkIndex(opts, work).index;
 
         expect(index.get(join(work, 'review', 'outcomes', 'FIND-004.md'))).toEqual({
           guideName: 'architecture-review',
@@ -268,7 +268,7 @@ describe('cross-guide link rewriting', () => {
     it('rewriteCrossGuideFileLinks routes each link to the correct output file', () => {
       withTmpDir('mdcp-three-rewrite-', (work) => {
         const opts = writeThreeGuideFixture(work);
-        const index = buildGuideLinkIndex(opts, work);
+        const index = buildGuideLinkIndex(opts, work).index;
         const sourceFile = join(work, 'glossary', 'terms.md');
         const input =
           'See [FIND-004](../review/outcomes/FIND-004.md) and [Deployment](../technical/deployment.md).';
@@ -317,7 +317,7 @@ describe('cross-guide link rewriting', () => {
     it('rewriteCrossGuideFileLinks honors ignoreGuides per target guide', () => {
       withTmpDir('mdcp-ignore-rewrite-', (work) => {
         const opts = writeThreeGuideFixture(work);
-        const index = buildGuideLinkIndex(opts, work);
+        const index = buildGuideLinkIndex(opts, work).index;
         const sourceFile = join(work, 'glossary', 'terms.md');
         const input =
           'See [FIND-004](../review/outcomes/FIND-004.md) and [Deployment](../technical/deployment.md).';
@@ -406,7 +406,7 @@ describe('cross-guide link rewriting', () => {
           { name: 'client-cli', compile: { outputFile: 'README.md' } },
         ],
       };
-      const index = buildGuideLinkIndex(opts, work);
+      const index = buildGuideLinkIndex(opts, work).index;
       const entry = index.get(join(work, 'features', 'feature-catalog.md'));
       expect(entry?.guideName).toBe('features');
       expect(entry?.outputBasename).toBe('guides.md');
@@ -484,7 +484,7 @@ describe('cross-guide link rewriting', () => {
           { name: 'pkg-b', path: 'pkg-b', compile: { outputFile: 'out-b/README.md' } },
         ],
       };
-      const index = buildGuideLinkIndex(opts, work);
+      const index = buildGuideLinkIndex(opts, work).index;
       const sourceFile = join(work, 'pkg-b', 'consumer.md');
       const currentOutput = join(work, 'out-b', 'README.md');
 
@@ -523,7 +523,7 @@ describe('cross-guide link rewriting', () => {
         docsRoot: work,
         config: { outputDir: '.', outputFile: 'guides.md', compileOrder: ['features'] },
         guides: [{ name: 'features' }],
-      });
+      }).index;
 
       expect(index.has(join(work, 'features', 'overview.md'))).toBe(true);
       expect(index.has(join(work, 'examples', 'prompts', 'README.md'))).toBe(false);

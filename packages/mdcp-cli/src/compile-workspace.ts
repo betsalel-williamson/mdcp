@@ -1,5 +1,5 @@
 import {
-  compileGuideResults,
+  compileGuideResultsWithContext,
   compileGuidesFromResults,
   writeCompiledGuidesFromResults,
   lintLinks,
@@ -11,6 +11,8 @@ import {
   type MdcpConfig,
   type LinkIssue,
   type LinkSeverity,
+  type GuideLinkIndex,
+  type ShardCache,
 } from '@bwilliamson/mdcp-core';
 
 export interface GlobalCompileOpts {
@@ -23,6 +25,8 @@ export interface CompileWorkspace {
   opts: CompileOptions;
   results: CompileGuideResult[];
   compiled: string;
+  linkIndex: GuideLinkIndex;
+  shardCache: ShardCache;
 }
 
 export function compileOptions(
@@ -51,9 +55,9 @@ export function compileWorkspace(
   globalOpts: GlobalCompileOpts,
 ): CompileWorkspace {
   const opts = compileOptions(config, docsRoot, globalOpts);
-  const results = compileGuideResults(opts);
+  const { results, linkIndex, shardCache } = compileGuideResultsWithContext(opts);
   const compiled = compileGuidesFromResults(results, opts);
-  return { opts, results, compiled };
+  return { opts, results, compiled, linkIndex, shardCache };
 }
 
 export function writeCompiledFromWorkspace(
@@ -76,6 +80,8 @@ export function runBuiltInLinkLintFromWorkspace(
     docsRoot,
     results: workspace.results,
     compileOptions: workspace.opts,
+    linkIndex: workspace.linkIndex,
+    shardCache: workspace.shardCache,
   });
 }
 

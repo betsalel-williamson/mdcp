@@ -1,5 +1,6 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
+import { loadShardSnapshot, type ShardCache } from './shard-cache.js';
 
 const FILE_LINK_RE = /\[[^\]]*\]\(([^)]+\.md)(?:#[^)]*)?\)/g;
 const SLUG_LINK_RE = /\]\(#([^)]+)\)/g;
@@ -8,6 +9,8 @@ export interface SectionFilesOptions {
   manifest?: string;
   scopeRoot?: string;
   sectionsHeading?: string;
+  cache?: ShardCache;
+  preambleSection?: string;
 }
 
 function manifestTextForSections(text: string, sectionsHeading?: string): string {
@@ -72,6 +75,8 @@ export function sectionFiles(guideDir: string, options: SectionFilesOptions = {}
 export function linkedSectionFiles(guideDir: string, options: SectionFilesOptions = {}): string[] {
   const guideRoot = resolve(guideDir);
   const scope = options.scopeRoot ? resolve(options.scopeRoot) : null;
+  const cache = options.cache;
+  const preambleSection = options.preambleSection ?? 'about-this-guide.md';
 
   function inScope(filePath: string): boolean {
     const abs = resolve(filePath);
@@ -85,7 +90,9 @@ export function linkedSectionFiles(guideDir: string, options: SectionFilesOption
 
   while (queue.length > 0) {
     const filePath = queue.shift()!;
-    const text = readFileSync(filePath, 'utf-8');
+    const text = cache
+      ? loadShardSnapshot(filePath, cache, preambleSection).raw
+      : readFileSync(filePath, 'utf-8');
     for (const match of text.matchAll(FILE_LINK_RE)) {
       const rel = match[1].split('#')[0];
       const resolved = resolve(dirname(filePath), rel);
@@ -97,4 +104,13 @@ export function linkedSectionFiles(guideDir: string, options: SectionFilesOption
   }
 
   return [...collected];
+}
+
+export function linkedSectionFilesCacheKey(guideDir: string, options: SectionFilesOptions): string {
+  return [
+    resolve(guideDir),
+    options.manifest ?? 'index.md',
+    options.scopeRoot ? resolve(options.scopeRoot) : '',
+    options.sectionsHeading ?? '',
+  ].join('\0');
 }

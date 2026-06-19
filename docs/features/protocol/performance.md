@@ -109,9 +109,9 @@ Track and publish in CI ([performance-dogfood.csv](./performance-dogfood.csv), r
 ## Known bottlenecks
 
 ```text
-mdcp check (after P0)
+mdcp check (after P1)
   orphans
-  compileWorkspace ──► compileGuideResults (once) → disk + refs + link lint
+  compileWorkspace ──► compileGuideResultsWithContext (once) → disk + refs + link lint
   xrefs
   markdownlint (shards + compiled)
   Vale
@@ -124,7 +124,7 @@ mdcp check (after P0)
 | `buildSlugRegistry`                          | **Fixed (P0)** — single line split                                           |
 | `lintShardLinks` → `shardSlugSet`            | **Fixed (P0)** — slug set computed once per shard                            |
 | `refs lookup`                                | Recompiles full monolith every call; should query persisted `refs.json` (P2) |
-| `linkedSectionFiles` / `buildSectionSlugMap` | Multiple full reads per shard during index build and assembly (P1)           |
+| `linkedSectionFiles` / `buildSectionSlugMap` | **Fixed (P1)** — compile-scoped shard cache; one read per shard              |
 | Peer linters                                 | Separate cost; scales with file count and rules                              |
 
 ## Optimization roadmap
@@ -140,10 +140,12 @@ Tracked in [GitHub #64](https://github.com/betsalel-williamson/mdcp/issues/64).
 
 **Acceptance:** `compileGuideResults` is invoked exactly once per `mdcp compile` and `mdcp check`; see CSV row `compile invocations per check` and `pnpm bench:dogfood` for measured improvements.
 
-### P1 — Read amplification (expected ~2× compile win)
+### P1 — Read amplification (expected ~2× compile win) — **done**
 
-- Single pass per shard: read once → `{ body, slugs, links, provenance }`
-- Memoize `buildGuideLinkIndex` / section slug maps across guides
+- [x] Single pass per shard: read once → `{ body, slugs, links, provenance }` via `ShardCache`
+- [x] Memoize `buildGuideLinkIndex` / section slug maps across guides; reuse `linkIndex` in link lint
+
+**Acceptance:** Tier 4 metric **file reads / shard → 1** during `compileGuideResultsWithContext`; verified by [`shard-cache.test.ts`](../../../packages/mdcp-core/test/shard-cache.test.ts). Dogfood `compileGuideResults (core)` improved from ~60 ms (post-P0) to ~50 ms after P1 (`pnpm bench:dogfood`).
 
 ### P2 — Agent path
 
