@@ -1,10 +1,13 @@
 import { basename } from 'node:path';
 import { resolve } from 'node:path';
 import type { CompileGuideResult } from '../compile/assemble.js';
+import { compileGuidesFromResults } from '../compile/assemble.js';
 import type { MdcpConfig } from '../config/schema.js';
 import { getGuideConfig, resolveGuideDir, resolveUnderOutputDir } from '../config/load.js';
 import { sectionFiles } from '../compile/section-manifest.js';
 import { buildGuideLinkIndex, type GuideLinkIndex } from '../compile/guide-link-index.js';
+import { buildSlugRegistry } from '../refs/slugs.js';
+import type { RefsRegistry } from '../refs/slugs.js';
 import { lintCompiledLinks } from './validate-compiled.js';
 import { lintShardLinks } from './validate-shards.js';
 import type { LinkIssue } from './types.js';
@@ -80,6 +83,17 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
     );
   }
 
+  const slugRegistryCache = new Map<string, RefsRegistry>();
+  for (const r of results) {
+    const outPath = resolve(resolveUnderOutputDir(absDocsRoot, outputDir, r.outputFile));
+    slugRegistryCache.set(outPath, buildSlugRegistry(r.text));
+  }
+  if (config.outputFile !== undefined && options.compileOptions) {
+    const monolithPath = resolve(resolveUnderOutputDir(absDocsRoot, outputDir, config.outputFile));
+    const monolithText = compileGuidesFromResults(results, options.compileOptions);
+    slugRegistryCache.set(monolithPath, buildSlugRegistry(monolithText));
+  }
+
   let linkIndex: GuideLinkIndex | undefined;
   if (options.compileOptions) {
     linkIndex = buildGuideLinkIndex(options.compileOptions, docsRoot);
@@ -132,6 +146,7 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
         publishOnly: r.publishOnly,
         allowedPublishPaths,
         disallowedShardPaths,
+        slugRegistryCache,
       }),
     );
   }

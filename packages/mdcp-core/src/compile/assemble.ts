@@ -307,19 +307,25 @@ function applyMonolithBanner(options: CompileOptions, results: CompileGuideResul
   return body;
 }
 
-export function compileGuides(options: CompileOptions): string {
-  const results = compileGuideResults(options);
+export function compileGuidesFromResults(
+  results: CompileGuideResult[],
+  options: CompileOptions,
+): string {
   if (options.config?.outputFile !== undefined) {
     return applyMonolithBanner(options, results);
   }
   return results.map((r) => r.text).join('\n');
 }
 
-export function writeCompiledGuides(
+export function compileGuides(options: CompileOptions): string {
+  return compileGuidesFromResults(compileGuideResults(options), options);
+}
+
+export function writeCompiledGuidesFromResults(
+  results: CompileGuideResult[],
   options: CompileOptions,
   monolithOutputPath?: string,
 ): { path: string; lines: number; backupPath?: string }[] {
-  const results = compileGuideResults(options);
   const docsRoot = options.docsRoot ?? process.cwd();
   const outputDir = options.config?.outputDir ?? '_build';
   const writeCtx = { docsRoot, outputDir, backup: options.backup };
@@ -345,4 +351,11 @@ export function writeCompiledGuides(
   }
 
   return written;
+}
+
+export function writeCompiledGuides(
+  options: CompileOptions,
+  monolithOutputPath?: string,
+): { path: string; lines: number; backupPath?: string }[] {
+  return writeCompiledGuidesFromResults(compileGuideResults(options), options, monolithOutputPath);
 }

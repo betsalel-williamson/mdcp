@@ -58,8 +58,9 @@ export function buildSlugRegistry(
 
   let currentGuide = '';
 
-  for (let i = 0; i < compiledText.split('\n').length; i++) {
-    const line = compiledText.split('\n')[i];
+  const lines = compiledText.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const m = line.match(HEADING_RE);
     if (!m) continue;
 

@@ -1,4 +1,4 @@
-import { buildSlugRegistry } from '../refs/slugs.js';
+import { buildSlugRegistry, type RefsRegistry } from '../refs/slugs.js';
 import { extractLinks } from './extract.js';
 import { validateCompiledLinkTarget } from './validate.js';
 import type { LinkIssue } from './types.js';
@@ -12,6 +12,7 @@ export interface LintCompiledLinksOptions {
   publishOnly?: boolean;
   allowedPublishPaths?: Set<string>;
   disallowedShardPaths?: Set<string>;
+  slugRegistryCache?: Map<string, RefsRegistry>;
 }
 
 /** Validate links in assembled compiled guide output. */
@@ -52,6 +53,7 @@ export function lintCompiledLinks(options: LintCompiledLinksOptions): LinkIssue[
       publishOnly: options.publishOnly,
       allowedPublishPaths: options.allowedPublishPaths,
       disallowedShardPaths: options.disallowedShardPaths,
+      slugRegistryCache: options.slugRegistryCache,
     });
     if (result.valid) continue;
     issues.push({

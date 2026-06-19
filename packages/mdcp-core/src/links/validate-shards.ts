@@ -45,11 +45,12 @@ export function lintShardLinks(options: LintShardLinksOptions): LinkIssue[] {
   const shardDir = dirname(options.shardFile);
   const searchRoots = [...defaultSearchRoots(), ...(options.scopeRoot ? [options.scopeRoot] : [])];
 
+  const anchorSlugs = shardSlugSet(options.shardFile);
+
   for (const link of extractLinks(text)) {
     if (link.target.startsWith('#')) {
       const slug = link.target.slice(1);
-      const slugs = shardSlugSet(options.shardFile);
-      if (!slugs.has(slug)) {
+      if (!anchorSlugs.has(slug)) {
         issues.push({
           kind: 'dead anchor',
           file: options.shardFile,
