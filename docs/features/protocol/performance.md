@@ -14,22 +14,41 @@ MDCP is designed for **full programs** — hundreds of shards across multiple gu
 
 The [usage model](./usage-model.md) prefers granular context (`refs lookup` → one shard). Performance work keeps that model viable as repos grow.
 
-## Current baseline (dogfood `docs/` repo)
+## Measured results (dogfood `docs/` repo)
 
-Measured on the reference repo (~64 shards, 4 guides, ~296 source links, ~357 compiled links):
+**Source of truth:** [performance-dogfood.csv](./performance-dogfood.csv)
 
-| Operation                          | Shards | Time    | Notes                                            |
-| ---------------------------------- | ------ | ------- | ------------------------------------------------ |
-| `compileGuideResults` (core, once) | 64     | ~700 ms | Multi-guide, glossary scope, cross-guide rewrite |
-| Built-in link lint                 | 64     | ~3.0 s  | Dominates core work                              |
-| `mdcp compile` (CLI)               | 64     | ~4.9 s  | Compiles **3×** (write + string + link lint)     |
-| `mdcp check` (CLI, with peers)     | 64     | ~6.6 s  | Core ~4 s + markdownlint + Vale on 71 files      |
+Regenerate after toolchain changes:
 
-Link validation cost scales with **links × target file size**, not shard count alone. On dogfood, compiled link lint averages ~8 ms/link because publish outputs re-read target files and rebuild slug registries per cross-file `#fragment` link.
+```bash
+pnpm build && pnpm bench:dogfood
+```
+
+The CSV is written by `scripts/bench-dogfood-performance.mjs` at the repo root. Each row is one operation with pre-P0 and post-P0 values side by side.
+
+| Column               | Meaning                                                                                   |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| `operation`          | Command or phase measured                                                                 |
+| `tier`               | SLO tier (1–4) when applicable; blank for component timings                               |
+| `slo_target`         | Normative target text from the SLO tables below                                           |
+| `slo_shards`         | Shard count the SLO is defined at (200 or 500); dogfood has ~64 shards                    |
+| `pre_p0_value`       | Historical baseline before P0 optimizations                                               |
+| `post_p0_value`      | Live measurement from the bench script (median of 3 CLI runs or single in-process sample) |
+| `value_unit`         | `ms`, `ms/link`, or `count`                                                               |
+| `improvement_factor` | `pre_p0_value / post_p0_value` when units match and post > 0                              |
+| `status`             | `met`, `miss`, or `open (P2)` vs the SLO for that row                                     |
+| `pre_p0_source`      | `github-issue-64` — not re-measured; do not edit by hand                                  |
+| `post_p0_source`     | Bench script id and date — updates when you run `pnpm bench:dogfood`                      |
+| `notes`              | Measurement method (CLI wall clock vs in-process, peer linters included or not)           |
+| `recorded_at`        | Date the post-P0 column was last generated                                                |
+
+**Pre-P0** values come from [GitHub #64](https://github.com/betsalel-williamson/mdcp/issues/64) when the toolchain compiled **3×** per `check` / `compile` and re-read target files per cross-file `#fragment` link. **Post-P0** values are measured on the reference repo (~64 shards, 4 guides, ~296 source links, ~357 compiled links).
+
+Do not hand-edit timing cells in this doc — update the CSV via the bench script.
 
 ## Scaling projections
 
-Synthetic fixtures (single guide + glossary, simple intra-guide links):
+Synthetic fixtures (single guide + glossary, simple intra-guide links). **Projections only** — not in the CSV until P3 benchmark fixtures land.
 
 | Shards | Links/shard | Core total (compile + lint) |
 | ------ | ----------- | --------------------------- |
@@ -41,16 +60,18 @@ Synthetic fixtures (single guide + glossary, simple intra-guide links):
 
 Scaling is **superlinear** beyond ~200 shards — repeated file reads and link-graph walks dominate.
 
-Real multi-guide repos with publish outputs (`compile.outputFile`), cross-guide rewriting, and compile hooks are roughly **10× slower per shard** than synthetic fixtures. Extrapolated full programs:
+Real multi-guide repos with publish outputs (`compile.outputFile`), cross-guide rewriting, and compile hooks are roughly **10× slower per shard** than synthetic fixtures. Extrapolated full programs (pre-P0 constant factor):
 
 | Scale      | Core compile + lint | Full `check` (with peers) |
 | ---------- | ------------------- | ------------------------- |
 | 200 shards | ~5–15 s             | ~15–30 s                  |
 | 500 shards | ~15–45 s            | ~45–90 s                  |
 
-These extrapolations are pre-optimization. The SLOs below define where the toolchain should land.
+Re-benchmark at 200/500 shards in P3; compare against SLO columns in the CSV.
 
 ## Service level objectives (SLOs)
+
+Normative targets below. Measured compliance for dogfood is in [performance-dogfood.csv](./performance-dogfood.csv).
 
 ### Tier 1 — Interactive (agent authoring loop)
 
@@ -76,7 +97,7 @@ These extrapolations are pre-optimization. The SLOs below define where the toolc
 
 ### Tier 4 — Regression metrics (CI tracking)
 
-Track and publish in CI:
+Track and publish in CI ([performance-dogfood.csv](./performance-dogfood.csv), rows with `tier=4`):
 
 | Metric                          | Target                              |
 | ------------------------------- | ----------------------------------- |
@@ -88,36 +109,36 @@ Track and publish in CI:
 ## Known bottlenecks
 
 ```text
-mdcp check (today)
+mdcp check (after P0)
   orphans
-  writeCompiled ──► compileGuideResults #1 → disk → compileGuideResults #2
-  refs gen/check
-  link lint ──► compileGuideResults #3
+  compileWorkspace ──► compileGuideResults (once) → disk + refs + link lint
   xrefs
   markdownlint (shards + compiled)
   Vale
 ```
 
-| Hot path                                     | Issue                                                                            |
-| -------------------------------------------- | -------------------------------------------------------------------------------- |
-| `writeCompiled` + `runBuiltInLinkLint`       | Triple compile per `check` / `compile`                                           |
-| `refs lookup`                                | Recompiles full monolith every call; should query persisted `refs.json`          |
-| `validateCompiledLinkTarget`                 | Re-reads target `.md` and rebuilds slug registry per cross-file `#fragment` link |
-| `buildSlugRegistry`                          | Splits compiled text twice per line                                              |
-| `lintShardLinks` → `shardSlugSet`            | Re-parses entire shard for every `#anchor` link                                  |
-| `linkedSectionFiles` / `buildSectionSlugMap` | Multiple full reads per shard during index build and assembly                    |
-| Peer linters                                 | Separate cost; scales with file count and rules                                  |
+| Hot path                                     | Status                                                                       |
+| -------------------------------------------- | ---------------------------------------------------------------------------- |
+| `writeCompiled` + `runBuiltInLinkLint`       | **Fixed (P0)** — single compile per command                                  |
+| `validateCompiledLinkTarget`                 | **Fixed (P0)** — slug registries cached per output file                      |
+| `buildSlugRegistry`                          | **Fixed (P0)** — single line split                                           |
+| `lintShardLinks` → `shardSlugSet`            | **Fixed (P0)** — slug set computed once per shard                            |
+| `refs lookup`                                | Recompiles full monolith every call; should query persisted `refs.json` (P2) |
+| `linkedSectionFiles` / `buildSectionSlugMap` | Multiple full reads per shard during index build and assembly (P1)           |
+| Peer linters                                 | Separate cost; scales with file count and rules                              |
 
 ## Optimization roadmap
 
 Tracked in [GitHub #64](https://github.com/betsalel-williamson/mdcp/issues/64).
 
-### P0 — Eliminate redundant work (expected 2–3× win)
+### P0 — Eliminate redundant work (expected 2–3× win) — **done**
 
-- Compile once per command; pass results through write, refs, and link lint
-- Cache slug registries per output file during link validation
-- Cache shard slug sets in `lintShardLinks`
-- Fix `buildSlugRegistry` double-split
+- [x] Compile once per command; pass results through write, refs, and link lint
+- [x] Cache slug registries per output file during link validation
+- [x] Cache shard slug sets in `lintShardLinks`
+- [x] Fix `buildSlugRegistry` double-split
+
+**Acceptance:** `compileGuideResults` is invoked exactly once per `mdcp compile` and `mdcp check`; see CSV row `compile invocations per check` and `pnpm bench:dogfood` for measured improvements.
 
 ### P1 — Read amplification (expected ~2× compile win)
 
