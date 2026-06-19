@@ -32,8 +32,8 @@ mdcp export --llms-index --config docs/mdcp.config.json --docs-root docs
 npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs-root docs
 npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --docs-root docs
 
-# Pin to release tag (recommended for 0.4.0 adopters)
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --fetch-profile alpha --docs-root docs
+# Pin to release tag (recommended for 0.4.x adopters)
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --fetch-profile alpha --docs-root docs
 
 # Fork / local protocol development
 npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-repo owner/fork --fetch-ref my-branch --fetch-profile dev --docs-root docs

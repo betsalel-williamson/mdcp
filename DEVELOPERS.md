@@ -230,9 +230,9 @@ Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.o
 
 #### Upstream refs (dogfood)
 
-`mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.0`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
+`mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.1`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
 
-Remote `--fetch` with `ref: v0.4.0` requires the **`v0.4.0` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
+Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](./packages/mdcp-core/README.md#publish-relative-link-rewriting).
 
@@ -330,6 +330,18 @@ Completed for the **0.4.0** open alpha:
 - [x] **Consumer install docs** — `--fetch-ref v0.4.0` + `--fetch-profile alpha`
 
 Remote `--fetch` with `ref: v0.4.0` requires the **`v0.4.0` git tag** on `main` (pushed by `pnpm release:tag:push`). Protocol version stays **`0.4.0.0`**; only git `ref` pins move between branch dogfood and release tags.
+
+#### Open alpha (0.4.1) patch release checklist
+
+Pending for **0.4.1** (first patch after 0.4.0 open alpha):
+
+- [x] **`docs/mdcp.config.json`** — `protocol.ref` pinned to `v0.4.1`
+- [x] **`spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md`** — phase-2 example `ref`: `v0.4.1`
+- [x] **Consumer install docs** — `--fetch-ref v0.4.1` + `--fetch-profile alpha`
+- [ ] **Three pending changesets** on `main` — `#62` refs registry, `#64` perf, `#57` Node 24 + llms-index indirection
+- [ ] **`pnpm release:tag:push`** — human runs interactively; select **patch** → `v0.4.1`
+
+Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Protocol version stays **`0.4.0.0`**; only git `ref` pins move.
 
 ### When to add a changeset
 
@@ -586,7 +598,7 @@ Four-part version for MDCP **artifact and config compatibility** (default `0.4.0
 
 **Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](#040-open-alpha-milestone).
 
-Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.0` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
+Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
 
 ## mdcp-llms-index
 

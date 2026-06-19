@@ -20,7 +20,7 @@ Set up a sharded documentation pipeline using **mdcp** for FEATURE above.
 npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs-root docs
 
 # Pinned open-alpha release (recommended after config exists — phase 2)
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --docs-root docs
 ```
 
 **Phase 2 — pin protocol profile + extensions:** Add `mdcp.config.json`, then re-fetch:
@@ -29,7 +29,7 @@ npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --docs-
 {
   "protocol": {
     "profile": "alpha",
-    "ref": "v0.4.0"
+    "ref": "v0.4.1"
   },
   "extensions": {
     "packs": [{ "id": "prompts-mdcp-defaults", "enabled": true, "version": "0.4.0.0" }]
@@ -40,7 +40,7 @@ npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --docs-
 Set `protocol.ref` to your feature branch when the `valpha` symlink is not on `main` yet (dogfood only).
 
 ```bash
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --config docs/mdcp.config.json --docs-root docs
 ```
 
 Run `mdcp export --llms-index` to write the agent index (`mdcp.v*.llms.txt`) under the docs root. `npx @bwilliamson/mdcp-cli export --llms-index --fetch` also caches versioned task prompts to `.caches/mdcp/prompts/`.

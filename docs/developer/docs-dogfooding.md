@@ -16,9 +16,9 @@ Config: [`docs/mdcp.config.json`](../mdcp.config.json). Guides with `compile.out
 
 ### Upstream refs (dogfood)
 
-`mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.0`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
+`mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.1`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
 
-Remote `--fetch` with `ref: v0.4.0` requires the **`v0.4.0` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
+Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).
 

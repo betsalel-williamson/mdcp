@@ -46,7 +46,7 @@ Task prompts and a bootstrap index get you started in a consumer repo without in
 Fetch the bootstrap index and prompts into your docs root:
 
 ```bash
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
 ```
 
 Prefer manual steps? See [Install and quick start](./install-and-quick-start.md).

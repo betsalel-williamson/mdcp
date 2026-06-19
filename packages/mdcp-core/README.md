@@ -48,7 +48,7 @@ Start with [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/
 Fetch the bootstrap index and prompts into your docs root:
 
 ```bash
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
 ```
 
 CLI walkthrough: [Install and quick start](../mdcp-cli/README.md#install-and-quick-start).
@@ -77,7 +77,7 @@ The CLI (`@bwilliamson/mdcp-cli`) depends on this package. Install `@bwilliamson
 
 ### Stability
 
-**Pre-1.0 / open alpha (0.4.0):** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Pin `@bwilliamson/mdcp-core@0.4.0` and read package changelogs before upgrading.
+**Pre-1.0 / open alpha (0.4.0):** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Pin `@bwilliamson/mdcp-core@0.4.1` and read package changelogs before upgrading.
 
 ## Glossary
 
@@ -1025,7 +1025,7 @@ Four-part version for MDCP **artifact and config compatibility** (default `0.4.0
 
 **Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](../../DEVELOPERS.md#040-open-alpha-milestone).
 
-Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.0` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
+Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
 
 ## mdcp-llms-index
 

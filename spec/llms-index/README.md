@@ -52,7 +52,7 @@ npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs
 npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --docs-root docs
 
 # Pin to release tag
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --fetch-profile dev --docs-root docs
 
 # Local mdcp checkout (no network)
 npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-local --fetch-profile dev --docs-root docs

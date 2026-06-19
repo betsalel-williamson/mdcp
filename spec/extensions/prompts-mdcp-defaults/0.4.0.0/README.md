@@ -18,7 +18,7 @@ npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs
 {
   "protocol": {
     "profile": "alpha",
-    "ref": "v0.4.0"
+    "ref": "v0.4.1"
   },
   "extensions": {
     "packs": [{ "id": "prompts-mdcp-defaults", "enabled": true, "version": "0.4.0.0" }]
@@ -27,7 +27,7 @@ npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs
 ```
 
 ```bash
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --config docs/mdcp.config.json --docs-root docs
 ```
 
 Prompts cache to `.caches/mdcp/prompts/` (`manifest.json` records extension `version`, `protocolVersion`, and upstream `ref`).

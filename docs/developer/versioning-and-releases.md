@@ -65,6 +65,18 @@ Completed for the **0.4.0** open alpha:
 
 Remote `--fetch` with `ref: v0.4.0` requires the **`v0.4.0` git tag** on `main` (pushed by `pnpm release:tag:push`). Protocol version stays **`0.4.0.0`**; only git `ref` pins move between branch dogfood and release tags.
 
+### Open alpha (0.4.1) patch release checklist
+
+Pending for **0.4.1** (first patch after 0.4.0 open alpha):
+
+- [x] **`docs/mdcp.config.json`** — `protocol.ref` pinned to `v0.4.1`
+- [x] **`spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md`** — phase-2 example `ref`: `v0.4.1`
+- [x] **Consumer install docs** — `--fetch-ref v0.4.1` + `--fetch-profile alpha`
+- [ ] **Three pending changesets** on `main` — `#62` refs registry, `#64` perf, `#57` Node 24 + llms-index indirection
+- [ ] **`pnpm release:tag:push`** — human runs interactively; select **patch** → `v0.4.1`
+
+Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Protocol version stays **`0.4.0.0`**; only git `ref` pins move.
+
 ## When to add a changeset
 
 Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR changes:

@@ -48,7 +48,7 @@ Task prompts and a bootstrap index get you started in a consumer repo without in
 Fetch the bootstrap index and prompts into your docs root:
 
 ```bash
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
 ```
 
 Prefer manual steps? See [Install and quick start](#install-and-quick-start).
@@ -267,7 +267,7 @@ npm install -D @bwilliamson/mdcp-cli
 
 # Or run without installing
 npx @bwilliamson/mdcp-cli check --config mdcp.config.json
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
 
 # Global install
 npm install -g @bwilliamson/mdcp-cli
@@ -278,7 +278,7 @@ npm install -g @bwilliamson/mdcp-cli
 **Open alpha (0.4.0).** MDCP is moving fast — this release is a working foundation for early adopters. Tooling and the draft protocol profile may change in 0.5+. Pin a specific version:
 
 ```bash
-npm install -D @bwilliamson/mdcp-cli@0.4.0
+npm install -D @bwilliamson/mdcp-cli@0.4.1
 ```
 
 **Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. CLI commands, flags, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read package changelogs before upgrading.
@@ -297,7 +297,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ### Quick start
 
-**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.0 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
+**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
@@ -962,7 +962,7 @@ Four-part version for MDCP **artifact and config compatibility** (default `0.4.0
 
 **Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](../../DEVELOPERS.md#040-open-alpha-milestone).
 
-Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.0` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
+Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
 
 ## mdcp-llms-index
 

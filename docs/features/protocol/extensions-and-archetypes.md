@@ -61,7 +61,7 @@ V1 wires **extension packs** into `mdcp.config.json` — enable built-in packs (
 {
   "protocolVersion": "0.4.0.0",
   "protocol": {
-    "fetch": { "ref": "v0.4.0", "profile": "dev" }
+    "fetch": { "ref": "v0.4.1", "profile": "dev" }
   },
   "extensions": {
     "packs": [
