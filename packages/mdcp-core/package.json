@@ -1,6 +1,6 @@
 {
   "name": "@bwilliamson/mdcp-core",
-  "version": "0.4.0-build.3",
+  "version": "0.4.1",
   "description": "MDCP core library — MarkDown Context Protocol compile, refs, validation",
   "license": "MIT",
   "type": "module",
