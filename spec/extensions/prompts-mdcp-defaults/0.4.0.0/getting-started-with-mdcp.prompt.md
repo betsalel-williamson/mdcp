@@ -17,10 +17,10 @@ Set up a sharded documentation pipeline using **mdcp** for FEATURE above.
 
 ```bash
 # In-progress protocol (vdev profile)
-mdcp export --llms-index --fetch --fetch-profile dev --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs-root docs
 
 # Pinned open-alpha release (recommended after config exists — phase 2)
-mdcp export --llms-index --fetch --fetch-ref v0.4.0 --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --docs-root docs
 ```
 
 **Phase 2 — pin protocol profile + extensions:** Add `mdcp.config.json`, then re-fetch:
@@ -40,10 +40,10 @@ mdcp export --llms-index --fetch --fetch-ref v0.4.0 --docs-root docs
 Set `protocol.ref` to your feature branch when the `valpha` symlink is not on `main` yet (dogfood only).
 
 ```bash
-mdcp export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.0 --config docs/mdcp.config.json --docs-root docs
 ```
 
-Run `mdcp export --llms-index` to write the agent index (`mdcp.v*.llms.txt`) under the docs root. `mdcp export --llms-index --fetch` also caches versioned task prompts to `.caches/mdcp/prompts/`.
+Run `mdcp export --llms-index` to write the agent index (`mdcp.v*.llms.txt`) under the docs root. `npx @bwilliamson/mdcp-cli export --llms-index --fetch` also caches versioned task prompts to `.caches/mdcp/prompts/`.
 
 **Setup:** Inspect this repository — package manager, existing docs layout, and developer docs — before changing files. Do not assume a specific host, script runner, or optional linter; discover what the repo already uses.
 

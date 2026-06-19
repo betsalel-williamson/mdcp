@@ -6,6 +6,7 @@ import {
   resolveLlmsIndexProfilePath,
   resolveLlmsIndexSpecFile,
   parseLlmsIndexProfile,
+  LLMS_INDEX_SPEC_DIR,
   type LlmsIndexProfile,
 } from './llms-index-artifacts.js';
 
@@ -109,6 +110,38 @@ function readLocalLlmsIndexSpec(options: LlmsIndexFetchOptions): LlmsIndexFetchR
   };
 }
 
+/** GitHub raw serves symlink bodies as the target filename only — match versioned llms-index files. */
+const LLMS_INDEX_SYMLINK_TARGET = /^mdcp\.v[\d.]+(?:--draft)?\.llms\.txt$/;
+
+/** When raw.githubusercontent.com returns a symlink target (e.g. `mdcp.v0.4.llms.txt`), return the basename. */
+export function parseLlmsIndexSymlinkTarget(text: string): string | null {
+  const trimmed = text.trim();
+  if (!trimmed || trimmed.includes('\n')) return null;
+  const base = trimmed.split('/').pop() ?? trimmed;
+  return LLMS_INDEX_SYMLINK_TARGET.test(base) ? base : null;
+}
+
+export function resolveLlmsIndexSymlinkTargetPath(profilePath: string, target: string): string {
+  const dir = profilePath.includes('/')
+    ? profilePath.slice(0, profilePath.lastIndexOf('/'))
+    : LLMS_INDEX_SPEC_DIR;
+  return `${dir}/${target}`;
+}
+
+async function fetchGithubRawText(
+  repo: string,
+  ref: string,
+  path: string,
+  fetchFn: typeof fetch,
+): Promise<{ text: string; url: string }> {
+  const url = buildGithubRawUrl(repo, ref, path);
+  const res = await fetchFn(url);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
+  }
+  return { text: await res.text(), url };
+}
+
 /** Fetch canonical llms-index from local spec artifacts or GitHub raw content. */
 export async function fetchLlmsIndexFromUpstream(
   options: LlmsIndexFetchOptions = {},
@@ -123,14 +156,18 @@ export async function fetchLlmsIndexFromUpstream(
   const fetchFn = options.fetch ?? fetch;
 
   const ref = await resolveUpstreamRef(repo, refInput, fetchFn);
-  const url = buildGithubRawUrl(repo, ref, path);
-  const res = await fetchFn(url);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
+  let { text, url } = await fetchGithubRawText(repo, ref, path, fetchFn);
+  let protocolVersion = parseLlmsIndexHeader(text);
+
+  if (!protocolVersion) {
+    const target = parseLlmsIndexSymlinkTarget(text);
+    if (target) {
+      const resolvedPath = resolveLlmsIndexSymlinkTargetPath(path, target);
+      ({ text, url } = await fetchGithubRawText(repo, ref, resolvedPath, fetchFn));
+      protocolVersion = parseLlmsIndexHeader(text);
+    }
   }
 
-  const text = await res.text();
-  const protocolVersion = parseLlmsIndexHeader(text);
   if (!protocolVersion) {
     throw new Error(`Fetched file is missing a valid mdcp-llms-index header: ${url}`);
   }

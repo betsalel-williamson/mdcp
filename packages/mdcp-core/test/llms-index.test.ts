@@ -13,6 +13,7 @@ describe('buildLlmsIndex', () => {
     expect(text).toContain('## Task prompts');
     expect(text).toContain('.caches/mdcp/prompts/feature-level-task.prompt.md');
     expect(text).toContain('Bootstrap');
+    expect(text).toContain('npx @bwilliamson/mdcp-cli export --llms-index --fetch');
     expect(text).toContain('protocol.profile');
     expect(text).toContain('protocol.ref');
     expect(text).not.toContain('extensions.protocolVersion');
