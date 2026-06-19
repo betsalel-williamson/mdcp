@@ -12,8 +12,6 @@ import {
   guideScanDirs,
   shardLintPaths,
   xrefScanDirs,
-  compileGuides,
-  writeCompiledGuides,
   checkOrphansForGuides,
   genRefsFromCompiled,
   checkRefsRegistry,
@@ -37,15 +35,19 @@ import {
   runPeer,
   shardFromMonolith,
   buildSlugRegistry,
-  resolveBackupOptions,
   writeOutputFile,
-  compileGuideResults,
-  lintLinks,
+  resolveBackupOptions,
   formatLinkIssue,
   type LinkIssue,
   type LinkSeverity,
   type MdcpConfig,
 } from '@bwilliamson/mdcp-core';
+import {
+  compileWorkspace,
+  writeCompiledFromWorkspace,
+  runBuiltInLinkLintFromWorkspace,
+  resolveLinkSeverity,
+} from './compile-workspace.js';
 
 interface GlobalOpts {
   config: string;
@@ -113,17 +115,16 @@ function resolveLinkTarget(config: MdcpConfig, docsRoot: string): string | undef
   return resolveOutputPath(config, docsRoot);
 }
 
-function backupOptions(config: MdcpConfig, opts: GlobalOpts) {
-  return resolveBackupOptions(config, {
+function cliBackupFlags(opts: GlobalOpts) {
+  return {
     backup: opts.backup,
     backupDir: opts.backupDir,
     backupExt: opts.backupExt,
-  });
+  };
 }
 
-function resolveLinkSeverity(opts: GlobalOpts, config: MdcpConfig): LinkSeverity {
-  if (opts.warnBrokenLinks) return 'warn';
-  return config.lint?.links?.severity ?? 'error';
+function backupOptions(config: MdcpConfig, opts: GlobalOpts) {
+  return resolveBackupOptions(config, cliBackupFlags(opts));
 }
 
 /** Print link diagnostics; returns true when caller should fail (severity error + issues). */
@@ -134,29 +135,19 @@ function reportLinkIssues(issues: LinkIssue[], severity: LinkSeverity): boolean 
   return severity === 'error' && issues.length > 0;
 }
 
-function runBuiltInLinkLint(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts): boolean {
-  if (config.lint?.links?.enabled === false) return false;
-  const opts = compileOptions(config, docsRoot, globalOpts);
-  const results = compileGuideResults(opts);
-  const issues = lintLinks({ config, docsRoot, results, compileOptions: opts });
-  const severity = resolveLinkSeverity(globalOpts, config);
+function runBuiltInLinkLint(
+  config: MdcpConfig,
+  docsRoot: string,
+  globalOpts: GlobalOpts,
+  workspace: ReturnType<typeof compileWorkspace>,
+): boolean {
+  const issues = runBuiltInLinkLintFromWorkspace(config, docsRoot, workspace);
+  const severity = resolveLinkSeverity(globalOpts.warnBrokenLinks, config);
   return reportLinkIssues(issues, severity);
 }
 
-function compileOptions(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts) {
-  return {
-    guidesRoot: resolveDocsRoot(config, docsRoot),
-    compileOrder: config.compileOrder,
-    banner: config.banner,
-    guides: config.guides,
-    docsRoot,
-    config,
-    backup: backupOptions(config, globalOpts),
-  };
-}
-
 function compileToString(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts): string {
-  return compileGuides(compileOptions(config, docsRoot, globalOpts));
+  return compileWorkspace(config, docsRoot, cliBackupFlags(globalOpts)).compiled;
 }
 
 function logWritten(results: { path: string; lines: number; backupPath?: string }[]): void {
@@ -167,11 +158,10 @@ function logWritten(results: { path: string; lines: number; backupPath?: string 
 }
 
 function writeCompiled(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts): string {
-  const opts = compileOptions(config, docsRoot, globalOpts);
-  const monolithPath = resolveOutputPath(config, docsRoot);
-  const results = writeCompiledGuides(opts, monolithPath);
-  logWritten(results);
-  return compileToString(config, docsRoot, globalOpts);
+  const workspace = compileWorkspace(config, docsRoot, cliBackupFlags(globalOpts));
+  const written = writeCompiledFromWorkspace(config, docsRoot, workspace);
+  logWritten(written);
+  return workspace.compiled;
 }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -203,10 +193,12 @@ program
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
     const docsRoot = getDocsRoot(opts);
-    const compiled = writeCompiled(config, docsRoot, opts);
+    const workspace = compileWorkspace(config, docsRoot, cliBackupFlags(opts));
+    const written = writeCompiledFromWorkspace(config, docsRoot, workspace);
+    logWritten(written);
     const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
-    genRefsFromCompiled(compiled, refsPath);
-    if (runBuiltInLinkLint(config, docsRoot, opts)) process.exit(1);
+    genRefsFromCompiled(workspace.compiled, refsPath);
+    if (runBuiltInLinkLint(config, docsRoot, opts, workspace)) process.exit(1);
   });
 
 const refs = program.command('refs').description('Heading slug registry (JSON default)');
@@ -550,15 +542,18 @@ program
     }
     if (failed) process.exit(1);
 
-    const compiled = writeCompiled(config, getDocsRoot(opts), opts);
+    const docsRoot = getDocsRoot(opts);
+    const workspace = compileWorkspace(config, docsRoot, cliBackupFlags(opts));
+    const written = writeCompiledFromWorkspace(config, docsRoot, workspace);
+    logWritten(written);
 
-    const refsPath = resolveRefsPath(getDocsRoot(opts), config.outputDir, config.refs.registryFile);
-    genRefsFromCompiled(compiled, refsPath);
-    const refsResult = checkRefsRegistry(compiled, refsPath);
+    const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
+    genRefsFromCompiled(workspace.compiled, refsPath);
+    const refsResult = checkRefsRegistry(workspace.compiled, refsPath);
     console.log(refsResult.message);
     if (!refsResult.ok) process.exit(1);
 
-    if (runBuiltInLinkLint(config, getDocsRoot(opts), opts)) failed = true;
+    if (runBuiltInLinkLint(config, docsRoot, opts, workspace)) failed = true;
 
     if (config.lint?.xrefs?.enabled !== false) {
       const xrefs = lintXrefs(xrefScanDirs(config, getDocsRoot(opts)));
