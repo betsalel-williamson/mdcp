@@ -55,14 +55,27 @@ export {
   processSection,
   assembleGuide,
   compileGuides,
+  compileGuidesFromResults,
   compileGuideResults,
+  compileGuideResultsWithContext,
   writeCompiledGuides,
+  writeCompiledGuidesFromResults,
   buildGuideLinkIndex,
+  type CompileGuideResult,
+  type CompileOptions,
   type CompileOptionsInput,
   type GuideLinkIndex,
   type GuideLinkEntry,
+  type BuildGuideLinkIndexResult,
   type SectionFilesOptions,
+  type CompileGuideResultsContext,
 } from './compile/assemble.js';
+export {
+  type ShardCache,
+  type ShardSnapshot,
+  createShardCache,
+  loadShardSnapshot,
+} from './compile/shard-cache.js';
 export {
   writeOutputFile,
   resolveBackupPath,

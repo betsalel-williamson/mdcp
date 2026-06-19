@@ -22,6 +22,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
     - [Scope and positioning](./protocol/01-scope-and-positioning.md)
     - [Alternatives and adoption](./protocol/02-alternatives-and-adoption.md)
     - [Usage model](./protocol/usage-model.md)
+    - [Performance goals and review](./protocol/performance.md)
     - [MDCP 1.0 spec (draft)](./protocol/mdcp-1.0-spec.md)
     - [Agent task prompts](./protocol/agent-task-prompts.md)
     - [Extensions and archetypes](./protocol/extensions-and-archetypes.md)

@@ -21,6 +21,30 @@ export interface ValidateCompiledLinkOptions {
   allowedPublishPaths?: Set<string>;
   /** Indexed shard paths that must not appear as link targets in publish output. */
   disallowedShardPaths?: Set<string>;
+  /** Cached slug registries keyed by absolute publish output path. */
+  slugRegistryCache?: Map<string, RefsRegistry>;
+}
+
+function getOrBuildRegistry(
+  path: string,
+  cache?: Map<string, RefsRegistry>,
+): RefsRegistry | undefined {
+  const absPath = resolve(path);
+  const cached = cache?.get(absPath);
+  if (cached) return cached;
+  if (!existsSync(absPath)) return undefined;
+  try {
+    const registry = buildSlugRegistry(readFileSync(absPath, 'utf-8'));
+    cache?.set(absPath, registry);
+    return registry;
+  } catch {
+    return undefined;
+  }
+}
+
+function registryHasSlug(path: string, slug: string, cache?: Map<string, RefsRegistry>): boolean {
+  const registry = getOrBuildRegistry(path, cache);
+  return registry ? slugSet(registry).has(slug) : false;
 }
 
 function slugSet(registry: RefsRegistry): Set<string> {
@@ -62,15 +86,9 @@ function resolveAllowedPublishTarget(
   if (candidates.length === 1) return candidates[0];
 
   if (fragment) {
-    const matching = candidates.filter((p) => {
-      if (!existsSync(p)) return false;
-      try {
-        const reg = buildSlugRegistry(readFileSync(p, 'utf-8'));
-        return slugSet(reg).has(fragment);
-      } catch {
-        return false;
-      }
-    });
+    const matching = candidates.filter((p) =>
+      registryHasSlug(p, fragment, options.slugRegistryCache),
+    );
     if (matching.length === 1) return matching[0];
   }
 
@@ -130,8 +148,7 @@ export function validateCompiledLinkTarget(
     const publishTarget = resolveAllowedPublishTarget(resolved, filePart, fragment, options);
     if (publishTarget) {
       if (fragment && existsSync(publishTarget)) {
-        const fileRegistry = buildSlugRegistry(readFileSync(publishTarget, 'utf-8'));
-        if (!slugSet(fileRegistry).has(fragment)) {
+        if (!registryHasSlug(publishTarget, fragment, options.slugRegistryCache)) {
           return { valid: false, reason: 'dead anchor', brokenTarget: target };
         }
       }
@@ -152,8 +169,7 @@ export function validateCompiledLinkTarget(
       };
     }
     if (fragment) {
-      const fileRegistry = buildSlugRegistry(readFileSync(resolved, 'utf-8'));
-      if (!slugSet(fileRegistry).has(fragment)) {
+      if (!registryHasSlug(resolved, fragment, options.slugRegistryCache)) {
         return { valid: false, reason: 'dead anchor', brokenTarget: target };
       }
     }
@@ -169,8 +185,7 @@ export function validateCompiledLinkTarget(
   }
 
   if (fragment && filePart.endsWith('.md')) {
-    const fileRegistry = buildSlugRegistry(readFileSync(resolved, 'utf-8'));
-    if (!slugSet(fileRegistry).has(fragment)) {
+    if (!registryHasSlug(resolved, fragment, options.slugRegistryCache)) {
       return { valid: false, reason: 'dead anchor', brokenTarget: target };
     }
   }

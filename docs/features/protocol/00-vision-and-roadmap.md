@@ -76,3 +76,4 @@ Task-type prompts in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` are part o
 - Scope ADR: [#46](https://github.com/betsalel-williamson/mdcp/issues/46)
 - Usage model: [#45](https://github.com/betsalel-williamson/mdcp/issues/45)
 - Normative spec: [#48](https://github.com/betsalel-williamson/mdcp/issues/48)
+- Performance SLOs and benchmarks: [#64](https://github.com/betsalel-williamson/mdcp/issues/64) — [Performance goals and review](./performance.md)

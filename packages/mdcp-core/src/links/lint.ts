@@ -1,10 +1,14 @@
 import { basename } from 'node:path';
 import { resolve } from 'node:path';
 import type { CompileGuideResult } from '../compile/assemble.js';
+import { compileGuidesFromResults } from '../compile/assemble.js';
 import type { MdcpConfig } from '../config/schema.js';
 import { getGuideConfig, resolveGuideDir, resolveUnderOutputDir } from '../config/load.js';
 import { sectionFiles } from '../compile/section-manifest.js';
 import { buildGuideLinkIndex, type GuideLinkIndex } from '../compile/guide-link-index.js';
+import { buildSlugRegistry } from '../refs/slugs.js';
+import type { RefsRegistry } from '../refs/slugs.js';
+import type { ShardCache } from '../compile/shard-cache.js';
 import { lintCompiledLinks } from './validate-compiled.js';
 import { lintShardLinks } from './validate-shards.js';
 import type { LinkIssue } from './types.js';
@@ -25,6 +29,8 @@ export interface LintLinksOptions {
   /** When set, also lint shard sources. */
   lintShards?: boolean;
   compileOptions?: import('../compile/assemble.js').CompileOptions;
+  linkIndex?: GuideLinkIndex;
+  shardCache?: ShardCache;
 }
 
 function disallowedShardPathsForPublisher(
@@ -80,9 +86,22 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
     );
   }
 
-  let linkIndex: GuideLinkIndex | undefined;
-  if (options.compileOptions) {
-    linkIndex = buildGuideLinkIndex(options.compileOptions, docsRoot);
+  const slugRegistryCache = new Map<string, RefsRegistry>();
+  for (const r of results) {
+    const outPath = resolve(resolveUnderOutputDir(absDocsRoot, outputDir, r.outputFile));
+    slugRegistryCache.set(outPath, buildSlugRegistry(r.text));
+  }
+  if (config.outputFile !== undefined && options.compileOptions) {
+    const monolithPath = resolve(resolveUnderOutputDir(absDocsRoot, outputDir, config.outputFile));
+    const monolithText = compileGuidesFromResults(results, options.compileOptions);
+    slugRegistryCache.set(monolithPath, buildSlugRegistry(monolithText));
+  }
+
+  let linkIndex: GuideLinkIndex | undefined = options.linkIndex;
+  if (!linkIndex && options.compileOptions) {
+    linkIndex = buildGuideLinkIndex(options.compileOptions, docsRoot).index;
+  }
+  if (linkIndex) {
     for (const entry of linkIndex.values()) {
       knownSlugs.add(entry.slug);
     }
@@ -107,8 +126,9 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
       }
 
       for (const shardFile of files) {
+        const snapshot = options.shardCache?.get(resolve(shardFile));
         issues.push(
-          ...lintShardLinks({ shardFile, guideDir, scopeRoot }).map((i) => ({
+          ...lintShardLinks({ shardFile, guideDir, scopeRoot, snapshot }).map((i) => ({
             ...i,
             guideName: name,
           })),
@@ -132,6 +152,7 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
         publishOnly: r.publishOnly,
         allowedPublishPaths,
         disallowedShardPaths,
+        slugRegistryCache,
       }),
     );
   }

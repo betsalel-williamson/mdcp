@@ -12,7 +12,12 @@ import {
   rewritePublishRelativeLinks,
 } from './publish-links.js';
 import { buildGuideLinkIndex, type GuideLinkIndex } from './guide-link-index.js';
-import { linkedSectionFiles } from './section-manifest.js';
+import {
+  linkedSectionFiles,
+  linkedSectionFilesCacheKey,
+  type SectionFilesOptions,
+} from './section-manifest.js';
+import { loadShardSnapshot, type ShardCache } from './shard-cache.js';
 import type { GuideConfig, GuideConfigInput, MdcpConfigInput } from '../config/schema.js';
 import {
   resolveGuideLinkBase,
@@ -21,7 +26,6 @@ import {
 } from '../config/load.js';
 import { resolveCompileHooks } from '../config/resolve-compile-hooks.js';
 import { writeOutputFile, type WriteOutputBackupOptions } from './write-output.js';
-import { collectShardProvenance } from '../links/validate-shards.js';
 import { markBrokenLinks } from '../links/mark-broken.js';
 import type { LinkProvenance } from '../links/mark-broken.js';
 
@@ -30,7 +34,9 @@ export {
   buildGuideLinkIndex,
   type GuideLinkIndex,
   type GuideLinkEntry,
+  type BuildGuideLinkIndexResult,
 } from './guide-link-index.js';
+export { type ShardCache, type ShardSnapshot, createShardCache } from './shard-cache.js';
 
 export function processSection(
   guideName: string,
@@ -67,6 +73,9 @@ export interface AssembleGuideOptions {
   guideName?: string;
   knownOutputBasenames?: Set<string>;
   knownSlugs?: Set<string>;
+  shardCache?: ShardCache;
+  slugByPath?: Map<string, string>;
+  linkedFiles?: string[];
 }
 
 export function assembleGuide(guideDir: string, options: AssembleGuideOptions = {}): string {
@@ -77,11 +86,16 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
   const parts: string[] = [];
 
   const useTitle = options.title;
-  const files = linkedSectionFiles(guideDir, {
+  const preambleSection = options.preambleSection ?? 'about-this-guide.md';
+  const cache = options.shardCache;
+  const sectionOpts: SectionFilesOptions = {
     manifest: manifestName,
     scopeRoot: options.scopeRoot,
     sectionsHeading: options.sectionsHeading,
-  });
+    cache,
+    preambleSection,
+  };
+  const files = options.linkedFiles ?? linkedSectionFiles(guideDir, sectionOpts);
 
   if (useTitle) {
     parts.push(`${formatCompileTitle(useTitle)}\n\n`);
@@ -99,8 +113,11 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
     if (!existsSync(filePath)) {
       throw new Error(`Missing section file: ${filePath}`);
     }
-    provenance.push(...collectShardProvenance(filePath));
-    let raw = readFileSync(filePath, 'utf-8').trim();
+    const snapshot = cache ? loadShardSnapshot(filePath, cache, preambleSection) : undefined;
+    if (snapshot) {
+      provenance.push(...snapshot.provenance);
+    }
+    let raw = (snapshot?.raw ?? readFileSync(filePath, 'utf-8')).trim();
 
     if (i === 0 && useTitle) {
       const firstHeading = extractFirstHeading(raw);
@@ -109,7 +126,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
       }
     }
 
-    let body = processSection(guideName, name, raw, options.preambleSection).trimEnd();
+    let body = processSection(guideName, name, raw, preambleSection).trimEnd();
 
     body = applyCompileHooks(
       body,
@@ -164,7 +181,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
     compiled = stripExplicitAnchorMarkers(compiled);
   }
 
-  const slugByPath = buildSectionSlugMap(files);
+  const slugByPath = options.slugByPath ?? buildSectionSlugMap(files, cache, preambleSection);
   compiled = rewriteIntraGuideFileLinks(compiled, slugByPath, guideDir);
 
   const intraSlugs = new Set(slugByPath.values());
@@ -222,11 +239,24 @@ function resolveGuideDir(
   return join(guidesRoot, name);
 }
 
-export function compileGuideResults(options: CompileOptions): CompileGuideResult[] {
+export interface CompileGuideResultsContext {
+  results: CompileGuideResult[];
+  linkIndex: GuideLinkIndex;
+  shardCache: ShardCache;
+  linkedFilesByGuide: Map<string, string[]>;
+}
+
+export function compileGuideResultsWithContext(
+  options: CompileOptions,
+): CompileGuideResultsContext {
   const guideConfigMap = new Map((options.guides ?? []).map((g) => [g.name, g]));
   const docsRoot = resolve(options.docsRoot ?? process.cwd());
   const orderLen = options.compileOrder.length;
-  const linkIndex = buildGuideLinkIndex(options, docsRoot);
+  const {
+    index: linkIndex,
+    shardCache,
+    linkedFilesByGuide,
+  } = buildGuideLinkIndex(options, docsRoot);
   const knownOutputBasenames = new Set(
     options.compileOrder.map((name) => {
       const cfg = guideConfigMap.get(name) as GuideConfig | undefined;
@@ -239,13 +269,24 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
     knownOutputBasenames.add(basename(options.config.outputFile));
   }
 
-  return options.compileOrder.map((name) => {
+  const results = options.compileOrder.map((name) => {
     const cfg = guideConfigMap.get(name) as GuideConfig | undefined;
     const guideDir = resolveGuideDir(name, options.guidesRoot, cfg, docsRoot);
     const compile = cfg?.compile;
     const outputFile = effectiveGuideOutputFile(name, compile, orderLen);
     const publishOnly = Boolean(compile?.outputFile);
     const outputBasename = basename(outputFile);
+    const preambleSection = compile?.preambleSection ?? 'about-this-guide.md';
+    const sectionOpts: SectionFilesOptions = {
+      manifest: compile?.manifest,
+      scopeRoot: compile?.scopeRoot ? resolve(docsRoot, compile.scopeRoot) : undefined,
+      sectionsHeading: compile?.sectionsHeading,
+      cache: shardCache,
+      preambleSection,
+    };
+    const linkedKey = linkedSectionFilesCacheKey(guideDir, sectionOpts);
+    const linkedFiles = linkedFilesByGuide.get(linkedKey)!;
+    const slugByPath = buildSectionSlugMap(linkedFiles, shardCache, preambleSection);
 
     const linkBase = resolve(
       resolveGuideLinkBase(options.config ?? {}, docsRoot, name, orderLen, compile),
@@ -255,7 +296,7 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       manifest: compile?.manifest,
       scopeRoot: compile?.scopeRoot ? resolve(docsRoot, compile.scopeRoot) : undefined,
       sectionsHeading: compile?.sectionsHeading,
-      preambleSection: compile?.preambleSection,
+      preambleSection,
       title: compile?.title,
       hooks: resolveCompileHooks(compile),
       stripAnchors: compile?.stripAnchors,
@@ -268,6 +309,9 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       markBroken: compile?.links?.markBroken,
       guideName: name,
       knownOutputBasenames,
+      shardCache,
+      slugByPath,
+      linkedFiles,
     });
 
     const includeBanner = compile?.includeBanner ?? false;
@@ -280,6 +324,12 @@ export function compileGuideResults(options: CompileOptions): CompileGuideResult
       includeBanner,
     };
   });
+
+  return { results, linkIndex, shardCache, linkedFilesByGuide };
+}
+
+export function compileGuideResults(options: CompileOptions): CompileGuideResult[] {
+  return compileGuideResultsWithContext(options).results;
 }
 
 function monolithResults(results: CompileGuideResult[]): CompileGuideResult[] {
@@ -307,19 +357,25 @@ function applyMonolithBanner(options: CompileOptions, results: CompileGuideResul
   return body;
 }
 
-export function compileGuides(options: CompileOptions): string {
-  const results = compileGuideResults(options);
+export function compileGuidesFromResults(
+  results: CompileGuideResult[],
+  options: CompileOptions,
+): string {
   if (options.config?.outputFile !== undefined) {
     return applyMonolithBanner(options, results);
   }
   return results.map((r) => r.text).join('\n');
 }
 
-export function writeCompiledGuides(
+export function compileGuides(options: CompileOptions): string {
+  return compileGuidesFromResults(compileGuideResults(options), options);
+}
+
+export function writeCompiledGuidesFromResults(
+  results: CompileGuideResult[],
   options: CompileOptions,
   monolithOutputPath?: string,
 ): { path: string; lines: number; backupPath?: string }[] {
-  const results = compileGuideResults(options);
   const docsRoot = options.docsRoot ?? process.cwd();
   const outputDir = options.config?.outputDir ?? '_build';
   const writeCtx = { docsRoot, outputDir, backup: options.backup };
@@ -345,4 +401,11 @@ export function writeCompiledGuides(
   }
 
   return written;
+}
+
+export function writeCompiledGuides(
+  options: CompileOptions,
+  monolithOutputPath?: string,
+): { path: string; lines: number; backupPath?: string }[] {
+  return writeCompiledGuidesFromResults(compileGuideResults(options), options, monolithOutputPath);
 }
