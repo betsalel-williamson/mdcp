@@ -1,6 +1,6 @@
 # Performance goals and review
 
-Latency targets and scaling expectations for MDCP compile, validation, and agent query paths. Parent epic: [GitHub #64](https://github.com/betsalel-williamson/mdcp/issues/64).
+Latency targets and scaling expectations for MDCP compile, validation, and agent query paths. P0+P1 shipped in [#64](https://github.com/betsalel-williamson/mdcp/issues/64); deferred P2+ tracked in [#67](https://github.com/betsalel-williamson/mdcp/issues/67).
 
 MDCP is designed for **full programs** — hundreds of shards across multiple guides with dense cross-links — while keeping interactive agent loops and CI gates fast. This page records measured baselines, proposed SLOs, known bottlenecks, and the optimization roadmap.
 
@@ -117,19 +117,19 @@ mdcp check (after P1)
   Vale
 ```
 
-| Hot path                                     | Status                                                                       |
-| -------------------------------------------- | ---------------------------------------------------------------------------- |
-| `writeCompiled` + `runBuiltInLinkLint`       | **Fixed (P0)** — single compile per command                                  |
-| `validateCompiledLinkTarget`                 | **Fixed (P0)** — slug registries cached per output file                      |
-| `buildSlugRegistry`                          | **Fixed (P0)** — single line split                                           |
-| `lintShardLinks` → `shardSlugSet`            | **Fixed (P0)** — slug set computed once per shard                            |
-| `refs lookup`                                | Recompiles full monolith every call; should query persisted `refs.json` (P2) |
-| `linkedSectionFiles` / `buildSectionSlugMap` | **Fixed (P1)** — compile-scoped shard cache; one read per shard              |
-| Peer linters                                 | Separate cost; scales with file count and rules                              |
+| Hot path                                     | Status                                                                                       |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `writeCompiled` + `runBuiltInLinkLint`       | **Fixed (P0)** — single compile per command                                                  |
+| `validateCompiledLinkTarget`                 | **Fixed (P0)** — slug registries cached per output file                                      |
+| `buildSlugRegistry`                          | **Fixed (P0)** — single line split                                                           |
+| `lintShardLinks` → `shardSlugSet`            | **Fixed (P0)** — slug set computed once per shard                                            |
+| `refs lookup`                                | **Deferred (P2)** — still recompiles monolith (~128 ms dogfood); acceptable at current scale |
+| `linkedSectionFiles` / `buildSectionSlugMap` | **Fixed (P1)** — compile-scoped shard cache; one read per shard                              |
+| Peer linters                                 | Separate cost; scales with file count and rules                                              |
 
 ## Optimization roadmap
 
-Tracked in [GitHub #64](https://github.com/betsalel-williamson/mdcp/issues/64).
+P0+P1 shipped ([#64](https://github.com/betsalel-williamson/mdcp/issues/64)). P2+ deferred to [#67](https://github.com/betsalel-williamson/mdcp/issues/67) — dogfood meets SLOs at ~64 shards; revisit at 200-shard scale or if agent-loop latency becomes a blocker.
 
 ### P0 — Eliminate redundant work (expected 2–3× win) — **done**
 
@@ -145,20 +145,26 @@ Tracked in [GitHub #64](https://github.com/betsalel-williamson/mdcp/issues/64).
 - [x] Single pass per shard: read once → `{ body, slugs, links, provenance }` via `ShardCache`
 - [x] Memoize `buildGuideLinkIndex` / section slug maps across guides; reuse `linkIndex` in link lint
 
-**Acceptance:** Tier 4 metric **file reads / shard → 1** during `compileGuideResultsWithContext`; verified by [`shard-cache.test.ts`](../../../packages/mdcp-core/test/shard-cache.test.ts). Dogfood `compileGuideResults (core)` improved from ~60 ms (post-P0) to ~50 ms after P1 (`pnpm bench:dogfood`).
+**Acceptance:** Tier 4 metric **file reads / shard → 1** during `compileGuideResultsWithContext`; verified by [`shard-cache.test.ts`](../../../packages/mdcp-core/test/shard-cache.test.ts). Dogfood `compileGuideResults (core)` ~60 ms after P1 (`pnpm bench:dogfood`).
 
-### P2 — Agent path
+### P2 — Agent path (deferred)
+
+Deferred — dogfood meets SLOs; revisit at 200-shard scale or if agent-loop latency becomes a blocker ([#67](https://github.com/betsalel-williamson/mdcp/issues/67)).
 
 - Persist `refs.json`; make `refs lookup` query registry (no compile)
 - Optional `--guide` scope for compile/lint during authoring
 
-### P3 — Observability
+### P3 — Observability (deferred)
+
+Deferred — no SLO miss at 64 shards; needed before scale investment ([#67](https://github.com/betsalel-williamson/mdcp/issues/67)).
 
 - Benchmark harness with fixtures at 64 / 200 / 500 shards
 - CI regression gate on Tier 4 metrics
 - Optional `mdcp check --profile` for phase timings
 
-### P4 — Peer linters (separate budget)
+### P4 — Peer linters (deferred)
+
+Deferred — full check with peers ~1.2 s at dogfood, within Tier 3 ([#67](https://github.com/betsalel-williamson/mdcp/issues/67)).
 
 - Document peer linter cost separately from core mdcp
 - Parallel peer runs or incremental lint at scale
