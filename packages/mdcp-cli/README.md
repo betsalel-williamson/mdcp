@@ -257,7 +257,7 @@ This package installs the `mdcp` command for use in your repo or CI. It works in
 
 ### Requirements
 
-- Node.js **>= 22.12.0**
+- Node.js **>= 24.0.0**
 
 ### Install
 
