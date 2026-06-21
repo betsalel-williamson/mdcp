@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "github-slugger": "^2.0.0",
-    "semver": "^7.8.4",
+    "semver": "^7.8.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {
