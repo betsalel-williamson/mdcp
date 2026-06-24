@@ -1,0 +1,7 @@
+{
+  "id": "format-archimate",
+  "version": "0.5.0.0",
+  "protocolVersionRange": "0.5.0.0",
+  "revoked": false,
+  "files": ["archimate-application-template.md", "README.md"]
+}

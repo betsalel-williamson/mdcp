@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "0.4.0.0",
+  "catalogVersion": "0.5.0.0",
   "extensions": [
     {
       "id": "prompts-mdcp-defaults",
@@ -9,6 +9,11 @@
         {
           "version": "0.4.0.0",
           "protocolVersionRange": "0.4.0.0",
+          "revoked": false
+        },
+        {
+          "version": "0.5.0.0",
+          "protocolVersionRange": "0.5.0.0",
           "revoked": false
         }
       ]
@@ -24,6 +29,54 @@
       "description": "Archetype: product docs site — MkDocs, Docusaurus, VitePress publish workflow",
       "tags": ["archetype", "product", "docs-site"],
       "versions": []
+    },
+    {
+      "id": "arch-manufacturing-ops",
+      "description": "Archetype: manufacturing and operations — procedures, equipment, safety glossary",
+      "tags": ["archetype", "operations", "manufacturing"],
+      "versions": []
+    },
+    {
+      "id": "arch-learning-curriculum",
+      "description": "Archetype: learning and training — modules, objectives, assessments",
+      "tags": ["archetype", "learning", "curriculum"],
+      "versions": []
+    },
+    {
+      "id": "format-c4",
+      "description": "Format pack: C4 model viewpoint shard templates",
+      "tags": ["format", "c4", "architecture"],
+      "versions": [
+        {
+          "version": "0.5.0.0",
+          "protocolVersionRange": "0.5.0.0",
+          "revoked": false
+        }
+      ]
+    },
+    {
+      "id": "format-function-points",
+      "description": "Format pack: function-point counting worksheet templates",
+      "tags": ["format", "function-points", "estimation"],
+      "versions": [
+        {
+          "version": "0.5.0.0",
+          "protocolVersionRange": "0.5.0.0",
+          "revoked": false
+        }
+      ]
+    },
+    {
+      "id": "format-archimate",
+      "description": "Format pack: ArchiMate viewpoint shard templates (exclusive notation per shard)",
+      "tags": ["format", "archimate", "enterprise"],
+      "versions": [
+        {
+          "version": "0.5.0.0",
+          "protocolVersionRange": "0.5.0.0",
+          "revoked": false
+        }
+      ]
     }
   ]
 }

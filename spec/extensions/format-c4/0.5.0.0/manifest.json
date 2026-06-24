@@ -1,0 +1,7 @@
+{
+  "id": "format-c4",
+  "version": "0.5.0.0",
+  "protocolVersionRange": "0.5.0.0",
+  "revoked": false,
+  "files": ["c4-container-template.md", "README.md"]
+}

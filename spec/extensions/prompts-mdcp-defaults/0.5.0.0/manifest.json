@@ -1,0 +1,15 @@
+{
+  "id": "prompts-mdcp-defaults",
+  "version": "0.5.0.0",
+  "protocolVersionRange": "0.5.0.0",
+  "revoked": false,
+  "files": [
+    "getting-started-with-mdcp.prompt.md",
+    "augment-existing-docs.prompt.md",
+    "feature-level-task.prompt.md",
+    "doc-only-task.prompt.md",
+    "design-architecture-task.prompt.md",
+    "ux-task.prompt.md",
+    "review-task.prompt.md"
+  ]
+}

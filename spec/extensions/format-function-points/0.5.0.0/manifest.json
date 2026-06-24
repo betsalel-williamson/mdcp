@@ -1,0 +1,7 @@
+{
+  "id": "format-function-points",
+  "version": "0.5.0.0",
+  "protocolVersionRange": "0.5.0.0",
+  "revoked": false,
+  "files": ["function-point-worksheet.md", "README.md"]
+}
