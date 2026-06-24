@@ -253,7 +253,18 @@ When reviewing an agent's documentation PR:
 
 This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
-**Fastest path:** copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent for first-time setup. More context: [So what — how do I use this in my project?](#so-what--how-do-i-use-this-in-my-project).
+**Fastest path (0.5):** run init, then compile and check:
+
+```bash
+npx @bwilliamson/mdcp-cli init --docs-root docs
+# Ask user: defaults or augment? Then:
+npx @bwilliamson/mdcp-cli init --docs-root docs --mode default --preset code
+# or: --mode augment
+mdcp compile --config docs/mdcp.config.json --docs-root docs
+mdcp check --config docs/mdcp.config.json --docs-root docs
+```
+
+**Open alpha (0.4.x):** copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) for the two-phase fetch flow until npm 0.5 ships. More context: [So what — how do I use this in my project?](#so-what--how-do-i-use-this-in-my-project).
 
 ### Requirements
 
