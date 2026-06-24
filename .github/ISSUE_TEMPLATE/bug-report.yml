@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a bug in mdcp CLI, core, or protocol artifacts
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Include protocol version if relevant (`mdcp-llms-index` header or npm package version).
+
+  - type: input
+    id: version
+    attributes:
+      label: mdcp version
+      placeholder: e.g. @bwilliamson/mdcp-cli@0.4.1, protocol 0.4.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: Commands run, config snippet, expected vs actual
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: OS, Node version, repo layout (docs-root path)
+    validations:
+      required: false

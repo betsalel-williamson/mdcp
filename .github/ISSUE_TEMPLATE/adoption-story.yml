@@ -1,0 +1,33 @@
+name: Adoption story
+description: Share how you adopted MDCP in your domain or repo
+title: '[Adoption]: '
+labels: ['adoption']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adoption stories help improve defaults, archetypes, and onboarding. Thank you for sharing.
+
+  - type: input
+    id: domain
+    attributes:
+      label: Domain or project type
+      placeholder: e.g. OSS library, factory SOPs, training curriculum, regulated docs
+    validations:
+      required: true
+
+  - type: textarea
+    id: workflow
+    attributes:
+      label: What worked
+      placeholder: Preset used, init mode (default vs augment), archetype or format packs
+    validations:
+      required: true
+
+  - type: textarea
+    id: friction
+    attributes:
+      label: What was hard
+      placeholder: Onboarding steps, missing templates, tooling gaps
+    validations:
+      required: false

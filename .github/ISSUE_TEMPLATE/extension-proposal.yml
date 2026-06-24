@@ -1,0 +1,39 @@
+name: Extension proposal
+description: Propose a new arch-* or format-* extension pack
+title: '[Extension]: '
+labels: ['extension']
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Extension kind
+      options:
+        - arch-* (domain archetype layout)
+        - format-* (modeling or publish template)
+        - prompts-* (agent task prompts)
+    validations:
+      required: true
+
+  - type: input
+    id: proposed-id
+    attributes:
+      label: Proposed extension id
+      placeholder: e.g. arch-manufacturing-ops, format-c4
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      placeholder: Who needs this, what shards or templates it provides
+    validations:
+      required: true
+
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility notes
+      description: Which frameworks or packs it composes with, or must stay exclusive from
+    validations:
+      required: false
