@@ -1,6 +1,8 @@
 # Vision and roadmap
 
-MDCP (**MarkDown Context Protocol**) is an open, repo-local standard for **system context** — like [OpenAPI](https://www.openapis.org/) is for HTTP APIs, but for **intent, design, and terminology** rather than implementation detail in code comments.
+MDCP (**MarkDown Context Protocol**) is an open standard for **technical documentation context** — like [OpenAPI](https://www.openapis.org/) is for HTTP APIs, but for **intent, design, and terminology** rather than implementation detail in code comments.
+
+Software repositories are the most common first adoption, but the same shard model applies to **factory procedures**, **equipment manuals**, **training curricula**, and other durable technical knowledge. V1 stores shards in git; the domain you document is separate from the transport.
 
 ## Problem
 
@@ -21,11 +23,11 @@ MDCP inverts the model: **small shards** are the source of truth; agents pull **
 
 ## Phased delivery
 
-| Phase  | Surface                                                                                                                               | Access model                  |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| **V1** | `mdcp.v0.4.llms.txt` bootstrap (protocol `0.4.0.0`, **draft** during npm 0.4 alpha) + agent task prompts + `mdcp export --llms-index` | Repo access (SSH, clone, IDE) |
-| **V2** | MDCP MCP server (`refs lookup`, shard read, glossary search)                                                                          | Repo access                   |
-| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                                                         | Opt-in publish                |
+| Phase  | Surface                                                                                      | Access model                  |
+| ------ | -------------------------------------------------------------------------------------------- | ----------------------------- |
+| **V1** | `mdcp.v*.llms.txt` bootstrap + `mdcp init` + agent task prompts + `mdcp export --llms-index` | Repo access (SSH, clone, IDE) |
+| **V2** | MDCP MCP server (`refs lookup`, shard read, glossary search)                                 | Repo access                   |
+| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                | Opt-in publish                |
 
 ```text
   V1 authoring     shards → compile → check → mdcp.v*.llms.txt
@@ -70,6 +72,7 @@ Task-type prompts in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` are part o
 ## Related issues
 
 - Protocol formalization epic: [GitHub #44](https://github.com/betsalel-williamson/mdcp/issues/44)
+- Protocol 0.5 epic: [GitHub #74](https://github.com/betsalel-williamson/mdcp/issues/74)
 - V1 bootstrap: [#58](https://github.com/betsalel-williamson/mdcp/issues/58) (shipped)
 - V2 MCP server: [#59](https://github.com/betsalel-williamson/mdcp/issues/59)
 - V3 hosted API: [#60](https://github.com/betsalel-williamson/mdcp/issues/60)

@@ -89,10 +89,14 @@ Built-in ids (such as `prompts-mdcp-defaults`) resolve paths under `spec/extensi
 
 An **archetype** is a documented bundle: guide layout, glossary seeds, optional prompts, and extension pointers for one project class.
 
-| Archetype         | Extension id             | When to use                   | Shard emphasis                                              |
-| ----------------- | ------------------------ | ----------------------------- | ----------------------------------------------------------- |
-| OSS library       | `arch-oss-library`       | npm/crates publishable API    | Pointer shards to `src/`; minimal duplication of signatures |
-| Product docs site | `arch-product-docs-site` | MkDocs, Docusaurus, VitePress | `format-*` extension + client guide tier                    |
+| Archetype         | Extension id               | When to use                | Shard emphasis                           |
+| ----------------- | -------------------------- | -------------------------- | ---------------------------------------- |
+| OSS library       | `arch-oss-library`         | npm/crates publishable API | Pointer shards to `src/`                 |
+| Product docs site | `arch-product-docs-site`   | MkDocs, Docusaurus         | `format-*` + client guide tier           |
+| Manufacturing ops | `arch-manufacturing-ops`   | Factory ops documentation  | `procedures/`, safety glossary, runbooks |
+| Learning          | `arch-learning-curriculum` | Training programs          | `modules/`, objectives, assessments      |
+
+Modeling templates (C4, ArchiMate, function points) ship as `format-*` packs — see [Modeling framework compatibility](./modeling-framework-compatibility.md).
 
 Archetype READMEs live under `spec/extensions/` — for example `arch-oss-library/` and `arch-product-docs-site/`.
 
@@ -107,6 +111,7 @@ MDCP is designed to outgrow a single vendor implementation. The long-term goal i
 ## Related
 
 - [Vision and roadmap](./00-vision-and-roadmap.md)
+- [Modeling framework compatibility](./modeling-framework-compatibility.md)
 - [llms-index export](../llms-index-export.md)
 - [Agent task prompts](./agent-task-prompts.md)
 - [spec/extensions/README.md](../../../spec/extensions/README.md)

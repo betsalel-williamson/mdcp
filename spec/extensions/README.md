@@ -40,11 +40,11 @@ spec/extensions/
 
 ### Extension id prefixes
 
-| Prefix     | Example ids                          | Purpose                                     |
-| ---------- | ------------------------------------ | ------------------------------------------- |
-| `prompts-` | `prompts-mdcp-defaults`              | Agent prompt packs (mdcp defaults + custom) |
-| `arch-`    | `arch-oss-library`                   | Project-class starter patterns              |
-| `format-`  | `format-docusaurus`, `format-mkdocs` | Lint/style presets per publish stack        |
+| Prefix     | Example ids                                               | Purpose                                     |
+| ---------- | --------------------------------------------------------- | ------------------------------------------- |
+| `prompts-` | `prompts-mdcp-defaults`                                   | Agent prompt packs (mdcp defaults + custom) |
+| `arch-`    | `arch-oss-library`, `arch-manufacturing-ops`              | Project-class starter patterns              |
+| `format-`  | `format-c4`, `format-archimate`, `format-function-points` | Modeling and publish templates              |
 
 ### Catalog (`manifest.json`)
 

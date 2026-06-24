@@ -6,12 +6,12 @@ Parent epic: [GitHub #44](https://github.com/betsalel-williamson/mdcp/issues/44)
 
 MDCP is an **offline document context protocol** — not a wire protocol like [Model Context Protocol (MCP)](https://modelcontextprotocol.io/).
 
-| Dimension       | MCP                                       | MDCP                                                     |
-| --------------- | ----------------------------------------- | -------------------------------------------------------- |
-| Problem         | Runtime tool and data access for AI hosts | Author, compile, and validate repo documentation context |
-| Interaction     | JSON-RPC session                          | Files on disk + batch CLI                                |
-| Source of truth | Server-defined                            | **Shards in git**; compiled output is generated          |
-| Validation      | Server-defined                            | Orphans, refs, xrefs, optional peer linters              |
+| Dimension       | MCP                                       | MDCP                                                          |
+| --------------- | ----------------------------------------- | ------------------------------------------------------------- |
+| Problem         | Runtime tool and data access for AI hosts | Author, compile, and validate technical documentation context |
+| Interaction     | JSON-RPC session                          | Files on disk + batch CLI                                     |
+| Source of truth | Server-defined                            | **Shards in git**; compiled output is generated               |
+| Validation      | Server-defined                            | Orphans, refs, xrefs, optional peer linters                   |
 
 ## Why MDCP is not an MCP server
 
@@ -44,5 +44,21 @@ OpenAPI standardizes HTTP API contracts. MDCP standardizes **documentation conte
 ## Filename versioning (`mdcp.v*.llms.txt`)
 
 - Protocol version `0.4.0.0` → `mdcp.v0.4.llms.txt` or `mdcp.v0.4.0.0.llms.txt`
-- In-file header always four-part: `mdcp-llms-index: 0.4.0.0`
+- Protocol version `0.5.0.0` (draft) → `mdcp.v0.5.llms.txt` — fetch via `vdev` profile during 0.5 development
+- In-file header always four-part: `mdcp-llms-index: 0.4.0.0` (or `0.5.0.0` for draft profile)
 - Drop trailing `.0` segments in filename only
+
+## Domains beyond software repositories
+
+MDCP is **not** limited to application codebases. The V1 transport is a **git repository** with Markdown shards; the **content domain** is orthogonal:
+
+| Domain example        | Typical guides                         | Archetype extension (0.5+) |
+| --------------------- | -------------------------------------- | -------------------------- |
+| Software product      | `features/`, `client/`, `developer/`   | `arch-oss-library`         |
+| Factory / operations  | procedures, equipment, safety glossary | `arch-manufacturing-ops`   |
+| Training / curriculum | modules, objectives, assessments       | `arch-learning-curriculum` |
+| Product docs site     | client guide + publish pipeline        | `arch-product-docs-site`   |
+
+Modeling templates (C4, function-point worksheets, ArchiMate viewpoints) ship as optional `format-*` packs — see [Modeling framework compatibility](./modeling-framework-compatibility.md).
+
+**Adoption (0.5):** run `mdcp init` first; choose **defaults** for a greenfield scaffold or **augment** to map MDCP onto existing `docs/` or README without deleting content.
