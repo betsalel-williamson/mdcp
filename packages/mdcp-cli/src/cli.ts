@@ -33,6 +33,7 @@ import {
   parseLlmsIndexProfile,
   findPeerBinary,
   runPeer,
+  runInit,
   shardFromMonolith,
   buildSlugRegistry,
   writeOutputFile,
@@ -185,6 +186,44 @@ program
   .option('--backup-dir <path>', 'Backup directory relative to outputDir')
   .option('--backup-ext <ext>', 'Suffix for backup filenames')
   .option('--warn-broken-links', 'Report broken links but exit 0');
+
+program
+  .command('init')
+  .description('Bootstrap mdcp in a docs root (detect, default scaffold, or augment)')
+  .option('--mode <mode>', 'detect | default | augment', 'detect')
+  .option('--preset <preset>', 'code | docs-site | operations | learning', 'code')
+  .option('--dry-run', 'Print detect summary or plan without writing files')
+  .option('--fetch-profile <profile>', 'llms-index profile when fetching: alpha or dev', 'dev')
+  .option('--fetch-ref <ref>', 'Upstream git ref for fetch')
+  .option('--fetch-local', 'Read llms-index and extensions from local spec/ in repo root')
+  .action(async (initOpts, cmd) => {
+    const opts = cmd.parent.opts() as GlobalOpts;
+    const docsRoot = opts.docsRoot ?? 'docs';
+    const repoRoot = process.cwd();
+    const mode = initOpts.mode as 'detect' | 'default' | 'augment';
+    try {
+      const result = await runInit({
+        repoRoot,
+        docsRoot,
+        mode,
+        preset: initOpts.preset,
+        dryRun: initOpts.dryRun,
+        fetchProfile: initOpts.fetchProfile === 'alpha' ? 'alpha' : 'dev',
+        fetchRef: initOpts.fetchRef,
+        fetchLocal: initOpts.fetchLocal,
+      });
+      if (mode === 'detect' && !initOpts.dryRun) {
+        console.log(result.message);
+        return;
+      }
+      console.log(result.message);
+      for (const p of result.created) console.log(`→ ${p}`);
+      for (const p of result.skipped) console.log(`skip ${p}`);
+    } catch (err) {
+      console.error(err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
 
 program
   .command('compile')

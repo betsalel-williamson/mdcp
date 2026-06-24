@@ -235,3 +235,15 @@ export {
 } from './export/protocol-version.js';
 export { findPeerBinary, runPeer, type PeerTool } from './peers/resolve.js';
 export { shardFromMonolith, runMdTree, type ShardGuideMapping } from './shard/orchestrator.js';
+export {
+  detectExistingDocs,
+  runInit,
+  buildDefaultConfig,
+  parseInitPreset,
+  INIT_PRESETS,
+  type DocsDetectionResult,
+  type RunInitOptions,
+  type RunInitResult,
+  type InitMode,
+  type InitPreset,
+} from './init/index.js';
