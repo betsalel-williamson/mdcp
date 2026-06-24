@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/betsalel-williamson/mdcp/spec/schemas/mdcp-llms-index-0.5.0.0.schema.json",
+  "title": "MDCP llms-index document (protocol 0.5.0.0)",
+  "description": "First-line header mdcp-llms-index: 0.5.0.0; filename mdcp.v0.5.llms.txt or mdcp.v0.5.0.0.llms.txt",
+  "type": "object",
+  "properties": {
+    "mdcp-llms-index": {
+      "type": "string",
+      "const": "0.5.0.0"
+    }
+  },
+  "required": ["mdcp-llms-index"]
+}
