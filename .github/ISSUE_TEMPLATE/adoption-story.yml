@@ -1,0 +1,77 @@
+name: Adoption story
+description: Share how mdcp worked in a real repo — qualitative outcomes for other adopters
+title: '[Adoption] '
+labels:
+  - adoption-story
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing a real-world mdcp adoption story. These reports back [Tier C benefit claims](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/protocol/benefit-claims-and-evidence.md) — outcomes we do not put on the README without evidence.
+
+        Please describe what you tried and what changed. Rough notes are fine.
+
+  - type: dropdown
+    id: archetype
+    attributes:
+      label: Adoption archetype
+      description: Which goal best matches your experience? See [personas](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/personas-and-priority-tiers.md#adoption-archetypes).
+      options:
+        - Builder — integrated mdcp into repo scripts or CI
+        - Learner — tried mdcp with agent help first
+        - Author — wrote shards; delegated CLI setup
+        - Champion — evaluated or sponsored adoption
+        - Other / mixed
+    validations:
+      required: true
+
+  - type: input
+    id: mdcp-version
+    attributes:
+      label: mdcp-cli version
+      description: e.g. 0.4.1 (from package.json or `mdcp --version`)
+      placeholder: '0.4.1'
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Repo type, team size, docs stack before mdcp — whatever helps readers relate.
+      placeholder: e.g. Open-source library, ~20 feature shards, previously one giant CONTRIBUTING.md
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-you-tried
+    attributes:
+      label: What you tried
+      description: Setup path (paste prompt, `mdcp init`, manual config), commands, CI wiring, agent workflow.
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What changed? Include qualitative benefits (speed, review time, agent behavior) and any friction.
+    validations:
+      required: true
+
+  - type: input
+    id: repo-link
+    attributes:
+      label: Public repo link (optional)
+      description: Link if the adoption is visible publicly.
+      placeholder: https://github.com/org/repo
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Consent
+      options:
+        - label: I am okay with maintainers quoting or summarizing this story in docs (with attribution if you provide a handle).
+          required: true

@@ -1,0 +1,26 @@
+name: Feedback or question
+description: Ideas, docs gaps, or how-to questions
+title: '[Feedback] '
+labels:
+  - feedback
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions and suggestions are welcome. For real-world outcomes, prefer the **Adoption story** template instead.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What are you trying to do, or what would you like to see improved?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links to shards, repos, or prior issues.
+    validations:
+      required: false

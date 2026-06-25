@@ -1,0 +1,52 @@
+name: Bug report
+description: Something broke — CLI, compile, check, or docs tooling
+title: '[Bug] '
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Include steps to reproduce and the `mdcp-cli` version if you can.
+
+  - type: input
+    id: mdcp-version
+    attributes:
+      label: mdcp-cli version
+      placeholder: '0.4.1'
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `mdcp check` in ...
+        2. See error ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: Paste error output or screenshots in a follow-up comment if needed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node version, package manager — whatever seems relevant.
+      placeholder: macOS 15, Node 22, pnpm 9
+    validations:
+      required: false
