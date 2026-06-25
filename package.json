@@ -24,6 +24,7 @@
     "spec:check-llms-index": "node scripts/sync-llms-index-spec.mjs && git diff --exit-code spec/llms-index/",
     "docs:check:repo": "node packages/mdcp-cli/dist/cli.js check --config docs/mdcp.config.json --docs-root docs --require-lint --require-vale",
     "bench:dogfood": "node scripts/bench-dogfood-performance.mjs",
+    "bench:context-size": "node scripts/bench-context-size.mjs",
     "docs:context": "node packages/mdcp-cli/dist/cli.js export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
     "docs:lint": "node packages/mdcp-cli/dist/cli.js lint --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --require-lint",
     "docs:prose": "node packages/mdcp-cli/dist/cli.js prose --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --require-vale",

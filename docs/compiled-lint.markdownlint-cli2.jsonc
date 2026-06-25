@@ -4,6 +4,7 @@
     "../DEVELOPERS.md",
     "../packages/mdcp-cli/README.md",
     "../packages/mdcp-core/README.md",
+    "../README.md",
   ],
   "config": {
     "MD012": false,

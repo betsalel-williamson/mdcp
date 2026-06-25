@@ -24,6 +24,10 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [Authored GFM](#authored-gfm)
 - [ignoreGuides](#ignoreguides)
 
+### Adoption and messaging
+
+- [WIIFM](#wiifm)
+
 ## Local setup
 
 ### Requirements
@@ -138,6 +142,7 @@ For task-type prompt templates, read [LLM collaboration](./packages/mdcp-cli/REA
 ```text
 mdcp/
 ├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
+├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
@@ -148,7 +153,8 @@ mdcp/
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)
 │   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
-│   └── client-core/        # → packages/mdcp-core/README.md
+│   ├── client-core/        # → packages/mdcp-core/README.md
+│   └── repo-readme/        # → README.md (publish landing)
 ├── examples/sample-guides/ # Minimal consumer fixture for tests and tutorials
 ├── legacy/                 # Original bash/Python reference implementation
 ├── .changeset/             # Changesets for semver releases
@@ -159,7 +165,7 @@ mdcp/
 
 All three npm packages share one version (fixed versioning via Changesets). Each ships `dist/` and a generated or hand-authored `README.md` in its tarball.
 
-`mdcp-presets` README is hand-authored for now. CLI and core READMEs are **compiled** from `docs/client-cli/` and `docs/client-core/` shards.
+`mdcp-presets` README is hand-authored for now. Root `README.md`, CLI, and core READMEs are **compiled** from `docs/repo-readme/`, `docs/client-cli/`, and `docs/client-core/` shards.
 
 ## Packages and tests
 
@@ -225,12 +231,17 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
 | `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
+| `repo-readme/` | GitHub visitors, adopters        | `README.md` at repo root                          |
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
+
+Publish landing style for root README: [Personas and priority tiers](docs/features/personas-and-priority-tiers.md#publish-landing-style).
 
 #### Upstream refs (dogfood)
 
 `mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.1`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
+
+**Dogfood agent index:** do not edit `docs/mdcp.v0.4.llms.txt` (protocol `0.4.0.0` — fetch-only). When `compileOrder` or repo scripts change, bump `protocolVersion` and `protocol.llmsIndex.outputFile` (for example `mdcp.v0.4.0.1.llms.txt`), run `pnpm docs:compile:repo`, and commit the new versioned file.
 
 Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
 
@@ -245,7 +256,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 1. Edit shard `.md` files under the relevant guide directory.
 2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](docs/features/manifest-compile-order.md) when using `compile.sectionsHeading`.
 3. Run `pnpm docs:compile:repo` then `pnpm docs:check:repo`.
-4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](../../DEVELOPERS.md) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
+4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](DEVELOPERS.md) when `developer/` shards change; commit [`README.md`](README.md) when `repo-readme/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
 
 ### Agent context
 
@@ -258,7 +269,7 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 ### Linting docs
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
-- **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
+- **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/`, `repo-readme/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
 - **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
 - **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
 
@@ -359,6 +370,19 @@ Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR
 - Typo fixes in package READMEs with no behavior change (maintainer discretion)
 
 CI on pull requests runs `pnpm changeset:status` to catch missing changesets when package code changed.
+
+### Dependabot
+
+Dependabot does not add changesets. [`.github/workflows/dependabot-changeset.yml`](.github/workflows/dependabot-changeset.yml) runs on Dependabot PRs and commits a **patch** changeset for all three fixed packages when a published package's production dependencies change (`dependencies`, `peerDependencies`, `optionalDependencies`).
+
+| Dependabot PR type                                      | Changeset                                                  |
+| ------------------------------------------------------- | ---------------------------------------------------------- |
+| Production dependency bump in `packages/*/package.json` | Auto **patch** changeset (`.changeset/dependabot-<pr>.md`) |
+| Root dev-dependencies (grouped) or GitHub Actions only  | No changeset (workflow no-ops; CI passes)                  |
+
+**One-time setup:** add repository secret `DEPENDENCY_UPDATE_GITHUB_TOKEN` — a fine-grained or classic PAT with **Contents: read/write** on this repo. The default `GITHUB_TOKEN` cannot push in a way that re-triggers CI on Dependabot branches; the PAT does.
+
+**Timing:** the first CI run on a new Dependabot PR may fail the `changeset` job briefly. After the workflow commits the changeset (usually within 1–2 minutes), CI re-runs and should pass.
 
 ### Bump selection guide
 
@@ -615,3 +639,7 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 ## ignoreGuides
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](./packages/mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](./packages/mdcp-core/README.md#cross-guide-link-rewriting).
+
+## WIIFM
+
+**What's In It For Me** — reader-first benefit before mechanics or toolchain detail. On mdcp landing pages, each [adoption archetype](docs/features/personas-and-priority-tiers.md#adoption-archetypes) gets one WIIFM line; copy must follow [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md) tiers (Tier A/B on README, never unmeasured Tier C claims).

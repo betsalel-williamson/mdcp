@@ -15,3 +15,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [GFM](./gfm.md)
 - [Authored GFM](./authored-gfm.md)
 - [ignoreGuides](./ignore-guides.md)
+
+## Adoption and messaging
+
+- [WIIFM](./wiifm.md)
