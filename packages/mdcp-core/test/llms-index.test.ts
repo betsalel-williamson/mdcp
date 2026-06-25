@@ -41,6 +41,17 @@ describe('buildLlmsIndex', () => {
     expect(defaultLlmsIndexFilename('0.4.0.0', { draft: true })).toBe('mdcp.v0.4--draft.llms.txt');
   });
 
+  it('uses config protocolVersion in header and repo section', () => {
+    const config = MdcpConfigSchema.parse({
+      protocolVersion: '0.4.0.1',
+      compileOrder: ['features'],
+      guides: [{ name: 'features' }],
+    });
+    const text = buildLlmsIndex(config, { configPath: 'docs/mdcp.config.json' });
+    expect(text.startsWith('mdcp-llms-index: 0.4.0.1')).toBe(true);
+    expect(text).toContain('- **Index version:** 0.4.0.1');
+  });
+
   it('includes review-task in agent prompt table', () => {
     const text = buildLlmsIndex();
     expect(text).toContain('review-task.prompt.md');

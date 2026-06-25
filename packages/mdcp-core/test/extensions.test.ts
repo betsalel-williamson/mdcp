@@ -62,7 +62,7 @@ describe('extensions config', () => {
     expect(packs[0]!.protocolVersion).toBe('0.4.0.0');
     expect(packs[0]!.version).toBe('0.4.0.0');
     expect(packs[0]!.path).toBe('spec/extensions/prompts-mdcp-defaults/0.4.0.0');
-    expect(packs[0]!.protocolVersionRange).toBe('0.4.0-0');
+    expect(packs[0]!.protocolVersionRange).toBe('^0.4.0-0');
   });
 
   it('defaults to task-prompts when extensions block is omitted', () => {
