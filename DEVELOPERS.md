@@ -371,6 +371,19 @@ Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR
 
 CI on pull requests runs `pnpm changeset:status` to catch missing changesets when package code changed.
 
+### Dependabot
+
+Dependabot does not add changesets. [`.github/workflows/dependabot-changeset.yml`](.github/workflows/dependabot-changeset.yml) runs on Dependabot PRs and commits a **patch** changeset for all three fixed packages when a published package's production dependencies change (`dependencies`, `peerDependencies`, `optionalDependencies`).
+
+| Dependabot PR type                                      | Changeset                                                  |
+| ------------------------------------------------------- | ---------------------------------------------------------- |
+| Production dependency bump in `packages/*/package.json` | Auto **patch** changeset (`.changeset/dependabot-<pr>.md`) |
+| Root dev-dependencies (grouped) or GitHub Actions only  | No changeset (workflow no-ops; CI passes)                  |
+
+**One-time setup:** add repository secret `DEPENDENCY_UPDATE_GITHUB_TOKEN` — a fine-grained or classic PAT with **Contents: read/write** on this repo. The default `GITHUB_TOKEN` cannot push in a way that re-triggers CI on Dependabot branches; the PAT does.
+
+**Timing:** the first CI run on a new Dependabot PR may fail the `changeset` job briefly. After the workflow commits the changeset (usually within 1–2 minutes), CI re-runs and should pass.
+
 ### Bump selection guide
 
 When **adding** a changeset in a PR, pick the bump that best describes your change (the maintainer confirms the final bump at release):
