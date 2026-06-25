@@ -6,7 +6,7 @@ mdcp-llms-index: 0.4.0.0
 
 - **Index version:** 0.4.0.0
 - **Config:** `docs/mdcp.config.json`
-- **Docs root guides (`compileOrder`):** `features`, `developer`, `client-cli`, `client-core`
+- **Docs root guides (`compileOrder`):** `features`, `developer`, `client-cli`, `client-core`, `repo-readme`
 - **Glossary:** add `glossary/` to `compileOrder` when domain terms exist
 
 ### npm scripts

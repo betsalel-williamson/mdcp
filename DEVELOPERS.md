@@ -138,6 +138,7 @@ For task-type prompt templates, read [LLM collaboration](./packages/mdcp-cli/REA
 ```text
 mdcp/
 ├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
+├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
@@ -148,7 +149,8 @@ mdcp/
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)
 │   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
-│   └── client-core/        # → packages/mdcp-core/README.md
+│   ├── client-core/        # → packages/mdcp-core/README.md
+│   └── repo-readme/        # → README.md (publish landing)
 ├── examples/sample-guides/ # Minimal consumer fixture for tests and tutorials
 ├── legacy/                 # Original bash/Python reference implementation
 ├── .changeset/             # Changesets for semver releases
@@ -159,7 +161,7 @@ mdcp/
 
 All three npm packages share one version (fixed versioning via Changesets). Each ships `dist/` and a generated or hand-authored `README.md` in its tarball.
 
-`mdcp-presets` README is hand-authored for now. CLI and core READMEs are **compiled** from `docs/client-cli/` and `docs/client-core/` shards.
+`mdcp-presets` README is hand-authored for now. Root `README.md`, CLI, and core READMEs are **compiled** from `docs/repo-readme/`, `docs/client-cli/`, and `docs/client-core/` shards.
 
 ## Packages and tests
 
@@ -225,8 +227,11 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
 | `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
+| `repo-readme/` | GitHub visitors, adopters        | `README.md` at repo root                          |
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
+
+Publish landing style for root README: [Personas and priority tiers](docs/features/personas-and-priority-tiers.md#publish-landing-style).
 
 #### Upstream refs (dogfood)
 
@@ -245,7 +250,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 1. Edit shard `.md` files under the relevant guide directory.
 2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](docs/features/manifest-compile-order.md) when using `compile.sectionsHeading`.
 3. Run `pnpm docs:compile:repo` then `pnpm docs:check:repo`.
-4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](../../DEVELOPERS.md) when `developer/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
+4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](../../DEVELOPERS.md) when `developer/` shards change; commit [`README.md`](../../README.md) when `repo-readme/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
 
 ### Agent context
 
@@ -258,7 +263,7 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 ### Linting docs
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
-- **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
+- **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/`, `repo-readme/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
 - **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
 - **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
 

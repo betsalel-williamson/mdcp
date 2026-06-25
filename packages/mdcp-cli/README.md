@@ -31,7 +31,7 @@ The goal is to **reduce friction between** durable context and active work: smal
 
 The open-alpha CLI is a working foundation, not a slide deck:
 
-- **Ship faster with agents** — `mdcp refs lookup` resolves link targets from compiled output; `mdcp export --llm` scopes context to what the next turn needs instead of re-sending the entire README.
+- **Stable cross-links for agents** — `mdcp refs lookup` resolves link targets from compiled output; when you follow the [usage model](../../docs/features/protocol/usage-model.md), agents can load one shard instead of re-sending the entire monolith. See [Benefit claims and evidence](../../docs/features/protocol/benefit-claims-and-evidence.md).
 - **Stop doc drift before merge** — `mdcp check` runs the same compile → refs → xrefs pipeline for agents, CI, and human reviewers.
 - **Edit docs like code** — small shards, manifest order, one compile step; publish to monolith, `DEVELOPERS.md`, or npm READMEs from the same source.
 - **Keep plan separate from implementation** — shards hold context and the high-level plan; code holds how. Structure enforces that split.
@@ -65,16 +65,16 @@ Like [OpenAPI](https://www.openapis.org/) standardized HTTP API contracts, MDCP 
 
 LLM pair-coding on a repo breaks down when documentation is a single monolith, unvalidated, and mixed up with implementation:
 
-| Pain                       | What goes wrong                                            | mdcp command                                                                                                                                     |
-| -------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Monolithic guides**      | Merge conflicts, missing sections, stale table of contents | `mdcp compile` stitches shards; `mdcp check` catches orphans                                                                                     |
-| **Broken cross-links**     | Agents guess `#anchor` slugs; links rot after edits        | `mdcp refs lookup` reads slugs from **compiled** output                                                                                          |
-| **Context overload**       | Entire README in every agent turn                          | `mdcp export --llm` strips tokens for scoped context                                                                                             |
-| **Docs drift**             | Shards and published output diverge silently               | `mdcp check` runs compile → refs → xrefs before merge                                                                                            |
-| **Custom compile scripts** | Bash/Python glue nobody owns                               | `compile`, `check`, and `@bwilliamson/mdcp-presets` replace one-offs                                                                             |
-| **Plan mixed with code**   | Agents re-implement from stale prose or skip user value    | Three-tier shards: `docs/features/` (plumbing), `docs/client/` (persona value), `docs/developer/` (repo workflow) — implementation stays in code |
+| Pain                       | What goes wrong                 | Command                                                |
+| -------------------------- | ------------------------------- | ------------------------------------------------------ |
+| **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans           |
+| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp refs lookup` on compiled output                  |
+| **Context overload**       | Monolith pasted each agent turn | `refs lookup` then read one shard                      |
+| **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                              |
+| **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`        |
+| **Plan mixed with code**   | Stale prose drives wrong code   | Shards under `docs/features/`, `client/`, `developer/` |
 
-Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way.
+Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way. For granular reads, follow the [usage model](../../docs/features/protocol/usage-model.md).
 
 ### Typical agent loop
 
@@ -109,7 +109,7 @@ Each prompt uses a **Replace before sending** code block at the top; the agent p
 
 First-time setup for a consumer repo: [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md).
 
-Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring.
+Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring. Best for **Learner** and **Author** archetypes — see [Personas and priority tiers](../../docs/features/personas-and-priority-tiers.md).
 
 ### Follow-up prompts
 

@@ -1,104 +1,123 @@
 # MDCP — MarkDown Context Protocol
 
-**mdcp** is a protocol for repository documentation context — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. You edit small shard files; mdcp weaves them into compiled output with correct heading levels, working cross-links, and structure checks. The CLI is one surface for `compile`, `check`, `refs lookup`, and `export --llm`.
+## What's in it for you
 
-## Why MDCP
+Pick the goal that matches you — not a job title:
 
-LLM pair-coding on a real repo breaks down when documentation is a single monolith, unvalidated, and tangled up with implementation. Merge conflicts stack up on one giant README. Agents guess `#anchor` slugs that rot after the next edit. Every turn dumps the whole guide into context. Shards and published output drift apart silently. A one-off bash script holds it together until nobody owns it.
+| Archetype    | What you get                                                                                             |
+| ------------ | -------------------------------------------------------------------------------------------------------- |
+| **Builder**  | One validation gate for humans, agents, and CI; edit small files instead of one giant doc.               |
+| **Learner**  | Paste a prompt into your agent; it sets up the pipeline while you learn the commands.                    |
+| **Author**   | One topic per file; load matching sections per the [usage model](docs/features/protocol/usage-model.md). |
+| **Champion** | A reviewable doc contract for your org (OpenAPI-style intent, not performance claims).                   |
 
-**The usual fixes do not solve that:**
+Messaging rules: [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md).
 
-| Approach                            | What it misses                                                                                   |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Monolithic README / full `llms.txt` | No sharding, no validation gate, no stable refs registry                                         |
-| Context7 / large crawled corpora    | Fuzzy retrieval — not author-controlled, deterministic, or PR-reviewable                         |
-| Cursor rules / `AGENTS.md`          | Host-native friction hints, not validated product context in git                                 |
-| Docusaurus / MkDocs / VitePress     | Strong public doc sites — weak agent-first `refs lookup`, scoped export, and CI structural gates |
-| MCP filesystem reads                | Delivers whatever exists; does not enforce shard discipline at authoring time                    |
+**mdcp** is an open protocol for **technical documentation context** — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. Software repositories are the most common adoption path; the same shard model applies to factory procedures, equipment manuals, training curricula, and other durable technical knowledge.
 
-MDCP is complementary to MCP and doc-site generators: it owns **authoring, compile invariants, and the validation gate** upstream of delivery. See [Scope and positioning](docs/features/protocol/01-scope-and-positioning.md).
+## Get started
 
-**What MDCP does not replace:** MDCP is a **middle layer** in your stack — not a substitute for what sits above or below it:
+Two equal paths — use whichever fits your workflow.
 
-- **Ephemeral work docs** — sprint plans, task briefs, spike notes, and scratch docs that help turn meta ideas into code. Those stay temporary and task-scoped; mdcp shards hold **durable product context** that outlives a single PR or agent session.
-- **Orchestrators and agent systems** — Cursor rules, MCP servers, CI pipelines, and multi-agent coordinators still run your workflow. MDCP feeds them validated, scoped documentation context; it does not replace how they schedule, route, or hand off work.
-- **Checked-in prompts and playbooks** — many teams already version agent prompts, rules files, and workflow templates in git. MDCP complements that habit with a formal, open framework: validated product-context shards, compile/check gates, `refs lookup`, and versioned task prompts — so prompt libraries and durable documentation share the same discipline.
-- **Implementation** — code, tests, and config remain the source of truth for behavior. Shards carry intent, constraints, and acceptance criteria — not line-by-line instructions that duplicate the repo.
+### Path A — paste into your agent
 
-The goal is to **reduce friction between** durable context and active work: smaller documentation batches, fewer context-switching interruptions, and less time re-explaining the system each turn — so humans and agents stay closer to flow state.
+1. Open [getting-started-with-mdcp.prompt.md](spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md).
+2. Fill in `FEATURE=` and `PERSONA=` at the top.
+3. Copy the **entire file** into your coding-agent chat (Cursor, Claude, Copilot, etc.) and send.
 
-**Adopt it today** — the open-alpha CLI (0.4.0) is a working foundation, not a slide deck:
+The agent inspects your repo and walks through config, shard layout, and first `mdcp check`.
 
-- **Ship faster with agents** — `mdcp refs lookup` resolves link targets from compiled output; `mdcp export --llm` scopes context to what the next turn needs instead of re-sending the entire README.
-- **Stop doc drift before merge** — `mdcp check` runs the same compile → refs → xrefs pipeline for agents, CI, and human reviewers.
-- **Edit docs like code** — small shards, manifest order, one compile step; publish to monolith, `DEVELOPERS.md`, or npm READMEs from the same source.
-- **Keep plan separate from implementation** — shards hold context and the high-level plan; code holds how. Structure enforces that split.
-
-Task prompts and a bootstrap index get you started in a consumer repo without inventing workflow from scratch: [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md), [LLM collaboration](docs/client-cli/llm-collaboration.md), [Alternatives and adoption](docs/features/protocol/02-alternatives-and-adoption.md).
-
-**So what — how do I use this in my project?** Install [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli) in **any** repository — monorepo or single app, any language or stack. mdcp cares about your documentation shards and compile pipeline, not your application architecture.
+Optional — fetch prompts into your docs root first:
 
 ```bash
-npm install -D @bwilliamson/mdcp-cli
+npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
 ```
 
-Copy [getting-started-with-mdcp.prompt.md](spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it walks through config, shard layout, and first `mdcp check`. Or fetch prompts with `npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`. Details: [Install and quick start](docs/client-cli/install-and-quick-start.md).
+### Path B — CLI init (0.5 preview)
 
-**Where it is going:** Like [OpenAPI](https://www.openapis.org/) standardized HTTP API contracts, MDCP is evolving into an open contract for **documentation context** — intent, design, and terminology you can share with other systems. That benefits inter-agent development (validated shards and glossaries instead of re-crawling ad hoc prose) and human-in-the-loop verification: reviewers read the same compiled context agents use and confirm the system behaves as documented. Roadmap: [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md).
+```bash
+npx @bwilliamson/mdcp-cli init --docs-root docs
+```
 
-> **Open alpha (0.4.x).** MDCP is moving fast — this release is a working foundation for early adopters. Tooling and the draft protocol profile may change in 0.5+. Pin `@bwilliamson/mdcp-cli@0.4.1`. Fetch the agent bootstrap with `npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`. There is **no API stability guarantee** until npm 1.0.
->
-> **Get involved:** Visit [github.com/betsalel-williamson/mdcp](https://github.com/betsalel-williamson/mdcp), **star** the repo to follow progress, and **open or comment on [GitHub Issues](https://github.com/betsalel-williamson/mdcp/issues)** with feedback, adoption stories, or bugs.
+Choose **defaults** (standard scaffold) or **augment** (map MDCP onto existing docs). Then compile and check:
 
-Shards are the **source of truth**. Generated output includes a local `docs/guides.md` (features review — gitignored), `docs/refs.json` (gitignored), [`DEVELOPERS.md`](DEVELOPERS.md) (from `docs/developer/`), and npm package READMEs compiled from `docs/client-cli/` and `docs/client-core/`.
+```bash
+mdcp compile --config docs/mdcp.config.json --docs-root docs
+mdcp check --config docs/mdcp.config.json --docs-root docs
+```
 
-## Quick start
+Details: [Install and quick start](docs/client-cli/install-and-quick-start.md).
+
+### Pick your path
+
+| Archetype                                     | Suits Path |
+| --------------------------------------------- | ---------- |
+| **Builder** — integrate mdcp into a repo      | A or B     |
+| **Learner** — try mdcp with agent help first  | A          |
+| **Author** — write shards; delegate CLI setup | A          |
+
+**Champion** (evaluate or sponsor adoption)? See [Learn more](#want-to-know-more).
+
+## Want to know more
+
+Depth lives in linked shards — not on this page.
+
+### Builder
+
+**Goal:** wire tooling and read the spec.
+
+- [CLI consumers guide](docs/client-cli/index.md)
+- [Install and quick start](docs/client-cli/install-and-quick-start.md)
+- [Spec and extensions](spec/extensions/README.md)
+
+### Learner
+
+**Goal:** adopt with agent assistance.
+
+- [Getting started prompt](spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md)
+- [LLM collaboration](docs/client-cli/llm-collaboration.md)
+
+### Author
+
+**Goal:** document a domain without owning the toolchain.
+
+- [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md)
+- [Scope and positioning](docs/features/protocol/01-scope-and-positioning.md)
+- [Alternatives and adoption](docs/features/protocol/02-alternatives-and-adoption.md)
+
+### Champion
+
+**Goal:** evaluate or sponsor org adoption.
+
+- [Why MDCP](docs/client-cli/why-mdcp-overview.md)
+- [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md)
+- [Scope and positioning](docs/features/protocol/01-scope-and-positioning.md)
+- [MDCP 1.0 spec (draft)](docs/features/protocol/mdcp-1.0-spec.md)
+- [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md)
+
+## This repository
+
+Contributors and maintainers working on the **mdcp monorepo** — not consumers adopting mdcp in another repo.
 
 ```bash
 pnpm install && pnpm build
-pnpm docs:compile:repo    # docs/guides.md + DEVELOPERS.md + package READMEs
-pnpm docs:check           # repo docs + examples/sample-guides
+pnpm docs:check
 ```
 
-Try the minimal fixture: [examples/sample-guides/](examples/sample-guides/).
-
-**LLM pair-coding:** documentation shards hold context and the high-level plan; code holds implementation. See [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) for the pain each command addresses, then [LLM collaboration](docs/client-cli/llm-collaboration.md) for prompts and workflow.
-
-## Documentation (sharded)
-
-This repo dogfoods mdcp under [`docs/`](docs/):
-
-| Guide             | Shards                                   | Compiled output                                                |
-| ----------------- | ---------------------------------------- | -------------------------------------------------------------- |
-| Tool capabilities | [`docs/features/`](docs/features/)       | `docs/guides.md` (local review — gitignored)                   |
-| Repo development  | [`docs/developer/`](docs/developer/)     | [`DEVELOPERS.md`](DEVELOPERS.md)                               |
-| CLI consumers     | [`docs/client-cli/`](docs/client-cli/)   | [`packages/mdcp-cli/README.md`](packages/mdcp-cli/README.md)   |
-| Core API          | [`docs/client-core/`](docs/client-core/) | [`packages/mdcp-core/README.md`](packages/mdcp-core/README.md) |
-
-Edit shards, then `pnpm docs:compile:repo`. Agent context: `pnpm docs:context`.
-
-Key shards:
-
-- [Feature catalog](docs/features/feature-catalog.md) — commands, tiers, agent scripts
-- [Design constraints](docs/features/design-constraints/index.md) — md-tree, GFM, peer linters
-- [Developer guide](docs/developer/local-setup.md) — setup, tests, docs dogfooding, releases
-- [Why mdcp for coding agents](docs/client-cli/why-mdcp-for-agents.md) — developer pain and which commands address it
-- [CLI install and quick start](docs/client-cli/install-and-quick-start.md) — install and first compile
-- [LLM collaboration](docs/client-cli/llm-collaboration.md) — spec-driven workflow, prompts, and agent integration
-
-## Contributing
-
-```bash
-pnpm install
-pnpm build
-pnpm vale:sync
-pnpm run check
-```
-
-Details: [DEVELOPERS.md](DEVELOPERS.md) and [docs/developer/local-setup.md](docs/developer/local-setup.md). Package changes need a changeset — [docs/developer/versioning-and-releases.md](docs/developer/versioning-and-releases.md).
+Full guide: [DEVELOPERS.md](DEVELOPERS.md). Sharded docs layout: [Docs dogfooding](docs/developer/docs-dogfooding.md). Publish landing style: [Personas and priority tiers](docs/features/personas-and-priority-tiers.md#publish-landing-style).
 
 This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
 
-## License
+### Status
+
+**Open alpha (0.4.x).** Pin `@bwilliamson/mdcp-cli@0.4.1`. There is **no API stability guarantee** until npm 1.0.
+
+**Get involved:** [GitHub Issues](https://github.com/betsalel-williamson/mdcp/issues) for feedback and bugs; [adoption stories](https://github.com/betsalel-williamson/mdcp/issues/new?template=adoption-story.yml) for real-world use.
+
+### Acknowledgments
+
+- [Denali Lumma (@dlumma)](https://github.com/dlumma) — early review and feedback
+
+### License
 
 MIT
