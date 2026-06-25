@@ -23,7 +23,7 @@ export const REFERENCE_EXTENSIONS_CATALOG: ExtensionsCatalog = {
       versions: [
         {
           version: '0.4.0.0',
-          protocolVersionRange: '0.4.0.0',
+          protocolVersionRange: '^0.4.0.0',
           revoked: false,
         },
       ],

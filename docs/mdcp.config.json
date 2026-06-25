@@ -1,7 +1,11 @@
 {
+  "protocolVersion": "0.4.0.1",
   "protocol": {
     "profile": "alpha",
-    "ref": "v0.4.1"
+    "ref": "v0.4.1",
+    "llmsIndex": {
+      "outputFile": "mdcp.v0.4.0.1.llms.txt"
+    }
   },
   "outputDir": "_build",
   "outputFile": "guides.md",

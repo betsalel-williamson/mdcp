@@ -1,12 +1,12 @@
-mdcp-llms-index: 0.4.0.0
+mdcp-llms-index: 0.4.0.1
 
-# Sharded docs agent index (v0.4)
+# Sharded docs agent index (v0.4.0.1)
 
 ## This repository
 
-- **Index version:** 0.4.0.0
+- **Index version:** 0.4.0.1
 - **Config:** `docs/mdcp.config.json`
-- **Docs root guides (`compileOrder`):** `features`, `developer`, `client-cli`, `client-core`
+- **Docs root guides (`compileOrder`):** `features`, `developer`, `client-cli`, `client-core`, `repo-readme`
 - **Glossary:** add `glossary/` to `compileOrder` when domain terms exist
 
 ### npm scripts

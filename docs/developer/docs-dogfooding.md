@@ -21,6 +21,8 @@ Publish landing style for root README: [Personas and priority tiers](../features
 
 `mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.1`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
 
+**Dogfood agent index:** do not edit `docs/mdcp.v0.4.llms.txt` (protocol `0.4.0.0` — fetch-only). When `compileOrder` or repo scripts change, bump `protocolVersion` and `protocol.llmsIndex.outputFile` (for example `mdcp.v0.4.0.1.llms.txt`), run `pnpm docs:compile:repo`, and commit the new versioned file.
+
 Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).

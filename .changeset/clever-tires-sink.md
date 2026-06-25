@@ -1,4 +1,5 @@
 ---
+'@bwilliamson/mdcp-core': patch
 ---
 
-Docs-only: repo-readme dogfood and `bench:context-size` root script. No package release.
+Honor `protocolVersion` in `buildLlmsIndex` output. Widen default prompts extension `protocolVersionRange` to `^0.4.0.0` so patch protocol indexes (for example `0.4.0.1`) remain compatible.
