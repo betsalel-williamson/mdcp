@@ -6,16 +6,16 @@
 
 LLM pair-coding on a repo breaks down when documentation is a single monolith, unvalidated, and mixed up with implementation:
 
-| Pain                       | What goes wrong                                            | mdcp command                                                                                                                                     |
-| -------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Monolithic guides**      | Merge conflicts, missing sections, stale table of contents | `mdcp compile` stitches shards; `mdcp check` catches orphans                                                                                     |
-| **Broken cross-links**     | Agents guess `#anchor` slugs; links rot after edits        | `mdcp refs lookup` reads slugs from **compiled** output                                                                                          |
-| **Context overload**       | Entire README in every agent turn                          | `mdcp export --llm` strips tokens for scoped context                                                                                             |
-| **Docs drift**             | Shards and published output diverge silently               | `mdcp check` runs compile → refs → xrefs before merge                                                                                            |
-| **Custom compile scripts** | Bash/Python glue nobody owns                               | `compile`, `check`, and `@bwilliamson/mdcp-presets` replace one-offs                                                                             |
-| **Plan mixed with code**   | Agents re-implement from stale prose or skip user value    | Three-tier shards: `docs/features/` (plumbing), `docs/client/` (persona value), `docs/developer/` (repo workflow) — implementation stays in code |
+| Pain                       | What goes wrong                 | Command                                                |
+| -------------------------- | ------------------------------- | ------------------------------------------------------ |
+| **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans           |
+| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp refs lookup` on compiled output                  |
+| **Context overload**       | Monolith pasted each agent turn | `refs lookup` then read one shard                      |
+| **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                              |
+| **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`        |
+| **Plan mixed with code**   | Stale prose drives wrong code   | Shards under `docs/features/`, `client/`, `developer/` |
 
-Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way.
+Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way. For granular reads, follow the [usage model](../features/protocol/usage-model.md).
 
 ## Typical agent loop
 

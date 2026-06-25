@@ -21,7 +21,7 @@ Each prompt uses a **Replace before sending** code block at the top; the agent p
 
 First-time setup for a consumer repo: [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md).
 
-Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring.
+Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring. Best for **Learner** and **Author** archetypes — see [Personas and priority tiers](../features/personas-and-priority-tiers.md).
 
 ## Follow-up prompts
 

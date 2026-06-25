@@ -29,7 +29,7 @@ The goal is to **reduce friction between** durable context and active work: smal
 
 The open-alpha CLI is a working foundation, not a slide deck:
 
-- **Ship faster with agents** — `mdcp refs lookup` resolves link targets from compiled output; `mdcp export --llm` scopes context to what the next turn needs instead of re-sending the entire README.
+- **Stable cross-links for agents** — `mdcp refs lookup` resolves link targets from compiled output; when you follow the [usage model](../features/protocol/usage-model.md), agents can load one shard instead of re-sending the entire monolith. See [Benefit claims and evidence](../features/protocol/benefit-claims-and-evidence.md).
 - **Stop doc drift before merge** — `mdcp check` runs the same compile → refs → xrefs pipeline for agents, CI, and human reviewers.
 - **Edit docs like code** — small shards, manifest order, one compile step; publish to monolith, `DEVELOPERS.md`, or npm READMEs from the same source.
 - **Keep plan separate from implementation** — shards hold context and the high-level plan; code holds how. Structure enforces that split.
