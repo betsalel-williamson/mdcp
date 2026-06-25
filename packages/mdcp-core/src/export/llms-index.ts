@@ -130,10 +130,14 @@ Rules that apply only to your project (formatting quirks, review gates, pointer-
 Shards are **GFM**. Compiled output can feed MkDocs, Docusaurus, Pandoc, or other site generators. Keep separate guides when agent-only context and public-site content differ in scope.
 `;
 
-function formatRepoSection(config: MdcpConfig, options: LlmsIndexOptions): string {
+function formatRepoSection(
+  config: MdcpConfig,
+  options: LlmsIndexOptions,
+  protocolVersion: string,
+): string {
   const lines: string[] = ['## This repository', ''];
 
-  lines.push(`- **Index version:** ${LLMS_INDEX_PROTOCOL_VERSION}`);
+  lines.push(`- **Index version:** ${protocolVersion}`);
   if (options.configPath) {
     lines.push(`- **Config:** \`${options.configPath}\``);
   }
@@ -167,13 +171,14 @@ function formatRepoSection(config: MdcpConfig, options: LlmsIndexOptions): strin
 
 /** Build llms-index document (bootstrap template + optional repo-specific section). */
 export function buildLlmsIndex(config?: MdcpConfig, options: LlmsIndexOptions = {}): string {
-  const abbrev = abbreviateProtocolVersion(LLMS_INDEX_PROTOCOL_VERSION);
-  const header = `mdcp-llms-index: ${LLMS_INDEX_PROTOCOL_VERSION}`;
+  const protocolVersion = config?.protocolVersion ?? LLMS_INDEX_PROTOCOL_VERSION;
+  const abbrev = abbreviateProtocolVersion(protocolVersion);
+  const header = `mdcp-llms-index: ${protocolVersion}`;
 
   const parts = [header, '', `# Sharded docs agent index (v${abbrev})`, ''];
 
   if (config) {
-    parts.push(formatRepoSection(config, options));
+    parts.push(formatRepoSection(config, options, protocolVersion));
   }
 
   parts.push(STATIC_SECTIONS.trim());

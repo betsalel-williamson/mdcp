@@ -1,7 +1,7 @@
 {
   "id": "prompts-mdcp-defaults",
   "version": "0.4.0.0",
-  "protocolVersionRange": "0.4.0.0",
+  "protocolVersionRange": "^0.4.0.0",
   "revoked": false,
   "files": [
     "getting-started-with-mdcp.prompt.md",

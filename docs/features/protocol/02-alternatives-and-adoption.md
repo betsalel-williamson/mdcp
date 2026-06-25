@@ -22,6 +22,8 @@ MDCP shards are [GFM-only](../design-constraints/gfm-scope.md). Adopters with Pa
 
 ## Bootstrap-first adoption
 
+Suited to **Learner** and **Author** archetypes — see [Personas and priority tiers](../personas-and-priority-tiers.md). Public copy must follow [Benefit claims and evidence](./benefit-claims-and-evidence.md).
+
 1. Copy `mdcp.v0.4.llms.txt` into docs root **before** `mdcp.config.json` exists.
 2. Use your existing agent to shard a monolith and plan glossary entries.
 3. Wire mdcp, compile, validate, regenerate index with `mdcp export --llms-index`.

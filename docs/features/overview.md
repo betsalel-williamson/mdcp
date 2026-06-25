@@ -189,6 +189,8 @@ Edit a shard (and `index.md` if section membership changed) → `mdcp refs looku
 
 Set `guides[].compile.outputFile` to the README path; run `mdcp compile`; README is generated, not hand-edited.
 
+This repository dogfoods a **publish landing** layout in [`docs/repo-readme/`](../repo-readme/index.md) → root `README.md`. See [Personas and priority tiers](./personas-and-priority-tiers.md) and [Benefit claims and evidence](./protocol/benefit-claims-and-evidence.md).
+
 ## Design boundaries (intentional limits)
 
 - **[GFM](../glossary/gfm.md) only** — no Pandoc, wikilinks, or required `{#heading-ids}`
