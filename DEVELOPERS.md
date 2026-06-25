@@ -24,6 +24,10 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [Authored GFM](#authored-gfm)
 - [ignoreGuides](#ignoreguides)
 
+### Adoption and messaging
+
+- [WIIFM](#wiifm)
+
 ## Local setup
 
 ### Requirements
@@ -620,3 +624,7 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 ## ignoreGuides
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](./packages/mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](./packages/mdcp-core/README.md#cross-guide-link-rewriting).
+
+## WIIFM
+
+**What's In It For Me** — reader-first benefit before mechanics or toolchain detail. On mdcp landing pages, each [adoption archetype](docs/features/personas-and-priority-tiers.md#adoption-archetypes) gets one WIIFM line; copy must follow [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md) tiers (Tier A/B on README, never unmeasured Tier C claims).

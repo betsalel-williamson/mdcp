@@ -1,5 +1,9 @@
 # MDCP — MarkDown Context Protocol
 
+## What this tool is
+
+**mdcp** is an open protocol for **technical documentation context** — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. Software repositories are the most common adoption path; the same shard model applies to factory procedures, equipment manuals, training curricula, and other durable technical knowledge.
+
 ## What's in it for you
 
 Pick the goal that matches you — not a job title:
@@ -12,8 +16,6 @@ Pick the goal that matches you — not a job title:
 | **Champion** | A reviewable doc contract for your org (OpenAPI-style intent, not performance claims).                   |
 
 Messaging rules: [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md).
-
-**mdcp** is an open protocol for **technical documentation context** — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. Software repositories are the most common adoption path; the same shard model applies to factory procedures, equipment manuals, training curricula, and other durable technical knowledge.
 
 ## Get started
 

@@ -4,7 +4,7 @@ mdcp splits, compiles, validates, and exports sharded Markdown for repos where *
 
 ## Adoption archetypes
 
-Four goals — not job titles. Interns and students map to **Learner**; technical writers and domain SMEs map to **Author**; foundation reviewers map to **Champion**. Do not enumerate roles on landing pages.
+Four goals — not job titles. Interns and students map to **Learner**; technical writers and domain SMEs map to **Author**; foundation reviewers map to **Champion**. Do not enumerate roles on landing pages. Each archetype gets one [WIIFM](../glossary/wiifm.md) line (landing-safe):
 
 | Archetype    | Goal                                     | WIIFM (landing-safe)                                       | Typical path                |
 | ------------ | ---------------------------------------- | ---------------------------------------------------------- | --------------------------- |
@@ -25,7 +25,7 @@ Public copy uses [Benefit claims and evidence](./protocol/benefit-claims-and-evi
 
 Reference: [`docs/repo-readme/`](../repo-readme/index.md) → `README.md`.
 
-- WIIFM before mechanics; four archetypes max
+- What this tool is, then [WIIFM](../glossary/wiifm.md); four archetypes max
 - Dual equal get-started paths; routing explains fit, not priority
 - Want to know more = archetype link hub; no mermaid on landing output
 
