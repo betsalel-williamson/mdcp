@@ -93,8 +93,11 @@ Configure an equivalent shard in consumer repos during [local setup](#local-setu
 ```text
 Host=GitHub (betsalel-williamson/mdcp)
 Issue base URL=https://github.com/betsalel-williamson/mdcp/issues/
+Project board=https://github.com/users/betsalel-williamson/projects/4
 WORK_ITEM=issue number (e.g. 39) or full issue URL
 ```
+
+All repo issues live on the public [MarkDown Context Protocol project board](https://github.com/users/betsalel-williamson/projects/4). **Status** tracks delivery (Todo / In Progress / Done); **Track** groups work by roadmap area (0.5 Spec & adoption, 1.0 Formalization, Maintenance, Performance, Future V2+). Move items to **In Progress** when you start a branch; set **Done** when the issue closes.
 
 ### Load scope (pick what your agent has)
 

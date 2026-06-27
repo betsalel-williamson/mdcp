@@ -4,6 +4,8 @@
 
 **mdcp** is an open protocol for **technical documentation context** — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. Software repositories are the most common adoption path; the same shard model applies to factory procedures, equipment manuals, training curricula, and other durable technical knowledge.
 
+New to MDCP? Read [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md) for problem, principles, and phased delivery.
+
 ## What's in it for you
 
 Pick the goal that matches you — not a job title:
@@ -52,13 +54,16 @@ Details: [Install and quick start](docs/client-cli/install-and-quick-start.md).
 
 ### Pick your path
 
-| Archetype                                     | Suits Path |
-| --------------------------------------------- | ---------- |
-| **Builder** — integrate mdcp into a repo      | A or B     |
-| **Learner** — try mdcp with agent help first  | A          |
-| **Author** — write shards; delegate CLI setup | A          |
+| Archetype                                     | Suits Path / start here                          |
+| --------------------------------------------- | ------------------------------------------------ |
+| **Builder** — integrate mdcp into a repo      | A or B                                           |
+| **Learner** — try mdcp with agent help first  | A                                                |
+| **Author** — write shards; delegate CLI setup | A                                                |
+| **Champion** — evaluate or sponsor adoption   | Vision and roadmap → Benefit claims and evidence |
 
-**Champion** (evaluate or sponsor adoption)? See [Learn more](#want-to-know-more).
+**Champion start:** [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md) → [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md).
+
+More depth per archetype: [Learn more](#want-to-know-more).
 
 ## Want to know more
 
@@ -91,11 +96,11 @@ Depth lives in linked shards — not on this page.
 
 **Goal:** evaluate or sponsor org adoption.
 
-- [Why MDCP](docs/client-cli/why-mdcp-overview.md)
 - [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md)
+- [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md)
+- [Why MDCP](docs/client-cli/why-mdcp-overview.md)
 - [Scope and positioning](docs/features/protocol/01-scope-and-positioning.md)
 - [MDCP 1.0 spec (draft)](docs/features/protocol/mdcp-1.0-spec.md)
-- [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md)
 
 ## This repository
 

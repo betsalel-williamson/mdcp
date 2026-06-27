@@ -17,6 +17,16 @@ Paths: [CLI README](../../packages/mdcp-cli/README.md), [getting started prompt]
 
 Once a pipeline exists, adoption archetypes map to **tool operator personas** below (for example Author → LLM doc author; Builder → wires CI `check`).
 
+### Archetype signals (non-landing)
+
+Anonymous goal patterns — do not copy job titles onto landing pages:
+
+- **Champion** — CPTO/CTO or platform lead assessing whether MDCP's shard contract fits agentic delivery governance; reads vision and claims shards before CLI setup. First external Champion validation (2026-06, anonymous) confirmed [Vision and roadmap](./protocol/00-vision-and-roadmap.md) was sufficient for onboarding; the landing one-liner alone was not.
+- **Builder** — wires `mdcp check` into CI after Champion sign-off.
+- **Author / Learner** — unchanged from the table above.
+
+Maintainers dogfooding the mdcp monorepo are **not** an adoption archetype — see [This repository](../repo-readme/this-repository.md) and [DEVELOPERS.md](../../DEVELOPERS.md).
+
 ### Messaging guardrails
 
 Public copy uses [Benefit claims and evidence](./protocol/benefit-claims-and-evidence.md) tiers only. Landing pages (root [README](../../README.md)) allow Tier A/B claims — never Tier C without adoption-story evidence.
@@ -25,8 +35,9 @@ Public copy uses [Benefit claims and evidence](./protocol/benefit-claims-and-evi
 
 Reference: [`docs/repo-readme/`](../repo-readme/index.md) → `README.md`.
 
-- What this tool is, then [WIIFM](../glossary/wiifm.md); four archetypes max
-- Dual equal get-started paths; routing explains fit, not priority
+- What this tool is (one-liner + vision link for evaluators), then [WIIFM](../glossary/wiifm.md); four archetypes max
+- WIIFM table does not replace the vision shard for Champions
+- Dual equal get-started paths (A/B); Champion eval path in get-started; routing explains fit, not priority
 - Want to know more = archetype link hub; no mermaid on landing output
 
 ## Tool operator personas
@@ -37,6 +48,15 @@ Reference: [`docs/repo-readme/`](../repo-readme/index.md) → `README.md`.
 | **LLM feature agent**  | Read doc context while coding   | `refs lookup`, shard read, `export --llm`  |
 | **Human doc reviewer** | PR quality gate                 | `check`, `prose`, `lint`, `xrefs`, `links` |
 | **End-user reader**    | Read glossary, guides, reviews  | `compile` output                           |
+
+## P0 adoption — evaluator onboarding (validated 2026-06)
+
+| Need                                           | Evidence                                   | Action                                                       |
+| ---------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| Champion can understand MDCP without prior use | First external Champion review (anonymous) | Vision link on landing; Champion eval path in get-started    |
+| Landing blurb alone insufficient               | Same                                       | Do not revert WIIFM order; augment with vision link and path |
+
+Aligns with GitHub project **Track: 0.5 Spec & adoption** — see [Agent work item tracking](../developer/agent-work-item-tracking.md).
 
 ## P0 — LLM can read docs and write correct links
 
