@@ -33,10 +33,13 @@ Details: [Install and quick start](../client-cli/install-and-quick-start.md).
 
 ## Pick your path
 
-| Archetype                                     | Suits Path |
-| --------------------------------------------- | ---------- |
-| **Builder** — integrate mdcp into a repo      | A or B     |
-| **Learner** — try mdcp with agent help first  | A          |
-| **Author** — write shards; delegate CLI setup | A          |
+| Archetype                                     | Suits Path / start here                          |
+| --------------------------------------------- | ------------------------------------------------ |
+| **Builder** — integrate mdcp into a repo      | A or B                                           |
+| **Learner** — try mdcp with agent help first  | A                                                |
+| **Author** — write shards; delegate CLI setup | A                                                |
+| **Champion** — evaluate or sponsor adoption   | Vision and roadmap → Benefit claims and evidence |
 
-**Champion** (evaluate or sponsor adoption)? See [Learn more](./learn-more.md).
+**Champion start:** [Vision and roadmap](../features/protocol/00-vision-and-roadmap.md) → [Benefit claims and evidence](../features/protocol/benefit-claims-and-evidence.md).
+
+More depth per archetype: [Learn more](./learn-more.md).

@@ -29,8 +29,8 @@ Depth lives in linked shards — not on this page.
 
 **Goal:** evaluate or sponsor org adoption.
 
-- [Why MDCP](../client-cli/why-mdcp-overview.md)
 - [Vision and roadmap](../features/protocol/00-vision-and-roadmap.md)
+- [Benefit claims and evidence](../features/protocol/benefit-claims-and-evidence.md)
+- [Why MDCP](../client-cli/why-mdcp-overview.md)
 - [Scope and positioning](../features/protocol/01-scope-and-positioning.md)
 - [MDCP 1.0 spec (draft)](../features/protocol/mdcp-1.0-spec.md)
-- [Benefit claims and evidence](../features/protocol/benefit-claims-and-evidence.md)
