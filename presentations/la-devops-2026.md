@@ -36,11 +36,12 @@ paginate: true
 
 ---
 
-### The Problem: The $1.8T Cost of Software Failures
+### The Problem: The $2.4T Cost of Software Failures
 
-- **$1.81 trillion** spent on operational software failures in the US (2022).
-- **$260 billion** spent on software-development failures.
-- _Source: ["Trillions Spent and Big Software Projects Are Still Failing" (IEEE Spectrum, Nov 2025)](https://spectrum.ieee.org/it-management-software-failures)_
+- **$2.41 trillion** total cost of poor software quality in the US (2022).
+- **~$1.8 trillion** of that from operational software failures.
+- **$1.52 trillion** in rapidly accumulating technical debt.
+- _Source: [Consortium for Information & Software Quality (CISQ) 2022 CPSQ Report](https://www.it-cisq.org/wp-content/uploads/sites/6/2022/11/CPSQ-Report-Nov-22-2.pdf)_
 
 **The Root Cause:** Lack of documentation and lost intent. Problems solved in code never make it back to the Product Requirements Document (PRD).
 
@@ -50,15 +51,15 @@ paginate: true
 
 - Invisible solutions to unknown problems become load-bearing features.
 - Obsolete legacy systems require expensive specialists just to keep the lights on.
-- **The AI Multiplier:** If humans generate $1.8T in failures, imagine the graveyard we build when AI allows us to write undocumented code 100x faster.
+- **The AI Amplifier:** AI doesn't just make us faster—it scales the volume of our code. The 2026 DORA ROI Report warns of a massive **"verification tax"** to review AI-generated code. Without a system for intent, this amplifier just generates legacy technical debt at scale.
 
 ---
 
 ### Context Overload
 
-- Large documentation dumps (monolithic READMEs, site-wide `llms.txt`) overload agent context windows.
+- Large documentation dumps (monolithic READMEs, site-wide `llms.txt`) pollute agent reasoning.
+- Massive context dumps increase latency, drive up inference costs, and trigger hallucinations from conflicting legacy terms.
 - Teams lack a shared, reviewable contract for **what documentation means**.
-- Same terms reused for different concepts across legacy projects.
 
 ---
 
@@ -66,7 +67,7 @@ paginate: true
 
 _One spoon at a time._
 
-**How do we solve a $1.8 Trillion problem?**
+**How do we solve a $2.4 Trillion problem?**
 
 _One bit of context at a time._
 
@@ -100,7 +101,7 @@ To survive the AI era, we must bring everyone to the front of the line:
 
 MDCP is designed for specific goals, matching the diverse roles in this very room:
 
-- **The Champion (Engineering Managers):** You need a reviewable doc contract for your org (OpenAPI-style intent, not performance claims).
+- **The Champion (Engineering Managers):** You need to slash Mean Time To Recovery (MTTR) during incidents and accelerate developer onboarding. MDCP gives your agents and junior devs instant, accurate context to solve problems safely.
 - **The Builder (Senior/Junior Engineers):** You integrate MDCP into the repo. You get one validation gate for humans, agents, and CI.
 - **The Author (PMs, Tech Writers):** You write the shards. You focus on one topic per file without fighting the toolchain.
 - **The Learner (Spectators, Juniors):** You paste a prompt into your agent and let it set up the pipeline while you learn the commands.
