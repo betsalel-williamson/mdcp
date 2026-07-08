@@ -21,3 +21,13 @@
 - Same terms reused for different concepts across legacy projects.
 
 ---
+
+## How do you eat an elephant?
+
+_One spoon at a time._
+
+**How do we solve a $1.8 Trillion problem?**
+
+_One bit of context at a time._
+
+---
