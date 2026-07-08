@@ -24,6 +24,12 @@
       "description": "Archetype: product docs site — MkDocs, Docusaurus, VitePress publish workflow",
       "tags": ["archetype", "product", "docs-site"],
       "versions": []
+    },
+    {
+      "id": "format-marp-presentation",
+      "description": "Formatting Pack: Marp presentation — conventions for authoring slide decks using MDCP shards",
+      "tags": ["format", "presentation", "marp"],
+      "versions": []
     }
   ]
 }
