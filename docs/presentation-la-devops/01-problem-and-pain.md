@@ -2,7 +2,9 @@
 
 - **$1.81 trillion** spent on operational software failures in the US (2022).
 - **$260 billion** spent on software-development failures.
-- **The Root Cause:** Lack of documentation and lost intent. Problems solved in code never make it back to the Product Requirements Document (PRD).
+- _Source: ["Trillions Spent and Big Software Projects Are Still Failing" (IEEE Spectrum, Nov 2025)](https://spectrum.ieee.org/it-management-software-failures)_
+
+**The Root Cause:** Lack of documentation and lost intent. Problems solved in code never make it back to the Product Requirements Document (PRD).
 
 ---
 
