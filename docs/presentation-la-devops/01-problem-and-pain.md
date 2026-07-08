@@ -5,15 +5,16 @@
 - **$1.52 trillion** in rapidly accumulating technical debt.
 - _Source: [Consortium for Information & Software Quality (CISQ) 2022 CPSQ Report](https://www.it-cisq.org/wp-content/uploads/sites/6/2022/11/CPSQ-Report-Nov-22-2.pdf)_
 
-**The Root Cause:** Lack of documentation and lost intent. Problems solved in code never make it back to the Product Requirements Document (PRD).
+**The Root Cause: "Documentation Debt" & Lost Intent**
+As defined by IBM, this happens when requirements fail to match what was actually built. When problems are solved in code but never make it back to the PRD, we lose **traceability**.
 
 ---
 
 ## The Trillion-Dollar Graveyard
 
-- Invisible solutions to unknown problems become load-bearing features.
-- Obsolete legacy systems require expensive specialists just to keep the lights on.
-- **The AI Amplifier:** AI doesn't just make us faster—it scales the volume of our code. The 2026 DORA ROI Report warns of a massive **"verification tax"** to review AI-generated code. Without a system for intent, this amplifier just generates legacy technical debt at scale.
+- **Lost Context:** Invisible solutions to unknown problems become load-bearing features.
+- **The AI Amplifier (GitClear 2024):** AI generation increased duplicate code 8x while healthy refactoring dropped below 10%.
+- **The Verification Tax (DORA 2026):** Reviewing AI code is creating massive bottlenecks. Without traceability to original intent, AI just generates legacy technical debt at scale.
 
 ---
 
