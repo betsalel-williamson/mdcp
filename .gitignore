@@ -40,6 +40,7 @@ docs/styles/*
 
 # MDCP compiled output (repo docs — regenerate with pnpm docs:compile:repo)
 docs/_build/
+presentations/*.pdf
 
 # Sample guides fixture output
 examples/sample-guides/_build/
