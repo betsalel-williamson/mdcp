@@ -22,8 +22,6 @@ paginate: true
 - **Mission-Critical Operations**
   - Lead DevOps Engineer for lunar logistics at Astrobotic
   - Coordinated technical specs for the U.S. Navy Nuclear Program (BPMI)
-- **Zero-to-One Scalability**
-  - Founder of a e-commerce startup
 - **Community Leadership**
   - DORA Community Guide (DevOps & Change Management)
   - LGBT+ and disability advocate (auadhdh and sensory sensitivities)
