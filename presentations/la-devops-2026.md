@@ -82,6 +82,17 @@ To survive the AI era, we must bring everyone to the front of the line:
 
 ---
 
+### Who is MDCP For? (The Personas)
+
+MDCP is designed for specific goals, matching the diverse roles in this very room:
+
+- **The Champion (Engineering Managers):** You need a reviewable doc contract for your org (OpenAPI-style intent, not performance claims).
+- **The Builder (Senior/Junior Engineers):** You integrate MDCP into the repo. You get one validation gate for humans, agents, and CI.
+- **The Author (PMs, Tech Writers):** You write the shards. You focus on one topic per file without fighting the toolchain.
+- **The Learner (Spectators, Juniors):** You paste a prompt into your agent and let it set up the pipeline while you learn the commands.
+
+---
+
 ### Policies to Achieve the Vision
 
 The bottleneck is no longer code syntax. It's our ability to accurately architect systems. Your docs must capture:
