@@ -1,15 +1,9 @@
----
-marp: true
-theme: default
-paginate: true
----
+<!-- Manifest for LA DevOps Presentation -->
 
-# Intent is the New Syntax
-
-## Introducing the MarkDown Context Protocol (MDCP)
-
-**LA DevOps Community**
-**July 30, 2026**
-[LA DevOps Meetup Group](https://www.meetup.com/meetup-group-zzqwjltm/)
-
----
+[00-intro.md](00-intro.md)
+[01-problem-and-pain.md](01-problem-and-pain.md)
+[02-alternate-vision.md](02-alternate-vision.md)
+[02b-personas.md](02b-personas.md)
+[03-policies-to-achieve-vision.md](03-policies-to-achieve-vision.md)
+[04-plan-to-enact.md](04-plan-to-enact.md)
+[05-call-to-action.md](05-call-to-action.md)
