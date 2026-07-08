@@ -9,6 +9,7 @@ paginate: true
 ## Introducing the MarkDown Context Protocol (MDCP)
 
 **LA DevOps Community**
-**2026**
+**July 30, 2026**
+[LA DevOps Meetup Group](https://www.meetup.com/meetup-group-zzqwjltm/)
 
 ---
