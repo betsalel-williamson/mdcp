@@ -6,4 +6,5 @@
 [02b-personas.md](02b-personas.md)
 [03-policies-to-achieve-vision.md](03-policies-to-achieve-vision.md)
 [04-plan-to-enact.md](04-plan-to-enact.md)
+[04b-faq.md](04b-faq.md)
 [05-call-to-action.md](05-call-to-action.md)

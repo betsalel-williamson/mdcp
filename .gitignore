@@ -40,6 +40,10 @@ docs/styles/*
 
 # MDCP compiled output (repo docs — regenerate with pnpm docs:compile:repo)
 docs/_build/
+
+# Rendered presentation artifacts — source lives in docs/presentation-la-devops/
+presentations/*.md
+presentations/*.html
 presentations/*.pdf
 
 # Sample guides fixture output
