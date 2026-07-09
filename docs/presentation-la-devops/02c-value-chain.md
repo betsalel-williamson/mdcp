@@ -2,7 +2,27 @@
 
 Where does MDCP sit in the software development value stream? It forms a persistent, machine-readable **Context Layer** throughout the lifecycle.
 
-![MDCP Value Stream](./assets/diagram1.svg)
+<style scoped>
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+</style>
+
+<div class="columns">
+<div>
+
+The actors (Product Managers, Architects, Developers, QA) interact with the MDCP context layer to author intent, provide context, and generate evidence.
+
+</div>
+<div>
+
+![MDCP Value Stream](./assets/mdcp-actors-and-artifacts.svg)
+
+</div>
+</div>
 
 ---
 
@@ -25,7 +45,7 @@ While the previous diagram highlights _who_ interacts with MDCP, this view shows
 </div>
 <div>
 
-![MDCP SDLC](./assets/diagram2.svg)
+![MDCP SDLC](./assets/mdcp-sdlc-prompts.svg)
 
 </div>
 </div>
