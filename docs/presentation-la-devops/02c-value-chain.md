@@ -64,3 +64,5 @@ In the **Agentic Era**, AI agents will need context to interact with physical wo
 - **Work Instructions:** Freeing manufacturing or procedural instructions from proprietary, locked-down systems.
 - **Hardware Manufacturing & Supply Chain:** Agents can parse MDCP shards to understand operational sequences and interface with legacy ERP tools.
 - **Legal & Operations:** Providing explicit, version-controlled business logic that agents can reliably execute.
+
+---
