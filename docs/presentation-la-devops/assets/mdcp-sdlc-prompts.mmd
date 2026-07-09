@@ -1,0 +1,13 @@
+graph TD
+    subgraph SDLC
+        Plan --> Code --> Test --> Release --> Operate
+    end
+
+    MDCP("MDCP Context Layer")
+
+    Plan -.->|"Arch Prompt"| MDCP
+    Code -.->|"Feature Prompt"| MDCP
+    MDCP -.->|"Context"| Code
+    MDCP -.->|"Acceptance"| Test
+    MDCP -.->|"Review Prompt"| Release
+    Operate -.->|"Doc Prompt"| MDCP
