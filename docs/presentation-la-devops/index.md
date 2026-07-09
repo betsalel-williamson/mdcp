@@ -6,6 +6,7 @@
 [02-alternate-vision.md](02-alternate-vision.md)
 [02b-personas.md](02b-personas.md)
 [02c-value-chain.md](02c-value-chain.md)
+[02d-dora-capabilities.md](02d-dora-capabilities.md)
 [03-policies-to-achieve-vision.md](03-policies-to-achieve-vision.md)
 [04-plan-to-enact.md](04-plan-to-enact.md)
 [04b-faq.md](04b-faq.md)

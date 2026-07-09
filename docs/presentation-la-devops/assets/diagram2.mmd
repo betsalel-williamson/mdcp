@@ -1,0 +1,13 @@
+graph TD
+    subgraph SDLC [SDLC Value Chain]
+        Plan[Plan] --> Code[Code] --> Test[Test] --> Release[Release] --> Operate[Operate]
+    end
+
+    MDCP[(MDCP Context Layer)]
+
+    Plan -.->|PRDs & Requirements| MDCP
+    Code -.->|ADRs & Tech Specs| MDCP
+    MDCP -.->|Context for AI/Devs| Code
+    MDCP -.->|Acceptance Criteria| Test
+    MDCP -.->|Compliance Evidence| Release
+    Operate -.->|System Updates| MDCP
