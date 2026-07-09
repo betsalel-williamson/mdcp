@@ -33,5 +33,6 @@ paginate: true
 - From mission-critical aerospace to fast-moving AI startups.
 - The zero-fail mindset of the nuclear program applied to software engineering.
 - **The Core Thesis:** "Intent is the New Syntax." As AI accelerates code generation, capturing _why_ we build is more critical than _how_ we build.
+- **The Payoff:** Documenting intent is hard, real work. Tonight, we'll look at a framework that makes this work pay off permanently—writing docs _once_ that serve both your team and your AI agents.
 
 ---
