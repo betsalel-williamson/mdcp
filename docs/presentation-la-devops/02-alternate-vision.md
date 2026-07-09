@@ -5,7 +5,7 @@
 - Like OpenAPI is for HTTP APIs, but for **intent, design, and terminology**.
 - **Small shards** are the source of truth.
 - Agents pull **one section at a time** via `refs lookup` or single shard reads.
-- **The Relief:** Write your documentation *once*. It serves as an onboarding guide for humans and a machine-readable context protocol for AI. No more explaining your architecture to every new agent.
+- **The Relief:** Write your documentation _once_. It serves as an onboarding guide for humans and a machine-readable context protocol for AI. No more explaining your architecture to every new agent.
 
 ---
 

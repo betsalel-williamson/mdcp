@@ -83,7 +83,7 @@ Before we dive in — a few terms we'll use throughout:
 - **refs lookup:** How an AI agent searches for and retrieves only the specific shards it needs, rather than reading the entire documentation at once.
 - **MCP (Model Context Protocol):** An open standard that enables AI assistants to access external data sources and tools.
 - **llms.txt:** A standard file that helps AI models navigate a project's documentation.
-- **PRD:** Product Requirements Document.
+- **PRD:** Product Requirements Document. A document that defines the purpose, features, functionality, and behavior of a product.
 
 ---
 
@@ -94,7 +94,7 @@ Before we dive in — a few terms we'll use throughout:
 - Like OpenAPI is for HTTP APIs, but for **intent, design, and terminology**.
 - **Small shards** are the source of truth.
 - Agents pull **one section at a time** via `refs lookup` or single shard reads.
-- **The Relief:** Write your documentation *once*. It serves as an onboarding guide for humans and a machine-readable context protocol for AI. No more explaining your architecture to every new agent.
+- **The Relief:** Write your documentation _once_. It serves as an onboarding guide for humans and a machine-readable context protocol for AI. No more explaining your architecture to every new agent.
 
 ---
 
