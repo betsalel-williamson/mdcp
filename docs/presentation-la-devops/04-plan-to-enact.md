@@ -24,3 +24,13 @@ mdcp compile --config docs/mdcp.config.json
 ```
 
 ---
+
+## Live Demo: 5 Minutes to Value
+
+We can show how this all works in a simple 5-minute demo:
+
+- Open **Cursor** (or any LLM tool) in a repo.
+- Copy-paste the bootstrap prompt from `mdcp.v0.4.llms.txt`, or ask the agent to install and configure MDCP from the existing docs.
+- Watch the agent set up the pipeline — no prior MDCP knowledge required.
+
+---
