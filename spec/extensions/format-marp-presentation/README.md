@@ -56,69 +56,34 @@ After running `mdcp compile`, use the Marp CLI or VS Code extension to export th
 When creating presentations, you will likely want to include architecture diagrams or flowcharts using Mermaid. However, there are a few caveats when using Marp:
 
 1. **Synchronous Constraints:** Marp uses `markdown-it` under the hood, which is strictly synchronous. Mermaid's modern rendering APIs are asynchronous, meaning you cannot easily render Mermaid blocks to SVGs during the Marp build process without complex workarounds.
-2. **Build Artifacts:** Pre-rendering diagrams to SVG or PNG files and committing them to the repository pollutes your Git history with build artifacts.
+2. **Client-Side Glitches:** We previously attempted to use a custom Marp engine to render Mermaid diagrams on the client side (in the browser). However, this approach resulted in rendering glitches and layout issues when exporting to PDF or viewing the HTML.
 
-### The Solution: Client-Side Rendering via Custom Engine
+### The Solution: Pre-Render SVGs
 
-The cleanest approach is to use a custom Marp engine that intercepts standard ````mermaid` blocks, wraps the raw code in a `div`, and injects the Mermaid JavaScript library to render the diagrams client-side when the HTML presentation is viewed.
+The most reliable approach we've found is to **pre-render your Mermaid diagrams to SVG files** and include them as standard Markdown images.
 
-**1. Create `marp-engine.js` in your project root:**
+**1. Create your Mermaid files (`.mmd`) alongside your shards:**
 
-```javascript
-module.exports = ({ marp }) => {
-  // A simple plugin to render mermaid blocks as <div class="mermaid">...</div>
-  marp.use((md) => {
-    const originalFence = md.renderer.rules.fence;
-    md.renderer.rules.fence = (tokens, idx, options, env, self) => {
-      const token = tokens[idx];
-      if (token.info.trim() === 'mermaid') {
-        const code = md.utils.escapeHtml(token.content.trim());
-        return `<div class="mermaid">\n${code}\n</div>\n`;
-      }
-      return originalFence(tokens, idx, options, env, self);
-    };
-  });
-
-  // Inject the Mermaid initialization script at the end of the document
-  const originalRender = marp.render.bind(marp);
-  marp.render = (markdown, env) => {
-    const result = originalRender(markdown, env);
-    const script = `
-<style>
-  .mermaid svg {
-    overflow: visible !important;
-  }
-</style>
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: 'default',
-    fontFamily: 'inherit'
-  });
-</script>
-`;
-    return {
-      ...result,
-      html: result.html + script,
-    };
-  };
-
-  return marp;
-};
+```text
+docs/
+  presentations/
+    my-presentation/
+      assets/
+        architecture.mmd
 ```
 
-**2. Update your `package.json` scripts to use the custom engine:**
+**2. Render the SVGs:**
 
-Pass the `--engine` flag to the Marp CLI:
+Use the Mermaid CLI to render the diagrams before compiling your presentation:
 
-```json
-{
-  "scripts": {
-    "presentation:render": "mdcp compile && marp --html true --engine ./marp-engine.js presentations/my-presentation.md -o presentations/my-presentation.html",
-    "presentation:preview": "mdcp compile && marp --html true --engine ./marp-engine.js -I presentations --server --watch --preview"
-  }
-}
+```bash
+npx @mermaid-js/mermaid-cli -i docs/presentations/my-presentation/assets/architecture.mmd -o docs/presentations/my-presentation/assets/architecture.svg
 ```
 
-This allows you to write standard Mermaid code blocks in your MDCP shards and have them render beautifully in your final presentation without managing external image assets.
+**3. Reference the SVGs in your shards:**
+
+```markdown
+![System Architecture](./assets/architecture.svg)
+```
+
+While this means you have to manage SVG artifacts in your repository, it guarantees that your diagrams will render perfectly in all Marp output formats (HTML, PDF, PPTX) without any client-side rendering issues.
