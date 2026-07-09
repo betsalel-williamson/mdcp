@@ -8,6 +8,8 @@
 .columns img {
   width: 100%;
   height: auto;
+  max-height: 500px;
+  object-fit: contain;
 }
 </style>
 
@@ -16,9 +18,9 @@
 
 ## The 30,000-Foot View: MDCP in the Value Stream
 
-Where does MDCP sit in the software development value stream? It forms a persistent, machine-readable **Context Layer** throughout the lifecycle.
+Where does MDCP sit in the software development value stream? It forms a persistent, machine-readable **Context Layer**.
 
-The actors (Product Managers, Architects, Developers, QA) interact with the MDCP context layer to author intent, provide context, and generate evidence.
+The actors interact with the MDCP context layer to author intent, provide context, and generate evidence.
 
 </div>
 <div>
@@ -40,6 +42,8 @@ The actors (Product Managers, Architects, Developers, QA) interact with the MDCP
 .columns img {
   width: 100%;
   height: auto;
+  max-height: 500px;
+  object-fit: contain;
 }
 </style>
 
@@ -48,7 +52,9 @@ The actors (Product Managers, Architects, Developers, QA) interact with the MDCP
 
 ### MDCP Across the SDLC
 
-While the previous diagram highlights _who_ interacts with MDCP, this view shows _where_ it sits in the traditional SDLC. Instead of documentation being a disconnected artifact, MDCP acts as a continuous, bidirectional context layer.
+While the previous diagram highlights _who_ interacts with MDCP, this view shows _where_ it sits in the traditional SDLC.
+
+Instead of documentation being a disconnected artifact, MDCP acts as a continuous, bidirectional context layer.
 
 </div>
 <div>

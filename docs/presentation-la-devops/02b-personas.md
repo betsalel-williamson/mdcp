@@ -1,12 +1,12 @@
 ## Who is MDCP For? (The Personas)
 
-MDCP is designed to support the entire software value chain, ensuring that every role has the context they need:
+MDCP supports the entire software value chain:
 
-- **Planning (PMs, Tech Writers):** You write the shards. You ensure that plans are documented and intent is clear before implementation begins.
-- **Developers (Senior/Junior Engineers):** You integrate MDCP into the repo. You get enough context to verify behavior, understand design constraints, and have one validation gate for humans, agents, and CI.
-- **Quality (QA Engineers):** You review the tests and the intent to make sure we're not overlooking blind spots, or testing too much that isn't needed.
-- **Compliance & Security:** You know exactly what to look for based on the docs, ensuring policies are met.
-- **Operators & End-Users:** You know how to use the system effectively based on accurate, up-to-date documentation.
-- **The Feedback Loop:** Real use comments, tickets, lessons learned, and feedback are recorded back to the docs to continuously improve the system context.
+- **Planning:** You write the shards to ensure intent is clear before implementation.
+- **Developers:** You get context to verify behavior and understand design constraints.
+- **Quality:** You review the intent to ensure we aren't overlooking blind spots.
+- **Compliance:** You know exactly what to look for to ensure policies are met.
+- **Operators:** You know how to use the system effectively.
+- **Feedback Loop:** Real use comments and lessons learned are recorded back to the docs.
 
 ---
