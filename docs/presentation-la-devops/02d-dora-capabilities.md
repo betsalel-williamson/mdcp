@@ -36,6 +36,4 @@ MDCP directly enables these critical multipliers:
 </div>
 </div>
 
-By adopting MDCP, you don't just adopt AI—you build the foundational capabilities required to make AI effective.
-
 ---
