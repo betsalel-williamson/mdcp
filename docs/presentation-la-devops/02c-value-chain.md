@@ -9,6 +9,10 @@ Where does MDCP sit in the software development value stream? It forms a persist
   gap: 1rem;
   align-items: center;
 }
+.columns img {
+  width: 100%;
+  height: auto;
+}
 </style>
 
 <div class="columns">
@@ -19,7 +23,7 @@ The actors (Product Managers, Architects, Developers, QA) interact with the MDCP
 </div>
 <div>
 
-![h:350 MDCP Value Stream](./assets/mdcp-actors-and-artifacts.png)
+![MDCP Value Stream](./assets/mdcp-actors-and-artifacts.png)
 
 </div>
 </div>
@@ -35,6 +39,10 @@ The actors (Product Managers, Architects, Developers, QA) interact with the MDCP
   gap: 1rem;
   align-items: center;
 }
+.columns img {
+  width: 100%;
+  height: auto;
+}
 </style>
 
 <div class="columns">
@@ -45,7 +53,7 @@ While the previous diagram highlights _who_ interacts with MDCP, this view shows
 </div>
 <div>
 
-![h:350 MDCP SDLC](./assets/mdcp-sdlc-prompts.png)
+![MDCP SDLC](./assets/mdcp-sdlc-prompts.png)
 
 </div>
 </div>
