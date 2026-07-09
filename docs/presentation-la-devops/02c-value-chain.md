@@ -19,7 +19,7 @@ The actors (Product Managers, Architects, Developers, QA) interact with the MDCP
 </div>
 <div>
 
-![MDCP Value Stream](./assets/mdcp-actors-and-artifacts.svg)
+![h:350 MDCP Value Stream](./assets/mdcp-actors-and-artifacts.png)
 
 </div>
 </div>
@@ -45,7 +45,7 @@ While the previous diagram highlights _who_ interacts with MDCP, this view shows
 </div>
 <div>
 
-![MDCP SDLC](./assets/mdcp-sdlc-prompts.svg)
+![h:350 MDCP SDLC](./assets/mdcp-sdlc-prompts.png)
 
 </div>
 </div>

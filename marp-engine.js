@@ -33,7 +33,7 @@ module.exports = ({ marp }) => {
 `;
     return {
       ...result,
-      html: result.html + script
+      html: result.html + script,
     };
   };
 
