@@ -2,27 +2,7 @@
 
 Where does MDCP sit in the software development value stream? It forms a persistent, machine-readable **Context Layer** throughout the lifecycle.
 
-```mermaid
-graph LR
-    subgraph Ideation ["Idea & Requirements"]
-        PM["Product Managers"] -->|"Author Intent"| MDCP[("MDCP Shards")]
-    end
-
-    subgraph Architecture ["Design & Architecture"]
-        Arch["System Architects"] -->|"Define Constraints"| MDCP
-    end
-
-    subgraph Dev ["Development & QA"]
-        MDCP -->|"Provide Context"| DevAgent["AI Agents & Devs"]
-        DevAgent -->|"Write & Test Code"| Code["Source Code"]
-    end
-
-    subgraph Audit ["Release & Compliance"]
-        MDCP -->|"Generate Evidence"| Auditor["Auditors & Compliance"]
-    end
-
-    Ideation --> Architecture --> Dev --> Audit
-```
+![MDCP Value Stream](./assets/diagram1.svg)
 
 ---
 
@@ -45,14 +25,7 @@ While the previous diagram highlights _who_ interacts with MDCP, this view shows
 </div>
 <div>
 
-```mermaid
-graph TD
-    A[Planning] -->|"Write Shards"| B(MDCP Layer)
-    B -->|"Context for Dev"| C[Development]
-    C -->|"Context for QA"| D[Testing]
-    D -->|"Evidence for Compliance"| E[Release]
-    E -->|"Feedback & Telemetry"| B
-```
+![MDCP SDLC](./assets/diagram2.svg)
 
 </div>
 </div>
