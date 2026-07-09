@@ -10,6 +10,7 @@ The bottleneck is no longer code syntax. It's our ability to accurately architec
 
 ## Core MDCP Principles
 
+- **Capture to the Proper Degree:** It's not magic; it's a method to ensure information is captured to the proper degree to support all value chain activities.
 - **High level over implementation:** Shards hold plan, constraints, and acceptance criteria; code holds _how_.
 - **Glossary as first-class:** Domain terms and legacy disambiguation live in dedicated shards.
 - **Document before build/migrate:** Capture context in shards before greenfield work.

@@ -1,10 +1,12 @@
 ## Who is MDCP For? (The Personas)
 
-MDCP is designed for specific goals, matching the diverse roles in this very room:
+MDCP is designed to support the entire software value chain, ensuring that every role has the context they need:
 
-- **The Champion (Engineering Managers):** You need to slash Mean Time To Recovery (MTTR) during incidents and accelerate developer onboarding. MDCP gives your agents and junior devs instant, accurate context to solve problems safely.
-- **The Builder (Senior/Junior Engineers):** You integrate MDCP into the repo. You get one validation gate for humans, agents, and CI.
-- **The Author (PMs, Tech Writers):** You write the shards. You focus on one topic per file without fighting the toolchain.
-- **The Learner (Spectators, Juniors):** You paste a prompt into your agent and let it set up the pipeline while you learn the commands.
+- **Planning (PMs, Tech Writers):** You write the shards. You ensure that plans are documented and intent is clear before implementation begins.
+- **Developers (Senior/Junior Engineers):** You integrate MDCP into the repo. You get enough context to verify behavior, understand design constraints, and have one validation gate for humans, agents, and CI.
+- **Quality (QA Engineers):** You review the tests and the intent to make sure we're not overlooking blind spots, or testing too much that isn't needed.
+- **Compliance & Security:** You know exactly what to look for based on the docs, ensuring policies are met.
+- **Operators & End-Users:** You know how to use the system effectively based on accurate, up-to-date documentation.
+- **The Feedback Loop:** Real use comments, tickets, lessons learned, and feedback are recorded back to the docs to continuously improve the system context.
 
 ---

@@ -2,7 +2,8 @@
 
 **MarkDown Context Protocol (MDCP)** is an open, repo-local standard for **system context**.
 
-- Like OpenAPI is for HTTP APIs, but for **intent, design, and terminology**.
+- It is **not just a repository**; it is a **protocol and method** that assists with the proper practice of developing docs.
+- Through protocol shards and prompt examples, we ensure we capture docs and details to the proper degree to support all activities across the value chain.
 - **Small shards** are the source of truth.
 - Agents pull **one section at a time** via `refs lookup` or single shard reads.
 - **The Relief:** Write your documentation _once_. It serves as an onboarding guide for humans and a machine-readable context protocol for AI. No more explaining your architecture to every new agent.
