@@ -25,12 +25,12 @@ mdcp compile --config docs/mdcp.config.json
 
 ---
 
-## Live Demo: 5 Minutes to Value
+## The 5-Minute Starting Point
 
-We can show how this all works in a simple 5-minute demo:
+This isn't a magic trick that instantly understands your legacy codebase. It's a frictionless, 5-minute starting point to establish the MDCP foundation.
 
 - Open **Cursor** (or any LLM tool) in a repo.
 - Copy-paste the bootstrap prompt from `mdcp.v0.4.llms.txt`, or ask the agent to install and configure MDCP from the existing docs.
-- Watch the agent set up the pipeline — no prior MDCP knowledge required.
+- Watch the agent set up the pipeline — proving how easy it is to begin the long-term journey of capturing intent.
 
 ---
