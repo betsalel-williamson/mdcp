@@ -3,12 +3,17 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {
   loadConfig,
-  compileGuides,
+  compileGuidesFromResults,
   writeCompiledGuidesFromResults,
   genRefsFromCompiled,
-  writeRefsRegistry,
   checkOrphansForGuides,
-  lintCompiledLinks,
+  lintLinks,
+  compileGuideResultsWithContext,
+  resolveDocsRoot,
+  resolveOutputPath,
+  resolveRefsPath,
+  getGuideConfig,
+  resolveGuideDir,
 } from '@bwilliamson/mdcp-core';
 import { IAssistantProvider, CursorInjector, CopilotInjector, GeminiInjector } from './injectors';
 
@@ -212,11 +217,22 @@ BasedOnStyles = Vale, Google
       const config = loadConfig(configPath, path.join(root, 'docs'));
       const docsRoot = path.join(root, 'docs');
 
-      const results = compileGuides(config, docsRoot);
-      writeCompiledGuidesFromResults(results, config, docsRoot, { enabled: false });
+      const compileOpts = {
+        guidesRoot: resolveDocsRoot(config, docsRoot),
+        compileOrder: config.compileOrder,
+        banner: config.banner,
+        guides: config.guides,
+        docsRoot,
+        config,
+      };
 
-      const refs = genRefsFromCompiled(results);
-      writeRefsRegistry(refs, config, docsRoot);
+      const { results } = compileGuideResultsWithContext(compileOpts);
+      const monolithPath = resolveOutputPath(config, docsRoot);
+      writeCompiledGuidesFromResults(results, compileOpts, monolithPath);
+
+      const compiledText = compileGuidesFromResults(results, compileOpts);
+      const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs?.registryFile);
+      genRefsFromCompiled(compiledText, refsPath);
 
       this.outputChannel.appendLine('Compile completed successfully.');
       vscode.window.showInformationMessage('MDCP: Compile Successful');
@@ -238,18 +254,49 @@ BasedOnStyles = Vale, Google
       const config = loadConfig(configPath, path.join(root, 'docs'));
       const docsRoot = path.join(root, 'docs');
 
-      const results = compileGuides(config, docsRoot);
-      genRefsFromCompiled(results);
+      const compileOpts = {
+        guidesRoot: resolveDocsRoot(config, docsRoot),
+        compileOrder: config.compileOrder,
+        banner: config.banner,
+        guides: config.guides,
+        docsRoot,
+        config,
+      };
 
-      const orphans = checkOrphansForGuides(config, docsRoot);
+      const { results, linkIndex, shardCache } = compileGuideResultsWithContext(compileOpts);
+      const compiledText = compileGuidesFromResults(results, compileOpts);
+      const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs?.registryFile);
+      genRefsFromCompiled(compiledText, refsPath);
+
+      const guideEntries = config.compileOrder.map((name: string) => {
+        const cfg = getGuideConfig(config, name);
+        return {
+          name,
+          dir: resolveGuideDir(name, config, docsRoot),
+          manifest: cfg?.compile?.manifest,
+          sectionsHeading: cfg?.compile?.sectionsHeading,
+          scopeRoot: cfg?.compile?.scopeRoot
+            ? path.resolve(docsRoot, cfg.compile.scopeRoot)
+            : undefined,
+        };
+      });
+
+      const orphans = checkOrphansForGuides(guideEntries);
       if (orphans.length > 0) {
         this.outputChannel.appendLine(`Found ${orphans.length} orphaned files.`);
       }
 
-      const linkIssues = lintCompiledLinks(results, config, docsRoot);
+      const linkIssues = lintLinks({
+        config,
+        docsRoot,
+        results,
+        compileOptions: compileOpts,
+        linkIndex,
+        shardCache,
+      });
       if (linkIssues.length > 0) {
         this.outputChannel.appendLine(`Found ${linkIssues.length} broken links.`);
-        linkIssues.forEach((issue) =>
+        linkIssues.forEach((issue: any) =>
           this.outputChannel.appendLine(`- ${issue.file}: ${issue.message}`),
         );
       } else {
