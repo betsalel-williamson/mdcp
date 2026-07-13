@@ -1,6 +1,8 @@
 ## Policies to Achieve the Vision
 
-The bottleneck is no longer code syntax. It's our ability to accurately architect systems. Your docs must capture:
+The bottleneck is no longer code syntax. It's our ability to accurately architect systems.
+
+Your docs must capture:
 
 1. **Intent and Value:** Why does this exist?
 2. **User Personas:** Who is suffering without this?
@@ -10,7 +12,7 @@ The bottleneck is no longer code syntax. It's our ability to accurately architec
 
 ## Core MDCP Principles
 
-- **Capture to the Proper Degree:** It's not magic; it's a method to ensure information is captured to the proper degree to support all value chain activities.
+- **Capture to the Proper Degree:** A method to ensure info supports all value chain activities.
 - **High level over implementation:** Shards hold plan, constraints, and acceptance criteria; code holds _how_.
 - **Glossary as first-class:** Domain terms and legacy disambiguation live in dedicated shards.
 - **Document before build/migrate:** Capture context in shards before greenfield work.

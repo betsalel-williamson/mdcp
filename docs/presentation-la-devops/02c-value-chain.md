@@ -50,7 +50,7 @@ The actors interact with the MDCP context layer to author intent, provide contex
 <div class="columns">
 <div>
 
-### MDCP Across the SDLC
+## MDCP Across the SDLC
 
 While the previous diagram highlights _who_ interacts with MDCP, this view shows _where_ it sits in the traditional SDLC.
 
@@ -64,11 +64,9 @@ Instead of documentation being a disconnected artifact, MDCP acts as a continuou
 </div>
 </div>
 
-**How is this different than any other doc process?** MDCP helps create a structured process to capture this information and helps LLM development know to enforce this practice.
-
 ---
 
-### SDLC Prompts at a Glance
+## SDLC Prompts at a Glance
 
 | Phase       | Prompt               | Action                                            |
 | ----------- | -------------------- | ------------------------------------------------- |
@@ -80,18 +78,18 @@ Instead of documentation being a disconnected artifact, MDCP acts as a continuou
 
 ---
 
-## What MDCP Is and Isn't
+## What MDCP Replaces
 
 To understand where to pull MDCP in, we must be clear on its boundaries.
-
-### What MDCP Replaces
 
 - Fragmented, quickly-outdated Wiki pages.
 - Stale `README.md` files that no one trusts.
 - Scattered Architecture Decision Records (ADRs).
 - Undocumented "tribal knowledge."
 
-### What MDCP Isn't
+---
+
+## What MDCP Isn't
 
 - **Not a Jira alternative:** It doesn't track task states or agile sprints.
 - **Not active system monitoring:** It doesn't tell you if the server is down.
