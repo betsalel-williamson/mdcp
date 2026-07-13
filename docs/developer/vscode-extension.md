@@ -48,6 +48,8 @@ The extension is published to both the **Visual Studio Marketplace** and the **O
 
 Publishing is fully automated via GitHub Actions (`.github/workflows/publish-vscode-extension.yml`).
 
+> **Security Note:** To prevent unauthorized releases, the publish workflow is restricted to specific approved developers (currently `betsalel-williamson`) and runs within the `vscode-publish` GitHub Environment.
+
 ### How to Release
 
 1. Update the version in `packages/mdcp-vscode/package.json`.

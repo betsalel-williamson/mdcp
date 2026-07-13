@@ -328,6 +328,8 @@ The extension is published to both the **Visual Studio Marketplace** and the **O
 
 Publishing is fully automated via GitHub Actions (`.github/workflows/publish-vscode-extension.yml`).
 
+> **Security Note:** To prevent unauthorized releases, the publish workflow is restricted to specific approved developers (currently `betsalel-williamson`) and runs within the `vscode-publish` GitHub Environment.
+
 #### How to Release
 
 1. Update the version in `packages/mdcp-vscode/package.json`.
@@ -648,6 +650,8 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 ### Release workflow (VS Code Extension)
 
 The VS Code extension (`packages/mdcp-vscode`) is published separately from the NPM packages.
+
+> **Security Note:** To prevent unauthorized releases, the publish workflow is restricted to specific approved developers (currently `betsalel-williamson`) and runs within the `vscode-publish` GitHub Environment.
 
 1. Update the version in `packages/mdcp-vscode/package.json`.
 2. Commit the version bump.

@@ -8,6 +8,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: vscode-publish
+    # Only allow specific developers to trigger this publish workflow
+    if: contains(fromJson('["betsalel-williamson"]'), github.actor)
     steps:
       - name: Checkout
         uses: actions/checkout@v4

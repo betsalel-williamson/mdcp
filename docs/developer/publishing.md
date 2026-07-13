@@ -106,6 +106,8 @@ Changesets config: [`.changeset/config.json`](../../.changeset/config.json) — 
 
 The VS Code extension (`packages/mdcp-vscode`) is published separately from the NPM packages.
 
+> **Security Note:** To prevent unauthorized releases, the publish workflow is restricted to specific approved developers (currently `betsalel-williamson`) and runs within the `vscode-publish` GitHub Environment.
+
 1. Update the version in `packages/mdcp-vscode/package.json`.
 2. Commit the version bump.
 3. Tag the commit with the prefix `vscode-v` (e.g., `vscode-v0.1.0`).
