@@ -179,10 +179,9 @@ BasedOnStyles = Vale, Google
     for (const injector of this.injectors) {
       try {
         await injector.injectContext(root, this.outputChannel);
-      } catch (error: any) {
-        this.outputChannel.appendLine(
-          `Failed to inject ${injector.name} context: ${error.message}`,
-        );
+      } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : String(error);
+        this.outputChannel.appendLine(`Failed to inject ${injector.name} context: ${msg}`);
       }
     }
 
@@ -236,9 +235,10 @@ BasedOnStyles = Vale, Google
 
       this.outputChannel.appendLine('Compile completed successfully.');
       vscode.window.showInformationMessage('MDCP: Compile Successful');
-    } catch (error: any) {
-      this.outputChannel.appendLine(`Error compiling guides: ${error.message}`);
-      vscode.window.showErrorMessage(`MDCP Compile Error: ${error.message}`);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      this.outputChannel.appendLine(`Error compiling guides: ${msg}`);
+      vscode.window.showErrorMessage(`MDCP Compile Error: ${msg}`);
     }
   }
 
@@ -296,7 +296,7 @@ BasedOnStyles = Vale, Google
       });
       if (linkIssues.length > 0) {
         this.outputChannel.appendLine(`Found ${linkIssues.length} broken links.`);
-        linkIssues.forEach((issue: any) =>
+        linkIssues.forEach((issue) =>
           this.outputChannel.appendLine(`- ${issue.file}: ${issue.message}`),
         );
       } else {
@@ -304,9 +304,10 @@ BasedOnStyles = Vale, Google
       }
 
       vscode.window.showInformationMessage('MDCP: Check Completed (see output)');
-    } catch (error: any) {
-      this.outputChannel.appendLine(`Error checking links: ${error.message}`);
-      vscode.window.showErrorMessage(`MDCP Check Error: ${error.message}`);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      this.outputChannel.appendLine(`Error checking links: ${msg}`);
+      vscode.window.showErrorMessage(`MDCP Check Error: ${msg}`);
     }
   }
 }
