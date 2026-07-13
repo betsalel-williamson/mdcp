@@ -5,7 +5,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ['**/dist/**', '**/node_modules/**', 'legacy/**'],
+    ignores: ['**/dist/**', '**/node_modules/**', 'legacy/**', 'marp-engine.js'],
   },
   {
     files: ['packages/**/*.ts'],
@@ -14,7 +14,6 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
-      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {

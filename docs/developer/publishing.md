@@ -110,11 +110,13 @@ The VS Code extension (`packages/mdcp-vscode`) is published separately from the 
 2. Commit the version bump.
 3. Tag the commit with the prefix `vscode-v` (e.g., `vscode-v0.1.0`).
 4. Push the tag to GitHub:
-   ```bash
-   git tag vscode-v0.1.0
-   git push origin vscode-v0.1.0
-   ```
-5. The GitHub Action (`.github/workflows/publish-vscode-extension.yml`) will automatically build the extension and publish it to both the Visual Studio Marketplace and Open VSX Registry.
+
+```bash
+git tag vscode-v0.1.0
+git push origin vscode-v0.1.0
+```
+
+1. The GitHub Action (`.github/workflows/publish-vscode-extension.yml`) will automatically build the extension and publish it to both the Visual Studio Marketplace and Open VSX Registry.
 
 ## Install surfaces
 

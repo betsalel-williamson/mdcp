@@ -14,6 +14,7 @@ import {
   resolveRefsPath,
   getGuideConfig,
   resolveGuideDir,
+  formatLinkIssue,
 } from '@bwilliamson/mdcp-core';
 import { IAssistantProvider, CursorInjector, CopilotInjector, GeminiInjector } from './injectors';
 
@@ -296,9 +297,7 @@ BasedOnStyles = Vale, Google
       });
       if (linkIssues.length > 0) {
         this.outputChannel.appendLine(`Found ${linkIssues.length} broken links.`);
-        linkIssues.forEach((issue) =>
-          this.outputChannel.appendLine(`- ${issue.file}: ${issue.message}`),
-        );
+        linkIssues.forEach((issue) => this.outputChannel.appendLine(`- ${formatLinkIssue(issue)}`));
       } else {
         this.outputChannel.appendLine('All links are valid.');
       }
