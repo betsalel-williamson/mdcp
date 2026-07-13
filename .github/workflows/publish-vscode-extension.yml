@@ -1,0 +1,45 @@
+name: Publish VS Code Extension
+
+on:
+  push:
+    tags:
+      - 'vscode-v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.15.9
+
+      - name: Install dependencies
+        run: pnpm install --config.engine-strict=false
+
+      - name: Build extension
+        run: pnpm --filter mdcp-vscode build
+
+      - name: Publish to Visual Studio Marketplace
+        uses: lannonbr/vsce-action@v3
+        with:
+          args: 'publish -p $VSCE_PAT'
+          packagePath: 'packages/mdcp-vscode'
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to Open VSX Registry
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.OVSX_PAT }}
+          registryUrl: https://open-vsx.org
+          extensionFile: packages/mdcp-vscode/*.vsix
+          packagePath: packages/mdcp-vscode

@@ -1,0 +1,66 @@
+{
+  "name": "mdcp-vscode",
+  "displayName": "MDCP (MarkDown Context Protocol)",
+  "description": "Zero-friction delivery of the MDCP AI Skill. Automatically injects context for AI assistants and provides MDCP commands.",
+  "version": "0.1.0",
+  "publisher": "bwilliamson",
+  "icon": "icon.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/betsalel-williamson/mdcp.git",
+    "directory": "packages/mdcp-vscode"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mdcp.initializeWorkspace",
+        "title": "MDCP: Initialize Workspace"
+      },
+      {
+        "command": "mdcp.compileGuides",
+        "title": "MDCP: Compile Guides"
+      },
+      {
+        "command": "mdcp.checkLinks",
+        "title": "MDCP: Check Links"
+      },
+      {
+        "command": "mdcp.lookupRefs",
+        "title": "MDCP: Lookup Refs"
+      },
+      {
+        "command": "mdcp.configureTooling",
+        "title": "MDCP: Configure Tooling"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run build",
+    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "watch": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext ts",
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "@bwilliamson/mdcp-cli": "workspace:*",
+    "@bwilliamson/mdcp-core": "workspace:*",
+    "@bwilliamson/mdcp-presets": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/vscode": "^1.80.0",
+    "esbuild": "^0.28.1",
+    "typescript": "^5.0.0"
+  }
+}
