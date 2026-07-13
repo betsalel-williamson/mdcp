@@ -77,7 +77,7 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` ta
 - Revoke any legacy `NPM_TOKEN` secrets from GitHub once OIDC is verified
 - The release workflow uses OIDC (`id-token: write`) and `NPM_CONFIG_PROVENANCE=true`
 
-## Release workflow
+## Release workflow (NPM Packages)
 
 1. Merge PRs with changesets to `main`.
 2. Run **`pnpm release:tag:push`** on `main` (applies changesets, tags `vX.Y.Z`, pushes).
@@ -101,6 +101,20 @@ pnpm changeset publish
 ```
 
 Changesets config: [`.changeset/config.json`](../../.changeset/config.json) — all three packages version together.
+
+## Release workflow (VS Code Extension)
+
+The VS Code extension (`packages/mdcp-vscode`) is published separately from the NPM packages.
+
+1. Update the version in `packages/mdcp-vscode/package.json`.
+2. Commit the version bump.
+3. Tag the commit with the prefix `vscode-v` (e.g., `vscode-v0.1.0`).
+4. Push the tag to GitHub:
+   ```bash
+   git tag vscode-v0.1.0
+   git push origin vscode-v0.1.0
+   ```
+5. The GitHub Action (`.github/workflows/publish-vscode-extension.yml`) will automatically build the extension and publish it to both the Visual Studio Marketplace and Open VSX Registry.
 
 ## Install surfaces
 

@@ -31,7 +31,7 @@ jobs:
       - name: Publish to Visual Studio Marketplace
         uses: lannonbr/vsce-action@v3
         with:
-          args: 'publish -p $VSCE_PAT'
+          args: 'publish -p $VSCE_PAT --no-dependencies'
           packagePath: 'packages/mdcp-vscode'
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
