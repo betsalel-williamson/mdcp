@@ -26,12 +26,18 @@ As defined by [IBM](https://community.ibm.com/community/user/blogs/frank-de-gili
 
 ---
 
-## How do you eat an elephant?
+## The Adversarial Reality: Why Docs Always Fail
 
-_One spoon at a time._
+We have known documentation is the problem for decades, yet we rarely fix it. Why?
 
-**How do we solve a $2.4 Trillion problem?**
+- **Working code sells:** Demos and MVPs win deals. Docs and maintenance are usually only valued during failures and disasters.
+- **Docs are viewed as a chore:** Engineers who build systems often see documentation as a duplication of work.
+- **The "Look at the Code" Fallacy:** Engineers argue, "Want to know what the system does? Look at the code."
 
-_One bit of context at a time._
+**Why "Look at the Code" fails:**
+
+- The business (who manages the system) and the users don't have access to the code.
+- When things go wrong, new engineers lack the context to understand _why_ one part links to another.
+- Code doesn't explain why tests are stale, or capture the critical edge case that lived in a Jira ticket but never made it back to the codebase.
 
 ---

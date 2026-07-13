@@ -12,7 +12,11 @@ Let’s ensure the future of agentic coding isn’t just generated faster—it�
 
 ## Thank You
 
-**Questions?**
+**Questions? Demo?**
 
 - **GitHub:** `betsalel-williamson/mdcp`
 - **NPM:** `@bwilliamson/mdcp-cli`
+
+_Appendix slides follow for common objections during Q&A._
+
+---

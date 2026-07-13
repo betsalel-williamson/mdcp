@@ -81,10 +81,7 @@
         "client-cli",
         "client-core",
         "repo-readme",
-        "presentation-la-devops",
-        "#**/*.png",
-        "#**/*.svg",
-        "#**/*.mmd"
+        "presentation-la-devops"
       ]
     },
     "xrefs": { "enabled": true }
@@ -98,10 +95,7 @@
       "client-cli",
       "client-core",
       "repo-readme",
-      "presentation-la-devops",
-      "!**/*.png",
-      "!**/*.svg",
-      "!**/*.mmd"
+      "presentation-la-devops"
     ]
   },
   "export": {
