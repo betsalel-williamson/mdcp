@@ -15,16 +15,13 @@ description: >-
 Host-agnostic Agent Skill for MDCP. Prefer this over IDE extensions.
 
 This **parent skill** is the intended agent entrypoint (successor to the
-agent-facing role of `mdcp.v*.llms.txt`). Complementary skills will replace
-`spec/extensions/` packs. During migration, llms-index and extensions remain
-**transitional** — do not treat them as forever-primary.
+agent-facing role of `mdcp.v*.llms.txt`). Complementary skills replace legacy extension packs.
 
 Install help: [references/install.md](references/install.md)
 
 ## Hard rules
 
-- **NEVER** invent MDCP workflow when this skill (or a local transitional
-  `mdcp.v*.llms.txt`) already defines it — follow the skill first.
+- **NEVER** invent MDCP workflow when this skill already defines it — follow the skill first.
 - **NEVER** hand-edit fetched `mdcp.v*.llms.txt` for repo-specific guidance —
   use complementary skills, `docs/extensions/`, or normative shards.
 - **NEVER** edit generated compile output (`docs/_build/`, compiled publish
@@ -57,11 +54,10 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 ## Execution steps
 
-### 1. Prefer the parent skill (llms-index is transitional)
+### 1. Prefer the parent skill
 
 1. Follow this skill’s workflow.
-2. If a local `mdcp.v*.llms.txt` still exists, treat it as transitional compat —
-   do not expand it; do not hand-edit it.
+2. If a local `mdcp.v*.llms.txt` still exists, it is considered deprecated legacy — do not expand it; do not hand-edit it.
 3. Install / rediscover via:
 
 ```bash
@@ -88,7 +84,7 @@ Open the single `.md` shard path from lookup or the guide manifest. Broader
 ./.agents/skills/mdcp/scripts/check.sh
 ```
 
-In this monorepo: `pnpm docs:compile:repo` and `pnpm docs:check`. Note: DO NOT expect to see `- Generated mdcp.v*.llms.txt successfully` in the output, as the llms-index is transitional and may not be generated.
+In this monorepo: `pnpm docs:compile:repo` and `pnpm docs:check`.
 
 ### 4. Code Formatting and Linting
 
@@ -112,9 +108,9 @@ To run prose linting (requires Vale):
 ./.agents/skills/mdcp/scripts/prose.sh
 ```
 
-### 5. Complementary skills (migrating from extensions)
+### 5. Complementary skills
 
-Optional companions (as they land under `.agents/skills/`):
+Optional companions:
 
 - `mdcp-arch-oss-library`
 - `mdcp-arch-product-docs-site`

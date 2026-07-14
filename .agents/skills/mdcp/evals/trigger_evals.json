@@ -12,7 +12,7 @@
     "should_trigger": true
   },
   {
-    "query": "What do we do with mdcp.v0.4.llms.txt during the skills migration?",
+    "query": "How does mdcp relate to the deprecated mdcp.v0.4.llms.txt format?",
     "should_trigger": true
   },
   {

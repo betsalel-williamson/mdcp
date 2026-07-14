@@ -6,9 +6,7 @@ Normative profile for **copy-paste agent prompts** that drive shard authoring ac
 
 Prompts are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge.
 
-Reference copies live in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/). The canonical prompt list is embedded in [spec/llms-index/](../../spec/llms-index/) llms-index artifacts and summarized below. `mdcp export --llms-index --fetch` caches prompts under `.agents/skills/mdcp/agents/` in the consumer docs root.
-
-**Do not edit** fetched `mdcp.v*.llms.txt` for prompt or workflow changes — propose upstream or add [extensions](./extensions-and-archetypes.md) under `docs/extensions/`.
+Reference copies live in [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/). The canonical prompt list is summarized below. **Do not edit** the `.agents/skills/mdcp/agents/` copies directly if you want changes to persist — propose upstream or add extensions.
 
 ## Required prompt shape
 
@@ -37,7 +35,7 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 | [ux.md](../../.agents/skills/mdcp/agents/ux.md)                                   | End-user experience              | `client/`                            |
 | [review.md](../../.agents/skills/mdcp/agents/review.md)                           | Architecture and security review | `review/`, `features/` (stubs)       |
 
-Index: [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/). Cached in consumer repos at `.agents/skills/mdcp/agents/` after fetch.
+Index: [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/).
 
 ## Three-tier authoring obligations
 
@@ -63,10 +61,10 @@ When using [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md)
 ## Entrypoint chain
 
 ```text
-mdcp.v0.4.llms.txt  →  .agents/skills/mdcp/agents/*.prompt.md (WORK_ITEM set)  →  shards  →  mdcp check
+.agents/skills/mdcp/agents/getting-started.md  →  .agents/skills/mdcp/agents/*.prompt.md (WORK_ITEM set)  →  shards  →  mdcp check
 ```
 
-The llms-index file points agents at prompts and query commands; prompts point at `WORK_ITEM_LOOKUP` for scope.
+The Agent Skill points agents at subagents and query commands; task prompts point at `WORK_ITEM_LOOKUP` for scope.
 
 ## Review workflow (normative summary)
 

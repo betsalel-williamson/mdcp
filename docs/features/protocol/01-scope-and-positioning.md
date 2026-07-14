@@ -22,27 +22,21 @@ MDCP is an **offline document context protocol** — not a wire protocol like [M
 ```text
   [Authoring]  MDCP: shards → compile → check → export
        ↓
-  [Delivery]   MCP server, file read, mdcp.v*.llms.txt, stdout
+  [Delivery]   Agent Skills pack, MCP server, file read, stdout
        ↓
   [Consumers]  agent host, CI, human reviewers
 ```
 
 ## OpenAPI analogy
 
-OpenAPI standardizes HTTP API contracts. MDCP standardizes **documentation context contracts**: shard layout, compile invariants, refs registry, export profiles (`--llm`, `mdcp.v*.llms.txt`).
+OpenAPI standardizes HTTP API contracts. MDCP standardizes **documentation context contracts**: shard layout, compile invariants, refs registry, export profiles (`--llm`).
 
 ## Normative core vs reference implementation
 
 | Layer                     | Owner                                             |
 | ------------------------- | ------------------------------------------------- |
 | Normative spec (MDCP 1.0) | `docs/features/protocol/` + `spec/schemas/`       |
-| Protocol artifacts        | `spec/llms-index/`, `spec/conformance/`           |
-| Extension packs           | `spec/extensions/` + local `docs/extensions/`     |
+| Protocol artifacts        | `spec/conformance/`                               |
+| Extension packs           | complementary skills + local `docs/extensions/`   |
 | Reference implementation  | `@bwilliamson/mdcp-cli`, `@bwilliamson/mdcp-core` |
 | Delivery adapters (V2/V3) | MCP server, hosted API                            |
-
-## Filename versioning (`mdcp.v*.llms.txt`)
-
-- Protocol version `0.4.0.0` → `mdcp.v0.4.llms.txt` or `mdcp.v0.4.0.0.llms.txt`
-- In-file header always four-part: `mdcp-llms-index: 0.4.0.0`
-- Drop trailing `.0` segments in filename only

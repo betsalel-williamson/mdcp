@@ -22,8 +22,6 @@ npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
 npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 ```
 
-_(Legacy extension packs from `spec/extensions/` have been fully migrated to these Agent Skills.)_
-
 ## CLI still required for compile/check
 
 ```bash

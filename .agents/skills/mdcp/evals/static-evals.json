@@ -8,7 +8,7 @@
     "scripts/prose.sh",
     "one shard",
     "complementary",
-    "transitional",
+    "legacy",
     "npx skills add",
     ".agents/skills/mdcp"
   ],
@@ -68,7 +68,7 @@
     {
       "id": "anti-hand-edit-index",
       "prompt": "Customize agent rules for this repo",
-      "mustMention": ["transitional", "complementary"]
+      "mustMention": ["legacy", "complementary"]
     },
     {
       "id": "remove-old-info",

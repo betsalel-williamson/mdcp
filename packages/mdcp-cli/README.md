@@ -90,7 +90,7 @@ For command and capability depth, read the [feature catalog](../../docs/features
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
-**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). `mdcp export --llms-index --fetch` caches them at `.agents/skills/mdcp/agents/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** versioned prompts live under [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents). `mdcp export --llms-index --fetch` caches them at `.agents/skills/mdcp/agents/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ### Prompt library
 
@@ -113,7 +113,7 @@ Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to 
 
 ### Follow-up prompts
 
-Use these after the pipeline exists (inline here — not duplicated in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`).
+Use these after the pipeline exists (inline here — not duplicated in `.agents/skills/mdcp/agents/`).
 
 **Add documentation for a new feature:**
 
@@ -157,7 +157,7 @@ For architecture-heavy work before coding (RFCs, ADRs, data models), use [design
 #### Sharding keeps context lean
 
 - **Core workflow** — bootstrap prompt and repo script wiring
-- **On demand** — task-type prompts from `.agents/skills/mdcp/agents/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; load only what the current task needs
+- **On demand** — task-type prompts from `.agents/skills/mdcp/agents/` or `.agents/skills/mdcp/agents/`; load only what the current task needs
 - **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
 
 Prefer structured prompts over permanently importing rigid always-on rules into every repo.
@@ -185,7 +185,7 @@ This repository documents its stack in [Agent work-item tracking](../../DEVELOPE
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — paste prompts from `.agents/skills/mdcp/agents/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; reference shard files for context; run the repo's doc check before ending a turn
+- **Cursor / Composer** — paste prompts from `.agents/skills/mdcp/agents/` or `.agents/skills/mdcp/agents/`; reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — `mdcp refs lookup "topic" --format json` before inserting fragment links
@@ -244,7 +244,7 @@ When reviewing an agent's documentation PR:
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [Agent integration](#agent-integration) — npm scripts quick reference
-- [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0) — versioned copy-paste prompt files
+- [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents) — versioned copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
 - [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
@@ -377,7 +377,7 @@ MIT
 
 ## Agent Skill (consumer)
 
-Install the MDCP **parent Agent Skill** so coding agents follow sharded-docs workflows without a host-specific IDE extension. Complementary skills (prompts, archetypes, format packs) install beside the parent as they migrate from the old extension packs.
+Install the MDCP **parent Agent Skill** so coding agents follow sharded-docs workflows without a host-specific IDE extension. Complementary skills (prompts, archetypes, format packs) install beside the parent.
 
 This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplace, or any single product.
 
@@ -387,8 +387,7 @@ This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplac
 # Parent skill (primary agent entrypoint)
 npx skills add betsalel-williamson/mdcp --skill mdcp
 
-# Complementary skills (optional; as each pack migrates)
-npx skills add betsalel-williamson/mdcp --skill mdcp-prompts-defaults
+# Complementary skills (optional)
 npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 ```
 
@@ -418,15 +417,10 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 Keep using npm scripts for compile and check — see [Agent integration](#agent-integration). The skill teaches agents **when** to run those commands and **how** to load the smallest useful shard context. It does not replace `@bwilliamson/mdcp-cli`.
 
-### Migration from llms-index bootstrap
-
-Older onboarding copied or fetched `mdcp.v*.llms.txt` into the docs root. That file remains available during transition, but new projects should install the **parent skill** first. See [Agent Skill delivery](../../docs/features/agent-skill.md) for phases and backlog.
-
 ### Next steps
 
 1. Install the parent skill (and complementary skills you need).
 2. Add [Install and quick start](#install-and-quick-start) CLI wiring.
-3. Use [LLM collaboration](#llm-collaboration) task prompts until `mdcp-prompts-defaults` ships as a skill.
 
 ## Project layout
 

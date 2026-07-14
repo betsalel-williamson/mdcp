@@ -47,7 +47,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ### Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type prompts ([.agents/skills/mdcp/agents/](.agents/skills/mdcp/agents)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ### Daily commands
 
@@ -85,7 +85,7 @@ CI runs the full gate: `pnpm run check`.
 
 ## Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0) (cached at `.agents/skills/mdcp/agents/` after fetch) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [.agents/skills/mdcp/agents/](.agents/skills/mdcp/agents) (cached at `.agents/skills/mdcp/agents/` after fetch) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 
@@ -283,7 +283,7 @@ Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on
 
 ## Agent Skill
 
-Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill at [`.agents/skills/mdcp/SKILL.md`](.agents/skills/mdcp/SKILL.md). Complementary skills (prompts, archetypes, format packs) migrate from [`spec/extensions/`](spec/extensions) into sibling directories under `.agents/skills/`.
+Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill at [`.agents/skills/mdcp/SKILL.md`](.agents/skills/mdcp/SKILL.md). Complementary skills (prompts, archetypes, format packs) migrate from [complementary skills](spec/extensions) into sibling directories under `.agents/skills/`.
 
 The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`. Keep `spec/llms-index/` and extension packs only while migration issues remain open.
 

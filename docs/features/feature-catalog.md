@@ -40,7 +40,7 @@ Drop the static file in any docs root before config exists; regenerate after `co
 
 ## Agent Skill delivery
 
-Parent Agent Skill at `.agents/skills/mdcp/SKILL.md` succeeds the agent-facing role of llms-index. Complementary skills migrate from `spec/extensions/`. See [Agent Skill delivery](./agent-skill.md).
+Parent Agent Skill at `.agents/skills/mdcp/SKILL.md` succeeds the agent-facing role of llms-index. See [Agent Skill delivery](./agent-skill.md).
 
 ## Check gate (P0.4)
 

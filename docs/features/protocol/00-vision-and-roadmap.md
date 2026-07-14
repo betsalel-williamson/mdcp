@@ -17,15 +17,15 @@ MDCP inverts the model: **small shards** are the source of truth; agents pull **
 | Document before build/migrate  | Capture context in shards before greenfield work or migrations                                            |
 | Granular, safe context         | `refs lookup` → single shard; `export --llm` only when broader context is needed                          |
 | Open standard                  | Reference implementation is `@bwilliamson/mdcp-cli` / `mdcp-core`; protocol is implementable without them |
-| Extensions over core           | `docs/extensions/` locally; shared packs in `spec/extensions/`                                            |
+| Extensions over core           | `docs/extensions/` locally; shared packs in complementary skills                                          |
 
 ## Phased delivery
 
-| Phase  | Surface                                                                                                                               | Access model                  |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| **V1** | `mdcp.v0.4.llms.txt` bootstrap (protocol `0.4.0.0`, **draft** during npm 0.4 alpha) + agent task prompts + `mdcp export --llms-index` | Repo access (SSH, clone, IDE) |
-| **V2** | MDCP MCP server (`refs lookup`, shard read, glossary search)                                                                          | Repo access                   |
-| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                                                         | Opt-in publish                |
+| Phase  | Surface                                                                               | Access model                  |
+| ------ | ------------------------------------------------------------------------------------- | ----------------------------- |
+| **V1** | **Agent Skills** pack (`.agents/skills/mdcp`) + `mdcp compile`/`check` + task prompts | Repo access (SSH, clone, IDE) |
+| **V2** | MDCP MCP server (`refs lookup`, shard read, glossary search)                          | Repo access                   |
+| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                         | Opt-in publish                |
 
 ```text
   V1 authoring     shards → compile → check → mdcp.v*.llms.txt
@@ -37,23 +37,11 @@ MDCP inverts the model: **small shards** are the source of truth; agents pull **
 
 **V1 phase ≠ semver 1.0.** Roadmap phase names describe delivery surfaces; npm and protocol stability promises align at npm **1.0.0** / **`vstable`** promotion — not during open alpha (`valpha`).
 
-## V1 bootstrap: `mdcp.v*.llms.txt`
-
-Drop **`mdcp.v0.4.llms.txt`** in your docs root before full MDCP setup. The file is a **short index** (~80–200 lines), not a context dump.
-
-| Convention     | Rule                                                                                    |
-| -------------- | --------------------------------------------------------------------------------------- |
-| Filename       | `mdcp.v{version}.llms.txt` — trailing `.0` segments may be omitted (`v0.4` ≡ `0.4.0.0`) |
-| In-file header | Always four-part: `mdcp-llms-index: 0.4.0.0`                                            |
-| Location       | Docs root (`--docs-root`)                                                               |
-| Modes          | Fetch `vdev`, `valpha`, or `mdcp export --llms-index` (repo overlay)                    |
-| Immutability   | Do not hand-edit fetched index — use shards and extensions doc                          |
-
 ## Positioning
 
 | Approach                         | MDCP relationship                                       |
 | -------------------------------- | ------------------------------------------------------- |
-| Monolithic `llms.txt` dump       | Replaced by versioned index + on-demand shards          |
+| Monolithic `llms.txt` dump       | Replaced by Agent Skills pack + on-demand shards        |
 | Context7 / large crawled corpora | Author-controlled, deterministic, PR-reviewable         |
 | OpenAPI                          | Analogy: contract for documentation context             |
 | MCP                              | Complementary delivery on top of MDCP artifacts         |
@@ -65,7 +53,7 @@ MDCP is **not** an MCP server. MCP delivers runtime access; MDCP enforces shard 
 
 MDCP authoring is [GFM-only](../design-constraints/gfm-scope.md). Compiled GFM output can feed Pandoc, MkDocs, Docusaurus, or other publish pipelines. Agent-only guides and publish-only guides may differ in scope.
 
-Task-type prompts in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` are part of the V1 authoring profile — [Agent task prompts](./agent-task-prompts.md).
+Task-type prompts in `.agents/skills/mdcp/agents/` are part of the V1 authoring profile — [Agent task prompts](./agent-task-prompts.md).
 
 ## Related issues
 

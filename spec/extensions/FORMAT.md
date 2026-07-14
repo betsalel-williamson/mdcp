@@ -7,4 +7,4 @@
 >
 > **This directory and its contents will be removed in an upcoming release.** We are keeping these files temporarily to ensure backward compatibility for early adopters who have not yet migrated.
 
-Normative layout and manifest schema for versioned extension packs under `spec/extensions/`.
+Normative layout and manifest schema for versioned extension packs under complementary skills.

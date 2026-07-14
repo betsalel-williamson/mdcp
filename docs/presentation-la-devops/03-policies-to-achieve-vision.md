@@ -17,6 +17,6 @@ Your docs must capture:
 - **Glossary as first-class:** Domain terms and legacy disambiguation live in dedicated shards.
 - **Document before build/migrate:** Capture context in shards before greenfield work.
 - **Granular, safe context:** `refs lookup` → single shard.
-- **Open standard & Extensions:** `docs/extensions/` locally; shared packs in `spec/extensions/`.
+- **Open standard & Extensions:** `docs/extensions/` locally; shared packs in complementary skills.
 
 ---
