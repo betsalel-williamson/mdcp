@@ -2,12 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import GithubSlugger, { slug as githubSlug } from 'github-slugger';
-import {
-  githubSlugify,
-  headingTextToPlain,
-  buildSlugRegistry,
-  lookupHeadings,
-} from '../src/refs/slugs.js';
+import { githubSlugify, headingTextToPlain, buildSlugRegistry } from '../src/refs/slugs.js';
+import * as mdcp from '../src/index.js';
 import { genRefsFromCompiled, checkRefsRegistry } from '../src/refs/registry.js';
 import { resolveRefsPath } from '../src/config/load.js';
 import { useTmpDir } from './helpers/tmp-dir.js';
@@ -79,11 +75,14 @@ describe('buildSlugRegistry', () => {
   });
 });
 
-describe('lookupHeadings', () => {
-  it('fuzzy matches title and slug', () => {
-    const reg = buildSlugRegistry('# G\n\n## Authentication flow\n');
-    const matches = lookupHeadings(reg, 'auth');
-    expect(matches.some((m) => m.title.includes('Authentication'))).toBe(true);
+describe('public refs API', () => {
+  it('does not export lookupHeadings', () => {
+    expect('lookupHeadings' in mdcp).toBe(false);
+  });
+
+  it('still exports buildSlugRegistry and registry helpers', () => {
+    expect(typeof mdcp.buildSlugRegistry).toBe('function');
+    expect(typeof mdcp.genRefsFromCompiled).toBe('function');
   });
 });
 

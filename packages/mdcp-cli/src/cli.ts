@@ -16,7 +16,6 @@ import {
   genRefsFromCompiled,
   checkRefsRegistry,
   resolveRefsPath,
-  lookupHeadings,
   readRefsRegistry,
   lintXrefs,
   stripForLlm,
@@ -24,7 +23,6 @@ import {
   findPeerBinary,
   runPeer,
   shardFromMonolith,
-  buildSlugRegistry,
   writeOutputFile,
   resolveBackupOptions,
   formatLinkIssue,
@@ -213,25 +211,6 @@ refs
       }
     } else {
       console.log(JSON.stringify(registry.headings, null, 2));
-    }
-  });
-
-refs
-  .command('lookup <query>')
-  .description('Fuzzy-find headings (JSON)')
-  .option('--format <fmt>', 'json or table', 'json')
-  .action((query, lookupOpts, cmd) => {
-    const opts = cmd.parent.parent.opts() as GlobalOpts;
-    const config = getConfig(opts);
-    const compiled = compileToString(config, getDocsRoot(opts), opts);
-    const registry = buildSlugRegistry(compiled);
-    const matches = lookupHeadings(registry, query);
-    if (lookupOpts.format === 'table') {
-      for (const m of matches) {
-        console.log(`${m.slug}\t${m.title}`);
-      }
-    } else {
-      console.log(JSON.stringify(matches, null, 2));
     }
   });
 

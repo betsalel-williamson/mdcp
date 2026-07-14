@@ -88,7 +88,6 @@ export {
   githubSlugify,
   headingTextToPlain,
   buildSlugRegistry,
-  lookupHeadings,
   type HeadingEntry,
   type RefsRegistry,
 } from './refs/slugs.js';
