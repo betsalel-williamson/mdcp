@@ -978,13 +978,17 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 ## Agent Skills
 
-The successor to the legacy `mdcp.v*.llms.txt` (llms-index) bootstrap file. Instead of fetching a monolithic `llms.txt` file, MDCP is delivered as a portable Agent Skill (e.g., `.agents/skills/mdcp/SKILL.md`). This provides a host-agnostic, zero-friction way to enforce documentation guardrails, workflows, and complementary skills (like prompts and formats) across different AI coding assistants.
+Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s documentation guardrails. Instead of fetching a monolithic `mdcp.v*.llms.txt` (llms-index) bootstrap file, MDCP ships as a vendored skill under `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and read docs one piece at a time across Cursor, Copilot, Claude Code, and similar hosts.
 
 Verification is split: [skill content lint](#skill-content-lint) is the CI static check on `SKILL.md` text; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
 
 ## MDCP
 
-**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, [refs](#refs) registry maintenance, and `export --llm` implement the shared context layer.
+**MarkDown Context Protocol** — an [Agent Skill](#agent-skills) and lightweight toolchain for repository documentation context. It helps teams distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays in the right place: reviewable in git, scalable as docs grow, and readable one shard at a time by people and coding agents.
+
+MDCP is not a magic bullet for documentation debt. It is a helpful practice and skill that puts durable system context where it compounds over time — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
+
+The CLI (`compile`, `check`, [refs](#refs) registry maintenance, and `export --llm`) implements that shared context layer alongside the skill’s behavioral guardrails.
 
 ## protocol version
 
