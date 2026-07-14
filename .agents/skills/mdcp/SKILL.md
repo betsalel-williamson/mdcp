@@ -44,6 +44,26 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 - **No temp info or backlogs:** Do not record temporary project information, tickets, incident logs, or "old information" like migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools.
 - **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
 
+## What belongs where
+
+Documentation is a **first-class artifact** alongside code. We use a **spec-driven** workflow: shards hold context, intent, and the high-level meta plan; **implementation details stay in code**.
+
+| Guide             | Holds                                                                          | Does not hold                                                 |
+| ----------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| `docs/features/`  | How the plumbing works — capabilities, design, contracts, acceptance criteria  | Step-by-step implementation, duplicated API surface from code |
+| `docs/client/`    | How a specific persona finds value using the software — outcomes, flows, usage | Internal architecture, maintainer-only workflows              |
+| `docs/developer/` | How to work on the repo — setup, layout, validation, delivery                  | Product narrative or end-user tutorials                       |
+| Code              | Implementation details, algorithms, edge-case handling                         | Duplicated high-level product narrative                       |
+
+Spell out domain terms on first use; link shared vocabulary from `docs/glossary/` when it exists.
+
+## Authoring rules
+
+- Shards under `docs/**/` are the source of truth.
+- Use `#` headings in shards; mdcp demotes them during compile.
+- After changing a guide's link order (e.g., in `index.md`), run `mdcp compile` — there is no separate manifest sync step.
+- Before inserting `[text](#slug)` cross-links, run `mdcp refs lookup "<topic>" --format json`.
+
 ## When to use
 
 - **PROACTIVELY on ANY feature, bugfix, or architectural task:** MDCP must be involved in the entire process. Before writing code, trace the requirement back to documentation. Consider the end-user problems and ensure helpful docs exist or are created.
