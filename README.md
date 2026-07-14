@@ -2,9 +2,9 @@
 
 ## What this tool is
 
-**mdcp** is an open standard and [Agent Skill](https://agentskills.io) for **technical documentation context**.
+**mdcp** is an [Agent Skill](https://agentskills.io) and toolchain for **technical documentation context**.
 
-Instead of massive, unvalidated monolithic READMEs that overwhelm LLM context windows, MDCP organizes knowledge into small, validated Markdown **shards** (e.g. `docs/features/my-feature.md`). The MDCP Agent Skill trains your coding agents (in Cursor, Copilot, or Claude) to read these shards one by one, update them before coding, and validate them in CI.
+It is not a magic bullet — it is a helpful way to head off the long-term cost of poor docs. Instead of massive, unvalidated monolithic READMEs that overwhelm LLM context windows, MDCP helps you distill mind maps, architecture notes, specs, and product ideas into small, validated Markdown **shards** (e.g. `docs/features/my-feature.md`). The skill trains coding agents (in Cursor, Copilot, or Claude) to read those shards one by one, update them before coding, and validate them in CI — so people and AIs can trace value, learn the tools, and keep the system understandable as it grows. Works for a team of one or a full product, engineering, and marketing org.
 
 ## Get started
 
@@ -34,10 +34,12 @@ npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 
 ## Why use MDCP?
 
-- **Docs-as-code discipline for Agents:** Forces agents to plan in Markdown shards rather than hallucinating in the chat window.
-- **Smaller context when you read one shard:** Shards keep per-turn context small versus loading a full compiled guide — when agents open a single shard instead of the monolith.
-- **Validation gate:** `mdcp check` runs in CI to guarantee that references and links between shards are valid.
-- **Portable:** Works natively in Cursor, GitHub Copilot, Claude Code, and other agent hosts that support the Agent Skills standard.
+- **Puts intent in the right place:** Distills mind maps, specs, and design notes into durable shards that stay with the repo over the long term.
+- **Docs-as-code discipline for agents:** Helps agents plan in Markdown shards rather than inventing context in the chat window.
+- **Small chunks, clearer roots:** Shards keep ideas digestible for people and keep LLMs on track — one shard at a time instead of a monolith dump.
+- **Validation gate:** `mdcp check` runs in CI so references and links between shards stay trustworthy.
+- **Scales with the org:** Useful for a solo builder or a full product, engineering, and marketing team.
+- **Portable skill:** Works in Cursor, GitHub Copilot, Claude Code, and other hosts that support [Agent Skills](https://agentskills.io).
 
 ## The Toolchain
 
