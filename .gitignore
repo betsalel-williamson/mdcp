@@ -22,6 +22,11 @@ coverage/
 .cursor/
 .cursorindexingignore
 
+# Agent Skills Workspaces
+.agents/skills/*-workspace/
+.agents/skills/skill-creator/
+skills-lock.json
+
 # VS Code (keep shared workspace config)
 .vscode/*
 
