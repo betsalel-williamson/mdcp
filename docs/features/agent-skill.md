@@ -1,36 +1,74 @@
 # Agent Skill delivery
 
-MDCP ships as a portable **Agent Skill** (`SKILL.md`) so projects inherit documentation guardrails without installing a host-specific IDE extension.
+MDCP ships as a portable **Agent Skills** pack so projects inherit documentation guardrails without installing a host-specific IDE extension. The **parent skill** is the intended agent entrypoint. Legacy `mdcp.v*.llms.txt` (llms-index) and `spec/extensions/` packs are **transitional** while we migrate them into skills.
 
-## Why a skill instead of an IDE extension
+## Why skills instead of IDE extensions or llms-index alone
 
-| Concern                  | Custom IDE extension                     | Agent Skill (`SKILL.md`)                                      |
-| ------------------------ | ---------------------------------------- | ------------------------------------------------------------- |
-| User friction            | Find and install an extension            | Zero — auto-discovered in the repo                            |
-| Interoperability         | Locked to one editor host                | Cursor, Copilot, Claude Code, VS Code Agent Skills, CLI hosts |
-| Maintenance              | UI / API updates per host                | Markdown skill bundle                                         |
-| Protocol source of truth | Risk of duplicating prompts in host code | Points at `mdcp.v*.llms.txt` + `spec/extensions/`             |
+Compared with a custom IDE extension or a fetched llms-index plus extension packs, Agent Skills give:
 
-## Format and location (spike outcome)
+- **Lower friction** — zero-install in the repo, or `npx skills add`
+- **Host interoperability** — Cursor, Copilot, Claude Code, VS Code, and CLI hosts
+- **Simpler maintenance** — markdown skill directories instead of host UI or dual index/pack formats
+- **Composition** — parent skill plus complementary skills instead of one monolithic pack
 
-- **Format:** `SKILL.md` per the [Agent Skills](https://agentskills.io) open standard (required filename for discovery).
-- **Preferred path:** [`.agents/skills/mdcp/SKILL.md`](../../.agents/skills/mdcp/SKILL.md) — shared project location across Cursor, GitHub Copilot, and VS Code.
-- **Also discovered by some hosts:** `.github/skills/mdcp/`, `.cursor/skills/mdcp/`.
-- **Not renamed:** the protocol bootstrap stays versioned `mdcp.v*.llms.txt` from [`spec/llms-index/`](../../spec/llms-index/). The skill teaches agents to **use** that index; it does not replace it.
+## Parent skill and complementary skills
 
-## What stays unchanged
+- `.agents/skills/mdcp/` — parent (bootstrap, hard rules, CLI, smallest-context); migrates from [`spec/llms-index/`](../../spec/llms-index/)
+- `.agents/skills/mdcp-prompts-defaults/` — default task prompts; from `prompts-mdcp-defaults`
+- `.agents/skills/mdcp-arch-oss-library/` — OSS library archetype; from `arch-oss-library`
+- `.agents/skills/mdcp-arch-product-docs-site/` — product docs site archetype; from `arch-product-docs-site`
+- `.agents/skills/mdcp-format-marp/` — Marp formatting; from `format-marp-presentation`
 
-- [`spec/llms-index/`](../../spec/llms-index/) — published agent bootstrap artifacts
-- [`spec/extensions/`](../../spec/extensions/) — format packs, archetypes, default task prompts
-- CLI / core packages — `compile`, `check`, `export`, `refs lookup`
+Complementary skills land via follow-up PRs tracked in the [migration backlog](#migration-backlog). Until then, transitional packs remain under [`spec/extensions/`](../../spec/extensions/).
 
-## Consumer workflow
+## Format and location
 
-1. Copy `.agents/skills/mdcp/` into the consumer repository (or install from a skill registry).
-2. Fetch or regenerate `mdcp.v*.llms.txt` in the docs root (`mdcp export --llms-index`).
-3. Edit shards; run `mdcp compile` then `mdcp check`.
-4. Load cached prompts from enabled extension packs when doing structured authoring tasks.
+- **Format:** `SKILL.md` per the [Agent Skills](https://agentskills.io) open standard.
+- **Preferred path:** [`.agents/skills/mdcp/SKILL.md`](../../.agents/skills/mdcp/SKILL.md).
+- **Also discovered:** `.github/skills/`, `.claude/skills/` (host-dependent aliases). Prefer documenting `.agents/skills/` only.
+
+## What remains during migration
+
+- CLI / core packages — `compile`, `check`, `export`, `refs lookup` (unchanged).
+- [`spec/llms-index/`](../../spec/llms-index/) and [`spec/extensions/`](../../spec/extensions/) — available for compat until skills cutover issues close.
+- Schemas and conformance under `spec/` — not replaced by skills.
+
+## Install surfaces
+
+```bash
+# Parent skill
+npx skills add betsalel-williamson/mdcp --skill mdcp
+
+# Complementary skills (as each migrates)
+npx skills add betsalel-williamson/mdcp --skill mdcp-prompts-defaults
+npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
+```
+
+Zero-install: copy `.agents/skills/mdcp/` (and complementary skill directories when present) into the consumer repo.
+
+## Acceptance criteria
+
+1. Parent skill is a valid Agent Skills package (`name: mdcp` matches folder).
+2. Docs and skill wording treat llms-index / extensions as **transitional**, not forever-primary.
+3. Install documents parent + complementary skills via `npx skills add`.
+4. Parent skill encodes bootstrap / smallest-context / hard rules formerly unique to the agent index.
+5. Skill is host-agnostic — no Marketplace-only required steps.
+6. `pnpm skill:check` passes locally and in CI for changes under `.agents/skills/mdcp/` and the skill checker scripts.
+
+## Migration phases
+
+1. **Compat** — Parent skill ships; llms-index fetch and extension packs still work.
+2. **Skills-primary** — Docs and install recommend Agent Skills; complementary skills replace packs.
+3. **Deprecate** — Drop or dual-publish only where tooling still requires the old fetch path (tracked in backlog issues).
+
+## Migration backlog
+
+Epic: [#102](https://github.com/betsalel-williamson/mdcp/issues/102). Per-pack and deprecation issues: [#103](https://github.com/betsalel-williamson/mdcp/issues/103)–[#107](https://github.com/betsalel-williamson/mdcp/issues/107). Full table: [Agent Skill (developer)](../developer/agent-skill.md#migration-backlog).
+
+## Eval and CI
+
+Deterministic evals live under `.agents/skills/mdcp/evals/`. Run `pnpm skill:check`. GitHub Actions runs the same gate so skill regressions fail the PR.
 
 ## Ecosystem publication
 
-Treat `.agents/skills/mdcp/` as the skill bundle to submit to community indexes (for example VoltAgent `awesome-agent-skills`, SkillsMP / AgentSkill.sh, host partner skill lists). Keep packaging professional: one skill directory, clear `name` / `description` frontmatter, and links to upstream `spec/` rather than forking protocol text into the skill body.
+Primary discovery: [skills.sh](https://skills.sh) via `npx skills`. Secondary registries later. Do not publish a VS Code Marketplace VSIX for this delivery path.

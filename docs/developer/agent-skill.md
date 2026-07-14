@@ -1,18 +1,60 @@
 # Agent Skill
 
-Zero-friction MDCP delivery for AI agents uses the portable Agent Skill at [`.agents/skills/mdcp/SKILL.md`](../../.agents/skills/mdcp/SKILL.md).
+Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill at [`.agents/skills/mdcp/SKILL.md`](../../.agents/skills/mdcp/SKILL.md). Complementary skills (prompts, archetypes, format packs) migrate from [`spec/extensions/`](../../spec/extensions/) into sibling directories under `.agents/skills/`.
+
+The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`. Keep `spec/llms-index/` and extension packs only while [migration backlog](#migration-backlog) issues remain open.
 
 ## Local dogfood
 
-Agents in this repository should discover the skill automatically. Manual invoke (hosts that support slash skills): `/mdcp`.
+Agents in this repository should discover `.agents/skills/mdcp/` automatically. Manual invoke (hosts that support slash skills): `/mdcp`.
 
 When changing skill instructions:
 
-1. Edit `.agents/skills/mdcp/SKILL.md`.
-2. Keep protocol truths in `spec/llms-index/` and `spec/extensions/` — only teach discovery and workflow in the skill.
-3. Update [Agent Skill delivery](../features/agent-skill.md) if location or publish guidance changes.
-4. Run `pnpm docs:check` after docs shard edits.
+1. Edit `.agents/skills/mdcp/SKILL.md` (and `references/` as needed).
+2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages / `spec/schemas`.
+3. For prompts, archetypes, or format packs, prefer complementary skills (or land them via migration issues) instead of growing the parent forever.
+4. Update [Agent Skill delivery](../features/agent-skill.md) when install or migration phases change.
+5. Run `pnpm skill:check` and `pnpm docs:check`.
 
-## Publishing the skill bundle
+## Verification
 
-Ship the `.agents/skills/mdcp/` directory (not a VS Code Marketplace VSIX). Consumers place it under `.agents/skills/mdcp/`, `.github/skills/mdcp/`, or `.cursor/skills/mdcp/` depending on host preferences. Prefer documenting `.agents/skills/` as the portable default.
+| Command            | Purpose                                                                        |
+| ------------------ | ------------------------------------------------------------------------------ |
+| `pnpm skill:check` | Deterministic parent-skill evals (frontmatter, triggers, hard-rule assertions) |
+| `pnpm docs:check`  | Docs compile + lint gate after shard edits                                     |
+
+`skill:check` is required in local `pnpm check` and in GitHub Actions CI. Changes to the skill or `scripts/check-mdcp-skill.mjs` must keep that step green.
+
+## Optional local improve loop
+
+For qualitative description tuning, install Anthropic's `skill-creator` locally (`npx skills add anthropics/skills --skill skill-creator`). Do **not** require Claude CLI or `skill-creator` in CI.
+
+## Publishing the skill pack
+
+Ship `.agents/skills/mdcp/` (and complementary skill directories as they migrate). Prefer:
+
+```bash
+npx skills add betsalel-williamson/mdcp --skill mdcp
+```
+
+Documented portable path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
+
+## Migration backlog
+
+Open (or update) GitHub issues for:
+
+- Epic: migrate agent delivery from llms-index + extensions to Agent Skills
+- Child: `prompts-mdcp-defaults` → `mdcp-prompts-defaults`
+- Child: `arch-oss-library` → `mdcp-arch-oss-library`
+- Child: `arch-product-docs-site` → `mdcp-arch-product-docs-site`
+- Child: `format-marp-presentation` → `mdcp-format-marp`
+- Child: deprecate / dual-publish path for `mdcp.v*.llms.txt` once the parent skill is authoritative
+
+| Issue                                                    | URL                                                      |
+| -------------------------------------------------------- | -------------------------------------------------------- |
+| Epic                                                     | <https://github.com/betsalel-williamson/mdcp/issues/102> |
+| `prompts-mdcp-defaults` → `mdcp-prompts-defaults`        | <https://github.com/betsalel-williamson/mdcp/issues/103> |
+| `arch-oss-library` → `mdcp-arch-oss-library`             | <https://github.com/betsalel-williamson/mdcp/issues/104> |
+| `arch-product-docs-site` → `mdcp-arch-product-docs-site` | <https://github.com/betsalel-williamson/mdcp/issues/105> |
+| `format-marp-presentation` → `mdcp-format-marp`          | <https://github.com/betsalel-williamson/mdcp/issues/106> |
+| Deprecate llms-index as primary bootstrap                | <https://github.com/betsalel-williamson/mdcp/issues/107> |

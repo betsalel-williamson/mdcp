@@ -40,7 +40,7 @@ Drop the static file in any docs root before config exists; regenerate after `co
 
 ## Agent Skill delivery
 
-Portable skill bundle at `.agents/skills/mdcp/SKILL.md` for zero-install discovery across Agent Skills hosts. Points agents at `mdcp.v*.llms.txt` and `spec/extensions/` — does not replace them. See [Agent Skill delivery](./agent-skill.md).
+Parent Agent Skill at `.agents/skills/mdcp/SKILL.md` succeeds the agent-facing role of llms-index. Complementary skills migrate from `spec/extensions/`. See [Agent Skill delivery](./agent-skill.md).
 
 ## Check gate (P0.4)
 
