@@ -1,5 +1,14 @@
 # UX Agent
 
+---
+
+**Replace before sending:**
+
+```text
+WORK_ITEM=
+WORK_ITEM_LOOKUP=
+```
+
 Act as an expert UX Designer and Frontend Engineer to design and implement user experiences using MDCP shards.
 
 ## Role

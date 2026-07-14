@@ -1,5 +1,14 @@
 # Design Architecture Agent
 
+---
+
+**Replace before sending:**
+
+```text
+WORK_ITEM=
+WORK_ITEM_LOOKUP=
+```
+
 Act as an expert Systems Architect to draft and design system architecture using MDCP shards.
 
 ## Role

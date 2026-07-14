@@ -1,5 +1,14 @@
 # Getting Started Agent
 
+---
+
+**Replace before sending:**
+
+```text
+FEATURE=
+PERSONA=
+```
+
 Set up a sharded documentation pipeline using MDCP for a new repository or feature.
 
 ## Role
