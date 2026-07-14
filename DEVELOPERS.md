@@ -283,7 +283,7 @@ Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on
 
 ## Agent Skill
 
-Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill at [`.agents/skills/mdcp/SKILL.md`](.agents/skills/mdcp/SKILL.md). Complementary skills (prompts, archetypes, format packs) migrate from [complementary skills](spec/extensions) into sibling directories under `.agents/skills/`.
+Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill at [`.agents/skills/mdcp/SKILL.md`](.agents/skills/mdcp/SKILL.md). Complementary skills (prompts, archetypes, format packs) migrate from [complementary skills](../../spec/extensions/) into sibling directories under `.agents/skills/`.
 
 The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`. Keep `spec/llms-index/` and extension packs only while migration issues remain open.
 

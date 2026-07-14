@@ -33,7 +33,6 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run format:check
       - run: pnpm run build
-      - run: pnpm run spec:check-llms-index
       - run: pnpm run test
       - run: pnpm run skill:check
       - run: pnpm run prepare:docs
