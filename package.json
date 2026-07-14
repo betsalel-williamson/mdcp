@@ -42,7 +42,8 @@
     "changeset:status": "changeset status --since=origin/main",
     "release:tag": "node scripts/release-tag.mjs",
     "release:tag:push": "node scripts/release-tag.mjs --push",
-    "prepare": "husky"
+    "prepare": "husky",
+    "skill:check": "node scripts/check-mdcp-skill.mjs"
   },
   "engines": {
     "node": ">=24.0.0"

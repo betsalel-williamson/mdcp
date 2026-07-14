@@ -1,0 +1,187 @@
+#!/usr/bin/env node
+/**
+ * Deterministic CI gate for the MDCP parent Agent Skill.
+ * No model/API required — frontmatter, triggers, and body assertions only.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const skillDir = path.join(root, '.agents/skills/mdcp');
+const skillPath = path.join(skillDir, 'SKILL.md');
+const triggersPath = path.join(skillDir, 'evals/triggers.json');
+const evalsPath = path.join(skillDir, 'evals/evals.json');
+
+const results = [];
+
+function pass(id, detail = '') {
+  results.push({ id, ok: true, detail });
+}
+
+function fail(id, detail) {
+  results.push({ id, ok: false, detail });
+}
+
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+function parseFrontmatter(raw) {
+  if (!raw.startsWith('---\n')) {
+    throw new Error('SKILL.md must start with YAML frontmatter');
+  }
+  const end = raw.indexOf('\n---\n', 4);
+  if (end === -1) {
+    throw new Error('SKILL.md frontmatter closing --- not found');
+  }
+  const yaml = raw.slice(4, end);
+  const body = raw.slice(end + 5);
+  const data = {};
+  let currentKey = null;
+  let folded = null;
+  for (const line of yaml.split('\n')) {
+    if (folded !== null) {
+      if (/^\s+\S/.test(line)) {
+        folded += (folded ? ' ' : '') + line.trim();
+        continue;
+      }
+      data[currentKey] = folded;
+      folded = null;
+      currentKey = null;
+    }
+    const m = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+    if (!m) continue;
+    const [, key, value] = m;
+    if (value === '>' || value === '>-' || value === '|' || value === '|-') {
+      currentKey = key;
+      folded = '';
+      continue;
+    }
+    data[key] = value.replace(/^['"]|['"]$/g, '');
+  }
+  if (folded !== null && currentKey) {
+    data[currentKey] = folded;
+  }
+  return { data, body };
+}
+
+function includesAny(haystack, needles) {
+  const lower = haystack.toLowerCase();
+  return needles.some((n) => lower.includes(String(n).toLowerCase()));
+}
+
+function includesAll(haystack, needles) {
+  const lower = haystack.toLowerCase();
+  return needles.every((n) => lower.includes(String(n).toLowerCase()));
+}
+
+function main() {
+  if (!fs.existsSync(skillPath)) {
+    fail('skill-exists', `missing ${skillPath}`);
+  } else {
+    pass('skill-exists');
+  }
+
+  const raw = fs.existsSync(skillPath) ? fs.readFileSync(skillPath, 'utf8') : '';
+  let data = {};
+  let body = '';
+  try {
+    ({ data, body } = parseFrontmatter(raw));
+    pass('frontmatter-parse');
+  } catch (error) {
+    fail('frontmatter-parse', error instanceof Error ? error.message : String(error));
+  }
+
+  if (data.name === 'mdcp') pass('name-mdcp');
+  else fail('name-mdcp', `expected name mdcp, got ${JSON.stringify(data.name)}`);
+
+  const description = String(data.description || '');
+  if (description.length > 0 && description.length <= 1024) pass('description-length');
+  else fail('description-length', `description length ${description.length}`);
+
+  const triggers = readJson(triggersPath);
+  const evals = readJson(evalsPath);
+
+  for (const token of triggers.descriptionMustInclude) {
+    if (description.toLowerCase().includes(token.toLowerCase())) {
+      pass(`description-has:${token}`);
+    } else {
+      fail(`description-has:${token}`, `description missing ${token}`);
+    }
+  }
+
+  for (const caseItem of triggers.positive) {
+    if (includesAny(description + '\n' + caseItem.query, caseItem.mustMatchAny)) {
+      // Positive queries should overlap description keywords so the skill is discoverable.
+      if (includesAny(description, caseItem.mustMatchAny)) {
+        pass(`trigger-positive:${caseItem.id}`);
+      } else {
+        fail(
+          `trigger-positive:${caseItem.id}`,
+          `description does not share keywords with query (${caseItem.mustMatchAny.join(', ')})`,
+        );
+      }
+    } else {
+      fail(`trigger-positive:${caseItem.id}`, 'invalid fixture needles');
+    }
+  }
+
+  for (const caseItem of triggers.negative) {
+    // Description may mention MDCP globally; negative cases only require that the
+    // query itself is not framed as an MDCP docs task (fixture sanity).
+    if (!includesAll(caseItem.query, caseItem.mustNotRequireAll)) {
+      pass(`trigger-negative:${caseItem.id}`);
+    } else {
+      fail(
+        `trigger-negative:${caseItem.id}`,
+        'negative query unexpectedly contains all MDCP needles',
+      );
+    }
+  }
+
+  for (const needle of evals.skillBodyMustInclude) {
+    if (body.toLowerCase().includes(needle.toLowerCase())) pass(`body-has:${needle}`);
+    else fail(`body-has:${needle}`, `SKILL.md body missing ${needle}`);
+  }
+
+  for (const needle of evals.skillBodyMustNotInclude) {
+    if (!body.includes(needle)) pass(`body-avoids:${needle}`);
+    else fail(`body-avoids:${needle}`, `SKILL.md must not require ${needle}`);
+  }
+
+  for (const rule of evals.hardRulesMustMention) {
+    if (includesAny(body, rule.patterns)) pass(`hard-rule:${rule.id}`);
+    else fail(`hard-rule:${rule.id}`, `missing patterns ${rule.patterns.join(', ')}`);
+  }
+
+  for (const caseItem of evals.cases) {
+    if (includesAll(body, caseItem.mustMention)) pass(`case:${caseItem.id}`);
+    else {
+      fail(
+        `case:${caseItem.id}`,
+        `body missing one of ${caseItem.mustMention.join(', ')} for: ${caseItem.prompt}`,
+      );
+    }
+  }
+
+  const lineCount = raw.split('\n').length;
+  if (lineCount <= 500) pass('line-budget');
+  else fail('line-budget', `SKILL.md has ${lineCount} lines (max 500)`);
+
+  const passed = results.filter((r) => r.ok).length;
+  const failed = results.filter((r) => !r.ok);
+  console.log(
+    `mdcp skill:check — ${passed} passed, ${failed.length} failed (${results.length} total)`,
+  );
+  for (const r of results) {
+    const mark = r.ok ? 'PASS' : 'FAIL';
+    console.log(`${mark}  ${r.id}${r.detail ? ` — ${r.detail}` : ''}`);
+  }
+
+  if (failed.length > 0) {
+    process.exitCode = 1;
+  }
+}
+
+main();
