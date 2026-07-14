@@ -417,8 +417,8 @@ This isn't a magic trick that instantly understands your legacy codebase. It's a
 Let’s ensure the future of agentic coding isn’t just generated faster—it’s designed with intent.
 
 1. **Shape the Standard:** Become a Founding Adopter.
-2. **Kick the tires:** Try the early alpha CLI:
-   `npm install -D @bwilliamson/mdcp-cli`
+2. **Kick the tires:** Try the agent skill:
+   `npx skills add betsalel-williamson/mdcp --skill mdcp`
 3. **Show support:** Drop a ⭐ on the GitHub repo.
 4. **Spread the word:** Share with your cross-functional teams.
 
@@ -429,7 +429,6 @@ Let’s ensure the future of agentic coding isn’t just generated faster—it�
 **Questions? Demo?**
 
 - **GitHub:** `betsalel-williamson/mdcp`
-- **NPM:** `@bwilliamson/mdcp-cli`
 
 _Appendix slides follow for common objections during Q&A._
 
