@@ -38,6 +38,10 @@ mdcp export --llms-index --config mdcp.config.json --docs-root docs
 
 Drop the static file in any docs root before config exists; regenerate after `compileOrder` changes. See [Vision and roadmap](./protocol/00-vision-and-roadmap.md).
 
+## Agent Skill delivery
+
+Portable skill bundle at `.agents/skills/mdcp/SKILL.md` for zero-install discovery across Agent Skills hosts. Points agents at `mdcp.v*.llms.txt` and `spec/extensions/` — does not replace them. See [Agent Skill delivery](./agent-skill.md).
+
 ## Check gate (P0.4)
 
 Structural validation: orphans → compile → refs → **links** → xrefs; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md). Latency targets for large shard sets: [Performance goals and review](./protocol/performance.md).

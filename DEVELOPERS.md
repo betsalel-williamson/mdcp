@@ -147,6 +147,7 @@ mdcp/
 ├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
+├── .agents/skills/mdcp/    # Portable Agent Skill (SKILL.md) — lower install friction
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
@@ -158,6 +159,7 @@ mdcp/
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
 │   ├── client-core/        # → packages/mdcp-core/README.md
 │   └── repo-readme/        # → README.md (publish landing)
+├── spec/                   # llms-index + extensions (protocol source of truth)
 ├── examples/sample-guides/ # Minimal consumer fixture for tests and tutorials
 ├── legacy/                 # Original bash/Python reference implementation
 ├── .changeset/             # Changesets for semver releases
@@ -277,6 +279,25 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 - **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
+
+## Agent Skill
+
+Zero-friction MDCP delivery for AI agents uses the portable Agent Skill at [`.agents/skills/mdcp/SKILL.md`](.agents/skills/mdcp/SKILL.md).
+
+### Local dogfood
+
+Agents in this repository should discover the skill automatically. Manual invoke (hosts that support slash skills): `/mdcp`.
+
+When changing skill instructions:
+
+1. Edit `.agents/skills/mdcp/SKILL.md`.
+2. Keep protocol truths in `spec/llms-index/` and `spec/extensions/` — only teach discovery and workflow in the skill.
+3. Update [Agent Skill delivery](docs/features/agent-skill.md) if location or publish guidance changes.
+4. Run `pnpm docs:check` after docs shard edits.
+
+### Publishing the skill bundle
+
+Ship the `.agents/skills/mdcp/` directory (not a VS Code Marketplace VSIX). Consumers place it under `.agents/skills/mdcp/`, `.github/skills/mdcp/`, or `.cursor/skills/mdcp/` depending on host preferences. Prefer documenting `.agents/skills/` as the portable default.
 
 ## Versioning and releases
 

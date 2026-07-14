@@ -16,6 +16,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
   - [Compile output backup](./compile-output-backup.md)
 - [Link validation](./link-validation.md)
 - [Refs registry path](./refs-registry-path.md)
+- [Agent Skill delivery](./agent-skill.md)
 - [Design constraints](./design-constraints/index.md)
   - [Protocol](./protocol/00-vision-and-roadmap.md)
     - [Vision and roadmap](./protocol/00-vision-and-roadmap.md)
