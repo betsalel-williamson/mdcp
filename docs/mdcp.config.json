@@ -1,9 +1,5 @@
 {
-  "protocolVersion": "0.4.0.1",
-  "protocol": {
-    "profile": "alpha",
-    "ref": "v0.4.1"
-  },
+  "$schema": "../packages/mdcp-core/mdcp.config.schema.json",
   "outputDir": "_build",
   "outputFile": "guides.md",
   "compileOrder": [
@@ -117,8 +113,5 @@
       "stripBanner": true,
       "collapseBlankLines": true
     }
-  },
-  "extensions": {
-    "packs": []
   }
 }

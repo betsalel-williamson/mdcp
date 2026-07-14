@@ -4,8 +4,6 @@ export {
   type MdcpConfigInput,
   type GuideConfig,
   type GuideConfigInput,
-  type ExtensionSource,
-  type ExtensionPack,
 } from './config/schema.js';
 export {
   loadConfig,

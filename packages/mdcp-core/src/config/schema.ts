@@ -74,28 +74,6 @@ export const MdcpConfigSchema = z.object({
   /** Four-part protocol version for conforming repositories (default 0.4.0.0). */
   protocolVersion: z.string().default('0.4.0.0'),
 
-  /** Protocol artifact fetch — profile (valpha/vdev) and optional branch override. */
-  protocol: z
-    .object({
-      /** `alpha` (valpha) or `dev` (vdev) under spec/llms-index/. Default applied at resolve time. */
-      profile: z.enum(['alpha', 'dev']).optional(),
-      /**
-       * Git branch or tag when the profile symlink is not on `main` (dogfood / pre-release).
-       * Omit for `main` or release tags (e.g. `v0.4.0`).
-       */
-      ref: z.string().optional(),
-      /** GitHub owner/repo (default authoritative mdcp upstream). */
-      repo: z.string().optional(),
-      /** Path in upstream repo; overrides profile symlink (advanced). */
-      path: z.string().optional(),
-      llmsIndex: z
-        .object({
-          outputFile: z.string().optional(),
-        })
-        .optional(),
-    })
-    .optional(),
-
   source: z.string().optional(),
   /** Generated output root relative to docs root (default `_build`). */
   outputDir: z.string().default('_build'),
@@ -180,43 +158,9 @@ export const MdcpConfigSchema = z.object({
         }),
     })
     .optional(),
-
-  /** Optional extension packs (prompts, archetypes) cached for agents. */
-  extensions: z
-    .object({
-      packs: z
-        .array(
-          z.object({
-            id: z.string(),
-            enabled: z.boolean().default(true),
-            /** Extension semver (defaults to newest catalog version compatible with protocol). */
-            version: z.string().optional(),
-            /** Source directory path (built-in ids merge defaults from spec). */
-            path: z.string().optional(),
-            /** Docs-root-relative cache directory. */
-            cacheDir: z.string().optional(),
-            /** Filenames to fetch into the cache (e.g. `*.prompt.md`). */
-            files: z.array(z.string()).optional(),
-            /** Override fetch source for this pack only (see spec/extensions/SECURITY.md). */
-            source: z
-              .object({
-                repo: z.string().default('betsalel-williamson/mdcp'),
-                ref: z.string().default('main'),
-                baseUrl: z.string().url().optional(),
-              })
-              .optional(),
-          }),
-        )
-        .optional(),
-    })
-    .optional(),
 });
 
 export type MdcpConfig = z.infer<typeof MdcpConfigSchema>;
 export type MdcpConfigInput = z.input<typeof MdcpConfigSchema>;
 export type GuideConfig = z.infer<typeof GuideSchema>;
 export type GuideConfigInput = z.input<typeof GuideSchema>;
-export type ExtensionSource = NonNullable<
-  NonNullable<NonNullable<MdcpConfig['extensions']>['packs']>[number]['source']
->;
-export type ExtensionPack = NonNullable<NonNullable<MdcpConfig['extensions']>['packs']>[number];

@@ -1,0 +1,200 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MDCP Configuration",
+  "description": "Configuration schema for mdcp (MarkDown Context Protocol)",
+  "type": "object",
+  "properties": {
+    "protocolVersion": {
+      "type": "string",
+      "default": "0.4.0.0",
+      "description": "Four-part protocol version for conforming repositories."
+    },
+    "source": {
+      "type": "string"
+    },
+    "outputDir": {
+      "type": "string",
+      "default": "_build",
+      "description": "Generated output root relative to docs root."
+    },
+    "outputFile": {
+      "type": "string",
+      "description": "Optional stitched monolith filename relative to outputDir."
+    },
+    "compileOrder": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "banner": {
+      "type": "string"
+    },
+    "guides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "path": { "type": "string" },
+          "splitLevel": { "type": "integer", "default": 2, "minimum": 1, "maximum": 6 },
+          "source": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": { "const": "h1Extract" },
+                  "index": { "type": "integer" },
+                  "preamble": {
+                    "type": "object",
+                    "properties": { "promoteToH2": { "type": "string" } }
+                  }
+                },
+                "required": ["type", "index"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": { "const": "merge" },
+                  "parts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fromH1Extract": { "type": "integer" },
+                        "demoteFirstH1": { "type": "boolean" }
+                      },
+                      "required": ["fromH1Extract"]
+                    }
+                  },
+                  "preamble": {
+                    "type": "object",
+                    "properties": { "promoteToH2": { "type": "string" } }
+                  }
+                },
+                "required": ["type", "parts"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": { "const": "directory" },
+                  "path": { "type": "string" }
+                },
+                "required": ["type", "path"]
+              }
+            ]
+          },
+          "compile": {
+            "type": "object",
+            "properties": {
+              "preambleSection": { "type": "string", "default": "about-this-guide.md" },
+              "manifest": { "type": "string", "default": "index.md" },
+              "sectionsHeading": { "type": "string" },
+              "title": { "type": "string" },
+              "scopeRoot": { "type": "string" },
+              "outputFile": { "type": "string" },
+              "includeBanner": { "type": "boolean" },
+              "hooks": {
+                "anyOf": [
+                  { "type": "array", "items": { "type": "string" } },
+                  { "type": "object", "additionalProperties": { "type": "boolean" } }
+                ]
+              },
+              "crossGuideLinks": {
+                "type": "object",
+                "properties": {
+                  "ignoreGuides": { "type": "array", "items": { "type": "string" } }
+                }
+              },
+              "hooksConfig": {
+                "type": "object",
+                "properties": {
+                  "inlineInserts": {
+                    "type": "object",
+                    "properties": {
+                      "searchRoots": { "type": "array", "items": { "type": "string" } }
+                    }
+                  }
+                }
+              },
+              "stripAnchors": { "type": "boolean", "default": true },
+              "links": {
+                "type": "object",
+                "properties": {
+                  "markBroken": { "type": "boolean", "default": true }
+                }
+              }
+            }
+          }
+        },
+        "required": ["name"]
+      }
+    },
+    "backup": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "dir": { "type": "string", "default": ".caches/backups" },
+        "ext": { "type": "string", "default": "" }
+      }
+    },
+    "refs": {
+      "type": "object",
+      "properties": {
+        "registryFile": { "type": "string", "default": ".caches/refs.json" },
+        "slugAlgorithm": { "type": "string", "enum": ["github"], "default": "github" }
+      }
+    },
+    "lint": {
+      "type": "object",
+      "properties": {
+        "markdownlint": {
+          "type": "object",
+          "properties": {
+            "shardsConfig": { "type": "string" },
+            "compiledConfig": { "type": "string" },
+            "shardsGlobs": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "severity": { "type": "string", "enum": ["error", "warn"], "default": "error" },
+            "target": { "type": "string" },
+            "config": { "type": "string" }
+          }
+        },
+        "xrefs": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true }
+          }
+        }
+      }
+    },
+    "vale": {
+      "type": "object",
+      "properties": {
+        "config": { "type": "string", "default": ".vale.ini" },
+        "strictMinAlertLevel": { "type": "string", "default": "error" },
+        "scanGlobs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "llm": {
+          "type": "object",
+          "properties": {
+            "stripHtmlComments": { "type": "boolean", "default": true },
+            "stripFrontmatter": { "type": "boolean", "default": true },
+            "stripBanner": { "type": "boolean", "default": true },
+            "skipIndexFiles": { "type": "boolean", "default": true },
+            "collapseBlankLines": { "type": "boolean", "default": true }
+          }
+        }
+      }
+    }
+  },
+  "required": ["compileOrder"]
+}
