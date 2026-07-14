@@ -86,12 +86,28 @@ graph TD
 
     MDCP("MDCP Context Layer")
 
-    Plan -.->|"Arch Prompt"| MDCP
-    Code -.->|"Feature Prompt"| MDCP
+    %% Subagent Actors
+    ArchAgent["Arch Subagent"]
+    FeatureAgent["Feature Subagent"]
+    TestAgent["Test Subagent"]
+    ReleaseAgent["Release Subagent"]
+    PostMortemAgent["Post-mortem Subagent"]
+
+    Plan -.-> ArchAgent
+    ArchAgent -.-> MDCP
+
+    Code -.-> FeatureAgent
+    FeatureAgent -.-> MDCP
     MDCP -.->|"Context"| Code
-    MDCP -.->|"Acceptance"| Test
-    MDCP -.->|"Review Prompt"| Release
-    Operate -.->|"Doc Prompt"| MDCP
+
+    MDCP -.-> TestAgent
+    TestAgent -.->|"Acceptance"| Test
+
+    MDCP -.-> ReleaseAgent
+    ReleaseAgent -.-> Release
+
+    Operate -.-> PostMortemAgent
+    PostMortemAgent -.-> MDCP
 ```
 
 </div>
@@ -99,15 +115,15 @@ graph TD
 
 ---
 
-## SDLC Prompts at a Glance
+## SDLC Subagents at a Glance
 
-| Phase       | Prompt               | Action                                            |
-| ----------- | -------------------- | ------------------------------------------------- |
-| **Plan**    | `arch prompt`        | Draft architecture docs                           |
-| **Code**    | `feature prompt`     | Ensure high-level and dev docs exist              |
-| **Test**    | `test prompt`        | Capture client-side and dev-side intent           |
-| **Release** | `release prompt`     | Ensure support docs are available and relevant    |
-| **Operate** | `post-mortem prompt` | Distill tickets and post-mortems back into shards |
+| Phase       | Subagent               | Action                                            |
+| ----------- | ---------------------- | ------------------------------------------------- |
+| **Plan**    | `arch subagent`        | Draft architecture docs                           |
+| **Code**    | `feature subagent`     | Ensure high-level and dev docs exist              |
+| **Test**    | `test subagent`        | Capture client-side and dev-side intent           |
+| **Release** | `release subagent`     | Ensure support docs are available and relevant    |
+| **Operate** | `post-mortem subagent` | Distill tickets and post-mortems back into shards |
 
 ---
 
