@@ -47,7 +47,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ### Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type prompts ([spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ### Daily commands
 
@@ -85,7 +85,7 @@ CI runs the full gate: `pnpm run check`.
 
 ## Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 
@@ -285,7 +285,7 @@ Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on
 
 Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill at [`.agents/skills/mdcp/SKILL.md`](.agents/skills/mdcp/SKILL.md). Complementary skills (prompts, archetypes, format packs) migrate from [`spec/extensions/`](spec/extensions) into sibling directories under `.agents/skills/`.
 
-The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`. Keep `spec/llms-index/` and extension packs only while [migration backlog](#migration-backlog) issues remain open.
+The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`. Keep `spec/llms-index/` and extension packs only while migration issues remain open.
 
 ### Local dogfood
 
@@ -333,26 +333,6 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
 Documented portable path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
-
-### Migration backlog
-
-Open (or update) GitHub issues for:
-
-- Epic: migrate agent delivery from llms-index + extensions to Agent Skills
-- Child: `prompts-mdcp-defaults` → `mdcp-prompts-defaults`
-- Child: `arch-oss-library` → `mdcp-arch-oss-library`
-- Child: `arch-product-docs-site` → `mdcp-arch-product-docs-site`
-- Child: `format-marp-presentation` → `mdcp-format-marp`
-- Child: deprecate / dual-publish path for `mdcp.v*.llms.txt` once the parent skill is authoritative
-
-| Issue                                                    | URL                                                      |
-| -------------------------------------------------------- | -------------------------------------------------------- |
-| Epic                                                     | <https://github.com/betsalel-williamson/mdcp/issues/102> |
-| `prompts-mdcp-defaults` → `mdcp-prompts-defaults`        | <https://github.com/betsalel-williamson/mdcp/issues/103> |
-| `arch-oss-library` → `mdcp-arch-oss-library`             | <https://github.com/betsalel-williamson/mdcp/issues/104> |
-| `arch-product-docs-site` → `mdcp-arch-product-docs-site` | <https://github.com/betsalel-williamson/mdcp/issues/105> |
-| `format-marp-presentation` → `mdcp-format-marp`          | <https://github.com/betsalel-williamson/mdcp/issues/106> |
-| Deprecate llms-index as primary bootstrap                | <https://github.com/betsalel-williamson/mdcp/issues/107> |
 
 ## Versioning and releases
 

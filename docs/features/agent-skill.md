@@ -19,7 +19,7 @@ Compared with a custom IDE extension or a fetched llms-index plus extension pack
 - `.agents/skills/mdcp-arch-product-docs-site/` — product docs site archetype; from `arch-product-docs-site`
 - `.agents/skills/mdcp-format-marp/` — Marp formatting; from `format-marp-presentation`
 
-Complementary skills land via follow-up PRs tracked in the [migration backlog](#migration-backlog). Until then, transitional packs remain under [`spec/extensions/`](../../spec/extensions/).
+Complementary skills land via follow-up PRs. Until then, transitional packs remain under [`spec/extensions/`](../../spec/extensions/).
 
 ## Format and location
 
@@ -72,10 +72,6 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 1. **Compat** — Parent skill ships; llms-index fetch and extension packs still work.
 2. **Skills-primary** — Docs and install recommend Agent Skills; complementary skills replace packs.
 3. **Deprecate** — Drop or dual-publish only where tooling still requires the old fetch path (tracked in backlog issues).
-
-## Migration backlog
-
-Epic: [#102](https://github.com/betsalel-williamson/mdcp/issues/102). Per-pack and deprecation issues: [#103](https://github.com/betsalel-williamson/mdcp/issues/103)–[#107](https://github.com/betsalel-williamson/mdcp/issues/107). Full table: [Agent Skill (developer)](../developer/agent-skill.md#migration-backlog).
 
 ## Eval and CI
 

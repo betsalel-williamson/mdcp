@@ -24,6 +24,12 @@
       "prompt": "Load documentation context for the agent",
       "expected_output": "Uses mdcp refs lookup to find a specific shard, then reads only that shard rather than a monolith.",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Remove old planning information from our docs, like the migration backlog",
+      "expected_output": "The agent removes the old information, acknowledging it belongs in an issue tracker and not in durable documentation shards.",
+      "files": []
     }
   ]
 }

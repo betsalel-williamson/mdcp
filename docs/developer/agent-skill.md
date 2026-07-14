@@ -2,7 +2,7 @@
 
 Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill at [`.agents/skills/mdcp/SKILL.md`](../../.agents/skills/mdcp/SKILL.md). Complementary skills (prompts, archetypes, format packs) migrate from [`spec/extensions/`](../../spec/extensions/) into sibling directories under `.agents/skills/`.
 
-The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`. Keep `spec/llms-index/` and extension packs only while [migration backlog](#migration-backlog) issues remain open.
+The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`. Keep `spec/llms-index/` and extension packs only while migration issues remain open.
 
 ## Local dogfood
 
@@ -50,23 +50,3 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
 Documented portable path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
-
-## Migration backlog
-
-Open (or update) GitHub issues for:
-
-- Epic: migrate agent delivery from llms-index + extensions to Agent Skills
-- Child: `prompts-mdcp-defaults` → `mdcp-prompts-defaults`
-- Child: `arch-oss-library` → `mdcp-arch-oss-library`
-- Child: `arch-product-docs-site` → `mdcp-arch-product-docs-site`
-- Child: `format-marp-presentation` → `mdcp-format-marp`
-- Child: deprecate / dual-publish path for `mdcp.v*.llms.txt` once the parent skill is authoritative
-
-| Issue                                                    | URL                                                      |
-| -------------------------------------------------------- | -------------------------------------------------------- |
-| Epic                                                     | <https://github.com/betsalel-williamson/mdcp/issues/102> |
-| `prompts-mdcp-defaults` → `mdcp-prompts-defaults`        | <https://github.com/betsalel-williamson/mdcp/issues/103> |
-| `arch-oss-library` → `mdcp-arch-oss-library`             | <https://github.com/betsalel-williamson/mdcp/issues/104> |
-| `arch-product-docs-site` → `mdcp-arch-product-docs-site` | <https://github.com/betsalel-williamson/mdcp/issues/105> |
-| `format-marp-presentation` → `mdcp-format-marp`          | <https://github.com/betsalel-williamson/mdcp/issues/106> |
-| Deprecate llms-index as primary bootstrap                | <https://github.com/betsalel-williamson/mdcp/issues/107> |

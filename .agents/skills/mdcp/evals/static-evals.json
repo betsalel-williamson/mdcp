@@ -38,6 +38,10 @@
     {
       "id": "always-check",
       "patterns": ["mdcp check", "docs:check"]
+    },
+    {
+      "id": "no-temp-info",
+      "patterns": ["temp info", "migration backlog", "planning", "issue tracking"]
     }
   ],
   "cases": [
@@ -65,6 +69,11 @@
       "id": "anti-hand-edit-index",
       "prompt": "Customize agent rules for this repo",
       "mustMention": ["transitional", "complementary"]
+    },
+    {
+      "id": "remove-old-info",
+      "prompt": "Remove old planning information from our docs, like the migration backlog",
+      "mustMention": ["issue tracking", "planning", "temp info"]
     }
   ]
 }

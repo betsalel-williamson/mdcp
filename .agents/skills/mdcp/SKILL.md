@@ -44,7 +44,7 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 - **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
 - **Break it down:** Organize information into the smallest possible pieces (shards).
 - **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
-- **No temp info:** Do not record temporary project information, tickets, or incident logs in the durable documentation.
+- **No temp info or backlogs:** Do not record temporary project information, tickets, incident logs, or "old information" like migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools.
 - **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
 
 ## When to use
