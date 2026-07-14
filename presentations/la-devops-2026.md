@@ -199,7 +199,7 @@ The actors interact with the MDCP context layer to author intent, provide contex
 </div>
 <div>
 
-```mermaid
+```mermaid {scale: 0.7}
 graph TD
     %% Actors
     PM["Product & Arch"]
@@ -252,7 +252,7 @@ Instead of documentation being a disconnected artifact, MDCP acts as a continuou
 </div>
 <div>
 
-```mermaid
+```mermaid {scale: 0.7}
 graph TD
     subgraph SDLC
         Plan --> Code --> Test --> Release --> Operate
