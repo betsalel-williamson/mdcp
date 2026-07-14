@@ -10,8 +10,8 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const skillDir = path.join(root, '.agents/skills/mdcp');
 const skillPath = path.join(skillDir, 'SKILL.md');
-const triggersPath = path.join(skillDir, 'evals/triggers.json');
-const evalsPath = path.join(skillDir, 'evals/evals.json');
+const triggersPath = path.join(skillDir, 'evals/static-triggers.json');
+const evalsPath = path.join(skillDir, 'evals/static-evals.json');
 
 const results = [];
 

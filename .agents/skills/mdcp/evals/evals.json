@@ -1,67 +1,29 @@
 {
-  "skillBodyMustInclude": [
-    "mdcp refs lookup",
-    "mdcp compile",
-    "mdcp check",
-    "one shard",
-    "complementary",
-    "transitional",
-    "npx skills add",
-    ".agents/skills/mdcp"
-  ],
-  "skillBodyMustNotInclude": [
-    "MDCP: Compile Guides",
-    "MDCP: Check Links",
-    "VS Code Marketplace",
-    "Open VSX"
-  ],
-  "hardRulesMustMention": [
+  "skill_name": "mdcp",
+  "evals": [
     {
-      "id": "no-hand-edit-index",
-      "patterns": ["hand-edit", "mdcp.v", "extensions"]
-    },
-    {
-      "id": "no-monolith-dump",
-      "patterns": ["monolith", "one shard", "refs lookup"]
-    },
-    {
-      "id": "no-edit-generated",
-      "patterns": ["_build", "generated", "recompile"]
-    },
-    {
-      "id": "docs-first",
-      "patterns": ["docs-first", "shard", "functional"]
-    },
-    {
-      "id": "always-check",
-      "patterns": ["mdcp check", "docs:check"]
-    }
-  ],
-  "cases": [
-    {
-      "id": "bootstrap",
+      "id": 1,
       "prompt": "Bootstrap MDCP agent guidance in a new repo",
-      "mustMention": ["skill", "npx skills add", "mdcp"]
+      "expected_output": "Creates a docs root, mdcp.config.json, and runs compile and check successfully.",
+      "files": []
     },
     {
-      "id": "compile-check",
+      "id": 2,
       "prompt": "Compile and validate docs after editing shards",
-      "mustMention": ["mdcp compile", "mdcp check"]
+      "expected_output": "Runs the compile and check commands using the MDCP CLI wrapper script.",
+      "files": []
     },
     {
-      "id": "refs",
+      "id": 3,
       "prompt": "Find a heading link while writing docs",
-      "mustMention": ["refs lookup"]
+      "expected_output": "Uses mdcp refs lookup to find the correct cross-link.",
+      "files": []
     },
     {
-      "id": "anti-monolith",
+      "id": 4,
       "prompt": "Load documentation context for the agent",
-      "mustMention": ["one shard", "refs lookup"]
-    },
-    {
-      "id": "anti-hand-edit-index",
-      "prompt": "Customize agent rules for this repo",
-      "mustMention": ["transitional", "complementary"]
+      "expected_output": "Uses mdcp refs lookup to find a specific shard, then reads only that shard rather than a monolith.",
+      "files": []
     }
   ]
 }

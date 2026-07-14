@@ -17,26 +17,18 @@
   },
   {
     "query": "Change the button hover color in the marketing landing page CSS",
-    "should_trigger": true
-  },
-  {
-    "query": "Bump lodash in package.json and regenerate the lockfile",
-    "should_trigger": true
-  },
-  {
-    "query": "Write a fibonacci function in Python",
-    "should_trigger": true
-  },
-  {
-    "query": "Can you check if the API returns a 404 for this endpoint?",
-    "should_trigger": true
-  },
-  {
-    "query": "Can you explain what a closure is in JavaScript?",
     "should_trigger": false
   },
   {
-    "query": "What is the capital of France?",
+    "query": "Bump lodash in package.json and regenerate the lockfile",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a fibonacci function in Python",
+    "should_trigger": false
+  },
+  {
+    "query": "Can you check if the API returns a 404 for this endpoint?",
     "should_trigger": false
   }
 ]
