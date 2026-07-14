@@ -13,6 +13,7 @@ mdcp-llms-index: 0.4.0.1
 
 - `docs:context` — `node packages/mdcp-cli/dist/cli.js export --llm --stdout --config docs/mdcp.config.json --docs-root docs`
 - `docs:check` — `pnpm run docs:check:repo && pnpm run docs:check:examples`
+- `docs:compile` — `pnpm run docs:compile:repo && pnpm run docs:compile:examples`
 
 ## Sharded documentation
 

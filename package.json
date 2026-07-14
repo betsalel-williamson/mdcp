@@ -43,7 +43,9 @@
     "release:tag": "node scripts/release-tag.mjs",
     "release:tag:push": "node scripts/release-tag.mjs --push",
     "prepare": "husky",
-    "skill:check": "node scripts/check-mdcp-skill.mjs"
+    "skill:check": "node scripts/check-mdcp-skill.mjs",
+    "docs:compile:examples": "node packages/mdcp-cli/dist/cli.js compile --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --warn-broken-links && node packages/mdcp-cli/dist/cli.js export --llms-index --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides",
+    "docs:compile": "pnpm run docs:compile:repo && pnpm run docs:compile:examples"
   },
   "engines": {
     "node": ">=24.0.0"
