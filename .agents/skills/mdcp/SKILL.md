@@ -131,7 +131,6 @@ Optional companions:
 
 - `mdcp-arch-oss-library`
 - `mdcp-arch-product-docs-site`
-- `mdcp-format-marp`
 
 ### 6. Subagents (Task Prompts)
 

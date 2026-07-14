@@ -11,7 +11,8 @@ This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplac
 npx skills add betsalel-williamson/mdcp --skill mdcp
 
 # Complementary skills (optional)
-npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
+npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
+npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
 ```
 
 Zero-install alternative: copy `.agents/skills/mdcp/` from this repository into your project (plus complementary skill folders when you need them). Prefer `.agents/skills/` over host-specific aliases.

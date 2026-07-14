@@ -19,7 +19,6 @@ You can also install complementary archetype and formatting skills:
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
-npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 ```
 
 ## CLI still required for compile/check

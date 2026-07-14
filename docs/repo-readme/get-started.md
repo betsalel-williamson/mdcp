@@ -21,5 +21,4 @@ You can add complementary skills for specific documentation architectures:
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
-npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 ```

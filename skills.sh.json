@@ -11,11 +11,6 @@
       "title": "Archetypes",
       "description": "Complementary skills for documentation architectures.",
       "skills": ["mdcp-arch-oss-library", "mdcp-arch-product-docs-site"]
-    },
-    {
-      "title": "Formats",
-      "description": "Complementary skills for presentation and output formats.",
-      "skills": ["mdcp-format-marp"]
     }
   ]
 }

@@ -335,7 +335,8 @@ This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplac
 npx skills add betsalel-williamson/mdcp --skill mdcp
 
 # Complementary skills (optional)
-npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
+npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
+npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
 ```
 
 Zero-install alternative: copy `.agents/skills/mdcp/` from this repository into your project (plus complementary skill folders when you need them). Prefer `.agents/skills/` over host-specific aliases.
@@ -947,9 +948,9 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ## MDCP
 
-**MarkDown Context Protocol** — an [Agent Skill](#agent-skills) and lightweight toolchain for repository documentation context. It helps teams distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays in the right place: reviewable in git, scalable as docs grow, and readable one shard at a time by people and coding agents.
+**MarkDown Context Protocol** — a **documentation system** delivered as an [Agent Skill](#agent-skills) and lightweight toolchain. It helps teams who care about durable docs distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays reviewable in git, maintainable as ideas keep arriving, and readable one shard at a time by people and coding agents.
 
-MDCP is not a magic bullet for documentation debt. It is a helpful practice and skill that puts durable system context where it compounds over time — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
+MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
 
 The CLI (`compile`, `check`, [refs](#refs) registry maintenance, and `export --llm`) implements that shared context layer alongside the skill’s behavioral guardrails.
 
@@ -1016,7 +1017,7 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 ## Agent Skills
 
-Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s documentation guardrails. Instead of fetching a monolithic `mdcp.v*.llms.txt` (llms-index) bootstrap file, MDCP ships as a vendored skill under `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and read docs one piece at a time across Cursor, Copilot, Claude Code, and similar hosts.
+Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Instead of fetching a monolithic `mdcp.v*.llms.txt` (llms-index) bootstrap file, MDCP ships as a vendored skill under `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time as ideas keep arriving — across Cursor, Copilot, Claude Code, and similar hosts.
 
 Verification is split: [skill content lint](#skill-content-lint) is the CI static check on `SKILL.md` text; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
 
