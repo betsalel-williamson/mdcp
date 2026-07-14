@@ -3,7 +3,7 @@
   "extensions": [
     {
       "id": "prompts-mdcp-defaults",
-      "description": "Default mdcp meta-level agent task prompts for sharded documentation workflows",
+      "description": "[MIGRATED TO .agents/skills/mdcp/agents/] Default mdcp meta-level agent task prompts for sharded documentation workflows",
       "tags": ["prompts", "authoring", "bootstrap", "defaults"],
       "versions": [
         {
@@ -15,19 +15,19 @@
     },
     {
       "id": "arch-oss-library",
-      "description": "Archetype: OSS library — API pointer shards, implementation in source",
+      "description": "[MIGRATED TO .agents/skills/mdcp-arch-oss-library] Archetype: OSS library — API pointer shards, implementation in source",
       "tags": ["archetype", "oss", "library"],
       "versions": []
     },
     {
       "id": "arch-product-docs-site",
-      "description": "Archetype: product docs site — MkDocs, Docusaurus, VitePress publish workflow",
+      "description": "[MIGRATED TO .agents/skills/mdcp-arch-product-docs-site] Archetype: product docs site — MkDocs, Docusaurus, VitePress publish workflow",
       "tags": ["archetype", "product", "docs-site"],
       "versions": []
     },
     {
       "id": "format-marp-presentation",
-      "description": "Formatting Pack: Marp presentation — conventions for authoring slide decks using MDCP shards",
+      "description": "[MIGRATED TO .agents/skills/mdcp-format-marp] Formatting Pack: Marp presentation — conventions for authoring slide decks using MDCP shards",
       "tags": ["format", "presentation", "marp"],
       "versions": []
     }

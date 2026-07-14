@@ -116,15 +116,22 @@ To run prose linting (requires Vale):
 
 Optional companions (as they land under `.agents/skills/`):
 
-- `mdcp-prompts-defaults`
 - `mdcp-arch-oss-library`
 - `mdcp-arch-product-docs-site`
 - `mdcp-format-marp`
 
-Until migrated, transitional packs live under `spec/extensions/`. Epic:
-<https://github.com/betsalel-williamson/mdcp/issues/102>
+### 6. Subagents (Task Prompts)
 
-### 6. Optional workspace scaffold
+The parent skill includes several specialized subagents (formerly prompt packs) located in `.agents/skills/mdcp/agents/`. Use the Task tool to spawn these subagents when performing specific types of work:
+
+- `design-architecture-task.prompt.md` — For high-level architectural design and planning.
+- `feature-level-task.prompt.md` — For implementing and documenting new features.
+- `doc-only-task.prompt.md` — For tasks that only involve writing or refactoring documentation.
+- `ux-task.prompt.md` — For user experience design and documentation.
+- `review-task.prompt.md` — For reviewing documentation and code against MDCP standards.
+- `getting-started-with-mdcp.prompt.md` — For bootstrapping a new repo with MDCP.
+
+### 7. Optional workspace scaffold
 
 When no `mdcp.config.json` yet: create docs root + config + guide dirs, install
 the parent skill under `.agents/skills/mdcp/`, optionally add

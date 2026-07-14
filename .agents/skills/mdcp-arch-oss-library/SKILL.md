@@ -1,4 +1,14 @@
-# Archetype: OSS library (`arch-oss-library`)
+---
+name: mdcp-arch-oss-library
+description: >-
+  Archetype skill for OSS libraries (npm, PyPI, crates.io). Use this skill when
+  the user is building, documenting, or architecting a publishable package where
+  the API truth lives in source code, and documentation shards hold intent,
+  stability guarantees, and migration notes. Triggers when users mention OSS,
+  libraries, packages, API references, or Javadoc-style documentation.
+---
+
+# MDCP Archetype: OSS Library
 
 For publishable packages (npm, PyPI, crates.io) where **API truth lives in source** and documentation shards hold intent, stability guarantees, and migration notes.
 
@@ -6,9 +16,7 @@ For publishable packages (npm, PyPI, crates.io) where **API truth lives in sourc
 
 ```text
 docs/
-  mdcp.v0.4.llms.txt              # fetched protocol index — do not edit locally
   extensions/
-    index.md                    # local extension manifest (optional)
     api-pointer-conventions.md  # how shards link into src/
   glossary/
   features/                       # design, acceptance criteria, public API promises
@@ -43,7 +51,3 @@ Agents use `mdcp refs lookup "SessionStore"` for compiled anchors and open the l
 
 - Add `docs/extensions/api-pointer-conventions.md` for language-specific path rules.
 - Optional formatting pack under `spec/extensions/format-*` for JavaDoc-style cross-links in compiled README output (future).
-
-## Catalog id
-
-`arch-oss-library` — doc-only archetype today; versioned fetchable packs **MAY** ship under `arch-oss-library/{version}/` later.

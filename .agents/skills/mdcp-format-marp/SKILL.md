@@ -1,6 +1,16 @@
-# Formatting Pack: Marp Presentation (`format-marp-presentation`)
+---
+name: mdcp-format-marp
+description: >-
+  Formatting skill for Marp Presentations. Use this skill when the user is
+  authoring, compiling, or formatting slide decks and presentations using MDCP
+  shards and the Marp (Markdown Presentation Ecosystem) framework. Triggers
+  when users mention Marp, slide decks, presentations, or rendering Mermaid
+  diagrams for slides.
+---
 
-This extension provides guidance and conventions for using MDCP shards to author presentations using [Marp](https://marp.app/) (Markdown Presentation Ecosystem).
+# MDCP Formatting Pack: Marp Presentation
+
+This skill provides guidance and conventions for using MDCP shards to author presentations using [Marp](https://marp.app/) (Markdown Presentation Ecosystem).
 
 ## Layout
 

@@ -1,4 +1,14 @@
-# Archetype: Product docs site (`arch-product-docs-site`)
+---
+name: mdcp-arch-product-docs-site
+description: >-
+  Archetype skill for Product Docs Sites (MkDocs, Docusaurus, VitePress). Use
+  this skill when the user is building, documenting, or architecting a human-facing
+  documentation site where MDCP shards are the authoring source of truth.
+  Triggers when users mention MkDocs, Docusaurus, VitePress, site generators,
+  or publishing documentation to the web.
+---
+
+# MDCP Archetype: Product Docs Site
 
 For products that publish human-facing docs via **MkDocs, Docusaurus, VitePress**, or similar while keeping MDCP shards as the authoring source of truth.
 
@@ -6,7 +16,6 @@ For products that publish human-facing docs via **MkDocs, Docusaurus, VitePress*
 
 ```text
 docs/
-  mdcp.v0.4.llms.txt
   extensions/
     publish-pipeline.md         # how compiled GFM feeds the site generator
   features/
@@ -26,15 +35,11 @@ Shards stay GFM. A `format-*` extension documents heading rules, admonition mapp
 
 ## Formatting extensions
 
-See [format/](../format/) for the formatting extension slot and naming (`format-docusaurus`, `format-mkdocs`, …). Product teams add `docs/extensions/docusaurus-mapping.md` (or similar) locally when proprietary theme rules apply.
+See `format-*` skills for the formatting extension slot and naming (e.g., `mdcp-format-docusaurus`, `mdcp-format-mkdocs`). Product teams add `docs/extensions/docusaurus-mapping.md` (or similar) locally when proprietary theme rules apply.
 
 ## Agent workflow
 
-1. Read fetched `mdcp.v*.llms.txt` — not edited per repo.
-2. Load task prompt with `WORK_ITEM`.
+1. Read the parent `mdcp` skill.
+2. Load task prompt with `WORK_ITEM` (via `mdcp` subagents).
 3. Edit `client/` and `features/` shards.
-4. `mdcp check` before PR; site CI runs after compile.
-
-## Catalog id
-
-`arch-product-docs-site` — doc-only archetype today; versioned fetchable packs **MAY** ship under `arch-product-docs-site/{version}/` later.
+4. Run `mdcp check` before PR; site CI runs after compile.
