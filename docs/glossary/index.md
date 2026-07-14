@@ -16,6 +16,10 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [GFM](./gfm.md)
 - [Authored GFM](./authored-gfm.md)
 - [ignoreGuides](./ignore-guides.md)
+- [refs](./refs.md)
+- [refs registry](./refs-registry.md)
+- [heading slug](./heading-slug.md)
+- [cross-link](./cross-link.md)
 
 ## Adoption and messaging
 

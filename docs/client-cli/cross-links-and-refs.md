@@ -1,11 +1,14 @@
 # Cross-links and refs
 
-When writing `` `[link text](#anchor)` `` in a shard, the anchor must match the compiled heading slug. Look it up instead of guessing:
+When writing `` `[link text](#anchor)` `` in a shard, the fragment must match the [heading slug](../glossary/heading-slug.md) in **compiled** output. [Refs](../glossary/refs.md) are the system that keeps those [cross-links](../glossary/cross-link.md) organized and checkable after stitch — not a doc-search tool.
 
 ```bash
-mdcp refs lookup "getting started" --format json
+mdcp compile --config docs/mdcp.config.json --docs-root docs
+mdcp check --config docs/mdcp.config.json --docs-root docs
 mdcp refs list
 ```
+
+`mdcp check` fails on dead `#` fragments and bad paths. `mdcp refs list` shows registry entries from the [refs registry](../glossary/refs-registry.md).
 
 The part after `#` must match how the compiled doc names that heading — which changes when shards are merged and headings shift level.
 
@@ -22,8 +25,8 @@ MDCP derives `#fragment` targets from **compiled** heading text using the same a
 
 **Authoring rules:**
 
-1. **Look up slugs** — run `mdcp refs lookup` or `mdcp refs list` after compile; do not hand-roll anchors from heading titles.
-2. **Prefer unique subheadings** — duplicate heading text in the same document produces `-1`, `-2` suffixes; the first `#slug` link may not reach later occurrences.
+1. **Prefer unique subheadings** — duplicate heading text in the same document produces `-1`, `-2` suffixes; the first `#slug` link may not reach later occurrences.
+2. **Validate with `mdcp check`** — do not hand-roll anchors from shard-only titles and assume they survive compile.
 3. **Explicit `{#id}` overrides** — when present on a heading line, that id is used instead of the auto slug (lowercased). Use sparingly; GitHub slugs are the default contract.
 
 `githubSlugify` and `buildSlugRegistry` in `@bwilliamson/mdcp-core` share this algorithm for link validation, `refs.json`, and compile-time slug maps. See [API — Refs and validation](../client-core/api-refs-validation.md#heading-slugs-github-slugger).

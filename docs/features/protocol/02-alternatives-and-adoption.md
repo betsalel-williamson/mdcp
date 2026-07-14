@@ -4,15 +4,15 @@ Read [Scope and positioning](./01-scope-and-positioning.md) and [Vision and road
 
 ## Alternatives comparison
 
-| Incumbent                           | What it does well        | What MDCP adds                                                |
-| ----------------------------------- | ------------------------ | ------------------------------------------------------------- |
-| Monolithic README / full `llms.txt` | Zero tooling             | Sharding, `refs lookup`, validation gate, versioned index     |
-| Context7 / large crawled corpora    | Fuzzy retrieval at scale | Author-controlled, deterministic, PR-reviewable shards        |
-| Custom bash/Python glue             | Flexible                 | Owned `check` gate, link rewrite, publish paths               |
-| Docusaurus / MkDocs / VitePress     | Public doc sites         | Agent-first `refs lookup`, `export --llm`, CI structural gate |
-| Cursor rules / `AGENTS.md`          | Host-native friction     | Validated product context separate from host config           |
-| Custom IDE extension                | Editor UI / bundled CLI  | Portable Agent Skill + unchanged `spec/` and CLI              |
-| MCP filesystem                      | Live file reads          | Upstream authoring discipline and validated artifacts         |
+| Incumbent                           | What it does well        | What MDCP adds                                          |
+| ----------------------------------- | ------------------------ | ------------------------------------------------------- |
+| Monolithic README / full `llms.txt` | Zero tooling             | Sharding, validation gate, versioned index              |
+| Context7 / large crawled corpora    | Fuzzy retrieval at scale | Author-controlled, deterministic, PR-reviewable shards  |
+| Custom bash/Python glue             | Flexible                 | Owned `check` gate, link rewrite, publish paths         |
+| Docusaurus / MkDocs / VitePress     | Public doc sites         | Agent-first shards + `export --llm`, CI structural gate |
+| Cursor rules / `AGENTS.md`          | Host-native friction     | Validated product context separate from host config     |
+| Custom IDE extension                | Editor UI / bundled CLI  | Portable Agent Skill + unchanged `spec/` and CLI        |
+| MCP filesystem                      | Live file reads          | Upstream authoring discipline and validated artifacts   |
 
 ## Pandoc and advanced publish stacks
 

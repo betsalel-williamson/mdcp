@@ -4,7 +4,7 @@
 
 - **A Protocol and Method:** Assists with the proper practice of developing docs.
 - **Small Shards:** Focused markdown files are the source of truth.
-- **Agent-Friendly:** Agents pull **one section at a time** via `refs lookup`.
+- **Agent-Friendly:** Agents pull **one section at a time** by reading a single shard.
 - **The Relief:** Write your documentation _once_. It serves as an onboarding guide for humans and a machine-readable context protocol for AI.
 
 ---

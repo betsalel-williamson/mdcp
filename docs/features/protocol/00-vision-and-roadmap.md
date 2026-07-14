@@ -6,7 +6,7 @@ MDCP (**MarkDown Context Protocol**) is an open, repo-local standard for **syste
 
 Large documentation dumps (monolithic README, site-wide `llms.txt`, crawled corpora like Context7) overload agent context windows. Teams also lack a shared, reviewable contract for **what documentation means** — especially when legacy projects reuse the same terms for different concepts.
 
-MDCP inverts the model: **small shards** are the source of truth; agents pull **one section at a time** via `refs lookup` or a single shard read.
+MDCP inverts the model: **small shards** are the source of truth; agents pull **one section at a time** by reading a single shard (host search is enough to find it).
 
 ## Principles
 
@@ -15,16 +15,19 @@ MDCP inverts the model: **small shards** are the source of truth; agents pull **
 | High level over implementation | Shards hold plan, constraints, acceptance criteria; code holds how                                        |
 | Glossary as first-class        | Domain terms and legacy disambiguation live in dedicated shards                                           |
 | Document before build/migrate  | Capture context in shards before greenfield work or migrations                                            |
-| Granular, safe context         | `refs lookup` → single shard; `export --llm` only when broader context is needed                          |
+| Granular, safe context         | Read one shard; `export --llm` only when broader context is needed                                        |
+| Direct value only              | Ship capabilities that close a unique gap                                                                 |
 | Open standard                  | Reference implementation is `@bwilliamson/mdcp-cli` / `mdcp-core`; protocol is implementable without them |
 | Extensions over core           | `docs/extensions/` locally; shared packs in complementary skills                                          |
+
+Filter for new capabilities: [Direct value bar](../design-constraints/direct-value-bar.md).
 
 ## Phased delivery
 
 | Phase  | Surface                                                                               | Access model                  |
 | ------ | ------------------------------------------------------------------------------------- | ----------------------------- |
 | **V1** | **Agent Skills** pack (`.agents/skills/mdcp`) + `mdcp compile`/`check` + task prompts | Repo access (SSH, clone, IDE) |
-| **V2** | MDCP MCP server (`refs lookup`, shard read, glossary search)                          | Repo access                   |
+| **V2** | MDCP MCP server (shard read, glossary search)                                         | Repo access                   |
 | **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                         | Opt-in publish                |
 
 ```text

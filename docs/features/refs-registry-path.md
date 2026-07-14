@@ -1,10 +1,10 @@
 # Refs registry path
 
-Specification for where `mdcp compile` writes the heading-slug registry (`refs.json`). Regression tests live in `packages/mdcp-cli/test/cli.smoke.test.ts`.
+Specification for where `mdcp compile` writes the [refs registry](../glossary/refs-registry.md) (`refs.json`). Parent concept: [refs](../glossary/refs.md). Regression tests live in `packages/mdcp-cli/test/cli.smoke.test.ts`.
 
 ## Purpose
 
-The refs registry is derived state under `outputDir`, not co-located with per-guide publish outputs. Consumers run `mdcp compile` then `mdcp refs list` or `mdcp refs lookup` while editing cross-links. Both commands must agree on the on-disk registry path.
+The refs registry is derived state under `outputDir`, not co-located with per-guide publish outputs. It catalogs compiled [heading slugs](../glossary/heading-slug.md) so [cross-links](../glossary/cross-link.md) can be checked after stitch. Consumers run `mdcp compile` then `mdcp check` (and optionally `mdcp refs list`). Commands that read the registry must agree on the on-disk path.
 
 ## Path resolution
 

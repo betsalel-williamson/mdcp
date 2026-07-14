@@ -12,13 +12,9 @@ mdcp compile --config mdcp.config.json --docs-root .
 
 Guides compile to per-guide files under `outputDir` by default (`{name}.md`, or `guide.md` when alone). Set top-level `outputFile` for an optional stitched monolith. Path layout: [Config essentials](../client-cli/config-essentials.md#path-layout).
 
-## Refs + lookup (P0.2)
+## Refs registry (P0.2)
 
-GitHub slugs from compiled output. Agents query headings while writing links.
-
-```bash
-mdcp refs lookup "authentication" --format json
-```
+Heading-slug **registry** for validation after compile — see [Refs registry path](./refs-registry-path.md). Discover shards with host search (`rg`); confirm `#` cross-links with `mdcp check`. There is no lookup CLI verb.
 
 ## LLM export (P0.3)
 
@@ -92,7 +88,6 @@ Built-in hooks:
 {
   "scripts": {
     "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json",
-    "docs:refs": "mdcp refs lookup",
     "docs:check:mdcp": "mdcp check --config docs/mdcp.config.json --require-lint"
   }
 }

@@ -106,7 +106,6 @@ We have known documentation is the problem for decades, yet we rarely fix it. Wh
 Before we dive in, a few terms we'll use throughout:
 
 - **Shard:** A small, focused markdown file containing specific context (e.g., a single concept, persona, or architecture decision).
-- **refs lookup:** How an AI agent searches for and retrieves only specific shards, rather than reading entire docs at once.
 - **MCP (Model Context Protocol):** An open standard for AI assistants to access external data sources.
 - **Agent Skill:** A specialized context file (e.g., `SKILL.md`) providing domain knowledge and behavioral instructions for the agent.
 - **PRD:** Product Requirements Document.
@@ -119,7 +118,7 @@ Before we dive in, a few terms we'll use throughout:
 
 - **A Protocol and Method:** Assists with the proper practice of developing docs.
 - **Small Shards:** Focused markdown files are the source of truth.
-- **Agent-Friendly:** Agents pull **one section at a time** via `refs lookup`.
+- **Agent-Friendly:** Agents pull **one section at a time** by reading a single shard.
 - **The Relief:** Write your documentation _once_. It serves as an onboarding guide for humans and a machine-readable context protocol for AI.
 
 ---
@@ -363,7 +362,7 @@ Your docs must capture:
 - **High level over implementation:** Shards hold plan, constraints, and acceptance criteria; code holds _how_.
 - **Glossary as first-class:** Domain terms and legacy disambiguation live in dedicated shards.
 - **Document before build/migrate:** Capture context in shards before greenfield work.
-- **Granular, safe context:** `refs lookup` → single shard.
+- **Granular, safe context:** Read one shard at a time; skip monolith dumps.
 - **Extensible Doc Standard:** MDCP acts as the foundational "go-to" documentation skill. Teams can extend it locally (e.g., `docs/extensions/`) to integrate custom workflows and proprietary systems.
 
 ---
@@ -375,7 +374,7 @@ Your docs must capture:
   - Agent tasks & skills
   - `mdcp compile` and validation
 - **V2: Delivery (MCP Adapter)**
-  - MDCP MCP server (`refs lookup`, shard read, glossary search)
+  - MDCP MCP server (shard read, glossary search)
 - **V3: Hosted Context API**
   - OpenAPI spec, API keys, polyglot clients
 
@@ -390,7 +389,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
 - It's a **behavioral guide**, not a context dump.
-- Tells agents how to compile, validate, and query shards via `refs lookup`.
+- Tells agents how to compile, validate, and read shards one at a time.
 
 Or use the CLI init to scaffold your docs:
 
@@ -458,7 +457,7 @@ Common objections for Q&A — skip during the main talk:
 
 - We're not replacing Docusaurus, MkDocs, or CI doc generators.
 - MDCP is a **protocol** (like OpenAPI for HTTP APIs) for **documentation context contracts**.
-- Doc sites weren't built for granular, PR-reviewable, agent-first retrieval (`refs lookup`).
+- Doc sites weren't built for granular, PR-reviewable, agent-first **shard** contracts.
 - The missing piece is a **shared standard** for validated intent that agents and humans consume the same way.
 
 ---

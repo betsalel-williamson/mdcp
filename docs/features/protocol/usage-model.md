@@ -8,12 +8,12 @@ Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `
 
 ## Actors and obligations
 
-| Actor                    | Reads                                          | Writes           | Must run                                     |
-| ------------------------ | ---------------------------------------------- | ---------------- | -------------------------------------------- |
-| Author (human/agent)     | shards, `refs lookup`, bootstrap index         | shards, manifest | `check` before PR                            |
-| CI                       | config                                         | —                | `check --require-lint` when peers configured |
-| Agent (context consumer) | bootstrap index, `export --llm`, single shards | —                | —                                            |
-| Maintainer               | spec + conformance                             | protocol shards  | `docs:check:repo`                            |
+| Actor                    | Reads                                                     | Writes           | Must run                                     |
+| ------------------------ | --------------------------------------------------------- | ---------------- | -------------------------------------------- |
+| Author (human/agent)     | shards, bootstrap index                                   | shards, manifest | `check` before PR                            |
+| CI                       | config                                                    | —                | `check --require-lint` when peers configured |
+| Agent (context consumer) | bootstrap index, single shards (`rg`/IDE), `export --llm` | —                | —                                            |
+| Maintainer               | spec + conformance                                        | protocol shards  | `docs:check:repo`                            |
 
 **Shards are source of truth; compiled files are generated.**
 
@@ -25,7 +25,7 @@ One guide, `compile` + `check`, monolith output. Fetch or copy `mdcp.v0.4.llms.t
 
 ### Standard
 
-Multi-guide `compileOrder`, publish outputs (`compile.outputFile`), `refs lookup`.
+Multi-guide `compileOrder`, publish outputs (`compile.outputFile`).
 
 ### Agent-native
 
@@ -43,8 +43,8 @@ Above plus `export --llm`, three-tier shards (`features` / `client` / `developer
 
 1. Read `mdcp.v*.llms.txt` in docs root (agent index)
 2. Load task prompt from `.agents/skills/mdcp/agents/` (or [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/)) with `WORK_ITEM` set — see [Agent task prompts](./agent-task-prompts.md)
-3. `mdcp refs lookup "<topic>"`
-4. Read one shard from lookup result
+3. Discover the shard with host tools (`rg`, IDE search, guide `index.md`) and **read one shard**
+4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs list`)
 5. `mdcp export --llm` only when broader context is required
 
 Read [LLM collaboration](../../client-cli/llm-collaboration.md) for prompts and workflow index.

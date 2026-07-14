@@ -5,7 +5,7 @@
   - Agent tasks & skills
   - `mdcp compile` and validation
 - **V2: Delivery (MCP Adapter)**
-  - MDCP MCP server (`refs lookup`, shard read, glossary search)
+  - MDCP MCP server (shard read, glossary search)
 - **V3: Hosted Context API**
   - OpenAPI spec, API keys, polyglot clients
 
@@ -20,7 +20,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
 - It's a **behavioral guide**, not a context dump.
-- Tells agents how to compile, validate, and query shards via `refs lookup`.
+- Tells agents how to compile, validate, and read shards one at a time.
 
 Or use the CLI init to scaffold your docs:
 

@@ -12,7 +12,8 @@ Policy for public copy — README, npm package openings, and adoption material. 
 
 ## Common corrections
 
-- **`export --llm` scopes context** — Scope comes from **workflow** ([usage model](./usage-model.md): `refs lookup` → one shard). `export --llm` strips comments and banners from whatever you export.
+- **`export --llm` scopes context** — Scope comes from **workflow** ([usage model](./usage-model.md): read one shard). `export --llm` strips comments and banners from whatever you export.
+- **`refs lookup` / retrieval as WIIFM** — Forbidden. Doc discovery is host search; do not claim a MDCP lookup verb for context size or accuracy.
 - **Ship faster with agents** — Tier C; use adoption stories or measured outcomes.
 - **Strips tokens for scoped context** — Split: export **strips HTML comments and banners** (Tier A); **smaller per-turn reads when agents load one shard** (Tier B, [context-size measurement](#context-size-measurement-dogfood-repo)).
 
@@ -40,7 +41,6 @@ On this repository, the median `docs/features/` shard is **~4.4%** of the compil
 
 ## Evidence elsewhere
 
-- **`refs lookup` latency** — [Performance goals and review](./performance.md) and [performance-dogfood.csv](./performance-dogfood.csv)
 - **`mdcp check` catches orphans and broken refs** — Feature catalog; core tests
 - **OpenAPI analogy** — Design intent in [Vision and roadmap](./00-vision-and-roadmap.md); not LF membership
 

@@ -37,17 +37,17 @@ Design constraints for the protocol and its ecosystem — analogous to SOLID in 
 | **O**pen/closed           | Core protocol versioned and stable; extend through complementary skills without forking the base spec                   |
 | **L**iskov substitution   | Optional extensions **MUST NOT** break core `mdcp check` when disabled; archetypes compose on top of conforming layouts |
 | **I**nterface segregation | Export profiles (`--llm`, `--llms-index`), compile hooks, and archetype packs are separate opt-in surfaces              |
-| **D**ependency inversion  | Agents and CI depend on **compiled contracts** and `refs lookup`, not ad-hoc README prose or host-specific rules        |
+| **D**ependency inversion  | Agents and CI depend on **compiled contracts** and `mdcp check`, not ad-hoc README prose or host-specific rules         |
 
 ## Extensions directory
 
 Published and community extensions live under [complementary skills](../../../spec/extensions/).
 
-| Kind                | Purpose                                                        | Example                                         |
-| ------------------- | -------------------------------------------------------------- | ----------------------------------------------- |
-| **Archetype**       | End-to-end layout + conventions for a project class            | OSS library, product docs site                  |
-| **Formatting pack** | Lint and style presets for a doc framework                     | Vale/Markdownlint for Docusaurus                |
-| **Pointer profile** | Shards as stable links into source; agents read code on demand | API surface via `mdcp refs lookup` + file paths |
+| Kind                | Purpose                                                        | Example                                   |
+| ------------------- | -------------------------------------------------------------- | ----------------------------------------- |
+| **Archetype**       | End-to-end layout + conventions for a project class            | OSS library, product docs site            |
+| **Formatting pack** | Lint and style presets for a doc framework                     | Vale/Markdownlint for Docusaurus          |
+| **Pointer profile** | Shards as stable links into source; agents read code on demand | API surface via heading refs + file paths |
 
 ### Fork, use locally, or contribute back
 

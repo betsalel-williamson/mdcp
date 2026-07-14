@@ -175,7 +175,7 @@ Start with `assemble.ts` and `cli.ts` if you are tracing a compile from config t
 
 ### LLM authoring a new section
 
-Edit a shard (and `index.md` if section membership changed) → `mdcp refs lookup "topic"` while writing links → `mdcp check`.
+Edit a shard (and `index.md` if section membership changed) → insert cross-links carefully → `mdcp check` (catches bad `#` fragments).
 
 ### Human PR review
 
@@ -183,7 +183,7 @@ Edit a shard (and `index.md` if section membership changed) → `mdcp refs looku
 
 ### Agent reading repo docs
 
-`mdcp export --llm --stdout` or read the compiled monolith; `mdcp refs lookup` for stable anchor targets.
+`mdcp export --llm --stdout` or read the compiled monolith; find shards with host search and read one file.
 
 ### Publishing package README from shards
 

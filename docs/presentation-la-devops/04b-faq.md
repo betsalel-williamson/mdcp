@@ -22,7 +22,7 @@ Common objections for Q&A — skip during the main talk:
 
 - We're not replacing Docusaurus, MkDocs, or CI doc generators.
 - MDCP is a **protocol** (like OpenAPI for HTTP APIs) for **documentation context contracts**.
-- Doc sites weren't built for granular, PR-reviewable, agent-first retrieval (`refs lookup`).
+- Doc sites weren't built for granular, PR-reviewable, agent-first **shard** contracts.
 - The missing piece is a **shared standard** for validated intent that agents and humans consume the same way.
 
 ---
