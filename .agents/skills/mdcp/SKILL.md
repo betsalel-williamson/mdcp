@@ -88,7 +88,7 @@ Open the single `.md` shard path from lookup or the guide manifest. Broader
 ./.agents/skills/mdcp/scripts/check.sh
 ```
 
-In this monorepo: `pnpm docs:compile:repo` and `pnpm docs:check`.
+In this monorepo: `pnpm docs:compile:repo` and `pnpm docs:check`. Note: DO NOT expect to see `- Generated mdcp.v*.llms.txt successfully` in the output, as the llms-index is transitional and may not be generated.
 
 ### 4. Code Formatting and Linting
 
