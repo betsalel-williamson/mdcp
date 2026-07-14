@@ -4,6 +4,7 @@ node_modules/
 
 # Build output
 dist/
+build/
 
 # MDCP temp / cache
 .compile-build/
@@ -47,9 +48,9 @@ docs/styles/*
 docs/_build/
 
 # Rendered presentation artifacts — source lives in docs/presentation-la-devops/
-presentations/*.md
-presentations/*.html
-presentations/*.pdf
+build/presentations/
+docs/presentation-la-devops/assets/*.png
+docs/presentation-la-devops/assets/*.svg
 
 # Sample guides fixture output
 examples/sample-guides/_build/

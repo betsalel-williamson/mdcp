@@ -53,7 +53,7 @@ Configure a guide in your `mdcp.config.json` to compile the presentation shards 
 {
   "name": "presentation-name",
   "compile": {
-    "outputFile": "../../presentations/presentation-name.md",
+    "outputFile": "../../build/presentations/presentation-name.md",
     "includeBanner": false
   }
 }
