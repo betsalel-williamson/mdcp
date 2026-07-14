@@ -112,7 +112,7 @@ To run prose linting (requires Vale):
 ./.agents/skills/mdcp/scripts/prose.sh
 ```
 
-### 4. Complementary skills (migrating from extensions)
+### 5. Complementary skills (migrating from extensions)
 
 Optional companions (as they land under `.agents/skills/`):
 
@@ -124,7 +124,7 @@ Optional companions (as they land under `.agents/skills/`):
 Until migrated, transitional packs live under `spec/extensions/`. Epic:
 <https://github.com/betsalel-williamson/mdcp/issues/102>
 
-### 5. Optional workspace scaffold
+### 6. Optional workspace scaffold
 
 When no `mdcp.config.json` yet: create docs root + config + guide dirs, install
 the parent skill under `.agents/skills/mdcp/`, optionally add
