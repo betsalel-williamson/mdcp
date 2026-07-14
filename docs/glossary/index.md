@@ -11,6 +11,11 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [protocol version](./protocol-version.md)
 - [mdcp-llms-index](./mdcp-llms-index.md)
 
+## Skill verification
+
+- [skill content lint](./skill-content-lint.md)
+- [live skill eval](./live-skill-eval.md)
+
 ## Format and compile terms
 
 - [GFM](./gfm.md)

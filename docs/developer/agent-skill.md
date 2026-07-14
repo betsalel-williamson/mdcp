@@ -14,7 +14,7 @@ When changing skill instructions:
 2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages / `spec/schemas`.
 3. For prompts, archetypes, or format packs, prefer complementary skills (or land them via migration issues) instead of growing the parent forever.
 4. Update [Agent Skill delivery](../features/agent-skill.md) when install or migration phases change.
-5. Run `pnpm skill:check` and `pnpm docs:check`.
+5. Run `pnpm skill:lint` and `pnpm docs:check`.
 
 ## Quality Assurance (QA) Principles
 
@@ -30,16 +30,16 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 ## Verification
 
-| Command            | Purpose                                                                        |
-| ------------------ | ------------------------------------------------------------------------------ |
-| `pnpm skill:check` | Deterministic parent-skill evals (frontmatter, triggers, hard-rule assertions) |
-| `pnpm docs:check`  | Docs compile + lint gate after shard edits                                     |
+| Command           | Purpose                                                         |
+| ----------------- | --------------------------------------------------------------- |
+| `pnpm skill:lint` | Static content lint on parent `SKILL.md` (phrases, frontmatter) |
+| `pnpm docs:check` | Docs compile + lint gate after shard edits                      |
 
-`skill:check` is required in local `pnpm check` and in GitHub Actions CI. Changes to the skill or `scripts/check-mdcp-skill.mjs` must keep that step green.
+`skill:lint` is the [skill content lint](../glossary/skill-content-lint.md) gate. It is required in local `pnpm check` and in GitHub Actions CI. It is **not** a [live skill eval](../glossary/live-skill-eval.md). Changes to the skill or `scripts/lint-mdcp-skill.mjs` must keep that step green.
 
 ## Optional local improve loop
 
-For qualitative description tuning, install Anthropic's `skill-creator` locally (`npx skills add anthropics/skills --skill skill-creator`). Do **not** require Claude CLI or `skill-creator` in CI.
+For qualitative description tuning and agent behavior checks, install Anthropic's `skill-creator` locally (`npx skills add anthropics/skills --skill skill-creator`) and use fixtures under `.agents/skills/mdcp/evals/`. That [live skill eval](../glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
 
 ## Publishing the skill pack
 

@@ -63,11 +63,15 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 2. Install documents parent + complementary skills via `npx skills add`.
 3. Parent skill encodes bootstrap / smallest-context / hard rules formerly unique to the agent index.
 4. Skill is host-agnostic — no Marketplace-only required steps.
-5. `pnpm skill:check` passes locally and in CI for changes under `.agents/skills/mdcp/` and the skill checker scripts.
+5. [`skill content lint`](../glossary/skill-content-lint.md) (`pnpm skill:lint`) passes locally and in CI for changes under `.agents/skills/mdcp/` and `scripts/lint-mdcp-skill.mjs`.
 
-## Eval and CI
+## Content lint (CI)
 
-Deterministic evals live under `.agents/skills/mdcp/evals/`. Run `pnpm skill:check`. GitHub Actions runs the same gate so skill regressions fail the PR.
+Static analysis of the parent `SKILL.md` — required/forbidden phrases, frontmatter, and line budget. Fixtures live under `scripts/mdcp-skill-content-lint/` (monorepo CI only; not shipped with the skill). Run `pnpm skill:lint`. GitHub Actions runs the same gate so phrase regressions fail the PR. This is not a [live skill eval](../glossary/live-skill-eval.md).
+
+## Live skill evals (optional, local)
+
+Optional skill-creator agent runs and description trigger optimization use fixtures under `.agents/skills/mdcp/evals/`. Never required in CI.
 
 ## Ecosystem publication
 

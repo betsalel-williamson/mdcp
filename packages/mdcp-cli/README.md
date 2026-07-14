@@ -926,6 +926,11 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [protocol version](#protocol-version)
 - [mdcp-llms-index](#mdcp-llms-index)
 
+### Skill verification
+
+- [skill content lint](#skill-content-lint)
+- [live skill eval](#live-skill-eval)
+
 ### Format and compile terms
 
 - [GFM](#gfm)
@@ -1009,6 +1014,8 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 The successor to the legacy `mdcp.v*.llms.txt` (llms-index) bootstrap file. Instead of fetching a monolithic `llms.txt` file, MDCP is delivered as a portable Agent Skill (e.g., `.agents/skills/mdcp/SKILL.md`). This provides a host-agnostic, zero-friction way to enforce documentation guardrails, workflows, and complementary skills (like prompts and formats) across different AI coding assistants.
 
+Verification is split: [skill content lint](#skill-content-lint) is the CI static check on `SKILL.md` text; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
+
 ## protocol version
 
 Four-part version for MDCP **artifact and config compatibility** (default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 0.4.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v0.4.llms.txt` ≡ `0.4.0.0`).
@@ -1020,6 +1027,14 @@ Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implem
 ## mdcp-llms-index
 
 **Legacy.** The legacy export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root, which was replaced by [Agent Skills](#agent-skills).
+
+## skill content lint
+
+CI/static check that required or forbidden language still appears in the parent `SKILL.md` (plus frontmatter and line-budget rules). Run with `pnpm skill:lint`; fixtures live under `scripts/mdcp-skill-content-lint/` (repo CI assets — not part of the portable skill pack). This is substring analysis of Markdown on disk — **not** a [live skill eval](#live-skill-eval), and it does not run agents or measure triggering.
+
+## live skill eval
+
+Optional local skill-creator workflow: run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `.agents/skills/mdcp/evals/`. Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
 
 ## GFM
 

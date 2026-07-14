@@ -1,6 +1,6 @@
 {
   "descriptionMustInclude": ["MDCP", "shard", "compile", "check", "refs"],
-  "positive": [
+  "keywordCoverage": [
     {
       "id": "edit-feature-shards",
       "query": "Add a feature shard under docs/features and update the manifest",
@@ -22,7 +22,7 @@
       "mustMatchAny": ["llms", "MDCP", "skill", "legacy", "index"]
     }
   ],
-  "negative": [
+  "nonMdcpFramedQueries": [
     {
       "id": "unrelated-css",
       "query": "Change the button hover color in the marketing landing page CSS",

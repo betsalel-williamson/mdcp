@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 /**
- * Deterministic CI gate for the MDCP parent Agent Skill.
- * No model/API required — frontmatter, triggers, and body assertions only.
+ * SKILL.md content lint for the MDCP parent Agent Skill.
+ * Static analysis only: frontmatter, required/forbidden phrases, line budget.
+ * Not a skill-creator live eval — no model/API; does not run agents or measure triggers.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const skillDir = path.join(root, '.agents/skills/mdcp');
-const skillPath = path.join(skillDir, 'SKILL.md');
-const triggersPath = path.join(skillDir, 'evals/static-triggers.json');
-const evalsPath = path.join(skillDir, 'evals/static-evals.json');
+const skillPath = path.join(root, '.agents/skills/mdcp/SKILL.md');
+const fixturesDir = path.join(root, 'scripts/mdcp-skill-content-lint');
+const descriptionKeywordsPath = path.join(fixturesDir, 'description-keywords.json');
+const requiredPhrasesPath = path.join(fixturesDir, 'required-phrases.json');
 
 const results = [];
 
@@ -100,10 +101,10 @@ function main() {
   if (description.length > 0 && description.length <= 1024) pass('description-length');
   else fail('description-length', `description length ${description.length}`);
 
-  const triggers = readJson(triggersPath);
-  const evals = readJson(evalsPath);
+  const keywords = readJson(descriptionKeywordsPath);
+  const phrases = readJson(requiredPhrasesPath);
 
-  for (const token of triggers.descriptionMustInclude) {
+  for (const token of keywords.descriptionMustInclude) {
     if (description.toLowerCase().includes(token.toLowerCase())) {
       pass(`description-has:${token}`);
     } else {
@@ -111,56 +112,55 @@ function main() {
     }
   }
 
-  for (const caseItem of triggers.positive) {
-    if (includesAny(description + '\n' + caseItem.query, caseItem.mustMatchAny)) {
-      // Positive queries should overlap description keywords so the skill is discoverable.
-      if (includesAny(description, caseItem.mustMatchAny)) {
-        pass(`trigger-positive:${caseItem.id}`);
+  for (const item of keywords.keywordCoverage) {
+    if (includesAny(description + '\n' + item.query, item.mustMatchAny)) {
+      // Sample queries should share keywords with the description for discoverability.
+      if (includesAny(description, item.mustMatchAny)) {
+        pass(`keyword-coverage:${item.id}`);
       } else {
         fail(
-          `trigger-positive:${caseItem.id}`,
-          `description does not share keywords with query (${caseItem.mustMatchAny.join(', ')})`,
+          `keyword-coverage:${item.id}`,
+          `description does not share keywords with query (${item.mustMatchAny.join(', ')})`,
         );
       }
     } else {
-      fail(`trigger-positive:${caseItem.id}`, 'invalid fixture needles');
+      fail(`keyword-coverage:${item.id}`, 'invalid fixture needles');
     }
   }
 
-  for (const caseItem of triggers.negative) {
-    // Description may mention MDCP globally; negative cases only require that the
-    // query itself is not framed as an MDCP docs task (fixture sanity).
-    if (!includesAll(caseItem.query, caseItem.mustNotRequireAll)) {
-      pass(`trigger-negative:${caseItem.id}`);
+  for (const item of keywords.nonMdcpFramedQueries) {
+    // Fixture sanity: unrelated sample queries must not be phrased as MDCP docs tasks.
+    if (!includesAll(item.query, item.mustNotRequireAll)) {
+      pass(`fixture-sanity:${item.id}`);
     } else {
       fail(
-        `trigger-negative:${caseItem.id}`,
-        'negative query unexpectedly contains all MDCP needles',
+        `fixture-sanity:${item.id}`,
+        'non-MDCP sample query unexpectedly contains all MDCP needles',
       );
     }
   }
 
-  for (const needle of evals.skillBodyMustInclude) {
+  for (const needle of phrases.skillBodyMustInclude) {
     if (body.toLowerCase().includes(needle.toLowerCase())) pass(`body-has:${needle}`);
     else fail(`body-has:${needle}`, `SKILL.md body missing ${needle}`);
   }
 
-  for (const needle of evals.skillBodyMustNotInclude) {
+  for (const needle of phrases.skillBodyMustNotInclude) {
     if (!body.includes(needle)) pass(`body-avoids:${needle}`);
     else fail(`body-avoids:${needle}`, `SKILL.md must not require ${needle}`);
   }
 
-  for (const rule of evals.hardRulesMustMention) {
+  for (const rule of phrases.hardRulesMustMention) {
     if (includesAny(body, rule.patterns)) pass(`hard-rule:${rule.id}`);
     else fail(`hard-rule:${rule.id}`, `missing patterns ${rule.patterns.join(', ')}`);
   }
 
-  for (const caseItem of evals.cases) {
-    if (includesAll(body, caseItem.mustMention)) pass(`case:${caseItem.id}`);
+  for (const item of phrases.phraseScenarios) {
+    if (includesAll(body, item.mustMention)) pass(`phrase-scenario:${item.id}`);
     else {
       fail(
-        `case:${caseItem.id}`,
-        `body missing one of ${caseItem.mustMention.join(', ')} for: ${caseItem.prompt}`,
+        `phrase-scenario:${item.id}`,
+        `body missing one of ${item.mustMention.join(', ')} for: ${item.prompt}`,
       );
     }
   }
@@ -172,7 +172,7 @@ function main() {
   const passed = results.filter((r) => r.ok).length;
   const failed = results.filter((r) => !r.ok);
   console.log(
-    `mdcp skill:check — ${passed} passed, ${failed.length} failed (${results.length} total)`,
+    `mdcp skill:lint — ${passed} passed, ${failed.length} failed (${results.length} total)`,
   );
   for (const r of results) {
     const mark = r.ok ? 'PASS' : 'FAIL';

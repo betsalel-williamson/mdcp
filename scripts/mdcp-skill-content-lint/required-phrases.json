@@ -1,6 +1,6 @@
 {
   "skillBodyMustInclude": [
-    "scripts/fix.sh",
+    "scripts/compile.sh",
     "scripts/check.sh",
     "scripts/setup-linters.sh",
     "scripts/fix.sh",
@@ -45,7 +45,7 @@
       "patterns": ["temp info", "migration backlog", "planning", "issue tracking"]
     }
   ],
-  "cases": [
+  "phraseScenarios": [
     {
       "id": "bootstrap",
       "prompt": "Bootstrap MDCP agent guidance in a new repo",
