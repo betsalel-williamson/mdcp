@@ -1,5 +1,5 @@
 # What this tool is
 
-**mdcp** is an open protocol for **technical documentation context** — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. Software repositories are the most common adoption path; the same shard model applies to factory procedures, equipment manuals, training curricula, and other durable technical knowledge.
+**mdcp** is an open standard and [Agent Skill](https://agentskills.io) for **technical documentation context**.
 
-New to MDCP? Read [Vision and roadmap](../features/protocol/00-vision-and-roadmap.md) for problem, principles, and phased delivery.
+Instead of massive, unvalidated monolithic READMEs that overwhelm LLM context windows, MDCP organizes knowledge into small, validated Markdown **shards** (e.g. `docs/features/my-feature.md`). The MDCP Agent Skill trains your coding agents (in Cursor, Copilot, or Claude) to read these shards one by one, update them before coding, and validate them in CI.

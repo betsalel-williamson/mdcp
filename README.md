@@ -1,106 +1,56 @@
-# MDCP — MarkDown Context Protocol
+# MDCP — MarkDown Context Protocol (Agent Skill)
 
 ## What this tool is
 
-**mdcp** is an open protocol for **technical documentation context** — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. Software repositories are the most common adoption path; the same shard model applies to factory procedures, equipment manuals, training curricula, and other durable technical knowledge.
+**mdcp** is an open standard and [Agent Skill](https://agentskills.io) for **technical documentation context**.
 
-New to MDCP? Read [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md) for problem, principles, and phased delivery.
-
-## What's in it for you
-
-Pick the goal that matches you — not a job title:
-
-| Archetype    | What you get                                                                                             |
-| ------------ | -------------------------------------------------------------------------------------------------------- |
-| **Builder**  | One validation gate for humans, agents, and CI; edit small files instead of one giant doc.               |
-| **Learner**  | Paste a prompt into your agent; it sets up the pipeline while you learn the commands.                    |
-| **Author**   | One topic per file; load matching sections per the [usage model](docs/features/protocol/usage-model.md). |
-| **Champion** | Slash MTTR during incidents and accelerate developer onboarding with instant, accurate context.          |
-
-Messaging rules: [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md).
+Instead of massive, unvalidated monolithic READMEs that overwhelm LLM context windows, MDCP organizes knowledge into small, validated Markdown **shards** (e.g. `docs/features/my-feature.md`). The MDCP Agent Skill trains your coding agents (in Cursor, Copilot, or Claude) to read these shards one by one, update them before coding, and validate them in CI.
 
 ## Get started
 
-Two equal paths — use whichever fits your workflow.
+MDCP is delivered as a zero-dependency **Agent Skill**. Once installed in your repository, it acts as a system-level prompt that teaches your AI tools how to interact with your project's documentation.
 
-### Path A — paste into your agent
+### Quick Start
 
-1. Open [getting-started.md](.agents/skills/mdcp/agents/getting-started.md).
-2. Fill in `FEATURE=` and `PERSONA=` at the top.
-3. Copy the **entire file** into your coding-agent chat (Cursor, Claude, Copilot, etc.) and send.
-
-The agent inspects your repo and walks through config, shard layout, and first `mdcp check`.
-
-Optional — fetch prompts into your docs root first:
+Install the core MDCP Agent Skill into your repository:
 
 ```bash
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
+npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-### Path B — CLI init (0.5 preview)
+_(This copies the `.agents/skills/mdcp/` folder into your repository. Commit it to git to ensure all team members and agents share the same instructions)._
+
+Once installed, your agents will proactively use MDCP commands to look up context, compile documentation, and validate references before writing code.
+
+### Complementary Skills
+
+You can add complementary skills for specific documentation architectures:
 
 ```bash
-npx @bwilliamson/mdcp-cli init --docs-root docs
+npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
+npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
+npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 ```
 
-Choose **defaults** (standard scaffold) or **augment** (map MDCP onto existing docs). Then compile and check:
+## Why use MDCP?
 
-```bash
-mdcp compile --config docs/mdcp.config.json --docs-root docs
-mdcp check --config docs/mdcp.config.json --docs-root docs
-```
+- **Docs-as-code discipline for Agents:** Forces agents to plan in Markdown shards rather than hallucinating in the chat window.
+- **Smaller context, better accuracy:** Agents use `mdcp refs lookup` to fetch exactly the context they need, rather than digesting thousands of lines of irrelevant documentation.
+- **Validation gate:** `mdcp check` runs in CI to guarantee that references and links between shards are valid.
+- **Portable:** Works natively in Cursor, GitHub Copilot, Claude Code, and other agent hosts that support the Agent Skills standard.
 
-Details: [Install and quick start](docs/client-cli/install-and-quick-start.md).
+## The Toolchain
 
-### Pick your path
+The MDCP workflow is enforced by the skill, but executed by the underlying CLI and Core libraries:
 
-| Archetype                                     | Suits Path / start here                          |
-| --------------------------------------------- | ------------------------------------------------ |
-| **Builder** — integrate mdcp into a repo      | A or B                                           |
-| **Learner** — try mdcp with agent help first  | A                                                |
-| **Author** — write shards; delegate CLI setup | A                                                |
-| **Champion** — evaluate or sponsor adoption   | Vision and roadmap → Benefit claims and evidence |
+- [`@bwilliamson/mdcp-cli`](./packages/mdcp-cli/README.md) - The command-line interface for compiling and checking shards.
+- [`@bwilliamson/mdcp-core`](./packages/mdcp-core/README.md) - The programmatic API for integrating MDCP into custom tooling.
 
-**Champion start:** [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md) → [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md).
-
-More depth per archetype: [Learn more](#want-to-know-more).
-
-## Want to know more
-
-Depth lives in linked shards — not on this page.
-
-### Builder
-
-**Goal:** wire tooling and read the spec.
-
-- [CLI consumers guide](docs/client-cli/index.md)
-- [Install and quick start](docs/client-cli/install-and-quick-start.md)
-- [Spec and extensions](spec/extensions/README.md)
-
-### Learner
-
-**Goal:** adopt with agent assistance.
-
-- [Getting started prompt](.agents/skills/mdcp/agents/getting-started.md)
-- [LLM collaboration](docs/client-cli/llm-collaboration.md)
-
-### Author
-
-**Goal:** document a domain without owning the toolchain.
+## Learn More
 
 - [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md)
-- [Scope and positioning](docs/features/protocol/01-scope-and-positioning.md)
-- [Alternatives and adoption](docs/features/protocol/02-alternatives-and-adoption.md)
-
-### Champion
-
-**Goal:** evaluate or sponsor org adoption.
-
-- [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md)
-- [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md)
-- [Why MDCP](docs/client-cli/why-mdcp-overview.md)
-- [Scope and positioning](docs/features/protocol/01-scope-and-positioning.md)
-- [MDCP 1.0 spec (draft)](docs/features/protocol/mdcp-1.0-spec.md)
+- [Agent Skill delivery](docs/features/agent-skill.md)
+- [CLI consumer guide](docs/client-cli/index.md)
 
 ## This repository
 

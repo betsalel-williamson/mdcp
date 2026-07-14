@@ -691,7 +691,7 @@ Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implem
 
 ## mdcp-llms-index
 
-_Transitional / Legacy._ Previously the export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. This approach is being migrated to [Agent Skills](#agent-skills) to provide a more modular, host-agnostic delivery mechanism. During the migration, llms-index remains available but is no longer the primary agent entrypoint. Read [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md).
+**Legacy.** The legacy export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root, which was replaced by [Agent Skills](#agent-skills).
 
 ## GFM
 
