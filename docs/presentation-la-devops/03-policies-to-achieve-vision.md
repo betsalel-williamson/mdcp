@@ -17,6 +17,6 @@ Your docs must capture:
 - **Glossary as first-class:** Domain terms and legacy disambiguation live in dedicated shards.
 - **Document before build/migrate:** Capture context in shards before greenfield work.
 - **Granular, safe context:** `refs lookup` → single shard.
-- **Open standard & Extensions:** `docs/extensions/` locally; shared packs in complementary skills.
+- **Extensible Doc Standard:** MDCP acts as the foundational "go-to" documentation skill. Teams can extend it locally (e.g., `docs/extensions/`) to integrate custom workflows and proprietary systems.
 
 ---
