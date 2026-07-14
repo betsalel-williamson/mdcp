@@ -46,6 +46,18 @@ npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 
 Zero-install: copy `.agents/skills/mdcp/` (and complementary skill directories when present) into the consumer repo.
 
+## Quality Assurance (QA) Principles
+
+When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
+
+- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
+- **Update as you go:** Continuously update documentation as work progresses.
+- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
+- **Break it down:** Organize information into the smallest possible pieces (shards).
+- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
+- **No temp info:** Do not record temporary project information, tickets, or incident logs in the durable documentation.
+- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
+
 ## Acceptance criteria
 
 1. Parent skill is a valid Agent Skills package (`name: mdcp` matches folder).

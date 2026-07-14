@@ -3,7 +3,9 @@ name: mdcp
 description: >-
   Applies MarkDown Context Protocol (MDCP) for sharded documentation — parent
   Agent Skill succeeding llms-index bootstrap, compile/check workflows, refs
-  lookup, and complementary skills for prompts/formats. Use when writing or
+  lookup, and complementary skills for prompts/formats. Use this skill
+  PROACTIVELY for ANY coding, feature, or architectural task to ensure changes
+  trace back to documentation and user needs. Use when writing or
   editing docs/ shards, mdcp.config.json, guide manifests, glossary shards, or
   when the user mentions MDCP, shard docs, refs lookup, or agent documentation.
 ---
@@ -33,8 +35,21 @@ Install help: [references/install.md](references/install.md)
   docs-first shards when the repo follows that convention.
 - **ALWAYS** run `mdcp check` (or `docs:check`) before trusting compiled output.
 
+## Quality Assurance (QA) Principles
+
+When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
+
+- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
+- **Update as you go:** Continuously update documentation as work progresses.
+- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
+- **Break it down:** Organize information into the smallest possible pieces (shards).
+- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
+- **No temp info:** Do not record temporary project information, tickets, or incident logs in the durable documentation.
+- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
+
 ## When to use
 
+- **PROACTIVELY on ANY feature, bugfix, or architectural task:** MDCP must be involved in the entire process. Before writing code, trace the requirement back to documentation. Consider the end-user problems and ensure helpful docs exist or are created.
 - Authoring or refactoring sharded markdown under a docs root
 - Bootstrapping MDCP agent guidance (install parent skill first)
 - Cross-links / refs while writing docs
@@ -56,7 +71,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 ### 2. Prefer smallest context
 
 ```bash
-mdcp refs lookup "<topic>" --format json --config <config> --docs-root <docs-root>
+./.agents/skills/mdcp/scripts/lookup.sh "<topic>"
 ```
 
 Open the single `.md` shard path from lookup or the guide manifest. Broader
@@ -69,11 +84,33 @@ Open the single `.md` shard path from lookup or the guide manifest. Broader
 3. Run:
 
 ```bash
-mdcp compile --config <config> --docs-root <docs-root>
-mdcp check --config <config> --docs-root <docs-root>
+./.agents/skills/mdcp/scripts/compile.sh
+./.agents/skills/mdcp/scripts/check.sh
 ```
 
 In this monorepo: `pnpm docs:compile:repo` and `pnpm docs:check`.
+
+### 4. Code Formatting and Linting
+
+If the user asks to set up formatting or linting, run:
+
+```bash
+./.agents/skills/mdcp/scripts/setup-linters.sh
+```
+
+This installs `prettier`, `markdownlint-cli2`, and `@bwilliamson/mdcp-presets`. It will also remind you to install `vale` separately. (Note: MDCP is flexible; if the user prefers other formatting or linting tools, you can integrate those instead.)
+
+To automatically format documents using the default tools:
+
+```bash
+./.agents/skills/mdcp/scripts/fix.sh
+```
+
+To run prose linting (requires Vale):
+
+```bash
+./.agents/skills/mdcp/scripts/prose.sh
+```
 
 ### 4. Complementary skills (migrating from extensions)
 

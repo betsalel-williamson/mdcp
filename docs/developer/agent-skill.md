@@ -16,6 +16,18 @@ When changing skill instructions:
 4. Update [Agent Skill delivery](../features/agent-skill.md) when install or migration phases change.
 5. Run `pnpm skill:check` and `pnpm docs:check`.
 
+## Quality Assurance (QA) Principles
+
+When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
+
+- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
+- **Update as you go:** Continuously update documentation as work progresses.
+- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
+- **Break it down:** Organize information into the smallest possible pieces (shards).
+- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
+- **No temp info:** Do not record temporary project information, tickets, or incident logs in the durable documentation.
+- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
+
 ## Verification
 
 | Command            | Purpose                                                                        |

@@ -87,6 +87,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ### Protocol terms
 
+- [Agent Skills](#agent-skills)
 - [MDCP](#mdcp)
 - [protocol version](#protocol-version)
 - [mdcp-llms-index](#mdcp-llms-index)
@@ -1019,6 +1020,10 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 **Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.
 
+## Agent Skills
+
+The successor to the legacy `mdcp.v*.llms.txt` (llms-index) bootstrap file. Instead of fetching a monolithic `llms.txt` file, MDCP is delivered as a portable Agent Skill (e.g., `.agents/skills/mdcp/SKILL.md`). This provides a host-agnostic, zero-friction way to enforce documentation guardrails, workflows, and complementary skills (like prompts and formats) across different AI coding assistants.
+
 ## MDCP
 
 **MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
@@ -1033,7 +1038,7 @@ Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implem
 
 ## mdcp-llms-index
 
-Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. Read [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
+_Transitional / Legacy._ Previously the export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. This approach is being migrated to [Agent Skills](#agent-skills) to provide a more modular, host-agnostic delivery mechanism. During the migration, llms-index remains available but is no longer the primary agent entrypoint. Read [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
 
 ## GFM
 

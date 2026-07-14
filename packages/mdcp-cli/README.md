@@ -394,6 +394,18 @@ npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 
 Zero-install alternative: copy `.agents/skills/mdcp/` from this repository into your project (plus complementary skill folders when you need them). Prefer `.agents/skills/` over host-specific aliases.
 
+### Quality Assurance (QA) Principles
+
+When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
+
+- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
+- **Update as you go:** Continuously update documentation as work progresses.
+- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
+- **Break it down:** Organize information into the smallest possible pieces (shards).
+- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
+- **No temp info:** Do not record temporary project information, tickets, or incident logs in the durable documentation.
+- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
+
 ### How this relates to CLI scripts
 
 Keep using npm scripts for compile and check — see [Agent integration](#agent-integration). The skill teaches agents **when** to run those commands and **how** to load the smallest useful shard context. It does not replace `@bwilliamson/mdcp-cli`.
@@ -954,6 +966,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ### Protocol terms
 
+- [Agent Skills](#agent-skills)
 - [MDCP](#mdcp)
 - [protocol version](#protocol-version)
 - [mdcp-llms-index](#mdcp-llms-index)
@@ -994,6 +1007,10 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 **Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.
 
+## Agent Skills
+
+The successor to the legacy `mdcp.v*.llms.txt` (llms-index) bootstrap file. Instead of fetching a monolithic `llms.txt` file, MDCP is delivered as a portable Agent Skill (e.g., `.agents/skills/mdcp/SKILL.md`). This provides a host-agnostic, zero-friction way to enforce documentation guardrails, workflows, and complementary skills (like prompts and formats) across different AI coding assistants.
+
 ## protocol version
 
 Four-part version for MDCP **artifact and config compatibility** (default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 0.4.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v0.4.llms.txt` ≡ `0.4.0.0`).
@@ -1004,7 +1021,7 @@ Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implem
 
 ## mdcp-llms-index
 
-Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. Read [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
+_Transitional / Legacy._ Previously the export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. This approach is being migrated to [Agent Skills](#agent-skills) to provide a more modular, host-agnostic delivery mechanism. During the migration, llms-index remains available but is no longer the primary agent entrypoint. Read [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
 
 ## GFM
 
