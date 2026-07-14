@@ -9,8 +9,8 @@ LLM pair-coding on a repo breaks down when documentation is a single monolith, u
 | Pain                       | What goes wrong                 | Command                                                |
 | -------------------------- | ------------------------------- | ------------------------------------------------------ |
 | **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans           |
-| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp refs lookup` on compiled output                  |
-| **Context overload**       | Monolith pasted each agent turn | `refs lookup` then read one shard                      |
+| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp check` (optional `mdcp refs list` for slugs)     |
+| **Context overload**       | Monolith pasted each agent turn | Host search, then read one shard                       |
 | **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                              |
 | **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`        |
 | **Plan mixed with code**   | Stale prose drives wrong code   | Shards under `docs/features/`, `client/`, `developer/` |
@@ -19,7 +19,7 @@ Documentation should carry **context and the high-level plan**; code carries **i
 
 ## Typical agent loop
 
-Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile` → `mdcp check` → `mdcp export --llm` when the next turn needs doc context.
+Discover shards with host search (`rg`, IDE search) → edit shards → `mdcp compile` → `mdcp check` (optional `mdcp refs list` to inspect slugs) → `mdcp export --llm` when the next turn needs doc context.
 
 ## Get started
 

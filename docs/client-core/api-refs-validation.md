@@ -5,7 +5,6 @@
 | Export                                                         | Purpose                                 |
 | -------------------------------------------------------------- | --------------------------------------- |
 | `headingTextToPlain`, `githubSlugify`, `buildSlugRegistry`     | GitHub heading slugs via github-slugger |
-| `lookupHeadings`                                               | Fuzzy search over `refs.json` headings  |
 | `genRefsFromCompiled`, `readRefsRegistry`, `checkRefsRegistry` | `refs.json` lifecycle                   |
 | `resolveRefsPath`, `writeRefsRegistry`                         | Path and I/O helpers                    |
 

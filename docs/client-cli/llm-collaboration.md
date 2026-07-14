@@ -32,14 +32,14 @@ Use these after the pipeline exists (inline here — not duplicated in `.agents/
 ```markdown
 Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
 Update each guide's `index.md`, then run this repo's mdcp compile and check commands.
-Use `mdcp refs lookup` for every cross-link. Do not edit generated compile output by hand.
+Discover shards with host search (`rg`, IDE search). Validate cross-links with `mdcp check` (optional `mdcp refs list`). Do not edit generated compile output by hand.
 ```
 
 **Fix validation failures:**
 
 ```markdown
 Documentation check failed. Read the error output, fix only shard `.md` files and config if needed, then re-run until check passes.
-Use `mdcp refs lookup` to correct broken fragment links.
+Use `mdcp check` (and optional `mdcp refs list`) to correct broken fragment links.
 ```
 
 **Regenerate manifest after TOC change:**
@@ -100,7 +100,7 @@ mdcp exposes a **tool-agnostic contract**: agents need shell access and the abil
 - **Cursor / Composer** — paste prompts from `.agents/skills/mdcp/agents/` or `.agents/skills/mdcp/agents/`; reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
-- **Cross-links** — `mdcp refs lookup "topic" --format json` before inserting fragment links
+- **Cross-links** — discover with host search; validate fragments with `mdcp check` (optional `mdcp refs list`)
 
 Example npm scripts:
 
@@ -109,8 +109,7 @@ Example npm scripts:
   "scripts": {
     "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
     "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
-    "docs:refs": "mdcp refs lookup"
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
   }
 }
 ```
@@ -146,7 +145,7 @@ When reviewing an agent's documentation PR:
 - Only shard `.md` files and config changed — not hand-edited generated compile output or `refs.json`
 - `index.md` link order matches intended compile order (use `compile.sectionsHeading` when the manifest has preamble example links)
 - Doc check passes locally and in CI (repo's documented commands)
-- Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
+- Cross-links pass `mdcp check` (optional `mdcp refs list` to inspect slugs), not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`
 - Task prompts use only the top replace block — fill in `WORK_ITEM` and `WORK_ITEM_LOOKUP` before sending
 - One WORK_ITEM per PR — branch and scope match a single feature or design
@@ -158,5 +157,5 @@ When reviewing an agent's documentation PR:
 - [Agent integration](./agent-integration.md) — npm scripts quick reference
 - [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/) — versioned copy-paste prompt files
 - [Project layout](./project-layout.md) — shard directory structure
-- [Cross-links and refs](./cross-links-and-refs.md) — slug lookup while authoring
+- [Cross-links and refs](./cross-links-and-refs.md) — validate fragments after compile
 - [Optional linters](./optional-linters.md) — markdownlint, Vale, link check peers

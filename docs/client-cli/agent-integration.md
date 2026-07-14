@@ -9,8 +9,7 @@ Add npm scripts in your consumer repo:
   "scripts": {
     "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
     "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
-    "docs:refs": "mdcp refs lookup"
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
   }
 }
 ```
@@ -19,11 +18,11 @@ Add npm scripts in your consumer repo:
 # Compact context for feature work
 mdcp export --llm --stdout --config docs/mdcp.config.json
 
-# Find the right section link while writing
-mdcp refs lookup "authentication" --format json
-
-# Full structural gate
+# Discover shards with host search (rg, IDE search), then validate links
 mdcp check --require-lint
+
+# Optional: inspect registry headings after compile or check
+mdcp refs list
 ```
 
 ## Related packages

@@ -7,8 +7,7 @@ import {
   resolveDocsRoot,
   genRefsFromCompiled,
   resolveRefsPath,
-  lookupHeadings,
-  buildSlugRegistry,
+  checkRefsRegistry,
   stripForLlm,
   getLlmExportOptions,
 } from '@bwilliamson/mdcp-core';
@@ -27,9 +26,7 @@ const compiled = compileGuides({
 
 const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
 genRefsFromCompiled(compiled, refsPath);
-
-const registry = buildSlugRegistry(compiled);
-const matches = lookupHeadings(registry, 'authentication');
+checkRefsRegistry(compiled, refsPath);
 
 const llmText = stripForLlm(compiled, getLlmExportOptions(config));
 ```

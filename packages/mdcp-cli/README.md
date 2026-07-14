@@ -17,8 +17,8 @@ LLM pair-coding on a repo breaks down when documentation is a single monolith, u
 | Pain                       | What goes wrong                 | Command                                                |
 | -------------------------- | ------------------------------- | ------------------------------------------------------ |
 | **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans           |
-| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp refs lookup` on compiled output                  |
-| **Context overload**       | Monolith pasted each agent turn | `refs lookup` then read one shard                      |
+| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp check` (optional `mdcp refs list` for slugs)     |
+| **Context overload**       | Monolith pasted each agent turn | Host search, then read one shard                       |
 | **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                              |
 | **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`        |
 | **Plan mixed with code**   | Stale prose drives wrong code   | Shards under `docs/features/`, `client/`, `developer/` |
@@ -27,7 +27,7 @@ Documentation should carry **context and the high-level plan**; code carries **i
 
 ### Typical agent loop
 
-Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile` → `mdcp check` → `mdcp export --llm` when the next turn needs doc context.
+Discover shards with host search (`rg`, IDE search) → edit shards → `mdcp compile` → `mdcp check` (optional `mdcp refs list` to inspect slugs) → `mdcp export --llm` when the next turn needs doc context.
 
 ### Get started
 
@@ -69,14 +69,14 @@ Use these after the pipeline exists (inline here — not duplicated in `.agents/
 ```markdown
 Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
 Update each guide's `index.md`, then run this repo's mdcp compile and check commands.
-Use `mdcp refs lookup` for every cross-link. Do not edit generated compile output by hand.
+Discover shards with host search (`rg`, IDE search). Validate cross-links with `mdcp check` (optional `mdcp refs list`). Do not edit generated compile output by hand.
 ```
 
 **Fix validation failures:**
 
 ```markdown
 Documentation check failed. Read the error output, fix only shard `.md` files and config if needed, then re-run until check passes.
-Use `mdcp refs lookup` to correct broken fragment links.
+Use `mdcp check` (and optional `mdcp refs list`) to correct broken fragment links.
 ```
 
 **Regenerate manifest after TOC change:**
@@ -137,7 +137,7 @@ mdcp exposes a **tool-agnostic contract**: agents need shell access and the abil
 - **Cursor / Composer** — paste prompts from `.agents/skills/mdcp/agents/` or `.agents/skills/mdcp/agents/`; reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
-- **Cross-links** — `mdcp refs lookup "topic" --format json` before inserting fragment links
+- **Cross-links** — discover with host search; validate fragments with `mdcp check` (optional `mdcp refs list`)
 
 Example npm scripts:
 
@@ -146,8 +146,7 @@ Example npm scripts:
   "scripts": {
     "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
     "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
-    "docs:refs": "mdcp refs lookup"
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
   }
 }
 ```
@@ -183,7 +182,7 @@ When reviewing an agent's documentation PR:
 - Only shard `.md` files and config changed — not hand-edited generated compile output or `refs.json`
 - `index.md` link order matches intended compile order (use `compile.sectionsHeading` when the manifest has preamble example links)
 - Doc check passes locally and in CI (repo's documented commands)
-- Cross-links use slugs from `mdcp refs lookup`, not guessed anchors
+- Cross-links pass `mdcp check` (optional `mdcp refs list` to inspect slugs), not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`
 - Task prompts use only the top replace block — fill in `WORK_ITEM` and `WORK_ITEM_LOOKUP` before sending
 - One WORK_ITEM per PR — branch and scope match a single feature or design
@@ -195,7 +194,7 @@ When reviewing an agent's documentation PR:
 - [Agent integration](#agent-integration) — npm scripts quick reference
 - [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents) — versioned copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
-- [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
+- [Cross-links and refs](#cross-links-and-refs) — validate fragments after compile
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
 
 ## Install and quick start
@@ -287,8 +286,7 @@ Add npm scripts in your consumer repo:
   "scripts": {
     "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
     "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
-    "docs:refs": "mdcp refs lookup"
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
   }
 }
 ```
@@ -297,11 +295,11 @@ Add npm scripts in your consumer repo:
 # Compact context for feature work
 mdcp export --llm --stdout --config docs/mdcp.config.json
 
-# Find the right section link while writing
-mdcp refs lookup "authentication" --format json
-
-# Full structural gate
+# Discover shards with host search (rg, IDE search), then validate links
 mdcp check --require-lint
+
+# Optional: inspect registry headings after compile or check
+mdcp refs list
 ```
 
 ### Related packages
@@ -626,27 +624,27 @@ mdcp check
 
 ### Command summary
 
-| Command                    | When you need it                                                                                   |
-| -------------------------- | -------------------------------------------------------------------------------------------------- |
-| `mdcp compile`             | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
-| `mdcp check`               | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
-| `mdcp shard`               | Split a monolith into shards (requires `config.source`)                                            |
-| `mdcp refs list`           | List heading slugs from `refs.json` as JSON                                                        |
-| `mdcp refs lookup <query>` | Search compiled section titles while writing cross-links                                           |
-| `mdcp export --llm`        | Token-stripped compiled output for LLM context                                                     |
-| `mdcp lint`                | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
-| `mdcp prose`               | Vale prose lint (peer, if installed)                                                               |
-| `mdcp links`               | markdown-link-check on compiled output (peer, if installed)                                        |
-| `mdcp fix`                 | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
+| Command             | When you need it                                                                                   |
+| ------------------- | -------------------------------------------------------------------------------------------------- |
+| `mdcp compile`      | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
+| `mdcp check`        | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
+| `mdcp shard`        | Split a monolith into shards (requires `config.source`)                                            |
+| `mdcp refs list`    | List heading slugs from `refs.json` as JSON                                                        |
+| `mdcp export --llm` | Token-stripped compiled output for LLM context                                                     |
+| `mdcp lint`         | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
+| `mdcp prose`        | Vale prose lint (peer, if installed)                                                               |
+| `mdcp links`        | markdown-link-check on compiled output (peer, if installed)                                        |
+| `mdcp fix`          | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
 
 ### Refs subcommands
 
-| Command                    | Purpose                                                                    |
-| -------------------------- | -------------------------------------------------------------------------- |
-| `mdcp refs gen`            | Generate `refs.json` from compiled output                                  |
-| `mdcp refs check`          | Verify `refs.json` matches compiled output                                 |
-| `mdcp refs list`           | List heading slugs from `refs.json` (run `mdcp check` or `refs gen` first) |
-| `mdcp refs lookup <query>` | Fuzzy-search titles from freshly compiled output                           |
+| Command           | Purpose                                                                    |
+| ----------------- | -------------------------------------------------------------------------- |
+| `mdcp refs gen`   | Generate `refs.json` from compiled output                                  |
+| `mdcp refs check` | Verify `refs.json` matches compiled output                                 |
+| `mdcp refs list`  | List heading slugs from `refs.json` (run `mdcp check` or `refs gen` first) |
+
+Discover shards with host search (`rg`, IDE search). Validate fragment links with `mdcp check`; use `mdcp refs list` when you need to inspect registry slugs.
 
 ### LLM and agent context
 
@@ -654,8 +652,11 @@ mdcp check
 # Token-stripped compiled output for coding agents
 mdcp export --llm --stdout
 
-# Find section links while authoring
-mdcp refs lookup "authentication" --format json
+# Full structural gate (includes refs + link validation)
+mdcp check
+
+# Optional: inspect registry headings after compile or check
+mdcp refs list
 ```
 
 ## Compile and the refs registry
@@ -687,20 +688,23 @@ Example:
 
 ```bash
 mdcp compile --config docs/mdcp.config.json --docs-root docs
+mdcp check --config docs/mdcp.config.json --docs-root docs
 mdcp refs list --config docs/mdcp.config.json --docs-root docs
-mdcp refs lookup "section title" --config docs/mdcp.config.json --docs-root docs
 ```
 
-`mdcp refs lookup` compiles fresh in memory; `mdcp refs list` reads the registry file that `compile` just wrote.
+Discover shards with host search (`rg`, IDE search). `mdcp check` validates cross-link fragments against compiled slugs; `mdcp refs list` reads the registry file that `compile` just wrote.
 
 ## Cross-links and refs
 
-When writing `` `[link text](#anchor)` `` in a shard, the anchor must match the compiled heading slug. Look it up instead of guessing:
+When writing `` `[link text](#anchor)` `` in a shard, the fragment must match the [heading slug](#heading-slug) in **compiled** output. [Refs](#refs) are the system that keeps those [cross-links](#cross-link) organized and checkable after stitch — not a doc-search tool.
 
 ```bash
-mdcp refs lookup "getting started" --format json
+mdcp compile --config docs/mdcp.config.json --docs-root docs
+mdcp check --config docs/mdcp.config.json --docs-root docs
 mdcp refs list
 ```
+
+`mdcp check` fails on dead `#` fragments and bad paths. `mdcp refs list` shows registry entries from the [refs registry](#refs-registry).
 
 The part after `#` must match how the compiled doc names that heading — which changes when shards are merged and headings shift level.
 
@@ -717,8 +721,8 @@ MDCP derives `#fragment` targets from **compiled** heading text using the same a
 
 **Authoring rules:**
 
-1. **Look up slugs** — run `mdcp refs lookup` or `mdcp refs list` after compile; do not hand-roll anchors from heading titles.
-2. **Prefer unique subheadings** — duplicate heading text in the same document produces `-1`, `-2` suffixes; the first `#slug` link may not reach later occurrences.
+1. **Prefer unique subheadings** — duplicate heading text in the same document produces `-1`, `-2` suffixes; the first `#slug` link may not reach later occurrences.
+2. **Validate with `mdcp check`** — do not hand-roll anchors from shard-only titles and assume they survive compile.
 3. **Explicit `` overrides** — when present on a heading line, that id is used instead of the auto slug (lowercased). Use sparingly; GitHub slugs are the default contract.
 
 `githubSlugify` and `buildSlugRegistry` in `@bwilliamson/mdcp-core` share this algorithm for link validation, `refs.json`, and compile-time slug maps. See [API — Refs and validation](../mdcp-core/README.md#heading-slugs-github-slugger).
@@ -841,7 +845,7 @@ See [Cross-guide links](../mdcp-core/README.md#cross-guide-ignore-example-mixed-
 1. Add `mdcp.config.json` to your docs shard directory
 2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](#--config-vs---docs-root))
 3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
-4. Use `mdcp refs lookup` for cross-link slugs (no ``)
+4. Discover shards with host search; validate cross-link slugs with `mdcp check` (optional `mdcp refs list`; prefer GitHub auto-slugs over ``)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
 Upgrade notes from earlier MDCP releases are in the package **changeset** files at release time, not in the feature catalog.
@@ -927,6 +931,10 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [GFM](#gfm)
 - [Authored GFM](#authored-gfm)
 - [ignoreGuides](#ignoreguides)
+- [refs](#refs)
+- [refs registry](#refs-registry)
+- [heading slug](#heading-slug)
+- [cross-link](#cross-link)
 
 ### Adoption and messaging
 
@@ -934,7 +942,46 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ## MDCP
 
-**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
+**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, [refs](#refs) registry maintenance, and `export --llm` implement the shared context layer.
+
+## heading slug
+
+GitHub-style fragment id for a heading in **compiled** Markdown (the part after `#` in `[label](#slug)`). Parent concept: [refs](#refs).
+
+MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Duplicate titles in one document get `-1`, `-2` suffixes. Authors should not invent fragments from shard-only titles; [cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
+
+## refs
+
+**Refs** (short for **references**) are the organized set of heading [slugs](#heading-slug) and [cross-links](#cross-link) MDCP derives from compiled guides so authors and CI can keep Markdown links coherent after stitch.
+
+The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](#refs-registry) and validates links at `check` time so the **compiled** document still targets the right sections and files.
+
+### Related wording
+
+| Form               | Meaning                                                                           |
+| ------------------ | --------------------------------------------------------------------------------- |
+| **refs** (noun)    | The reference system as a whole (slugs + links + registry)                        |
+| **refs registry**  | Derived catalog (`refs.json`) of compiled heading entries                         |
+| **ref** (informal) | One heading entry or one link target under that system                            |
+| **generate refs**  | Rebuild the registry from compiled output (`mdcp refs gen` / compile side effect) |
+| **list refs**      | Print registry headings (`mdcp refs list`)                                        |
+| **check refs**     | Confirm registry matches compiled headings (`mdcp refs check` / via `mdcp check`) |
+
+There is no `refs lookup` verb. Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs list`**.
+
+Not the same as ordinary “search the docs.” Refs are about **correct anchors and paths after compile**.
+
+## cross-link
+
+A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
+
+Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](../../docs/features/link-validation.md).
+
+## refs registry
+
+Derived catalog of [heading slugs](#heading-slug) from compiled guide output, typically written as `refs.json` under `outputDir`. Parent concept: [refs](#refs).
+
+The registry is **generated state**, not authored shards. `mdcp compile` (and `mdcp refs gen`) rebuild it; `mdcp check` / `mdcp refs check` verify it still matches the latest compile. Path rules: [Refs registry path](../../docs/features/refs-registry-path.md).
 
 ## domain glossary
 

@@ -48,6 +48,10 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [GFM](#gfm)
 - [Authored GFM](#authored-gfm)
 - [ignoreGuides](#ignoreguides)
+- [refs](#refs)
+- [refs registry](#refs-registry)
+- [heading slug](#heading-slug)
+- [cross-link](#cross-link)
 
 ### Adoption and messaging
 
@@ -62,8 +66,7 @@ import {
   resolveDocsRoot,
   genRefsFromCompiled,
   resolveRefsPath,
-  lookupHeadings,
-  buildSlugRegistry,
+  checkRefsRegistry,
   stripForLlm,
   getLlmExportOptions,
 } from '@bwilliamson/mdcp-core';
@@ -82,9 +85,7 @@ const compiled = compileGuides({
 
 const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
 genRefsFromCompiled(compiled, refsPath);
-
-const registry = buildSlugRegistry(compiled);
-const matches = lookupHeadings(registry, 'authentication');
+checkRefsRegistry(compiled, refsPath);
 
 const llmText = stripForLlm(compiled, getLlmExportOptions(config));
 ```
@@ -187,7 +188,6 @@ Full spec: [Compile output backup](../../docs/features/compile-output-backup.md)
 | Export                                                         | Purpose                                 |
 | -------------------------------------------------------------- | --------------------------------------- |
 | `headingTextToPlain`, `githubSlugify`, `buildSlugRegistry`     | GitHub heading slugs via github-slugger |
-| `lookupHeadings`                                               | Fuzzy search over `refs.json` headings  |
 | `genRefsFromCompiled`, `readRefsRegistry`, `checkRefsRegistry` | `refs.json` lifecycle                   |
 | `resolveRefsPath`, `writeRefsRegistry`                         | Path and I/O helpers                    |
 
@@ -977,7 +977,7 @@ The successor to the legacy `mdcp.v*.llms.txt` (llms-index) bootstrap file. Inst
 
 ## MDCP
 
-**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
+**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, [refs](#refs) registry maintenance, and `export --llm` implement the shared context layer.
 
 ## protocol version
 
@@ -1002,6 +1002,45 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 ## ignoreGuides
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](#cross-guide-link-rewriting).
+
+## refs
+
+**Refs** (short for **references**) are the organized set of heading [slugs](#heading-slug) and [cross-links](#cross-link) MDCP derives from compiled guides so authors and CI can keep Markdown links coherent after stitch.
+
+The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](#refs-registry) and validates links at `check` time so the **compiled** document still targets the right sections and files.
+
+### Related wording
+
+| Form               | Meaning                                                                           |
+| ------------------ | --------------------------------------------------------------------------------- |
+| **refs** (noun)    | The reference system as a whole (slugs + links + registry)                        |
+| **refs registry**  | Derived catalog (`refs.json`) of compiled heading entries                         |
+| **ref** (informal) | One heading entry or one link target under that system                            |
+| **generate refs**  | Rebuild the registry from compiled output (`mdcp refs gen` / compile side effect) |
+| **list refs**      | Print registry headings (`mdcp refs list`)                                        |
+| **check refs**     | Confirm registry matches compiled headings (`mdcp refs check` / via `mdcp check`) |
+
+There is no `refs lookup` verb. Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs list`**.
+
+Not the same as ordinary “search the docs.” Refs are about **correct anchors and paths after compile**.
+
+## refs registry
+
+Derived catalog of [heading slugs](#heading-slug) from compiled guide output, typically written as `refs.json` under `outputDir`. Parent concept: [refs](#refs).
+
+The registry is **generated state**, not authored shards. `mdcp compile` (and `mdcp refs gen`) rebuild it; `mdcp check` / `mdcp refs check` verify it still matches the latest compile. Path rules: [Refs registry path](../../docs/features/refs-registry-path.md).
+
+## heading slug
+
+GitHub-style fragment id for a heading in **compiled** Markdown (the part after `#` in `[label](#slug)`). Parent concept: [refs](#refs).
+
+MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Duplicate titles in one document get `-1`, `-2` suffixes. Authors should not invent fragments from shard-only titles; [cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
+
+## cross-link
+
+A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
+
+Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](../../docs/features/link-validation.md).
 
 ## WIIFM
 
