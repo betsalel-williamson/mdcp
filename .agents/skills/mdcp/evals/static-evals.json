@@ -1,0 +1,79 @@
+{
+  "skillBodyMustInclude": [
+    "scripts/lookup.sh",
+    "scripts/compile.sh",
+    "scripts/check.sh",
+    "scripts/setup-linters.sh",
+    "scripts/fix.sh",
+    "scripts/prose.sh",
+    "one shard",
+    "complementary",
+    "legacy",
+    "npx skills add",
+    ".agents/skills/mdcp"
+  ],
+  "skillBodyMustNotInclude": [
+    "MDCP: Compile Guides",
+    "MDCP: Check Links",
+    "VS Code Marketplace",
+    "Open VSX"
+  ],
+  "hardRulesMustMention": [
+    {
+      "id": "no-hand-edit-index",
+      "patterns": ["hand-edit", "mdcp.v", "extensions"]
+    },
+    {
+      "id": "no-monolith-dump",
+      "patterns": ["monolith", "one shard", "refs lookup"]
+    },
+    {
+      "id": "no-edit-generated",
+      "patterns": ["_build", "generated", "recompile"]
+    },
+    {
+      "id": "docs-first",
+      "patterns": ["docs-first", "shard", "functional"]
+    },
+    {
+      "id": "always-check",
+      "patterns": ["mdcp check", "docs:check"]
+    },
+    {
+      "id": "no-temp-info",
+      "patterns": ["temp info", "migration backlog", "planning", "issue tracking"]
+    }
+  ],
+  "cases": [
+    {
+      "id": "bootstrap",
+      "prompt": "Bootstrap MDCP agent guidance in a new repo",
+      "mustMention": ["skill", "npx skills add", "mdcp"]
+    },
+    {
+      "id": "compile-check",
+      "prompt": "Compile and validate docs after editing shards",
+      "mustMention": ["scripts/compile.sh", "scripts/check.sh"]
+    },
+    {
+      "id": "refs",
+      "prompt": "Find a heading link while writing docs",
+      "mustMention": ["refs lookup"]
+    },
+    {
+      "id": "anti-monolith",
+      "prompt": "Load documentation context for the agent",
+      "mustMention": ["one shard", "refs lookup"]
+    },
+    {
+      "id": "anti-hand-edit-index",
+      "prompt": "Customize agent rules for this repo",
+      "mustMention": ["legacy", "complementary"]
+    },
+    {
+      "id": "remove-old-info",
+      "prompt": "Remove old planning information from our docs, like the migration backlog",
+      "mustMention": ["issue tracking", "planning", "temp info"]
+    }
+  ]
+}

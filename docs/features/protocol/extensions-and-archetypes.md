@@ -34,14 +34,14 @@ Design constraints for the protocol and its ecosystem — analogous to SOLID in 
 | Principle                 | MDCP meaning                                                                                                            |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | **S**ingle responsibility | llms-index = entrypoint and query instructions; shards = intent; code = implementation; extensions = vertical overlays  |
-| **O**pen/closed           | Core protocol versioned and stable; extend through `spec/extensions/` without forking the base spec                     |
+| **O**pen/closed           | Core protocol versioned and stable; extend through complementary skills without forking the base spec                   |
 | **L**iskov substitution   | Optional extensions **MUST NOT** break core `mdcp check` when disabled; archetypes compose on top of conforming layouts |
 | **I**nterface segregation | Export profiles (`--llm`, `--llms-index`), compile hooks, and archetype packs are separate opt-in surfaces              |
 | **D**ependency inversion  | Agents and CI depend on **compiled contracts** and `refs lookup`, not ad-hoc README prose or host-specific rules        |
 
 ## Extensions directory
 
-Published and community extensions live under [`spec/extensions/`](../../../spec/extensions/).
+Published and community extensions live under [complementary skills](../../../spec/extensions/).
 
 | Kind                | Purpose                                                        | Example                                         |
 | ------------------- | -------------------------------------------------------------- | ----------------------------------------------- |
@@ -51,7 +51,7 @@ Published and community extensions live under [`spec/extensions/`](../../../spec
 
 ### Fork, use locally, or contribute back
 
-- **Fork** `spec/extensions/` into your repo under `docs/extensions/` when you need proprietary or experimental packs.
+- **Fork** complementary skills into your repo under `docs/extensions/` when you need proprietary or experimental packs.
 - **Contribute back** via PR when an extension is broadly useful — we want shared archetypes to grow.
 - **No obligation** — mdcp uses **MIT**; local-only proprietary extensions are explicitly encouraged when they encode competitive or regulated workflow detail.
 
@@ -81,9 +81,9 @@ V1 wires **extension packs** into `mdcp.config.json` — enable built-in packs (
 
 **Bootstrap:** Phase 1 — `mdcp export --llms-index --fetch` without config (defaults). Phase 2 — add config with `protocol.profile` (and `protocol.ref` when not on `main`), re-fetch with `--config`.
 
-**Security:** Default fetch uses the authoritative [`betsalel-williamson/mdcp`](https://github.com/betsalel-williamson/mdcp) repo. Per-pack `source` overrides and third-party URLs are a prompt-injection risk — see [spec/extensions/SECURITY.md](../../../spec/extensions/SECURITY.md). Future work: trusted-source allowlist and sandboxed fetch.
+**Security:** Agent Skills operate with identical permissions to the user. Treat third-party Agent Skills as untrusted. Future work: trusted-source allowlist and sandboxed execution.
 
-Built-in ids (such as `prompts-mdcp-defaults`) resolve paths under `spec/extensions/{id}/{version}/` from the root catalog ([FORMAT.md](../../../spec/extensions/FORMAT.md)). Each cache dir writes `manifest.json` with extension `version`, `protocolVersionRange`, upstream `ref`, and `files[]`. Revoked catalog entries **MUST NOT** be fetched.
+Built-in subagents (such as the `mdcp` feature and doc review subagents) resolve directly via the `.agents/skills/` directory. Each Agent Skill is an isolated, independent entity.
 
 ## Archetypes
 
@@ -94,7 +94,7 @@ An **archetype** is a documented bundle: guide layout, glossary seeds, optional 
 | OSS library       | `arch-oss-library`       | npm/crates publishable API    | Pointer shards to `src/`; minimal duplication of signatures |
 | Product docs site | `arch-product-docs-site` | MkDocs, Docusaurus, VitePress | `format-*` extension + client guide tier                    |
 
-Archetype READMEs live under `spec/extensions/` — for example `arch-oss-library/` and `arch-product-docs-site/`.
+Archetype READMEs live under complementary skills — for example `arch-oss-library/` and `arch-product-docs-site/`.
 
 Formatting packs use the `format-*` prefix — see `spec/extensions/format/`.
 
@@ -107,6 +107,5 @@ MDCP is designed to outgrow a single vendor implementation. The long-term goal i
 ## Related
 
 - [Vision and roadmap](./00-vision-and-roadmap.md)
-- [llms-index export](../llms-index-export.md)
 - [Agent task prompts](./agent-task-prompts.md)
 - [spec/extensions/README.md](../../../spec/extensions/README.md)

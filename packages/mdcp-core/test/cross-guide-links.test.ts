@@ -505,7 +505,7 @@ describe('cross-guide link rewriting', () => {
   it('buildGuideLinkIndex excludes repo files outside guide directories', () => {
     withTmpDir('mdcp-index-external-', (work) => {
       mkdirSync(join(work, 'features'), { recursive: true });
-      mkdirSync(join(work, 'examples', 'prompts'), { recursive: true });
+      mkdirSync(join(work, 'examples', 'other'), { recursive: true });
 
       writeFileSync(
         join(work, 'features', 'index.md'),
@@ -513,9 +513,9 @@ describe('cross-guide link rewriting', () => {
       );
       writeFileSync(
         join(work, 'features', 'overview.md'),
-        '# Overview\n\nPrompts: [README](../../examples/prompts/README.md)\n',
+        '# Overview\n\nPrompts: [README](../../examples/other/README.md)\n',
       );
-      writeFileSync(join(work, 'examples', 'prompts', 'README.md'), '# Prompt templates\n');
+      writeFileSync(join(work, 'examples', 'other', 'README.md'), '# Prompt templates\n');
 
       const index = buildGuideLinkIndex({
         guidesRoot: work,
@@ -526,7 +526,7 @@ describe('cross-guide link rewriting', () => {
       }).index;
 
       expect(index.has(join(work, 'features', 'overview.md'))).toBe(true);
-      expect(index.has(join(work, 'examples', 'prompts', 'README.md'))).toBe(false);
+      expect(index.has(join(work, 'examples', 'other', 'README.md'))).toBe(false);
     });
   });
 });

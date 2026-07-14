@@ -77,7 +77,7 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` ta
 - Revoke any legacy `NPM_TOKEN` secrets from GitHub once OIDC is verified
 - The release workflow uses OIDC (`id-token: write`) and `NPM_CONFIG_PROVENANCE=true`
 
-## Release workflow
+## Release workflow (NPM Packages)
 
 1. Merge PRs with changesets to `main`.
 2. Run **`pnpm release:tag:push`** on `main` (applies changesets, tags `vX.Y.Z`, pushes).

@@ -1,6 +1,6 @@
 # Agent integration
 
-npm script stubs for wiring mdcp into any coding agent. For setup prompts, docs-first feature workflow, and task-type templates, see [LLM collaboration](./llm-collaboration.md).
+npm script stubs for wiring mdcp into any coding agent. For the portable Agent Skill install (parent + complementary skills), see [Agent Skill (consumer)](./agent-skill.md). For setup prompts, docs-first feature workflow, and task-type templates, see [LLM collaboration](./llm-collaboration.md).
 
 Add npm scripts in your consumer repo:
 
@@ -35,6 +35,7 @@ mdcp check --require-lint
 
 ## Further reading
 
+- [Agent Skill (consumer)](./agent-skill.md) — host-agnostic skill install
 - [Why mdcp for coding agents](./why-mdcp-for-agents.md) — developer pain and which commands address it
 - [LLM collaboration](./llm-collaboration.md) — spec-driven workflow, prompts, toolchain integration
 - [Project README](../../README.md) — concepts and design rationale

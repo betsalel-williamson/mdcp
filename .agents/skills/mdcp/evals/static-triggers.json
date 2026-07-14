@@ -1,0 +1,37 @@
+{
+  "descriptionMustInclude": ["MDCP", "shard", "compile", "check", "refs"],
+  "positive": [
+    {
+      "id": "edit-feature-shards",
+      "query": "Add a feature shard under docs/features and update the manifest",
+      "mustMatchAny": ["shard", "docs/", "MDCP", "documentation", "manifest"]
+    },
+    {
+      "id": "bootstrap-mdcp",
+      "query": "Bootstrap MDCP in a new repository for agent documentation",
+      "mustMatchAny": ["MDCP", "bootstrap", "llms-index", "skill", "docs"]
+    },
+    {
+      "id": "refs-lookup",
+      "query": "Use mdcp refs lookup to find the right cross-link while editing shards",
+      "mustMatchAny": ["refs", "lookup", "MDCP", "shard"]
+    },
+    {
+      "id": "llms-index-mention",
+      "query": "How does mdcp relate to the deprecated mdcp.v0.4.llms.txt format?",
+      "mustMatchAny": ["llms", "MDCP", "skill", "legacy", "index"]
+    }
+  ],
+  "negative": [
+    {
+      "id": "unrelated-css",
+      "query": "Change the button hover color in the marketing landing page CSS",
+      "mustNotRequireAll": ["MDCP", "shard", "llms-index", "compile"]
+    },
+    {
+      "id": "unrelated-deps",
+      "query": "Bump lodash in package.json and regenerate the lockfile",
+      "mustNotRequireAll": ["MDCP", "shard", "documentation", "refs"]
+    }
+  ]
+}
