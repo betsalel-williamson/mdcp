@@ -42,10 +42,10 @@ As AI accelerates code generation, capturing _why_ we build is more critical tha
 
 ### The Payoff
 
-Documenting intent is hard, real work.
+Documenting intent is hard, real work. MDCP won’t do it for you.
 
-Tonight, we'll look at a framework that makes this work pay off permanently:
-**Writing docs _once_ that serve both your team and your AI agents.**
+Tonight, we'll look at an **Agent Skill** that makes this work pay off permanently:
+**Writing docs _once_ that serve both your team and your AI agents** — by putting small, durable shards where long-term system value lives.
 
 ---
 
@@ -114,12 +114,12 @@ Before we dive in, a few terms we'll use throughout:
 
 ### The Alternate Vision: MDCP
 
-**MarkDown Context Protocol (MDCP)** is an open, repo-local standard for **system context**.
+**MarkDown Context Protocol (MDCP)** is an **Agent Skill** and lightweight toolchain for **system context** in the repo.
 
-- **A Protocol and Method:** Assists with the proper practice of developing docs.
-- **Small Shards:** Focused markdown files are the source of truth.
-- **Agent-Friendly:** Agents pull **one section at a time** by reading a single shard.
-- **The Relief:** Write your documentation _once_. It serves as an onboarding guide for humans and a machine-readable context protocol for AI.
+- **A skill and method:** Helps you practice durable docs — not a magic bullet, and not an industry “standard” to join.
+- **Small shards:** Distill mind maps, arch notes, specs, and product ideas into focused Markdown files.
+- **Agent-friendly:** Agents pull **one section at a time** by reading a single shard — which keeps LLMs on track.
+- **Long-term payoff:** Write intent once. It onboards humans, traces value for the system, and gives AIs the same contract.
 
 ---
 
@@ -129,7 +129,7 @@ If we just demand more docs, aren't we just shifting the burden?
 
 MDCP is a tool that enables people to **think more clearly**.
 
-It flips the script: documentation becomes the _fun part_ of the design process, not a post-hoc chore.
+It flips the script: documentation becomes the _fun part_ of the design process, not a post-hoc chore. Small chunks help people see the root of an idea — and help agents stay aligned with that root.
 
 ---
 
@@ -146,13 +146,14 @@ Because each part is understandable, the entire system can be reasoned about.
 
 ### Cross-Functional Collaboration
 
-To survive the AI era, we must bring everyone to the front of the line:
+Works for a **team of one** or a full product, engineering, and marketing org — bring everyone to the front of the line:
 
 - Product Managers (defining the "why")
 - FinOps
 - Technical Writers (wrangling the "how")
 - System Architects
 - QA Engineers & Support Staff
+- Marketing (clear value and learnability)
 
 **MDCP restores a healthy, collaborative engineering culture.**
 
@@ -160,13 +161,14 @@ To survive the AI era, we must bring everyone to the front of the line:
 
 ### Who is MDCP For? (The Personas)
 
-MDCP supports the entire software value chain:
+MDCP supports a team of one **or** the entire software value chain:
 
 - **Planning:** You write the shards to ensure intent is clear before implementation.
 - **Developers:** You get context to verify behavior and understand design constraints.
 - **Quality:** You review the intent to ensure we aren't overlooking blind spots.
 - **Compliance:** You know exactly what to look for to ensure policies are met.
 - **Operators:** You know how to use the system effectively.
+- **Product & marketing:** You keep learnable value and WIIFM aligned with what shipped.
 - **Feedback Loop:** Real use comments and lessons learned are recorded back to the docs.
 
 ---
@@ -339,7 +341,7 @@ MDCP directly enables these critical multipliers.
 
 ### DORA Multipliers Enabled by MDCP (Cont.)
 
-- **Clear + communicated AI stance:** MDCP provides a standardized protocol (the contract) for how AI agents should interact with your system.
+- **Clear + communicated AI stance:** MDCP gives agents a shared, reviewable contract for how to read and update system context — without pretending to be an industry standard.
 - **Healthy data ecosystems:** Granular, validated shards prevent AI hallucinations and context overload.
 
 ---
@@ -363,7 +365,7 @@ Your docs must capture:
 - **Glossary as first-class:** Domain terms and legacy disambiguation live in dedicated shards.
 - **Document before build/migrate:** Capture context in shards before greenfield work.
 - **Granular, safe context:** Read one shard at a time; skip monolith dumps.
-- **Extensible Doc Standard:** MDCP acts as the foundational "go-to" documentation skill. Teams can extend it locally (e.g., `docs/extensions/`) to integrate custom workflows and proprietary systems.
+- **Extensible doc skill:** MDCP is the foundational “go-to” documentation skill. Teams can extend it locally (e.g., `docs/extensions/`) to integrate custom workflows and proprietary systems.
 
 ---
 
@@ -402,7 +404,7 @@ mdcp compile --config docs/mdcp.config.json
 
 ### The 5-Minute Starting Point
 
-This isn't a magic trick that instantly understands your legacy codebase. It's a frictionless, 5-minute starting point.
+This isn't a magic bullet that instantly understands your legacy codebase. It's a frictionless, 5-minute starting point that puts docs in the right place so they scale.
 
 - Open **Cursor** (or any LLM tool) in a repo.
 - Type: _"Help me write a new feature using the MDCP skill."_
@@ -415,11 +417,11 @@ This isn't a magic trick that instantly understands your legacy codebase. It's a
 
 Let’s ensure the future of agentic coding isn’t just generated faster—it’s designed with intent.
 
-1. **Shape the Standard:** Become a Founding Adopter.
-2. **Kick the tires:** Try the agent skill:
+1. **Shape the practice:** Become a founding adopter — try the skill on a real repo and tell us what breaks.
+2. **Kick the tires:** Install the agent skill:
    `npx skills add betsalel-williamson/mdcp --skill mdcp`
 3. **Show support:** Drop a ⭐ on the GitHub repo.
-4. **Spread the word:** Share with your cross-functional teams.
+4. **Spread the word:** Share with solo builders and cross-functional teams alike.
 
 ---
 
@@ -456,9 +458,9 @@ Common objections for Q&A — skip during the main talk:
 ### Why yet another doc tool?
 
 - We're not replacing Docusaurus, MkDocs, or CI doc generators.
-- MDCP is a **protocol** (like OpenAPI for HTTP APIs) for **documentation context contracts**.
-- Doc sites weren't built for granular, PR-reviewable, agent-first **shard** contracts.
-- The missing piece is a **shared standard** for validated intent that agents and humans consume the same way.
+- MDCP is an **Agent Skill** (plus compile/check tooling) that organizes **documentation context** the way OpenAPI organizes API contracts — as a useful analogy, not a standards-body claim.
+- Doc sites weren't built for granular, PR-reviewable, agent-first **shard** workflows.
+- The missing piece is a **shared, validated place** for intent that agents and humans consume the same way — so docs scale without becoming monolith dumps.
 
 ---
 
@@ -473,8 +475,8 @@ Common objections for Q&A — skip during the main talk:
 
 ### How does MDCP ensure the code built matches the docs?
 
-- It doesn't magically force compliance—it requires someone to use it productively.
-- By making docs granular, machine-readable, and co-located with code, it allows AI agents to continuously verify implementation aligns with intent.
-- It makes documentation the _blueprint_ for LLM code generation, rather than an afterthought.
+- It doesn't magically force compliance — it is not a magic bullet.
+- By making docs granular, machine-readable, and co-located with code, it helps people and AI agents continuously verify implementation against intent.
+- It makes documentation the _blueprint_ for LLM code generation, rather than an afterthought — when someone uses the skill productively.
 
 ---

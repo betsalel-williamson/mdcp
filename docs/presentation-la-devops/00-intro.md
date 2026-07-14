@@ -42,9 +42,9 @@ As AI accelerates code generation, capturing _why_ we build is more critical tha
 
 ## The Payoff
 
-Documenting intent is hard, real work.
+Documenting intent is hard, real work. MDCP won’t do it for you.
 
-Tonight, we'll look at a framework that makes this work pay off permanently:
-**Writing docs _once_ that serve both your team and your AI agents.**
+Tonight, we'll look at an **Agent Skill** that makes this work pay off permanently:
+**Writing docs _once_ that serve both your team and your AI agents** — by putting small, durable shards where long-term system value lives.
 
 ---

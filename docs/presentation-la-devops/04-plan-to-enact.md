@@ -33,7 +33,7 @@ mdcp compile --config docs/mdcp.config.json
 
 ## The 5-Minute Starting Point
 
-This isn't a magic trick that instantly understands your legacy codebase. It's a frictionless, 5-minute starting point.
+This isn't a magic bullet that instantly understands your legacy codebase. It's a frictionless, 5-minute starting point that puts docs in the right place so they scale.
 
 - Open **Cursor** (or any LLM tool) in a repo.
 - Type: _"Help me write a new feature using the MDCP skill."_

@@ -21,9 +21,9 @@ Common objections for Q&A — skip during the main talk:
 ## Why yet another doc tool?
 
 - We're not replacing Docusaurus, MkDocs, or CI doc generators.
-- MDCP is a **protocol** (like OpenAPI for HTTP APIs) for **documentation context contracts**.
-- Doc sites weren't built for granular, PR-reviewable, agent-first **shard** contracts.
-- The missing piece is a **shared standard** for validated intent that agents and humans consume the same way.
+- MDCP is an **Agent Skill** (plus compile/check tooling) that organizes **documentation context** the way OpenAPI organizes API contracts — as a useful analogy, not a standards-body claim.
+- Doc sites weren't built for granular, PR-reviewable, agent-first **shard** workflows.
+- The missing piece is a **shared, validated place** for intent that agents and humans consume the same way — so docs scale without becoming monolith dumps.
 
 ---
 
@@ -38,8 +38,8 @@ Common objections for Q&A — skip during the main talk:
 
 ## How does MDCP ensure the code built matches the docs?
 
-- It doesn't magically force compliance—it requires someone to use it productively.
-- By making docs granular, machine-readable, and co-located with code, it allows AI agents to continuously verify implementation aligns with intent.
-- It makes documentation the _blueprint_ for LLM code generation, rather than an afterthought.
+- It doesn't magically force compliance — it is not a magic bullet.
+- By making docs granular, machine-readable, and co-located with code, it helps people and AI agents continuously verify implementation against intent.
+- It makes documentation the _blueprint_ for LLM code generation, rather than an afterthought — when someone uses the skill productively.
 
 ---

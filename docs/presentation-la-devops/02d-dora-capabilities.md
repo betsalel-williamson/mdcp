@@ -18,7 +18,7 @@ MDCP directly enables these critical multipliers.
 
 ## DORA Multipliers Enabled by MDCP (Cont.)
 
-- **Clear + communicated AI stance:** MDCP provides a standardized protocol (the contract) for how AI agents should interact with your system.
+- **Clear + communicated AI stance:** MDCP gives agents a shared, reviewable contract for how to read and update system context — without pretending to be an industry standard.
 - **Healthy data ecosystems:** Granular, validated shards prevent AI hallucinations and context overload.
 
 ---
