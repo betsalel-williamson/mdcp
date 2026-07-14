@@ -260,28 +260,28 @@ graph TD
 
     MDCP("MDCP Context Layer")
 
-    %% Subagent Actors
-    ArchAgent["Arch Subagent"]
-    FeatureAgent["Feature Subagent"]
-    TestAgent["Test Subagent"]
-    ReleaseAgent["Release Subagent"]
-    PostMortemAgent["Post-mortem Subagent"]
+    %% Agent Skills
+    ArchSkill["Arch Skill"]
+    FeatureSkill["Feature Skill"]
+    TestSkill["Test Skill"]
+    ReleaseSkill["Release Skill"]
+    PostMortemSkill["Post-mortem Skill"]
 
-    Plan -.-> ArchAgent
-    ArchAgent -.-> MDCP
+    Plan -.-> ArchSkill
+    ArchSkill -.-> MDCP
 
-    Code -.-> FeatureAgent
-    FeatureAgent -.-> MDCP
+    Code -.-> FeatureSkill
+    FeatureSkill -.-> MDCP
     MDCP -.->|"Context"| Code
 
-    MDCP -.-> TestAgent
-    TestAgent -.->|"Acceptance"| Test
+    MDCP -.-> TestSkill
+    TestSkill -.->|"Acceptance"| Test
 
-    MDCP -.-> ReleaseAgent
-    ReleaseAgent -.-> Release
+    MDCP -.-> ReleaseSkill
+    ReleaseSkill -.-> Release
 
-    Operate -.-> PostMortemAgent
-    PostMortemAgent -.-> MDCP
+    Operate -.-> PostMortemSkill
+    PostMortemSkill -.-> MDCP
 ```
 
 </div>
@@ -289,15 +289,15 @@ graph TD
 
 ---
 
-### SDLC Subagents at a Glance
+### SDLC Agent Skills at a Glance
 
-| Phase       | Subagent               | Action                                            |
-| ----------- | ---------------------- | ------------------------------------------------- |
-| **Plan**    | `arch subagent`        | Draft architecture docs                           |
-| **Code**    | `feature subagent`     | Ensure high-level and dev docs exist              |
-| **Test**    | `test subagent`        | Capture client-side and dev-side intent           |
-| **Release** | `release subagent`     | Ensure support docs are available and relevant    |
-| **Operate** | `post-mortem subagent` | Distill tickets and post-mortems back into shards |
+| Phase       | Agent Skill         | Action                                            |
+| ----------- | ------------------- | ------------------------------------------------- |
+| **Plan**    | `arch skill`        | Draft architecture docs                           |
+| **Code**    | `feature skill`     | Ensure high-level and dev docs exist              |
+| **Test**    | `test skill`        | Capture client-side and dev-side intent           |
+| **Release** | `release skill`     | Ensure support docs are available and relevant    |
+| **Operate** | `post-mortem skill` | Distill tickets and post-mortems back into shards |
 
 ---
 
@@ -372,7 +372,7 @@ Your docs must capture:
 
 - **V1: Authoring**
   - Agent Skills bootstrap
-  - Agent task prompts
+  - Agent tasks & skills
   - `mdcp compile` and validation
 - **V2: Delivery (MCP Adapter)**
   - MDCP MCP server (`refs lookup`, shard read, glossary search)

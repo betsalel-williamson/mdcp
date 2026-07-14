@@ -2,7 +2,7 @@
 
 - **V1: Authoring**
   - Agent Skills bootstrap
-  - Agent task prompts
+  - Agent tasks & skills
   - `mdcp compile` and validation
 - **V2: Delivery (MCP Adapter)**
   - MDCP MCP server (`refs lookup`, shard read, glossary search)
