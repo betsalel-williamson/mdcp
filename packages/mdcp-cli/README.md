@@ -90,11 +90,11 @@ For command and capability depth, read the [feature catalog](../../docs/features
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
-**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). `mdcp export --llms-index --fetch` caches them at `.caches/mdcp/prompts/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/). `mdcp export --llms-index --fetch` caches them at `.caches/mdcp/prompts/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ### Prompt library
 
-Copy from [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). Index: [README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
+Copy from [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents).
 
 - [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) — first-time pipeline setup in a consumer repo
 - [doc-only.md](../../.agents/skills/mdcp/agents/doc-only.md) — documentation-only work
@@ -244,7 +244,7 @@ When reviewing an agent's documentation PR:
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [Agent integration](#agent-integration) — npm scripts quick reference
-- [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0) — versioned copy-paste prompt files
+- [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/) — versioned copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
 - [Cross-links and refs](#cross-links-and-refs) — slug lookup while authoring
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
@@ -297,7 +297,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ### Quick start
 
-**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
+**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 

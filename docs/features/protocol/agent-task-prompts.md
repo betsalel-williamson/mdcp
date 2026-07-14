@@ -37,7 +37,7 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 | [ux.md](../../.agents/skills/mdcp/agents/ux.md)                                   | End-user experience              | `client/`                            |
 | [review.md](../../.agents/skills/mdcp/agents/review.md)                           | Architecture and security review | `review/`, `features/` (stubs)       |
 
-Index: [spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md). Cached in consumer repos at `.caches/mdcp/prompts/` after fetch.
+Index: [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/). Cached in consumer repos at `.caches/mdcp/prompts/` after fetch.
 
 ## Three-tier authoring obligations
 

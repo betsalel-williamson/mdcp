@@ -6,7 +6,7 @@ Spec-driven prompts and workflow for coding agents. For the problems mdcp solves
 
 ## Prompt library
 
-Copy from [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/). Index: [README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
+Copy from [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/).
 
 - [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) — first-time pipeline setup in a consumer repo
 - [doc-only.md](../../.agents/skills/mdcp/agents/doc-only.md) — documentation-only work
