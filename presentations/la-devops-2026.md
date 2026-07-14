@@ -383,7 +383,11 @@ Your docs must capture:
 
 ### Getting Started: Agent Skills
 
-Install the MDCP Agent Skill in your repo (`.agents/skills/mdcp/SKILL.md`).
+Install the MDCP Agent Skill in your repo (`.agents/skills/mdcp/SKILL.md`):
+
+```bash
+npx skills add betsalel-williamson/mdcp --skill mdcp
+```
 
 - It's a **behavioral guide**, not a context dump.
 - Tells agents how to compile, validate, and query shards via `refs lookup`.
