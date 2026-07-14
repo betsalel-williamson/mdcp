@@ -9,7 +9,6 @@ import {
   type ExtensionVersionEntry,
 } from './catalog.js';
 import {
-  DEFAULT_PROMPTS_EXTENSION_ID,
   getBuiltinExtensionDefaults,
   isBuiltinExtensionPackId,
   type BuiltinExtensionPackId,
@@ -117,18 +116,7 @@ export function resolveEnabledExtensionPacks(
   const defaultSource = defaultSourceFromConfig(config);
   const configured = config?.extensions?.packs;
 
-  if (!configured?.length) {
-    return [
-      {
-        ...mergePackWithCatalog(
-          { id: DEFAULT_PROMPTS_EXTENSION_ID, enabled: true },
-          protocolVersion,
-          catalog,
-        ),
-        source: defaultSource,
-      },
-    ];
-  }
+  if (!configured?.length) return [];
 
   return configured
     .filter((pack) => pack.enabled)

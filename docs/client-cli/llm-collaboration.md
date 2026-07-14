@@ -2,7 +2,7 @@
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](./why-mdcp-for-agents.md).
 
-**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/). `mdcp export --llms-index --fetch` caches them at `.caches/mdcp/prompts/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/). `mdcp export --llms-index --fetch` caches them at `.agents/skills/mdcp/agents/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ## Prompt library
 
@@ -69,7 +69,7 @@ For architecture-heavy work before coding (RFCs, ADRs, data models), use [design
 ### Sharding keeps context lean
 
 - **Core workflow** — bootstrap prompt and repo script wiring
-- **On demand** — task-type prompts from `.caches/mdcp/prompts/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; load only what the current task needs
+- **On demand** — task-type prompts from `.agents/skills/mdcp/agents/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; load only what the current task needs
 - **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
 
 Prefer structured prompts over permanently importing rigid always-on rules into every repo.
@@ -97,7 +97,7 @@ This repository documents its stack in [Agent work-item tracking](../developer/a
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — paste prompts from `.caches/mdcp/prompts/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; reference shard files for context; run the repo's doc check before ending a turn
+- **Cursor / Composer** — paste prompts from `.agents/skills/mdcp/agents/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — `mdcp refs lookup "topic" --format json` before inserting fragment links

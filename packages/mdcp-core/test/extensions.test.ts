@@ -48,7 +48,7 @@ describe('extensions config', () => {
     expect(packs).toHaveLength(1);
     expect(packs[0]!.path).toBe('.agents/skills/mdcp/agents');
     expect(packs[0]!.version).toBe('0.4.0.0');
-    expect(packs[0]!.cacheDir).toBe('.caches/mdcp/prompts');
+    expect(packs[0]!.cacheDir).toBe('.agents/skills/mdcp/agents');
     expect(packs[0]!.files).toEqual([...STANDARD_TASK_PROMPT_FILES]);
   });
 
@@ -57,20 +57,13 @@ describe('extensions config', () => {
       compileOrder: ['features'],
       protocolVersion: '0.4.0.0',
       protocol: { ref: 'main' },
+      extensions: { packs: [{ id: 'prompts-mdcp-defaults', enabled: true }] },
     });
     const packs = resolveEnabledExtensionPacks(config, { repoRoot: REPO_ROOT });
     expect(packs[0]!.protocolVersion).toBe('0.4.0.0');
     expect(packs[0]!.version).toBe('0.4.0.0');
     expect(packs[0]!.path).toBe('.agents/skills/mdcp/agents');
     expect(packs[0]!.protocolVersionRange).toBe('^0.4.0-0');
-  });
-
-  it('defaults to task-prompts when extensions block is omitted', () => {
-    const config = MdcpConfigSchema.parse({ compileOrder: ['features'] });
-    const packs = resolveEnabledExtensionPacks(config, { repoRoot: REPO_ROOT });
-    expect(packs).toHaveLength(1);
-    expect(packs[0]!.id).toBe('prompts-mdcp-defaults');
-    expect(packs[0]!.version).toBe('0.4.0.0');
   });
 
   it('derives release ref from protocolVersion when fetch ref is main', () => {
@@ -124,10 +117,10 @@ describe('extensions config', () => {
       const result = copyEnabledExtensionsFromLocalSpec(REPO_ROOT, docsRoot, config);
       expect(result.packs).toHaveLength(1);
       for (const filename of STANDARD_TASK_PROMPT_FILES) {
-        expect(existsSync(join(docsRoot, '.caches/mdcp/prompts', filename))).toBe(true);
+        expect(existsSync(join(docsRoot, '.agents/skills/mdcp/agents', filename))).toBe(true);
       }
       const manifest = JSON.parse(
-        readFileSync(join(docsRoot, '.caches/mdcp/prompts/manifest.json'), 'utf-8'),
+        readFileSync(join(docsRoot, '.agents/skills/mdcp/agents/manifest.json'), 'utf-8'),
       ) as {
         id: string;
         version: string;

@@ -30,7 +30,7 @@ npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile dev --docs
 npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --config docs/mdcp.config.json --docs-root docs
 ```
 
-Prompts cache to `.caches/mdcp/prompts/` (`manifest.json` records extension `version`, `protocolVersion`, and upstream `ref`).
+Prompts cache to `.agents/skills/mdcp/agents/` (`manifest.json` records extension `version`, `protocolVersion`, and upstream `ref`).
 
 Host-specific agent systems **MAY** substitute their own prompts. Written shards **SHOULD** still follow the fetched llms-index layout.
 

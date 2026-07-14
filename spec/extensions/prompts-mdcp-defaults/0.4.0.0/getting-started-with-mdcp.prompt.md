@@ -30,9 +30,6 @@ npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --docs-
   "protocol": {
     "profile": "alpha",
     "ref": "v0.4.1"
-  },
-  "extensions": {
-    "packs": [{ "id": "prompts-mdcp-defaults", "enabled": true, "version": "0.4.0.0" }]
   }
 }
 ```
@@ -43,7 +40,7 @@ Set `protocol.ref` to your feature branch when the `valpha` symlink is not on `m
 npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --config docs/mdcp.config.json --docs-root docs
 ```
 
-Run `mdcp export --llms-index` to write the agent index (`mdcp.v*.llms.txt`) under the docs root. `npx @bwilliamson/mdcp-cli export --llms-index --fetch` also caches versioned task prompts to `.caches/mdcp/prompts/`.
+Run `mdcp export --llms-index` to write the agent index (`mdcp.v*.llms.txt`) under the docs root. `npx @bwilliamson/mdcp-cli export --llms-index --fetch` also caches versioned task prompts to `.agents/skills/mdcp/agents/`.
 
 **Setup:** Inspect this repository — package manager, existing docs layout, and developer docs — before changing files. Do not assume a specific host, script runner, or optional linter; discover what the repo already uses.
 
@@ -84,4 +81,4 @@ Use mdcp commands only — do not create custom compile or lint scripts.
 
 **Cross-links:** Run `mdcp refs lookup "<topic>" --format json` before inserting `[text](#slug)`. The slug must match **compiled** output, not the shard alone.
 
-**Next steps:** After the pipeline exists, load task-type prompts from `.caches/mdcp/prompts/` (same directory after `mdcp export --llms-index --fetch`): [feature-level-task.prompt.md](./feature-level-task.prompt.md), [doc-only-task.prompt.md](./doc-only-task.prompt.md), [design-architecture-task.prompt.md](./design-architecture-task.prompt.md), [ux-task.prompt.md](./ux-task.prompt.md), [review-task.prompt.md](./review-task.prompt.md). Each task uses one `WORK_ITEM` per branch — branch from updated `main` before editing. Add a `docs/developer/` shard (for example `agent-work-item-tracking.md`) documenting tracker host, issue id format, and how agents load scope; set `WORK_ITEM_LOOKUP` in each task prompt to that shard path.
+**Next steps:** After the pipeline exists, load task-type prompts from `.agents/skills/mdcp/agents/` (same directory after `mdcp export --llms-index --fetch`): [feature-level-task.prompt.md](./feature-level-task.prompt.md), [doc-only-task.prompt.md](./doc-only-task.prompt.md), [design-architecture-task.prompt.md](./design-architecture-task.prompt.md), [ux-task.prompt.md](./ux-task.prompt.md), [review-task.prompt.md](./review-task.prompt.md). Each task uses one `WORK_ITEM` per branch — branch from updated `main` before editing. Add a `docs/developer/` shard (for example `agent-work-item-tracking.md`) documenting tracker host, issue id format, and how agents load scope; set `WORK_ITEM_LOOKUP` in each task prompt to that shard path.

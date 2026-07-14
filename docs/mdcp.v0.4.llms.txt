@@ -101,7 +101,7 @@ Run `mdcp check` before trusting compiled output. Do not hand-edit generated com
 
 Versioned **meta-level** authoring instructions (feature, doc-only, design, UX, review, bootstrap). Host agent systems **MAY** replace them with local prompts; written shards **SHOULD** still follow the layout and validation in this index.
 
-After fetch, enabled extension packs from `mdcp.config.json` are cached under each pack's `cacheDir` (default `prompts-mdcp-defaults` → `.caches/mdcp/prompts/`). Default fetch follows `protocol.profile` + optional `protocol.ref`; individual packs **MAY** override `source` — treat third-party repos as untrusted ([SECURITY.md](../../../spec/extensions/SECURITY.md)).
+After fetch, enabled extension packs from `mdcp.config.json` are cached under each pack's `cacheDir` (default `prompts-mdcp-defaults` → `.agents/skills/mdcp/agents/`). Default fetch follows `protocol.profile` + optional `protocol.ref`; individual packs **MAY** override `source` — treat third-party repos as untrusted ([SECURITY.md](../../../spec/extensions/SECURITY.md)).
 
 Set `WORK_ITEM` and `WORK_ITEM_LOOKUP` in each prompt header before sending.
 

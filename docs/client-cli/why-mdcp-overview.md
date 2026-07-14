@@ -41,7 +41,7 @@ Task prompts and a bootstrap index get you started in a consumer repo without in
 [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli) is an npm package you add to **any** repository — monorepo or single app, Node, Python, Rust, Go, or mixed stacks. mdcp cares about your **documentation shards and compile pipeline**, not your application architecture.
 
 1. `npm install -D @bwilliamson/mdcp-cli`
-2. Copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load it from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
+2. Copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load it from `.agents/skills/mdcp/agents/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
 
 Fetch the bootstrap index and prompts into your docs root:
 

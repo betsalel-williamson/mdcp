@@ -64,7 +64,7 @@ GitHub raw path: `spec/llms-index/valpha` or `spec/llms-index/vdev`. **`vstable`
 
 ## Authoring profile
 
-The llms-index lists all task-type prompts under `.caches/mdcp/prompts/` (populated by fetch). Source artifacts: [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../extensions/prompts-mdcp-defaults/0.4.0.0/) (extension **`prompts-mdcp-defaults`** 0.4.0.0). Normative table: [docs/features/protocol/agent-task-prompts.md](../../docs/features/protocol/agent-task-prompts.md).
+The llms-index lists all task-type prompts under `.agents/skills/mdcp/agents/` (populated by fetch). Source artifacts: [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../extensions/prompts-mdcp-defaults/0.4.0.0/) (extension **`prompts-mdcp-defaults`** 0.4.0.0). Normative table: [docs/features/protocol/agent-task-prompts.md](../../docs/features/protocol/agent-task-prompts.md).
 
 ## Maintainer sync
 

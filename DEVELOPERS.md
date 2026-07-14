@@ -85,7 +85,7 @@ CI runs the full gate: `pnpm run check`.
 
 ## Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0) (cached at `.agents/skills/mdcp/agents/` after fetch) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 

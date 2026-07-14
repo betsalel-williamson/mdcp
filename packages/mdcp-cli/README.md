@@ -43,7 +43,7 @@ Task prompts and a bootstrap index get you started in a consumer repo without in
 [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli) is an npm package you add to **any** repository — monorepo or single app, Node, Python, Rust, Go, or mixed stacks. mdcp cares about your **documentation shards and compile pipeline**, not your application architecture.
 
 1. `npm install -D @bwilliamson/mdcp-cli`
-2. Copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load it from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
+2. Copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load it from `.agents/skills/mdcp/agents/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
 
 Fetch the bootstrap index and prompts into your docs root:
 
@@ -82,7 +82,7 @@ Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile
 
 ### Get started
 
-First-time setup in a consumer repo: copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
+First-time setup in a consumer repo: copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load from `.agents/skills/mdcp/agents/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
 
 For command and capability depth, read the [feature catalog](../../docs/features/feature-catalog.md).
 
@@ -90,7 +90,7 @@ For command and capability depth, read the [feature catalog](../../docs/features
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
-**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). `mdcp export --llms-index --fetch` caches them at `.caches/mdcp/prompts/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** versioned prompts live under [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0). `mdcp export --llms-index --fetch` caches them at `.agents/skills/mdcp/agents/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ### Prompt library
 
@@ -157,7 +157,7 @@ For architecture-heavy work before coding (RFCs, ADRs, data models), use [design
 #### Sharding keeps context lean
 
 - **Core workflow** — bootstrap prompt and repo script wiring
-- **On demand** — task-type prompts from `.caches/mdcp/prompts/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; load only what the current task needs
+- **On demand** — task-type prompts from `.agents/skills/mdcp/agents/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; load only what the current task needs
 - **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
 
 Prefer structured prompts over permanently importing rigid always-on rules into every repo.
@@ -185,7 +185,7 @@ This repository documents its stack in [Agent work-item tracking](../../DEVELOPE
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — paste prompts from `.caches/mdcp/prompts/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; reference shard files for context; run the repo's doc check before ending a turn
+- **Cursor / Composer** — paste prompts from `.agents/skills/mdcp/agents/` or `spec/extensions/prompts-mdcp-defaults/0.4.0.0/`; reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — `mdcp refs lookup "topic" --format json` before inserting fragment links
@@ -297,7 +297,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ### Quick start
 
-**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents).
+**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.agents/skills/mdcp/agents/` — see [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 

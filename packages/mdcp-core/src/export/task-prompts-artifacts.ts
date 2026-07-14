@@ -5,7 +5,7 @@ import { LLMS_INDEX_PROTOCOL_VERSION } from './llms-index-artifacts.js';
 export const TASK_PROMPTS_SPEC_DIR = '.agents/skills/mdcp/agents';
 
 /** Default cache under docs root (populated by `mdcp export --llms-index --fetch`). */
-export const DEFAULT_TASK_PROMPTS_CACHE_DIR = '.caches/mdcp/prompts';
+export const DEFAULT_TASK_PROMPTS_CACHE_DIR = '.agents/skills/mdcp/agents';
 
 /** Standard meta prompts — general authoring instructions, replaceable by host-specific systems. */
 export const STANDARD_TASK_PROMPT_FILES = [
@@ -29,6 +29,11 @@ export function resolveTaskPromptsCacheDir(
   docsRoot: string,
   cacheDir = DEFAULT_TASK_PROMPTS_CACHE_DIR,
 ): string {
+  if (cacheDir === '.agents/skills/mdcp/agents') {
+    // If it's the new skill path, resolve it relative to the workspace root,
+    // assuming docsRoot is typically one level deep (e.g. 'docs/')
+    return resolve(docsRoot, '..', cacheDir);
+  }
   return resolve(docsRoot, cacheDir);
 }
 

@@ -209,7 +209,7 @@ Pin **protocol profile** and optional **branch ref** — do not duplicate fetch 
 
 Per-pack `extensions.packs[].source` overrides the default fetch — see [SECURITY.md](./SECURITY.md).
 
-Cached pack manifests (`.caches/mdcp/prompts/manifest.json`) record `version`, `protocolVersion`, `protocolVersionRange`, upstream `ref`, and `files[]`.
+Cached pack manifests (`.agents/skills/mdcp/agents/manifest.json`) record `version`, `protocolVersion`, `protocolVersionRange`, upstream `ref`, and `files[]`.
 
 ## JSON Schema
 

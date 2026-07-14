@@ -29,7 +29,7 @@ Multi-guide `compileOrder`, publish outputs (`compile.outputFile`), `refs lookup
 
 ### Agent-native
 
-Above plus `export --llm`, three-tier shards (`features` / `client` / `developer`), task prompts from `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` (cached at `.caches/mdcp/prompts/` after fetch).
+Above plus `export --llm`, three-tier shards (`features` / `client` / `developer`), task prompts from `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` (cached at `.agents/skills/mdcp/agents/` after fetch).
 
 ## Coexistence
 
@@ -42,7 +42,7 @@ Above plus `export --llm`, three-tier shards (`features` / `client` / `developer
 ## Query preference order
 
 1. Read `mdcp.v*.llms.txt` in docs root (agent index)
-2. Load task prompt from `.caches/mdcp/prompts/` (or [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/)) with `WORK_ITEM` set — see [Agent task prompts](./agent-task-prompts.md)
+2. Load task prompt from `.agents/skills/mdcp/agents/` (or [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/)) with `WORK_ITEM` set — see [Agent task prompts](./agent-task-prompts.md)
 3. `mdcp refs lookup "<topic>"`
 4. Read one shard from lookup result
 5. `mdcp export --llm` only when broader context is required
