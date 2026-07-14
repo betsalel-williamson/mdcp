@@ -19,6 +19,8 @@ There is **no calendar cadence**. Releases are **event-driven**:
 3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
 4. CI publishes to npm when the **`v*`** tag lands on GitHub.
 
+**Note on Agent Skills:** The Agent Skills located in `.agents/skills/` are not published to npm. They evolve continuously on the `main` branch. When a git tag (e.g., `v0.4.1`) is created for npm releases, it simultaneously marks the version of the Agent Skills in version control. Consumers pull skills via Git (e.g., `npx skills add`) and vendor them into their own repositories.
+
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
 ## Pre-1.0 policy (`0.x.y`)

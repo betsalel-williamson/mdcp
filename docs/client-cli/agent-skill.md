@@ -17,6 +17,14 @@ npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 
 Zero-install alternative: copy `.agents/skills/mdcp/` from this repository into your project (plus complementary skill folders when you need them). Prefer `.agents/skills/` over host-specific aliases.
 
+## Versioning and Upgrades
+
+Agent Skills use a **vendoring** strategy. Instead of relying on a hidden `.caches/` directory and dynamic fetches pinned by `mdcp.config.json` (as the old extension packs did), skills become part of your project's source code:
+
+1. The `npx skills add` command downloads the skill directly into your `.agents/skills/` directory.
+2. You **commit** these files to your repository. This ensures that every developer and agent on your team operates with the exact same instructions, and any changes to the skill are reviewable in pull requests.
+3. To **upgrade**, simply re-run the `npx skills add` command, review the `git diff`, and commit the changes.
+
 ## Quality Assurance (QA) Principles
 
 When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:

@@ -27,6 +27,15 @@ Complementary skills land via follow-up PRs. Until then, transitional packs rema
 - **Preferred path:** [`.agents/skills/mdcp/SKILL.md`](../../.agents/skills/mdcp/SKILL.md).
 - **Also discovered:** `.github/skills/`, `.claude/skills/` (host-dependent aliases). Prefer documenting `.agents/skills/` only.
 
+## Versioning Strategy (Vendoring)
+
+Unlike the old extension pack system—which explicitly pinned `protocol.ref: "v0.4.1"` in `mdcp.config.json` and dynamically fetched artifacts into a `.caches/` directory—Agent Skills use a **vendoring** approach:
+
+1. **Commit to Git:** When you run `npx skills add`, the skill's source files are copied directly into your project's `.agents/skills/` directory and tracked in your own source control.
+2. **Docs-as-code Evolution:** The skill version is tied to the commit in your repository. This makes agent instruction changes explicitly reviewable in Pull Requests alongside the code or configuration changes they support.
+3. **Upgrading:** To upgrade a skill, re-run the `npx skills add` command (or manually copy the updated folder), review the resulting `git diff`, and commit the changes.
+4. **Authoring/Maintainer Versioning:** In the upstream `betsalel-williamson/mdcp` repository, the skills simply evolve on the `main` branch and are tagged alongside normal npm package releases (e.g., `v0.4.1`). Consumers can point `npx skills add` to specific tags if necessary, but the primary version constraint is what's committed to the consumer's repository.
+
 ## What remains during migration
 
 - CLI / core packages — `compile`, `check`, `export`, `refs lookup` (unchanged).
