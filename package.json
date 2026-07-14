@@ -37,7 +37,7 @@
     "presentation:serve": "pnpm run presentation:compile && pnpm run presentation:assets && marp --html true --no-stdin --engine ./marp-engine.js -I presentations --server --watch",
     "presentation:preview": "pnpm run presentation:compile && pnpm run presentation:assets && marp --html true --no-stdin --engine ./marp-engine.js -I presentations --server --watch --preview",
     "presentation:verify": "pnpm run presentation:compile && pnpm run presentation:assets && mkdir -p .tmp/slides && marp --images png --no-stdin --engine ./marp-engine.js presentations/la-devops-2026.md -o .tmp/slides/",
-    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run docs:check",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run skill:check && pnpm run docs:check",
     "changeset": "changeset",
     "changeset:status": "changeset status --since=origin/main",
     "release:tag": "node scripts/release-tag.mjs",

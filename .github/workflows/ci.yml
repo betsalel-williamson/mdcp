@@ -35,6 +35,7 @@ jobs:
       - run: pnpm run build
       - run: pnpm run spec:check-llms-index
       - run: pnpm run test
+      - run: pnpm run skill:check
       - run: pnpm run prepare:docs
       - run: pnpm run docs:check
 
