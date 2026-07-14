@@ -39,7 +39,7 @@ You receive these parameters in your prompt:
 
 1. Add or revise MDCP shards under the appropriate guide (`docs/features/`, `docs/developer/`, `docs/client/`).
 2. Update each guide's `index.md` for compile order.
-3. Use `mdcp refs lookup` for every cross-link — do not edit generated compile output or `refs.json` by hand.
+3. Validate cross-links with `mdcp check` — do not edit generated compile output or `refs.json` by hand.
 
 ### Step 4: Review and Refactor
 

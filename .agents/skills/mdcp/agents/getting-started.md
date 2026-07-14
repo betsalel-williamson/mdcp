@@ -45,7 +45,7 @@ You receive these parameters in your prompt:
 
 ### Step 4: Scripts
 
-1. Wire `mdcp compile`, `mdcp check`, `mdcp export --llm`, and `mdcp refs lookup` into this repo's script runner (discover naming from existing `package.json` or developer docs).
+1. Wire `mdcp compile`, `mdcp check`, and `mdcp export --llm` into this repo's script runner (discover naming from existing `package.json` or developer docs).
 2. When optional linters are installed, use `mdcp check --require-lint` and/or `--require-vale` for CI gates.
 
 ### Step 5: Guide Layout
@@ -67,4 +67,4 @@ Each guide must have an `index.md` and topic shards. Shards are the source of tr
 ### Step 7: Write and Validate
 
 1. After shards exist, compile and run the full documentation check until xref, orphan, and lint errors are resolved (use this repo's documented commands).
-2. Run `mdcp refs lookup "<topic>" --format json` before inserting cross-links. The slug must match **compiled** output, not the shard alone.
+2. After inserting cross-links, run `mdcp check`. Fragments must match **compiled** output; inspect with `mdcp refs list` if needed.

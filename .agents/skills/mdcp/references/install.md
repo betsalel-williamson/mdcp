@@ -27,5 +27,5 @@ npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 ```bash
 mdcp compile --config <config> --docs-root <docs-root>
 mdcp check --config <config> --docs-root <docs-root>
-mdcp refs lookup "<topic>" --format json --config <config> --docs-root <docs-root>
+mdcp refs list --config <config> --docs-root <docs-root>
 ```

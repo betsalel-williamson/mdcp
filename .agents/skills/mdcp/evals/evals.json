@@ -16,13 +16,13 @@
     {
       "id": 3,
       "prompt": "Find a heading link while writing docs",
-      "expected_output": "Uses mdcp refs lookup to find the correct cross-link.",
+      "expected_output": "Validates cross-links with mdcp check (compiled slug integrity).",
       "files": []
     },
     {
       "id": 4,
       "prompt": "Load documentation context for the agent",
-      "expected_output": "Uses mdcp refs lookup to find a specific shard, then reads only that shard rather than a monolith.",
+      "expected_output": "Uses host search to find a specific shard, then reads only that shard rather than a monolith.",
       "files": []
     },
     {

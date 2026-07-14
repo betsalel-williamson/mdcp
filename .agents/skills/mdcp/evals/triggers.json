@@ -8,7 +8,7 @@
     "should_trigger": true
   },
   {
-    "query": "Use mdcp refs lookup to find the right cross-link while editing shards",
+    "query": "Validate a heading cross-link while editing MDCP shards",
     "should_trigger": true
   },
   {

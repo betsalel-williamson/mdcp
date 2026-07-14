@@ -3,11 +3,11 @@ name: mdcp
 description: >-
   Applies MarkDown Context Protocol (MDCP) for sharded documentation — parent
   Agent Skill succeeding llms-index bootstrap, compile/check workflows, refs
-  lookup, and complementary skills for prompts/formats. Use this skill
-  PROACTIVELY for ANY coding, feature, or architectural task to ensure changes
-  trace back to documentation and user needs. Use when writing or
+  registry validation, and complementary skills for prompts/formats. Use this
+  skill PROACTIVELY for ANY coding, feature, or architectural task to ensure
+  changes trace back to documentation and user needs. Use when writing or
   editing docs/ shards, mdcp.config.json, guide manifests, glossary shards, or
-  when the user mentions MDCP, shard docs, refs lookup, or agent documentation.
+  when the user mentions MDCP, shard docs, refs, or agent documentation.
 ---
 
 # MDCP (parent skill)
@@ -26,8 +26,8 @@ Install help: [references/install.md](references/install.md)
   use complementary skills, `docs/extensions/`, or normative shards.
 - **NEVER** edit generated compile output (`docs/_build/`, compiled publish
   targets) — fix shards and recompile.
-- **NEVER** dump whole monoliths into context — `mdcp refs lookup`, then read
-  **one shard** at a time.
+- **NEVER** dump whole monoliths into context — discover with host search (`rg`,
+  IDE search), then read **one shard** at a time.
 - **NEVER** write functional product code for a docs/feature change without
   docs-first shards when the repo follows that convention.
 - **ALWAYS** run `mdcp check` (or `docs:check`) before trusting compiled output.
@@ -62,7 +62,7 @@ Spell out domain terms on first use; link shared vocabulary from `docs/glossary/
 - Shards under `docs/**/` are the source of truth.
 - Use `#` headings in shards; mdcp demotes them during compile.
 - After changing a guide's link order (e.g., in `index.md`), run `mdcp compile` — there is no separate manifest sync step.
-- Before inserting `[text](#slug)` cross-links, run `mdcp refs lookup "<topic>" --format json`.
+- After inserting `[text](#slug)` cross-links, run `mdcp check` so fragments match **compiled** slugs (use `mdcp refs list` if you need to inspect the registry).
 
 ## When to use
 
@@ -86,12 +86,9 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 
 ### 2. Prefer smallest context
 
-```bash
-./.agents/skills/mdcp/scripts/lookup.sh "<topic>"
-```
-
-Open the single `.md` shard path from lookup or the guide manifest. Broader
-`mdcp export --llm` is last resort.
+Discover the relevant shard with host search (`rg`, IDE search) or the guide
+`index.md`, then open **one** `.md` shard. Broader `mdcp export --llm` is last
+resort.
 
 ### 3. Edit shards, then validate
 

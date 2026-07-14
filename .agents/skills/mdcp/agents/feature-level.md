@@ -39,7 +39,7 @@ You receive these parameters in your prompt:
 
 1. Add or update shards under `docs/features/` (capabilities, design, API surface, acceptance criteria) and `docs/client/` (end-user value and how to use the feature).
 2. Update each guide's `index.md`.
-3. Use `mdcp refs lookup` for cross-links.
+3. Validate cross-links with `mdcp check`.
 
 ### Step 4: Test-Driven Development (TDD)
 

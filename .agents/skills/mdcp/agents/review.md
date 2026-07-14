@@ -57,7 +57,7 @@ You receive these parameters in your prompt:
 
 ### Step 6: Validate and Complete
 
-1. Run review validation commands (`validate`, `validate-diagrams`, etc.) and documentation validation until they pass. Use `mdcp refs lookup` for every cross-link.
+1. Run review validation commands (`validate`, `validate-diagrams`, etc.) and documentation validation until they pass. Use `mdcp check` for every cross-link.
 2. Run the repo's review complete command for `REVIEW_NODE` only after checklists, findings, and required diagnostics are done.
 3. Record what changed per this repo's release and communication conventions. DO NOT detail old behavior that no longer works in review shards.
 4. Submit work for review, link `WORK_ITEM`, and cite `REVIEW_NODE` in the PR body.

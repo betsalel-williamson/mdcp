@@ -1,7 +1,6 @@
 {
   "skillBodyMustInclude": [
-    "scripts/lookup.sh",
-    "scripts/compile.sh",
+    "scripts/fix.sh",
     "scripts/check.sh",
     "scripts/setup-linters.sh",
     "scripts/fix.sh",
@@ -16,7 +15,9 @@
     "MDCP: Compile Guides",
     "MDCP: Check Links",
     "VS Code Marketplace",
-    "Open VSX"
+    "Open VSX",
+    "scripts/lookup.sh",
+    "refs lookup"
   ],
   "hardRulesMustMention": [
     {
@@ -25,7 +26,7 @@
     },
     {
       "id": "no-monolith-dump",
-      "patterns": ["monolith", "one shard", "refs lookup"]
+      "patterns": ["monolith", "one shard"]
     },
     {
       "id": "no-edit-generated",
@@ -58,12 +59,12 @@
     {
       "id": "refs",
       "prompt": "Find a heading link while writing docs",
-      "mustMention": ["refs lookup"]
+      "mustMention": ["mdcp check"]
     },
     {
       "id": "anti-monolith",
       "prompt": "Load documentation context for the agent",
-      "mustMention": ["one shard", "refs lookup"]
+      "mustMention": ["one shard"]
     },
     {
       "id": "anti-hand-edit-index",

@@ -36,7 +36,7 @@ Public API: `packages/core/src/session/store.ts` — read implementation on dema
 Acceptance: sessions expire after 24h; see [feature shard](../../../features/session-store.md).
 ```
 
-Agents use `mdcp refs lookup "SessionStore"` for compiled anchors and open the linked file for types and methods.
+Agents use host search and the [refs](../../../docs/glossary/refs.md) registry / `mdcp check` for compiled anchors, then open the linked source file for types and methods.
 
 ## When to shard vs when to point
 

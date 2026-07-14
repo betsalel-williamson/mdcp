@@ -12,9 +12,9 @@
       "mustMatchAny": ["MDCP", "bootstrap", "llms-index", "skill", "docs"]
     },
     {
-      "id": "refs-lookup",
-      "query": "Use mdcp refs lookup to find the right cross-link while editing shards",
-      "mustMatchAny": ["refs", "lookup", "MDCP", "shard"]
+      "id": "cross-links-check",
+      "query": "Validate a heading cross-link while editing shards",
+      "mustMatchAny": ["refs", "check", "MDCP", "shard"]
     },
     {
       "id": "llms-index-mention",
