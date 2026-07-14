@@ -77,7 +77,7 @@
     }
   ],
   "refs": {
-    "registryFile": ".caches/refs.json",
+    "registryFile": "_build/refs.json",
     "slugAlgorithm": "github"
   },
   "lint": {
