@@ -1,7 +1,5 @@
 ---
-marp: true
 theme: default
-paginate: true
 ---
 
 # Intent is the New Syntax

@@ -1,7 +1,5 @@
 ---
-marp: true
 theme: default
-paginate: true
 ---
 
 ## Intent is the New Syntax
@@ -110,7 +108,7 @@ Before we dive in, a few terms we'll use throughout:
 - **Shard:** A small, focused markdown file containing specific context (e.g., a single concept, persona, or architecture decision).
 - **refs lookup:** How an AI agent searches for and retrieves only specific shards, rather than reading entire docs at once.
 - **MCP (Model Context Protocol):** An open standard for AI assistants to access external data sources.
-- **llms.txt:** A context file containing system instructions to help the LLM respond appropriately.
+- **Agent Skill:** A specialized context file (e.g., `SKILL.md`) providing domain knowledge and behavioral instructions for the agent.
 - **PRD:** Product Requirements Document.
 
 ---
@@ -201,7 +199,26 @@ The actors interact with the MDCP context layer to author intent, provide contex
 </div>
 <div>
 
-![MDCP Value Stream](./assets/mdcp-actors-and-artifacts.png)
+```mermaid
+graph TD
+    %% Actors
+    PM["Product & Arch"]
+    AI["AI Agents & Devs"]
+    QA["QA & Compliance"]
+
+    %% Artifacts
+    MDCP_In("MDCP\n(Feature/Dev Docs)")
+    Code["Source Code"]
+    MDCP_Out("MDCP\n(Client Docs)")
+
+    %% Flow
+    PM -->|"Author Intent"| MDCP_In
+    MDCP_In -->|"Context"| AI
+    AI -->|"Write/Test"| Code
+    AI -->|"Evidence"| MDCP_Out
+    Code -->|"Verify"| QA
+    MDCP_Out -->|"Audit"| QA
+```
 
 </div>
 </div>
@@ -235,7 +252,21 @@ Instead of documentation being a disconnected artifact, MDCP acts as a continuou
 </div>
 <div>
 
-![MDCP SDLC](./assets/mdcp-sdlc-prompts.png)
+```mermaid
+graph TD
+    subgraph SDLC
+        Plan --> Code --> Test --> Release --> Operate
+    end
+
+    MDCP("MDCP Context Layer")
+
+    Plan -.->|"Arch Prompt"| MDCP
+    Code -.->|"Feature Prompt"| MDCP
+    MDCP -.->|"Context"| Code
+    MDCP -.->|"Acceptance"| Test
+    MDCP -.->|"Review Prompt"| Release
+    Operate -.->|"Doc Prompt"| MDCP
+```
 
 </div>
 </div>
@@ -324,9 +355,9 @@ Your docs must capture:
 ### Plan to Enact: Phased Delivery
 
 - **V1: Authoring**
-  - `mdcp.v0.4.llms.txt` bootstrap
+  - Agent Skills bootstrap
   - Agent task prompts
-  - `mdcp export --llms-index`
+  - `mdcp compile` and validation
 - **V2: Delivery (MCP Adapter)**
   - MDCP MCP server (`refs lookup`, shard read, glossary search)
 - **V3: Hosted Context API**
@@ -334,14 +365,14 @@ Your docs must capture:
 
 ---
 
-### Getting Started: V1 Bootstrap
+### Getting Started: Agent Skills
 
-Drop `mdcp.v0.4.llms.txt` in your docs root.
+Install the MDCP Agent Skill in your repo (`.agents/skills/mdcp/SKILL.md`).
 
-- It's a **short index**, not a context dump.
-- Agents inspect your repo and walk through config and shard layout.
+- It's a **behavioral guide**, not a context dump.
+- Tells agents how to compile, validate, and query shards via `refs lookup`.
 
-Or use the CLI init:
+Or use the CLI init to scaffold your docs:
 
 ```bash
 npx @bwilliamson/mdcp-cli init --docs-root docs
@@ -355,8 +386,9 @@ mdcp compile --config docs/mdcp.config.json
 This isn't a magic trick that instantly understands your legacy codebase. It's a frictionless, 5-minute starting point.
 
 - Open **Cursor** (or any LLM tool) in a repo.
-- Copy-paste the bootstrap prompt from `mdcp.v0.4.llms.txt`.
-- Watch the agent set up the pipeline — proving how easy it is to begin capturing intent.
+- Type: _"Help me write a new feature using the MDCP skill."_
+- The agent reads `.agents/skills/mdcp/SKILL.md` automatically.
+- Watch it set up your documentation shards and capture intent _before_ writing code.
 
 ---
 

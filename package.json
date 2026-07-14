@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/betsalel-williamson/mdcp.git"
   },
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "pnpm@11.13.0",
   "scripts": {
     "build": "pnpm -r run build",
     "test": "pnpm -r run test",
@@ -29,12 +29,11 @@
     "docs:check:examples": "node packages/mdcp-cli/dist/cli.js check --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --require-lint --require-vale",
     "docs:check": "pnpm run docs:check:repo && pnpm run docs:check:examples",
     "presentation:compile": "node packages/mdcp-cli/dist/cli.js compile --config docs/mdcp.config.json --docs-root docs --warn-broken-links",
-    "presentation:assets": "mkdir -p presentations/assets && npx @mermaid-js/mermaid-cli -i docs/presentation-la-devops/assets/mdcp-actors-and-artifacts.mmd -o presentations/assets/mdcp-actors-and-artifacts.png && npx @mermaid-js/mermaid-cli -i docs/presentation-la-devops/assets/mdcp-sdlc-prompts.mmd -o presentations/assets/mdcp-sdlc-prompts.png",
-    "presentation:render": "pnpm run presentation:compile && pnpm run presentation:assets && marp --html true --no-stdin --engine ./marp-engine.js presentations/la-devops-2026.md -o presentations/la-devops-2026.html",
-    "presentation:render:pdf": "pnpm run presentation:compile && pnpm run presentation:assets && marp --html true --no-stdin --engine ./marp-engine.js presentations/la-devops-2026.md --pdf -o presentations/la-devops-2026.pdf",
-    "presentation:serve": "pnpm run presentation:compile && pnpm run presentation:assets && marp --html true --no-stdin --engine ./marp-engine.js -I presentations --server --watch",
-    "presentation:preview": "pnpm run presentation:compile && pnpm run presentation:assets && marp --html true --no-stdin --engine ./marp-engine.js -I presentations --server --watch --preview",
-    "presentation:verify": "pnpm run presentation:compile && pnpm run presentation:assets && mkdir -p .tmp/slides && marp --images png --no-stdin --engine ./marp-engine.js presentations/la-devops-2026.md -o .tmp/slides/",
+    "presentation:render": "pnpm run presentation:compile && slidev build presentations/la-devops-2026.md --out ../build/presentations/dist",
+    "presentation:render:pdf": "pnpm run presentation:compile && slidev export presentations/la-devops-2026.md --output build/presentations/la-devops-2026.pdf",
+    "presentation:serve": "pnpm run presentation:compile && slidev presentations/la-devops-2026.md",
+    "presentation:preview": "pnpm run presentation:compile && slidev presentations/la-devops-2026.md",
+    "presentation:verify": "pnpm run presentation:compile && slidev export presentations/la-devops-2026.md --format png --output .tmp/slides/",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run skill:check && pnpm run docs:check",
     "changeset": "changeset",
     "changeset:status": "changeset status --since=origin/main",
@@ -47,11 +46,6 @@
   },
   "engines": {
     "node": ">=24.0.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "esbuild": ">=0.28.1"
-    }
   },
   "lint-staged": {
     "packages/**/*.{ts,mjs}": [
@@ -75,8 +69,8 @@
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "^10.0.1",
-    "@marp-team/marp-cli": "4.4.1",
-    "@mermaid-js/mermaid-cli": "^11.16.0",
+    "@slidev/cli": "latest",
+    "@slidev/theme-default": "latest",
     "eslint": "^10.5.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.7",

@@ -25,7 +25,26 @@ The actors interact with the MDCP context layer to author intent, provide contex
 </div>
 <div>
 
-![MDCP Value Stream](./assets/mdcp-actors-and-artifacts.png)
+```mermaid
+graph TD
+    %% Actors
+    PM["Product & Arch"]
+    AI["AI Agents & Devs"]
+    QA["QA & Compliance"]
+
+    %% Artifacts
+    MDCP_In("MDCP\n(Feature/Dev Docs)")
+    Code["Source Code"]
+    MDCP_Out("MDCP\n(Client Docs)")
+
+    %% Flow
+    PM -->|"Author Intent"| MDCP_In
+    MDCP_In -->|"Context"| AI
+    AI -->|"Write/Test"| Code
+    AI -->|"Evidence"| MDCP_Out
+    Code -->|"Verify"| QA
+    MDCP_Out -->|"Audit"| QA
+```
 
 </div>
 </div>
@@ -59,7 +78,21 @@ Instead of documentation being a disconnected artifact, MDCP acts as a continuou
 </div>
 <div>
 
-![MDCP SDLC](./assets/mdcp-sdlc-prompts.png)
+```mermaid
+graph TD
+    subgraph SDLC
+        Plan --> Code --> Test --> Release --> Operate
+    end
+
+    MDCP("MDCP Context Layer")
+
+    Plan -.->|"Arch Prompt"| MDCP
+    Code -.->|"Feature Prompt"| MDCP
+    MDCP -.->|"Context"| Code
+    MDCP -.->|"Acceptance"| Test
+    MDCP -.->|"Review Prompt"| Release
+    Operate -.->|"Doc Prompt"| MDCP
+```
 
 </div>
 </div>
