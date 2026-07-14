@@ -15,7 +15,7 @@ Extension packs are pasted into agent context. Fetchable files listed in `manife
 
 | Rule              | Requirement                                                                                                                                                                                                                          |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Sibling links     | Markdown links in `files[]` **SHOULD** target only sibling files in the same `{id}/{version}/` directory (e.g. `./feature-level-task.prompt.md`).                                                                                    |
+| Sibling links     | Markdown links in `files[]` **SHOULD** target only sibling files in the same `{id}/{version}/` directory (e.g. `./feature-level.md`).                                                                                                |
 | Escaping paths    | Relative links that leave the pack directory (`../`) **MUST NOT** appear in fetchable files.                                                                                                                                         |
 | External URLs     | `http://` and `https://` links **SHOULD NOT** appear in default/reference prompt packs. Community packs **MAY** include them but **MUST** expect fetch-time flagging (see [SECURITY.md](./SECURITY.md#in-pack-external-references)). |
 | README dependency | `README.md` in the version directory is for discovery; if it is not listed in `files[]`, fetchable prompts **MUST NOT** depend on it.                                                                                                |
@@ -44,7 +44,7 @@ spec/extensions/
     0.4.0.0/
       manifest.json
       README.md
-      getting-started-with-mdcp.prompt.md
+      getting-started.md
       …
   arch-oss-library/
     README.md
@@ -123,7 +123,7 @@ Authoritative record for one extension release. **MUST** mirror catalog fields f
   "version": "0.4.0.0",
   "protocolVersionRange": "0.4.0.0",
   "revoked": false,
-  "files": ["getting-started-with-mdcp.prompt.md", "feature-level-task.prompt.md"]
+  "files": ["getting-started.md", "feature-level.md"]
 }
 ```
 
@@ -181,7 +181,7 @@ When `revoked: true`:
 
 1. Catalog consumers **MUST NOT** auto-select that extension version.
 2. Fetch **MUST** fail when a consumer pins that version.
-3. `revokedReason` **SHOULD** explain the incident (e.g. `"Prompt injection in ux-task.prompt.md — use 0.4.0.1+"`).
+3. `revokedReason` **SHOULD** explain the incident (e.g. `"Prompt injection in ux.md — use 0.4.0.1+"`).
 
 Revocation is per **extension version**, not per protocol version.
 

@@ -122,14 +122,14 @@ Optional companions (as they land under `.agents/skills/`):
 
 ### 6. Subagents (Task Prompts)
 
-The parent skill includes several specialized subagents (formerly prompt packs) located in `.agents/skills/mdcp/agents/`. Use the Task tool to spawn these subagents when performing specific types of work:
+The parent skill includes several specialized subagents located in `.agents/skills/mdcp/agents/`. Use the Task tool to spawn these subagents when performing specific types of work:
 
-- `design-architecture-task.prompt.md` — For high-level architectural design and planning.
-- `feature-level-task.prompt.md` — For implementing and documenting new features.
-- `doc-only-task.prompt.md` — For tasks that only involve writing or refactoring documentation.
-- `ux-task.prompt.md` — For user experience design and documentation.
-- `review-task.prompt.md` — For reviewing documentation and code against MDCP standards.
-- `getting-started-with-mdcp.prompt.md` — For bootstrapping a new repo with MDCP.
+- `design-architecture.md` — For high-level architectural design and planning.
+- `feature-level.md` — For implementing and documenting new features.
+- `doc-only.md` — For tasks that only involve writing or refactoring documentation.
+- `ux.md` — For user experience design and documentation.
+- `review.md` — For reviewing documentation and code against MDCP standards.
+- `getting-started.md` — For bootstrapping a new repo with MDCP.
 
 ### 7. Optional workspace scaffold
 

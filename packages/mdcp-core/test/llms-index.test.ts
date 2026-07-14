@@ -11,7 +11,7 @@ describe('buildLlmsIndex', () => {
     const text = buildLlmsIndex();
     expect(text.startsWith(`mdcp-llms-index: ${LLMS_INDEX_PROTOCOL_VERSION}`)).toBe(true);
     expect(text).toContain('## Task prompts');
-    expect(text).toContain('.caches/mdcp/prompts/feature-level-task.prompt.md');
+    expect(text).toContain('.agents/skills/mdcp/agents/feature-level.md');
     expect(text).toContain('Bootstrap');
     expect(text).toContain('npx @bwilliamson/mdcp-cli export --llms-index --fetch');
     expect(text).toContain('protocol.profile');
@@ -54,7 +54,7 @@ describe('buildLlmsIndex', () => {
 
   it('includes review-task in agent prompt table', () => {
     const text = buildLlmsIndex();
-    expect(text).toContain('review-task.prompt.md');
+    expect(text).toContain('review.md');
     expect(text).toContain('docs/extensions/');
     expect(text).toContain('Do not hand-edit');
   });

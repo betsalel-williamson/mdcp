@@ -41,7 +41,7 @@ Integrate programmatically with `@bwilliamson/mdcp-core` for compile, refs, vali
 Start with [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli) in **any** repository — monorepo or single app, any language or framework. mdcp cares about your **documentation shards and compile pipeline**, not your application architecture. Add `@bwilliamson/mdcp-core` later when you need programmatic compile, refs, or export in CI or custom tooling.
 
 1. `npm install -D @bwilliamson/mdcp-cli`
-2. Copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) (or load it from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
+2. Copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load it from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
 
 Fetch the bootstrap index and prompts into your docs root:
 

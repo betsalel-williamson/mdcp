@@ -85,10 +85,10 @@ function mergePackWithCatalog(
   catalog = loadExtensionsCatalog(),
 ): Omit<ResolvedExtensionPack, 'source'> {
   const { version, entry } = resolveVersionEntry(pack, protocolVersion, catalog);
-  const path = pack.path ?? resolveExtensionPackPath(pack.id, version);
   const defaults = isBuiltinExtensionPackId(pack.id)
     ? getBuiltinExtensionDefaults(pack.id as BuiltinExtensionPackId)
     : undefined;
+  const path = pack.path ?? defaults?.path ?? resolveExtensionPackPath(pack.id, version);
 
   if (!defaults && (!pack.cacheDir || !pack.files?.length) && !pack.path) {
     throw new Error(

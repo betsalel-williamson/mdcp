@@ -35,7 +35,7 @@ Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split
 
 Copy-paste prompts in `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` are part of the MDCP 1.0 authoring profile (cached at `.caches/mdcp/prompts/` after fetch). See [Agent task prompts](./agent-task-prompts.md).
 
-Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md). Review work **SHOULD** use [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md) with `REVIEW_NODE` set.
+Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md). Review work **SHOULD** use [review.md](../../.agents/skills/mdcp/agents/review.md) with `REVIEW_NODE` set.
 
 ## 5. Extensions and immutability
 
@@ -61,7 +61,7 @@ Versioned agent bootstrap file in the docs root. **Canonical immutable artifacts
 | Profiles    | `valpha`, `vdev`; `vstable` reserved for npm 1.0.0                               |
 | Equivalence | `mdcp.v0.4.llms.txt` and `mdcp.v0.4.0.0.llms.txt` both denote protocol `0.4.0.0` |
 | Content     | Index only; **MUST NOT** embed full guide bodies                                 |
-| Prompts     | **MUST** list all task-type prompts including `review-task.prompt.md`            |
+| Prompts     | **MUST** list all task-type prompts including `review.md`                        |
 | Command     | `mdcp export --llms-index` or `--fetch` (upstream)                               |
 
 Schema: [spec/schemas/mdcp-llms-index-0.4.0.0.schema.json](../../../spec/schemas/mdcp-llms-index-0.4.0.0.schema.json)

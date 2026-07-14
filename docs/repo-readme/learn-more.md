@@ -14,7 +14,7 @@ Depth lives in linked shards — not on this page.
 
 **Goal:** adopt with agent assistance.
 
-- [Getting started prompt](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md)
+- [Getting started prompt](../../.agents/skills/mdcp/agents/getting-started.md)
 - [LLM collaboration](../client-cli/llm-collaboration.md)
 
 ## Author

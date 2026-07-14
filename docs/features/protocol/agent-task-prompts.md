@@ -28,14 +28,14 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 
 ## Standard prompts (protocol 0.4.0.0)
 
-| Prompt                                                                                                                         | Role                             | Primary guides                       |
-| ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- | ------------------------------------ |
-| [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) | Bootstrap pipeline               | all tiers                            |
-| [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md)               | Feature engineering              | `features/`, `client/`, code + tests |
-| [doc-only-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/doc-only-task.prompt.md)                         | Technical writing                | `features/`, `client/`, `developer/` |
-| [design-architecture-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/design-architecture-task.prompt.md)   | ADRs, RFCs                       | `features/protocol/`, `features/`    |
-| [ux-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/ux-task.prompt.md)                                     | End-user experience              | `client/`                            |
-| [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md)                             | Architecture and security review | `review/`, `features/` (stubs)       |
+| Prompt                                                                            | Role                             | Primary guides                       |
+| --------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
+| [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md)         | Bootstrap pipeline               | all tiers                            |
+| [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md)             | Feature engineering              | `features/`, `client/`, code + tests |
+| [doc-only.md](../../.agents/skills/mdcp/agents/doc-only.md)                       | Technical writing                | `features/`, `client/`, `developer/` |
+| [design-architecture.md](../../.agents/skills/mdcp/agents/design-architecture.md) | ADRs, RFCs                       | `features/protocol/`, `features/`    |
+| [ux.md](../../.agents/skills/mdcp/agents/ux.md)                                   | End-user experience              | `client/`                            |
+| [review.md](../../.agents/skills/mdcp/agents/review.md)                           | Architecture and security review | `review/`, `features/` (stubs)       |
 
 Index: [spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md). Cached in consumer repos at `.caches/mdcp/prompts/` after fetch.
 
@@ -51,7 +51,7 @@ Shared terms: `docs/glossary/` — all prompts that introduce vocabulary.
 
 ## Feature-level workflow (normative summary)
 
-When using [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md):
+When using [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md):
 
 1. Branch from updated `main` for `WORK_ITEM`
 2. Load issue via `WORK_ITEM_LOOKUP`
@@ -70,7 +70,7 @@ The llms-index file points agents at prompts and query commands; prompts point a
 
 ## Review workflow (normative summary)
 
-When using [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md):
+When using [review.md](../../.agents/skills/mdcp/agents/review.md):
 
 1. Branch per `REVIEW_NODE` (one manifest node per PR)
 2. Load `WORK_ITEM` via `WORK_ITEM_LOOKUP`

@@ -112,12 +112,12 @@ Set \`WORK_ITEM\` and \`WORK_ITEM_LOOKUP\` in each prompt header before sending.
 
 | Task | Cached path |
 | ---- | ----------- |
-| Bootstrap sharded docs | \`.caches/mdcp/prompts/getting-started-with-mdcp.prompt.md\` |
-| Feature (docs + code) | \`.caches/mdcp/prompts/feature-level-task.prompt.md\` |
-| Documentation only | \`.caches/mdcp/prompts/doc-only-task.prompt.md\` |
-| Architecture / ADR | \`.caches/mdcp/prompts/design-architecture-task.prompt.md\` |
-| End-user UX | \`.caches/mdcp/prompts/ux-task.prompt.md\` |
-| Review | \`.caches/mdcp/prompts/review-task.prompt.md\` |
+| Bootstrap sharded docs | \`.agents/skills/mdcp/agents/getting-started.md\` |
+| Feature (docs + code) | \`.agents/skills/mdcp/agents/feature-level.md\` |
+| Documentation only | \`.agents/skills/mdcp/agents/doc-only.md\` |
+| Architecture / ADR | \`.agents/skills/mdcp/agents/design-architecture.md\` |
+| End-user UX | \`.agents/skills/mdcp/agents/ux.md\` |
+| Review | \`.agents/skills/mdcp/agents/review.md\` |
 
 Typical flow: read this index → load cached prompt → \`refs lookup\` for \`WORK_ITEM\` scope → edit shards under \`features/\`, \`client/\`, \`developer/\`, or \`review/\` → \`mdcp check\`.
 

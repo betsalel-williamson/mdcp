@@ -34,6 +34,7 @@ export const REFERENCE_EXTENSIONS_CATALOG: ExtensionsCatalog = {
 export interface BuiltinExtensionPackDefaults {
   cacheDir: string;
   files: readonly string[];
+  path?: string;
 }
 
 export const BUILTIN_EXTENSION_DEFAULTS: Record<
@@ -43,6 +44,7 @@ export const BUILTIN_EXTENSION_DEFAULTS: Record<
   [DEFAULT_PROMPTS_EXTENSION_ID]: {
     cacheDir: DEFAULT_TASK_PROMPTS_CACHE_DIR,
     files: STANDARD_TASK_PROMPT_FILES,
+    path: '.agents/skills/mdcp/agents',
   },
 };
 

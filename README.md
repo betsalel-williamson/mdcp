@@ -25,7 +25,7 @@ Two equal paths — use whichever fits your workflow.
 
 ### Path A — paste into your agent
 
-1. Open [getting-started-with-mdcp.prompt.md](spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md).
+1. Open [getting-started.md](.agents/skills/mdcp/agents/getting-started.md).
 2. Fill in `FEATURE=` and `PERSONA=` at the top.
 3. Copy the **entire file** into your coding-agent chat (Cursor, Claude, Copilot, etc.) and send.
 
@@ -81,7 +81,7 @@ Depth lives in linked shards — not on this page.
 
 **Goal:** adopt with agent assistance.
 
-- [Getting started prompt](spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md)
+- [Getting started prompt](.agents/skills/mdcp/agents/getting-started.md)
 - [LLM collaboration](docs/client-cli/llm-collaboration.md)
 
 ### Author

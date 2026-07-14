@@ -13,7 +13,7 @@ Four goals — not job titles. Interns and students map to **Learner**; technica
 | **Author**   | Own content, not the toolchain           | One topic per file; load the section that matches the task | Paste prompt + usage model  |
 | **Champion** | Evaluate or sponsor adoption             | Slash MTTR and accelerate onboarding with instant context  | Vision and claims shards    |
 
-Paths: [CLI README](../../packages/mdcp-cli/README.md), [getting started prompt](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md), [usage model](./protocol/usage-model.md), [vision](./protocol/00-vision-and-roadmap.md), [claims policy](./protocol/benefit-claims-and-evidence.md).
+Paths: [CLI README](../../packages/mdcp-cli/README.md), [getting started prompt](../../.agents/skills/mdcp/agents/getting-started.md), [usage model](./protocol/usage-model.md), [vision](./protocol/00-vision-and-roadmap.md), [claims policy](./protocol/benefit-claims-and-evidence.md).
 
 Once a pipeline exists, adoption archetypes map to **tool operator personas** below (for example Author → LLM doc author; Builder → wires CI `check`).
 

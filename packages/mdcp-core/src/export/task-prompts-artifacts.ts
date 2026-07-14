@@ -1,20 +1,20 @@
 import { resolve } from 'node:path';
 import { LLMS_INDEX_PROTOCOL_VERSION } from './llms-index-artifacts.js';
 
-/** Versioned default mdcp prompts extension 0.4.0.0 (`spec/extensions/prompts-mdcp-defaults/0.4.0.0`). */
-export const TASK_PROMPTS_SPEC_DIR = 'spec/extensions/prompts-mdcp-defaults/0.4.0.0';
+/** Versioned default mdcp prompts extension 0.4.0.0 (migrated to `.agents/skills/mdcp/agents`). */
+export const TASK_PROMPTS_SPEC_DIR = '.agents/skills/mdcp/agents';
 
 /** Default cache under docs root (populated by `mdcp export --llms-index --fetch`). */
 export const DEFAULT_TASK_PROMPTS_CACHE_DIR = '.caches/mdcp/prompts';
 
 /** Standard meta prompts — general authoring instructions, replaceable by host-specific systems. */
 export const STANDARD_TASK_PROMPT_FILES = [
-  'getting-started-with-mdcp.prompt.md',
-  'feature-level-task.prompt.md',
-  'doc-only-task.prompt.md',
-  'design-architecture-task.prompt.md',
-  'ux-task.prompt.md',
-  'review-task.prompt.md',
+  'getting-started.md',
+  'feature-level.md',
+  'doc-only.md',
+  'design-architecture.md',
+  'ux.md',
+  'review.md',
 ] as const;
 
 export type StandardTaskPromptFile = (typeof STANDARD_TASK_PROMPT_FILES)[number];

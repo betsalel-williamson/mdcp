@@ -46,7 +46,7 @@ describe('extensions config', () => {
     });
     const packs = resolveEnabledExtensionPacks(config, { repoRoot: REPO_ROOT });
     expect(packs).toHaveLength(1);
-    expect(packs[0]!.path).toBe('spec/extensions/prompts-mdcp-defaults/0.4.0.0');
+    expect(packs[0]!.path).toBe('.agents/skills/mdcp/agents');
     expect(packs[0]!.version).toBe('0.4.0.0');
     expect(packs[0]!.cacheDir).toBe('.caches/mdcp/prompts');
     expect(packs[0]!.files).toEqual([...STANDARD_TASK_PROMPT_FILES]);
@@ -61,7 +61,7 @@ describe('extensions config', () => {
     const packs = resolveEnabledExtensionPacks(config, { repoRoot: REPO_ROOT });
     expect(packs[0]!.protocolVersion).toBe('0.4.0.0');
     expect(packs[0]!.version).toBe('0.4.0.0');
-    expect(packs[0]!.path).toBe('spec/extensions/prompts-mdcp-defaults/0.4.0.0');
+    expect(packs[0]!.path).toBe('.agents/skills/mdcp/agents');
     expect(packs[0]!.protocolVersionRange).toBe('^0.4.0-0');
   });
 

@@ -53,7 +53,7 @@ describe('task-prompts fetch', () => {
           { status: 200 },
         );
       }
-      expect(url).toContain('/owner/mdcp/v0.4.0/spec/extensions/prompts-mdcp-defaults/0.4.0.0/');
+      expect(url).toContain('/owner/mdcp/v0.4.0/.agents/skills/mdcp/agents/');
       return new Response(`# ${url}\n`, { status: 200 });
     });
 

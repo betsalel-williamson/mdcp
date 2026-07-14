@@ -17,7 +17,7 @@ Agents and humans get a **short, self-contained entrypoint** (~60–100 lines) f
 - [x] `mdcp export --llms-index` merges repo-specific `compileOrder` and scripts
 - [x] `mdcp export --llms-index --fetch` pulls from `spec/llms-index/valpha` or `vdev`
 - [x] Draft naming `mdcp.v{n}--draft.llms.txt` until adopted; symlinks `valpha` / `vdev`
-- [x] `review-task.prompt.md` listed in spec artifact and [Agent task prompts](./protocol/agent-task-prompts.md)
+- [x] `review.md` listed in spec artifact and [Agent task prompts](./protocol/agent-task-prompts.md)
 - [x] Static copy in `examples/sample-guides/`
 - [x] Agent task prompts documented in [Agent task prompts](./protocol/agent-task-prompts.md)
 - [x] Conformance vector: `spec/conformance/llms-index-v0.4/`
@@ -64,7 +64,7 @@ Do **not** duplicate fetch fields under `extensions` — use `protocol.profile` 
 
 ## Agent workflow
 
-Use [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md) with `WORK_ITEM` set to the bootstrap issue (or `.caches/mdcp/prompts/feature-level-task.prompt.md` after fetch). Load scope via [Agent work-item tracking](../developer/agent-work-item-tracking.md).
+Use [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md) with `WORK_ITEM` set to the bootstrap issue (or `.agents/skills/mdcp/agents/feature-level.md` after fetch). Load scope via [Agent work-item tracking](../developer/agent-work-item-tracking.md).
 
 ## Out of scope (V1)
 
