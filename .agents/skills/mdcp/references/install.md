@@ -12,16 +12,17 @@ Prefer `.agents/skills/` as the portable path. Some hosts also discover `.github
 
 ## Complementary skills
 
-As packs migrate from `spec/extensions/`:
+The `mdcp` parent skill includes the core subagents (formerly `prompts-mdcp-defaults`) built-in under `.agents/skills/mdcp/agents/`.
+
+You can also install complementary archetype and formatting skills:
 
 ```bash
-npx skills add betsalel-williamson/mdcp --skill mdcp-prompts-defaults
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
 npx skills add betsalel-williamson/mdcp --skill mdcp-format-marp
 ```
 
-Tracking: <https://github.com/betsalel-williamson/mdcp/issues/102>
+_(Legacy extension packs from `spec/extensions/` have been fully migrated to these Agent Skills.)_
 
 ## CLI still required for compile/check
 
