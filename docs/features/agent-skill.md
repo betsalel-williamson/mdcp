@@ -76,3 +76,8 @@ Optional skill-creator agent runs and description trigger optimization use fixtu
 ## Ecosystem publication
 
 Primary discovery: [skills.sh](https://skills.sh) via `npx skills`. Secondary registries later. Do not publish a VS Code Marketplace VSIX for this delivery path.
+
+Landing identity for skills.sh:
+
+- Root [README](../../README.md) includes the [install-count badge](https://www.skills.sh/docs#badge) (`https://skills.sh/b/betsalel-williamson/mdcp`) and `npx skills add` install commands.
+- Repo-root [`skills.sh.json`](../../skills.sh.json) groups Core / Archetypes / Formats on the [skills.sh repo page](https://www.skills.sh/docs/customize).
