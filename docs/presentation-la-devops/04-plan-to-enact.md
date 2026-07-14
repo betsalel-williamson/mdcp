@@ -1,9 +1,9 @@
 ## Plan to Enact: Phased Delivery
 
 - **V1: Authoring**
-  - `mdcp.v0.4.llms.txt` bootstrap
+  - Agent Skills bootstrap
   - Agent task prompts
-  - `mdcp export --llms-index`
+  - `mdcp compile` and validation
 - **V2: Delivery (MCP Adapter)**
   - MDCP MCP server (`refs lookup`, shard read, glossary search)
 - **V3: Hosted Context API**
@@ -11,14 +11,14 @@
 
 ---
 
-## Getting Started: V1 Bootstrap
+## Getting Started: Agent Skills
 
-Drop `mdcp.v0.4.llms.txt` in your docs root.
+Install the MDCP Agent Skill in your repo (`.agents/skills/mdcp/SKILL.md`).
 
-- It's a **short index**, not a context dump.
-- Agents inspect your repo and walk through config and shard layout.
+- It's a **behavioral guide**, not a context dump.
+- Tells agents how to compile, validate, and query shards via `refs lookup`.
 
-Or use the CLI init:
+Or use the CLI init to scaffold your docs:
 
 ```bash
 npx @bwilliamson/mdcp-cli init --docs-root docs
@@ -32,7 +32,8 @@ mdcp compile --config docs/mdcp.config.json
 This isn't a magic trick that instantly understands your legacy codebase. It's a frictionless, 5-minute starting point.
 
 - Open **Cursor** (or any LLM tool) in a repo.
-- Copy-paste the bootstrap prompt from `mdcp.v0.4.llms.txt`.
-- Watch the agent set up the pipeline — proving how easy it is to begin capturing intent.
+- Type: _"Help me write a new feature using the MDCP skill."_
+- The agent reads `.agents/skills/mdcp/SKILL.md` automatically.
+- Watch it set up your documentation shards and capture intent _before_ writing code.
 
 ---
