@@ -1,0 +1,21 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Core",
+      "description": "Parent Agent Skill for MDCP — install this first.",
+      "skills": ["mdcp"]
+    },
+    {
+      "title": "Archetypes",
+      "description": "Complementary skills for documentation architectures.",
+      "skills": ["mdcp-arch-oss-library", "mdcp-arch-product-docs-site"]
+    },
+    {
+      "title": "Formats",
+      "description": "Complementary skills for presentation and output formats.",
+      "skills": ["mdcp-format-marp"]
+    }
+  ]
+}

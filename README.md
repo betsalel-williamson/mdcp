@@ -2,13 +2,15 @@
 
 ## What this tool is
 
-**mdcp** is an [Agent Skill](https://agentskills.io) and toolchain for **technical documentation context**.
+[![skills.sh](https://skills.sh/b/betsalel-williamson/mdcp)](https://skills.sh/betsalel-williamson/mdcp)
+
+**mdcp** is an [Agent Skill](https://agentskills.io) and toolchain for **technical documentation context**. Discover and install it via [skills.sh](https://skills.sh/betsalel-williamson/mdcp).
 
 It is not a magic bullet — it is a helpful way to head off the long-term cost of poor docs. Instead of massive, unvalidated monolithic READMEs that overwhelm LLM context windows, MDCP helps you distill mind maps, architecture notes, specs, and product ideas into small, validated Markdown **shards** (e.g. `docs/features/my-feature.md`). The skill trains coding agents (in Cursor, Copilot, or Claude) to read those shards one by one, update them before coding, and validate them in CI — so people and AIs can trace value, learn the tools, and keep the system understandable as it grows. Works for a team of one or a full product, engineering, and marketing org.
 
 ## Get started
 
-MDCP is delivered as a zero-dependency **Agent Skill**. Once installed in your repository, it acts as a system-level prompt that teaches your AI tools how to interact with your project's documentation.
+MDCP is delivered as a zero-dependency **Agent Skill**. Once installed in your repository, it acts as a system-level prompt that teaches your AI tools how to interact with your project's documentation. Install with the [`skills` CLI](https://www.skills.sh/docs/cli) (same path as [skills.sh](https://skills.sh)).
 
 ### Quick Start
 
@@ -50,6 +52,7 @@ The MDCP workflow is enforced by the skill, but executed by the underlying CLI a
 
 ## Learn More
 
+- [skills.sh — MDCP skills](https://skills.sh/betsalel-williamson/mdcp)
 - [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md)
 - [Agent Skill delivery](docs/features/agent-skill.md)
 - [CLI consumer guide](docs/client-cli/index.md)
