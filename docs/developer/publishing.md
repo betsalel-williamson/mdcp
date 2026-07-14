@@ -102,24 +102,6 @@ pnpm changeset publish
 
 Changesets config: [`.changeset/config.json`](../../.changeset/config.json) — all three packages version together.
 
-## Release workflow (VS Code Extension)
-
-The VS Code extension (`packages/mdcp-vscode`) is published separately from the NPM packages.
-
-> **Security Note:** To prevent unauthorized releases, the publish workflow is restricted to specific approved developers (currently `betsalel-williamson`) and runs within the `vscode-publish` GitHub Environment.
-
-1. Update the version in `packages/mdcp-vscode/package.json`.
-2. Commit the version bump.
-3. Tag the commit with the prefix `vscode-v` (e.g., `vscode-v0.1.0`).
-4. Push the tag to GitHub:
-
-```bash
-git tag vscode-v0.1.0
-git push origin vscode-v0.1.0
-```
-
-1. The GitHub Action (`.github/workflows/publish-vscode-extension.yml`) will automatically build the extension and publish it to both the Visual Studio Marketplace and Open VSX Registry.
-
 ## Install surfaces
 
 | Use case       | Command                                                               |
