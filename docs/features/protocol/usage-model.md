@@ -23,7 +23,7 @@ Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `
 
 One guide, `compile` + `check`, monolith output. Fetch or copy `mdcp.v0.4.llms.txt` to docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --fetch-profile alpha`).
 
-### Standard
+### Typical
 
 Multi-guide `compileOrder`, publish outputs (`compile.outputFile`).
 

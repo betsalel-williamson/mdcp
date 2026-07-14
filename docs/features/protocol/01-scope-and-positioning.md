@@ -29,7 +29,7 @@ MDCP is an **offline document context protocol** — not a wire protocol like [M
 
 ## OpenAPI analogy
 
-OpenAPI standardizes HTTP API contracts. MDCP standardizes **documentation context contracts**: shard layout, compile invariants, refs registry, export profiles (`--llm`).
+OpenAPI defines HTTP API contracts. MDCP defines **documentation context contracts** for a repo: shard layout, compile invariants, refs registry, export profiles (`--llm`). The analogy is about clear contracts — MDCP itself is positioned as an Agent Skill and toolchain, not an industry “standard” to join.
 
 ## Normative core vs reference implementation
 

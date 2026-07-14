@@ -141,7 +141,7 @@ The parent skill includes several specialized subagents located in `.agents/skil
 - `feature-level.md` — For implementing and documenting new features.
 - `doc-only.md` — For tasks that only involve writing or refactoring documentation.
 - `ux.md` — For user experience design and documentation.
-- `review.md` — For reviewing documentation and code against MDCP standards.
+- `review.md` — For reviewing documentation and code against MDCP skill and shard conventions.
 - `getting-started.md` — For bootstrapping a new repo with MDCP.
 
 ### 7. Optional workspace scaffold
