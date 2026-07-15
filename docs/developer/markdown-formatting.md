@@ -4,9 +4,9 @@
 
 When contributing documentation, rely on **simple GFM (GitHub Flavored Markdown)** as the standard.
 
-## We do not enforce OKF
+## Open Structure
 
-We explicitly decided not to adopt OKF (One Knowledge Format) or any other highly opinionated, rigid document structure (see [ADR 0003](../features/adr/0003-do-not-adopt-okf.md)). The goal is to keep the authoring experience simple, flexible, and accessible. You do not need to adhere to complex metadata schemas or strict structural hierarchies when writing documentation shards.
+We use an unopinionated, flexible document structure. The goal is to keep the authoring experience simple and accessible. You do not need to adhere to complex metadata schemas or strict structural hierarchies when writing documentation shards.
 
 ## Strict Link Validity
 
@@ -17,3 +17,7 @@ While we are unopinionated about document structure, we are **strict about links
 - Do not create links to files that do not exist yet. If you need to indicate a placeholder, comment it out or write `(TBD)`.
 
 For more details on the link validation rules, please consult the [Format specification](../features/protocol/format-specification.md).
+
+---
+
+_Note: GitHub and GitHub Flavored Markdown are trademarks of GitHub, Inc. This project is not affiliated with, sponsored by, or endorsed by GitHub, Inc._

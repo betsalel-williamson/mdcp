@@ -6,7 +6,7 @@ This document outlines the base formatting requirements and structural guideline
 
 ## What this isn't
 
-This is not a rigid or highly opinionated knowledge schema (such as OKF). We actively avoid overly prescriptive formats to keep the authoring experience simple and accessible. We do not enforce strict document hierarchies or complex metadata requirements for standard documentation.
+This is not a rigid or highly opinionated knowledge schema. We actively avoid overly prescriptive formats to keep the authoring experience simple and accessible. We do not enforce strict document hierarchies or complex metadata requirements for standard documentation.
 
 ## Base Requirement: Simple GFM
 
@@ -37,3 +37,7 @@ We enforce a **Strict Link Validity** requirement across all documentation:
 ### Rationale
 
 Docs should be accurate and current. Invalid information inserts drift and significantly increases the chance for AI agent hallucinations. When an agent (or a human) follows a broken link, it breaks context and trust in the documentation ecosystem. Enforcing strict link validity ensures the compiled output is a reliable source of truth.
+
+---
+
+_Note: GitHub and GitHub Flavored Markdown are trademarks of GitHub, Inc. This project is not affiliated with, sponsored by, or endorsed by GitHub, Inc._
