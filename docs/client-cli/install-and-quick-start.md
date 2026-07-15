@@ -72,7 +72,3 @@ Global options (apply to every command):
 | --------------------- | ------------------ | -------------------------------------------------------------------------------- |
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
 | `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |
-
-## Related: Agent Skill
-
-Optional and **separate** from this package: install the parent skill so coding agents follow docs-as-code workflows, then run `/mdcp help me get started`. See [Agent Skill (related)](./agent-skill.md). Agents that use the skill still need this CLI (or equivalent scripts) for `mdcp compile` / `mdcp check`.

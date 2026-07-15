@@ -48,7 +48,7 @@ githubSlugify('`--config` vs `--docs-root`');
 // → '--config-vs---docs-root'
 ```
 
-Consumer docs: [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules).
+CLI authoring rules: [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules).
 
 ## Manifest
 

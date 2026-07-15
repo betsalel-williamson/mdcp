@@ -1,8 +1,6 @@
 # Agent integration
 
-Wire **`@bwilliamson/mdcp-cli`** into any coding agent with npm scripts. This is CLI packaging — not the Agent Skill. For skill install, see [Agent Skill (related)](./agent-skill.md) or the [root README](../../README.md). For how skill subagents use these commands, see [LLM collaboration](./llm-collaboration.md).
-
-Add npm scripts in your consumer repo:
+Wire **`@bwilliamson/mdcp-cli`** into CI or coding agents with npm scripts. This is CLI packaging — not the Agent Skill ([root README](../../README.md)).
 
 ```json
 {
@@ -15,13 +13,8 @@ Add npm scripts in your consumer repo:
 ```
 
 ```bash
-# Compact context for feature work
 mdcp export --llm --stdout --config docs/mdcp.config.json
-
-# Discover shards with host search (rg, IDE search), then validate links
 mdcp check --require-lint
-
-# Optional: inspect registry headings after compile or check
 mdcp refs list
 ```
 
@@ -34,11 +27,10 @@ mdcp refs list
 
 ## Further reading
 
-- [Project README](../../README.md) — Agent Skill landing (separate from this CLI)
-- [Why mdcp for coding agents](./why-mdcp-for-agents.md) — developer pain and which CLI commands address it
-- [LLM collaboration](./llm-collaboration.md) — skill + CLI workflow for agents
-- [Agent Skill (related)](./agent-skill.md) — optional skill install alongside this package
-- [Feature catalog](../features/feature-catalog.md) — full maintainer docs
+- [Project README](../../README.md) — Agent Skill landing
+- [Commands reference](./commands-reference.md) — full `mdcp` command list
+- [Core API](../client-core/index.md) — programmatic library
+- [Feature catalog](../features/feature-catalog.md) — maintainer depth
 - [Sample guides](../../examples/sample-guides/)
 
 ## License

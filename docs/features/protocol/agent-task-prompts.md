@@ -4,7 +4,7 @@ Normative profile for **task-type subagents** under the parent MDCP Agent Skill 
 
 ## Purpose
 
-Subagent files are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge. Activate the parent skill (`/mdcp`), then name a subagent id and read `agents/<id>.md`. Invoke recipe: [skills/mdcp/references/agents.md](../../skills/mdcp/references/agents.md). Consumer index: [LLM collaboration](../../client-cli/llm-collaboration.md).
+Subagent files are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge. Activate the parent skill (`/mdcp`), then name a subagent id and read `agents/<id>.md`. Invoke recipe and consumer index: [skills/mdcp/references/agents.md](../../skills/mdcp/references/agents.md).
 
 Reference copies live in [skills/mdcp/agents/](../../skills/mdcp/agents/). The canonical catalog is summarized below. **Do not edit** the `skills/mdcp/agents/` copies directly if you want changes to persist — propose upstream or add extensions.
 

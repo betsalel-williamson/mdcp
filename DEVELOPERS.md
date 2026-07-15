@@ -151,7 +151,7 @@ WORK_ITEM=39
 WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md
 ```
 
-Prefer stating the shard path for `WORK_ITEM_LOOKUP` so the agent loads tracker conventions from this file. For subagent catalog and invoke recipe, read [LLM collaboration](./packages/mdcp-cli/README.md#llm-collaboration).
+Prefer stating the shard path for `WORK_ITEM_LOOKUP` so the agent loads tracker conventions from this file. For subagent catalog and invoke recipe, read [`skills/mdcp/references/agents.md`](skills/mdcp/references/agents.md).
 
 ## Repository layout
 
@@ -253,7 +253,9 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
 | `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
-| `repo-readme/` | GitHub visitors, adopters        | `README.md` at repo root                          |
+| `repo-readme/` | GitHub visitors, skill adopters  | `README.md` at repo root                          |
+
+**Surface ownership:** `repo-readme/` = Agent Skill landing; `client-cli/` = CLI commands/config only; `client-core/` = library API/hooks only. Cross-link the other surfaces instead of duplicating skill, CLI, or API narrative across package READMEs.
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
