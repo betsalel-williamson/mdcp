@@ -31,12 +31,11 @@ pnpm build && pnpm docs:compile:repo && pnpm bench:context-size
 
 - **Sharding** can reduce per-turn context **when agents read one feature shard instead of the full features monolith** — see `median_shard_pct_of_monolith` in the CSV.
 - **`export --llm`** removes comment, banner, and frontmatter bytes (`llm_strip_delta_chars`) — a smaller delta than shard scoping; do not conflate the two.
-- MDCP does **not** stop an agent from reading the whole monolith — discipline and `mdcp.v*.llms.txt` instructions matter.
+- MDCP does **not** stop an agent from reading the whole monolith — discipline and Agent Skill instructions matter.
 
 ### Tier B wording (dogfood measurement, 2026-06-25)
 
-On this repository, the median `docs/features/` shard is **~4.4%** of the compiled features monolith by character count (median ~4.6k chars vs ~105k chars). When agents read one shard instead of the full monolith, per-turn context can be smaller — if they follow the [usage model](./usage-model.md). MDCP does not enforce that discipline; `mdcp.v*.llms.txt` and your workflow do.
-
+On this repository, the median `docs/features/` shard is **~4.4%** of the compiled features monolith by character count (median ~4.6k chars vs ~105k chars). When agents read one shard instead of the full monolith, per-turn context can be smaller — if they follow the [usage model](./usage-model.md). MDCP does not enforce that discipline; the Agent Skill and your workflow do.
 `export --llm` removed **0** bytes on the features guide in this run (no HTML comments or banners in that output). Do not conflate export stripping with shard scoping.
 
 ## Evidence elsewhere

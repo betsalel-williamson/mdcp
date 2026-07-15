@@ -259,13 +259,17 @@ Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.o
 
 Publish landing style for root README: [Personas and priority tiers](docs/features/personas-and-priority-tiers.md#publish-landing-style).
 
-#### Upstream refs (dogfood)
+#### Agent Skill dogfood
 
-`mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.1`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
+Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`](skills/mdcp), not a fetched `mdcp.v*.llms.txt` bootstrap. After editing skill files, refresh the local install:
 
-**Dogfood agent index:** do not edit `docs/mdcp.v0.4.llms.txt` (protocol `0.4.0.0` — fetch-only). When `compileOrder` or repo scripts change, bump `protocolVersion` and `protocol.llmsIndex.outputFile` (for example `mdcp.v0.4.0.1.llms.txt`), run `pnpm docs:compile:repo`, and commit the new versioned file.
+```bash
+pnpm skill:install
+```
 
-Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
+That copies `skills/mdcp/` into `.agents/skills/mdcp/` (gitignored). Manual invoke: `/mdcp`. See [Agent Skill](#agent-skill).
+
+Do not use `mdcp export --llms-index` / `--fetch` for dogfood — those flags are deprecated in favor of Agent Skills (see [mdcp-llms-index](docs/glossary/mdcp-llms-index.md)).
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](./packages/mdcp-core/README.md#publish-relative-link-rewriting).
 
@@ -400,17 +404,18 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 
 ### 0.4.0 open alpha milestone
 
-**0.4.0** is the first public alpha for external testers. It ships llms-index export, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy.
+**0.4.0** is the first public alpha for external testers. It shipped compile/check, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy. Agent Skills now supersede the temporary `mdcp.v*.llms.txt` / `--llms-index --fetch` bootstrap path.
 
-| Track                  | 0.4.0 status                                                                                                                               |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **npm packages**       | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee                                                                     |
-| **Protocol `0.4.0.0`** | Draft profile (`mdcp.v0.4.llms.txt`); first published llms-index spec; fetch via `--fetch-profile alpha` / `valpha` + `--fetch-ref v0.4.0` |
+| Track              | 0.4.0 status                                                                  |
+| ------------------ | ----------------------------------------------------------------------------- |
+| **npm packages**   | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee        |
+| **Agent delivery** | Prefer Agent Skills (`npx skills add`); legacy llms-index fetch is deprecated |
 
-**Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, llms-index export, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
-| **Roadmap V1 phase** | Reference implementation shipped; not a semver 1.0 stability promise |
+**Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
 
-**Path to 1.0.0:** npm and protocol graduate together when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
+**Roadmap V1 phase:** Reference implementation shipped; not a semver 1.0 stability promise.
+
+**Path to 1.0.0:** npm graduates when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
 
 #### Community feedback
 
@@ -420,25 +425,18 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 
 #### Open alpha (0.4.0) release checklist
 
-Completed for the **0.4.0** open alpha:
+Completed for the **0.4.0** open alpha (historical — agent delivery has since moved to Agent Skills):
 
-- [x] **`docs/mdcp.config.json`** — `protocol.ref` pinned to `v0.4.0`
-- [x] **`skills/mdcp/agents/getting-started.md`** — phase-2 example `ref`: `v0.4.0`
-- [x] **Consumer install docs** — `--fetch-ref v0.4.0` + `--fetch-profile alpha`
-
-Remote `--fetch` with `ref: v0.4.0` requires the **`v0.4.0` git tag** on `main` (pushed by `pnpm release:tag:push`). Protocol version stays **`0.4.0.0`**; only git `ref` pins move between branch dogfood and release tags.
+- [x] Open alpha npm tag and consumer install docs
+- [x] `skills/mdcp` parent skill as agent entrypoint (succeeds llms-index)
 
 #### Open alpha (0.4.1) patch release checklist
 
 Pending for **0.4.1** (first patch after 0.4.0 open alpha):
 
-- [x] **`docs/mdcp.config.json`** — `protocol.ref` pinned to `v0.4.1`
-- [x] **`skills/mdcp/agents/getting-started.md`** — phase-2 example `ref`: `v0.4.1`
-- [x] **Consumer install docs** — `--fetch-ref v0.4.1` + `--fetch-profile alpha`
-- [ ] **Three pending changesets** on `main` — `#62` refs registry, `#64` perf, `#57` Node 24 + llms-index indirection
+- [x] Agent Skill install docs (`npx skills add betsalel-williamson/mdcp --skill mdcp`)
+- [ ] **Pending changesets** on `main` — merge and release as needed
 - [ ] **`pnpm release:tag:push`** — human runs interactively; select **patch** → `v0.4.1`
-
-Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Protocol version stays **`0.4.0.0`**; only git `ref` pins move.
 
 ### When to add a changeset
 
@@ -714,11 +712,11 @@ The CLI (`compile`, `check`, [refs](#refs) registry maintenance, and `export --l
 
 ## protocol version
 
-Four-part version for MDCP **artifact and config compatibility** (default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 0.4.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v0.4.llms.txt` ≡ `0.4.0.0`).
+Optional four-part string for MDCP **artifact and config compatibility** (historically default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` when present.
 
-**Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](#040-open-alpha-milestone).
+Legacy `mdcp.v*.llms.txt` files used the same string in a first-line header (`mdcp-llms-index: 0.4.0.0`). That bootstrap path is deprecated — prefer [Agent Skills](#agent-skills). See [mdcp-llms-index](#mdcp-llms-index).
 
-Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
+Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli` remains pre-1.0 while tooling and agent delivery continue to evolve.
 
 ## mdcp-llms-index
 

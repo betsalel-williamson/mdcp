@@ -31,14 +31,14 @@ Filter for new capabilities: [Direct value bar](../design-constraints/direct-val
 | **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                                     | Opt-in publish                |
 
 ```text
-  V1 authoring     shards → compile → check → mdcp.v*.llms.txt
+  V1 authoring     shards → compile → check → Agent Skill (/mdcp)
         ↓
   V2 delivery      MCP adapter (optional)
         ↓
   V3 delivery      HTTPS API + API keys (optional)
 ```
 
-**V1 phase ≠ semver 1.0.** Roadmap phase names describe delivery surfaces; npm and protocol stability promises align at npm **1.0.0** / **`vstable`** promotion — not during open alpha (`valpha`).
+**V1 phase ≠ semver 1.0.** Roadmap phase names describe delivery surfaces; npm stability promises align at npm **1.0.0** — not during open alpha.
 
 ## Positioning
 

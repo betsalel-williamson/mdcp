@@ -8,24 +8,22 @@ A single monolithic agent index cannot serve every documentation culture — ope
 
 MDCP separates:
 
-| Layer             | Holds                                                        | Edited by                                     |
-| ----------------- | ------------------------------------------------------------ | --------------------------------------------- |
-| **Protocol core** | `spec/llms-index/`, normative spec, schemas, conformance     | Upstream mdcp maintainers; adopted by version |
-| **Repo shards**   | `features/`, `client/`, `developer/`, `glossary/`, `review/` | Your team in git                              |
-| **Extensions**    | Archetypes, formatting packs, local overlays                 | Your team; **MAY** be proprietary             |
+| Layer             | Holds                                                         | Edited by                                     |
+| ----------------- | ------------------------------------------------------------- | --------------------------------------------- |
+| **Protocol core** | Normative shards, schemas, CLI/core packages                  | Upstream mdcp maintainers; adopted by version |
+| **Repo shards**   | `features/`, `client/`, `developer/`, `glossary/`             | Your team in git                              |
+| **Extensions**    | Complementary skills, local overlays under `docs/extensions/` | Your team; **MAY** be proprietary             |
 
-## Do not edit `mdcp.v*.llms.txt` locally
+## Do not hand-edit agent entrypoints for repo-specific guidance
 
-The versioned llms-index in your **docs root** is a **fetched or generated protocol artifact**, not a scratchpad.
+The parent **Agent Skill** (`skills/mdcp/` → `.agents/skills/mdcp/`) is the portable agent entrypoint. Legacy `mdcp.v*.llms.txt` files are deprecated.
 
-| Rule                                                                            | Detail                                                                            |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Agents **MUST NOT** hand-edit `mdcp.v*.llms.txt` for repo-specific improvements | Changes belong in shards or extensions                                            |
-| Broadly applicable improvements                                                 | Propose upstream to `spec/llms-index/` via PR                                     |
-| Project-specific guidance                                                       | `docs/extensions/` in your repo (local extension)                                 |
-| Regenerate repo copy                                                            | `mdcp export --llms-index --fetch --fetch-profile alpha` after upstream alpha pin |
-
-`mdcp export --llms-index` **without** `--fetch` may add a `## This repository` section — that is generated overlay, not a substitute for editing the canonical bootstrap in place.
+| Rule                                                                       | Detail                                                    |
+| -------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Agents **MUST NOT** hand-edit vendored skill files for one-off repo advice | Changes belong in shards or `docs/extensions/`            |
+| Broadly applicable improvements                                            | Propose upstream to `skills/mdcp/` via PR                 |
+| Project-specific guidance                                                  | `docs/extensions/` or complementary skills you maintain   |
+| Refresh local dogfood                                                      | `pnpm skill:install` (or `npx skills add . --skill mdcp`) |
 
 ## SOLID principles for MDCP
 
@@ -33,15 +31,15 @@ Design constraints for the protocol and its ecosystem — analogous to SOLID in 
 
 | Principle                 | MDCP meaning                                                                                                            |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **S**ingle responsibility | llms-index = entrypoint and query instructions; shards = intent; code = implementation; extensions = vertical overlays  |
-| **O**pen/closed           | Core protocol versioned and stable; extend through complementary skills without forking the base spec                   |
+| **S**ingle responsibility | Agent Skill = entrypoint and workflow; shards = intent; code = implementation; extensions = vertical overlays           |
+| **O**pen/closed           | Core protocol versioned and stable; extend through complementary skills without forking the base skill                  |
 | **L**iskov substitution   | Optional extensions **MUST NOT** break core `mdcp check` when disabled; archetypes compose on top of conforming layouts |
-| **I**nterface segregation | Export profiles (`--llm`, `--llms-index`), compile hooks, and archetype packs are separate opt-in surfaces              |
+| **I**nterface segregation | Export profiles (`--llm`), compile hooks, and complementary skills are separate opt-in surfaces                         |
 | **D**ependency inversion  | Agents and CI depend on **compiled contracts** and `mdcp check`, not ad-hoc README prose or host-specific rules         |
 
 ## Extensions directory
 
-Published and community extensions live under [complementary skills](../../../spec/extensions/).
+Published and community extensions live as complementary skills under `skills/mdcp-arch-*` (WIP) or local `docs/extensions/`.
 
 | Kind                | Purpose                                                        | Example                                   |
 | ------------------- | -------------------------------------------------------------- | ----------------------------------------- |
@@ -55,31 +53,7 @@ Published and community extensions live under [complementary skills](../../../sp
 - **Contribute back** via PR when an extension is broadly useful — we want shared archetypes to grow.
 - **No obligation** — mdcp uses **MIT**; local-only proprietary extensions are explicitly encouraged when they encode competitive or regulated workflow detail.
 
-V1 wires **extension packs** into `mdcp.config.json` — enable built-in packs (such as `prompts-mdcp-defaults`) or add custom packs with alternate `baseUrl` sources. List extension shards from your guide `index.md` like any other shard when the pack is doc-only.
-
-```json
-{
-  "protocolVersion": "0.4.0.0",
-  "protocol": {
-    "fetch": { "ref": "v0.4.1", "profile": "dev" }
-  },
-  "extensions": {
-    "packs": [
-      { "id": "prompts-mdcp-defaults", "enabled": true, "version": "0.4.0.0" },
-      {
-        "id": "team-prompts",
-        "enabled": true,
-        "path": "prompts",
-        "cacheDir": ".caches/mdcp/team-prompts",
-        "files": ["feature.prompt.md"],
-        "source": { "baseUrl": "https://cdn.example.com/my-org" }
-      }
-    ]
-  }
-}
-```
-
-**Bootstrap:** Phase 1 — `mdcp export --llms-index --fetch` without config (defaults). Phase 2 — add config with `protocol.profile` (and `protocol.ref` when not on `main`), re-fetch with `--config`.
+**Bootstrap:** Install the parent skill with `npx skills add betsalel-williamson/mdcp --skill mdcp`. Commit `.agents/skills/mdcp/` in consumer repos so agents share the same instructions.
 
 **Security:** Agent Skills operate with identical permissions to the user. Treat third-party Agent Skills as untrusted. Future work: trusted-source allowlist and sandboxed execution.
 

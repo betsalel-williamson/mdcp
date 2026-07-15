@@ -220,7 +220,6 @@ npm install -D @bwilliamson/mdcp-cli
 
 # Or run without installing
 npx @bwilliamson/mdcp-cli check --config mdcp.config.json
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
 
 # Global install
 npm install -g @bwilliamson/mdcp-cli
@@ -1025,11 +1024,11 @@ Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:li
 
 ## protocol version
 
-Four-part version for MDCP **artifact and config compatibility** (default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 0.4.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v0.4.llms.txt` ≡ `0.4.0.0`).
+Optional four-part string for MDCP **artifact and config compatibility** (historically default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` when present.
 
-**Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](../../DEVELOPERS.md#040-open-alpha-milestone).
+Legacy `mdcp.v*.llms.txt` files used the same string in a first-line header (`mdcp-llms-index: 0.4.0.0`). That bootstrap path is deprecated — prefer [Agent Skills](#agent-skills). See [mdcp-llms-index](#mdcp-llms-index).
 
-Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
+Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli` remains pre-1.0 while tooling and agent delivery continue to evolve.
 
 ## mdcp-llms-index
 

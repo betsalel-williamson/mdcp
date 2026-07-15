@@ -4,16 +4,18 @@ Operational roles for Markdown as Context. Parent: [GitHub #45](https://github.c
 
 ## Agent entrypoint
 
-Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `mdcp.v0.4.llms.txt` (protocol `0.4.0.0`). That file explains how to query without loading entire guides.
+Agents should load the parent **Agent Skill** (`/mdcp`, install target `.agents/skills/mdcp/`) first. That skill teaches how to query with smallest context — discover one shard at a time — without loading entire guides. See [Agent Skill delivery](../agent-skill.md).
+
+Legacy `mdcp.v*.llms.txt` bootstraps are deprecated; do not regenerate them with `export --llms-index` / `--fetch`.
 
 ## Actors and obligations
 
-| Actor                    | Reads                                                     | Writes           | Must run                                     |
-| ------------------------ | --------------------------------------------------------- | ---------------- | -------------------------------------------- |
-| Author (human/agent)     | shards, bootstrap index                                   | shards, manifest | `check` before PR                            |
-| CI                       | config                                                    | —                | `check --require-lint` when peers configured |
-| Agent (context consumer) | bootstrap index, single shards (`rg`/IDE), `export --llm` | —                | —                                            |
-| Maintainer               | spec + conformance                                        | protocol shards  | `docs:check:repo`                            |
+| Actor                    | Reads                                                 | Writes           | Must run                                     |
+| ------------------------ | ----------------------------------------------------- | ---------------- | -------------------------------------------- |
+| Author (human/agent)     | shards, Agent Skill                                   | shards, manifest | `check` before PR                            |
+| CI                       | config                                                | —                | `check --require-lint` when peers configured |
+| Agent (context consumer) | Agent Skill, single shards (`rg`/IDE), `export --llm` | —                | —                                            |
+| Maintainer               | skill pack + conformance                              | protocol shards  | `docs:check:repo`                            |
 
 **Shards are source of truth; compiled files are generated.**
 
@@ -21,7 +23,7 @@ Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `
 
 ### Minimal
 
-One guide, `compile` + `check`, monolith output. Fetch or copy `mdcp.v0.4.llms.txt` to docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --fetch-profile alpha`).
+One guide, `compile` + `check`, monolith output. Install the parent skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`).
 
 ### Typical
 

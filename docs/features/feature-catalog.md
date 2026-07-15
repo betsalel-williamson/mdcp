@@ -24,19 +24,15 @@ Token-stripped context for agents.
 mdcp export --llm --stdout --config mdcp.config.json
 ```
 
-## llms-index export (V1)
-
-Versioned agent bootstrap at docs root (`mdcp.v0.4.llms.txt`, protocol `0.4.0.0`).
-
-```bash
-mdcp export --llms-index --config mdcp.config.json --docs-root docs
-```
-
-Drop the static file in any docs root before config exists; regenerate after `compileOrder` changes. See [Vision and roadmap](./protocol/00-vision-and-roadmap.md).
-
 ## Agent Skill delivery
 
-Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`) succeeds the agent-facing role of llms-index. See [Agent Skill delivery](./agent-skill.md).
+Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill delivery](./agent-skill.md).
+
+```bash
+npx skills add betsalel-williamson/mdcp --skill mdcp
+```
+
+Legacy `mdcp export --llms-index` / `--fetch` bootstraps are deprecated — prefer the Agent Skill.
 
 ## Check gate (P0.4)
 

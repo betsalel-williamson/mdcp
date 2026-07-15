@@ -16,7 +16,6 @@ npm install -D @bwilliamson/mdcp-cli
 
 # Or run without installing
 npx @bwilliamson/mdcp-cli check --config mdcp.config.json
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
 
 # Global install
 npm install -g @bwilliamson/mdcp-cli

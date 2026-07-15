@@ -2,7 +2,7 @@
 
 Normative specification for the MarkDown Context Protocol. Parent: [GitHub #48](https://github.com/betsalel-williamson/mdcp/issues/48).
 
-> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before npm **1.0.0** / stable protocol promotion. npm **0.4.0** (open alpha) implements this draft profile; fetch via `--fetch-profile dev` / `vdev`.
+> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before npm **1.0.0**. npm **0.4.x** (open alpha) implements this draft. Agent entrypoint is the parent **Agent Skill** (`/mdcp`); legacy `export --llms-index` / `--fetch` is deprecated.
 
 ## 1. Introduction
 
@@ -14,7 +14,7 @@ Conformance keywords: **MUST**, **SHOULD**, **MAY** (RFC 2119 sense).
 
 Conforming `mdcp.config.json` **MUST** declare `protocolVersion` as a four-part string (default `0.4.0.0`).
 
-Published protocol artifacts start at **0.4.0.0**. Pre-0.4 tooling and doc-style evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the **0.4.0** [changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — not in prior llms-index artifacts.
+Published protocol profiles start at **0.4.0.0**. Pre-0.4 tooling and doc-style evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the **0.4.0** [changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/). Agent delivery uses [Agent Skills](../../glossary/agent-skills.md), not llms-index artifacts.
 
 ## 3. Guide layout and three-tier authoring
 
