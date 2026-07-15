@@ -14,10 +14,10 @@ Every task-type subagent **MUST** open with an **Intake (ask before editing)** s
 
 Required fields for work-item-driven subagents:
 
-| Field              | Meaning                                                          | Example intake question                                                                   |
-| ------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `WORK_ITEM`        | Tracker id or URL (e.g. GitHub issue number)                     | What issue, ticket URL, or task should this session cover?                                |
-| `WORK_ITEM_LOOKUP` | Shard path describing how to load scope and delivery conventions | Where should you load scope and delivery conventions? (Prefer a `docs/developer/` shard.) |
+| Field              | Meaning                                                                                   | Example intake question                                                                   |
+| ------------------ | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `WORK_ITEM`        | Enough to resolve the task — tracker id, URL, or short issue name/description             | What issue, ticket URL, or task should this session cover?                                |
+| `WORK_ITEM_LOOKUP` | Where to load scope and delivery conventions — shard path or plain location (e.g. GitHub) | Where should you load scope and delivery conventions? (Prefer a `docs/developer/` shard.) |
 
 Bootstrap (`getting-started`) **MUST** ask for `FEATURE` and `PERSONA` instead of `WORK_ITEM`.
 

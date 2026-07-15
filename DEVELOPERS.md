@@ -105,7 +105,7 @@ Configure an equivalent shard in consumer repos during [local setup](#local-setu
 Host=GitHub (betsalel-williamson/mdcp)
 Issue base URL=https://github.com/betsalel-williamson/mdcp/issues/
 Project board=https://github.com/users/betsalel-williamson/projects/4
-WORK_ITEM=issue number (e.g. 39) or full issue URL
+WORK_ITEM=enough to resolve the issue — number, URL, or short name/description
 ```
 
 All repo issues live on the public [MarkDown Context Protocol project board](https://github.com/users/betsalel-williamson/projects/4). **Status** tracks delivery (Todo / In Progress / Done); **Track** groups work by roadmap area (0.5 Spec & adoption, 1.0 Formalization, Maintenance, Performance, Future V2+). Move items to **In Progress** when you start a branch; set **Done** when the issue closes.
@@ -151,7 +151,12 @@ WORK_ITEM=39
 WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md
 ```
 
-Prefer stating the shard path for `WORK_ITEM_LOOKUP` so the agent loads tracker conventions from this file. For subagent catalog and invoke recipe, read [`skills/mdcp/references/agents.md`](skills/mdcp/references/agents.md).
+```text
+WORK_ITEM=default compile hooks
+WORK_ITEM_LOOKUP=GitHub
+```
+
+`WORK_ITEM` may be an issue number, URL, or a short name/description the agent can resolve. `WORK_ITEM_LOOKUP` may be this shard path or a plain location (e.g. GitHub) that points the agent at the tracker conventions here. For subagent catalog and invoke recipe, read [`skills/mdcp/references/agents.md`](skills/mdcp/references/agents.md).
 
 ## Repository layout
 

@@ -18,7 +18,7 @@ Before branching or editing shards, ask the user for any missing values. Wait fo
 Collect these via intake (or from the conversation if already stated):
 
 - **WORK_ITEM**: The issue, ticket, or task description.
-- **WORK_ITEM_LOOKUP**: The path to the tracker or context file.
+- **WORK_ITEM_LOOKUP**: Shard path or plain location (e.g. GitHub) for scope and delivery conventions.
 
 ## Process
 
