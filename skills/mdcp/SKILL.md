@@ -64,14 +64,16 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 Documentation is a **first-class artifact** alongside code. We use a **spec-driven** workflow: shards hold context, intent, and the high-level meta plan; **implementation details stay in code**.
 
+The default MDCP structure acts as the "batteries-included" **Code Repository Archetype**. This fundamental four-tier taxonomy enforces strict boundaries to prevent the docs system from falling apart as it scales:
+
 | Guide             | Holds                                                                          | Does not hold                                                 |
 | ----------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
 | `docs/features/`  | How the plumbing works — capabilities, design, contracts, acceptance criteria  | Step-by-step implementation, duplicated API surface from code |
 | `docs/client/`    | How a specific persona finds value using the software — outcomes, flows, usage | Internal architecture, maintainer-only workflows              |
 | `docs/developer/` | How to work on the repo — setup, layout, validation, delivery                  | Product narrative or end-user tutorials                       |
-| Code              | Implementation details, algorithms, edge-case handling                         | Duplicated high-level product narrative                       |
+| `docs/glossary/`  | Shared terms and disambiguation                                                | General code snippets                                         |
 
-Spell out domain terms on first use; link shared vocabulary from `docs/glossary/` when it exists.
+_(Note: The MDCP engine itself is domain-agnostic. Non-code projects can define entirely different guide tiers/archetypes while still using the same compile and validation checks.)_
 
 ## Authoring rules
 

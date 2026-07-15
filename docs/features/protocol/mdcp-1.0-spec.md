@@ -10,9 +10,9 @@ MDCP defines **offline document context preparation**: shard layout, compile sem
 
 Conformance keywords: **MUST**, **SHOULD**, **MAY** (RFC 2119 sense).
 
-## 2. Guide layout and three-tier authoring
+## 2. Default Guide Layout (Code Repository Archetype)
 
-Conforming repositories **SHOULD** organize shards into guides listed in `compileOrder`:
+Conforming repositories **SHOULD** organize shards into guides listed in `compileOrder`. This default structure—often referred to as the **Code Repository Archetype**—is the "batteries-included" layout for software engineering projects:
 
 | Guide tier | Typical path | Holds                                        |
 | ---------- | ------------ | -------------------------------------------- |
@@ -21,9 +21,13 @@ Conforming repositories **SHOULD** organize shards into guides listed in `compil
 | Developer  | `developer/` | Repo workflow, tracker integration, releases |
 | Glossary   | `glossary/`  | Shared terms and disambiguation              |
 
+This four-tier taxonomy is fundamental to preventing the system from falling apart as it scales. It enforces strict, proven boundaries that keep developer workflows out of client usage and separate high-level feature specs from low-level code.
+
 Each guide **MUST** have a manifest (`index.md` or `shards.md`) defining compile order.
 
 Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split manifests across `index.md` and sub-index files (for example `index-protocol.md`) that link term shards; transitive manifest links include terms in compile output.
+
+The MDCP engine itself is agnostic. Other documentation systems (e.g., Legal Operations, HR Policies) **MAY** introduce their own "battery types" (archetypes) with completely different guide tiers using the same underlying `mdcp compile` and `mdcp check` mechanics.
 
 ## 3. Agent task subagents
 
