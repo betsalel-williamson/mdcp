@@ -118,8 +118,6 @@ resort.
 ./.agents/skills/mdcp/scripts/check.sh
 ```
 
-In this monorepo: `pnpm docs:compile:repo` and `pnpm docs:check`.
-
 ### 4. Code Formatting and Linting
 
 If the user asks to set up formatting or linting, run:
