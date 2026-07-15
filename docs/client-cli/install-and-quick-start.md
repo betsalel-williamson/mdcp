@@ -26,7 +26,7 @@ npm install -g @bwilliamson/mdcp-cli
 **Open alpha (0.4.0).** MDCP is moving fast — this release is a working foundation for early adopters. Tooling and the draft protocol profile may change in 0.5+. Pin a specific version:
 
 ```bash
-npm install -D @bwilliamson/mdcp-cli@0.4.1
+npm install -D @bwilliamson/mdcp-cli@0.5.0
 ```
 
 **Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. CLI commands, flags, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read package changelogs before upgrading.

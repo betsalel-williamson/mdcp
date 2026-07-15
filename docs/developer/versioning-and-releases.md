@@ -19,13 +19,13 @@ There is **no calendar cadence**. Releases are **event-driven**:
 3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
 4. CI publishes to npm when the **`v*`** tag lands on GitHub.
 
-**Note on Agent Skills:** Publishable skills live under `skills/` (not npm). They evolve on `main` and are tagged with npm releases (e.g., `v0.4.1`). Bump each skill’s `metadata.version` with that release. Consumers install via Git (`npx skills add`) into `.agents/skills/`.
+**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). See [Agent Skill](./agent-skill.md).
 
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
 ## Pre-1.0 policy (`0.x.y`)
 
-The project is **pre-1.0**. Until **1.0.0**, there is **no API stability guarantee** — exported library APIs, CLI commands and flags, `mdcp.config.json` schema, and compile output shape may change in any `0.x.y` release without a semver-major bump.
+The project is **pre-1.0** (open alpha). Until **1.0.0**, there is **no API stability guarantee** — exported library APIs, CLI commands and flags, `mdcp.config.json` schema, and compile output shape may change in any `0.x.y` release without a semver-major bump. Agent Skills (`npx skills add`) are the supported agent delivery path.
 
 Treat versions as:
 
@@ -35,43 +35,27 @@ Treat versions as:
 | **minor**                | New commands, config fields, hooks, or behavior additions                           | new `mdcp` subcommand, new compile hook, new preset rule |
 | **major** (within `0.x`) | Breaking CLI flags, config schema removals, output format changes consumers rely on | rename config key, change compiled heading rules         |
 
-At **1.0.0**, semver applies strictly: breaking changes require a major bump.
-
-## 0.4.0 open alpha milestone
-
-**0.4.0** is the first public alpha for external testers. It shipped compile/check, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy. Agent Skills are the supported agent delivery path (`npx skills add`).
-
-| Track              | 0.4.0 status                                                           |
-| ------------------ | ---------------------------------------------------------------------- |
-| **npm packages**   | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee |
-| **Agent delivery** | Prefer Agent Skills (`npx skills add`)                                 |
-
-**Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
-
-**Roadmap V1 phase:** Reference implementation shipped; not a semver 1.0 stability promise.
-
-**Path to 1.0.0:** npm graduates when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
+At **1.0.0**, semver applies strictly: breaking changes require a major bump. Graduate when core mechanics survive real-world adoption without breaking changes for several months.
 
 ### Community feedback
 
 - Visit [github.com/betsalel-williamson/mdcp](https://github.com/betsalel-williamson/mdcp) and **star** the repo to follow progress
 - **Open an issue** or **comment on existing issues and PRs** with bugs, adoption stories, or protocol/tooling feedback
-- Pin `@bwilliamson/mdcp-cli@0.4.0` and read changelogs before upgrading
+- Pin the current open-alpha CLI version from the root README and read changelogs before upgrading
 
-### Open alpha (0.4.0) release checklist
+## Release checklist (maintainers)
 
-Completed for the **0.4.0** open alpha (historical — agent delivery has since moved to Agent Skills):
+Use this for every cut. Do not accumulate one-off milestone checklists in this shard.
 
-- [x] Open alpha npm tag and consumer install docs
-- [x] `skills/mdcp` parent skill as agent entrypoint
+1. On clean `main`, confirm pending `.changeset/*.md` files cover package changes since the last tag.
+2. **Skills policy:** only the parent `mdcp` skill is public. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` until intentionally published; list only `mdcp` in [`skills.sh.json`](../../skills.sh.json).
+3. Preflight: `pnpm skill:lint && pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
+4. In a real TTY: `pnpm release:tag:push` — select bump (patch / minor / major / build), type `vX.Y.Z`, answer `yes`. Agents and CI cannot run this script.
+5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, commits `chore: release vX.Y.Z`, tags, and (with `--push`) pushes `main` + the tag.
+6. Verify CI [release workflow](../../.github/workflows/release.yml): npm versions for all three packages and the GitHub Release for `vX.Y.Z`.
+7. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
 
-### Open alpha (0.4.1) patch release checklist
-
-Pending for **0.4.1** (first patch after 0.4.0 open alpha):
-
-- [x] Agent Skill install docs (`npx skills add betsalel-williamson/mdcp --skill mdcp`)
-- [ ] **Pending changesets** on `main` — merge and release as needed
-- [ ] **`pnpm release:tag:push`** — human runs interactively; select **patch** → `v0.4.1`
+Preview without writes: `pnpm release:tag --dry-run`.
 
 ## When to add a changeset
 
@@ -116,38 +100,6 @@ When **adding** a changeset in a PR, pick the bump that best describes your chan
 
 At release, `pnpm release:tag` lets the maintainer choose **patch / minor / major / build** and requires typing the version plus an explicit `yes` — non-interactive tools cannot release.
 
-## Release flow (maintainers)
-
-### Day-to-day
-
-```bash
-pnpm changeset          # interactive; commit the new .changeset/*.md file
-```
-
-### Verify locally (optional)
-
-```bash
-pnpm changeset:status   # fails if package changes since the PR/upstream base lack a changeset
-```
-
-### Tag and publish (maintainers)
-
-When changesets have accumulated on `main`, a **human** runs the interactive release script in a terminal. It cannot run in CI or non-interactive shells (LLM agents cannot bump versions).
-
-```bash
-pnpm run check              # optional gate
-pnpm release:tag            # interactive: pick bump, confirm, commit, tag
-git push origin main && git push origin vX.Y.Z   # triggers CI publish
-```
-
-Or one step (still interactive):
-
-```bash
-pnpm release:tag:push       # same prompts, then push main + tag
-```
-
-Preview without writes: `pnpm release:tag --dry-run`
-
 ### Bump types (chosen at release time)
 
 | Choice | Bump      | Use for                                                  |
@@ -160,12 +112,10 @@ Preview without writes: `pnpm release:tag --dry-run`
 ### Human confirmation gate
 
 1. Select bump type `1`–`4`
-2. Type the exact tag (e.g. `v0.2.0`) to confirm
+2. Type the exact tag (e.g. `vX.Y.Z`) to confirm
 3. Answer `yes` to “Do you really want to do this?”
 
 Without a TTY, the script exits immediately.
-
-The [release workflow](../../.github/workflows/release.yml) runs on **`v*` tag push**, verifies the tag matches `packages/mdcp-cli/package.json` version, builds, runs `changeset publish`, and opens a GitHub Release.
 
 ### Automated (after tag push)
 
@@ -173,9 +123,7 @@ The [release workflow](../../.github/workflows/release.yml) runs on **`v*` tag p
 2. `pnpm build` then `pnpm changeset publish` with npm provenance (OIDC).
 3. GitHub Release is created with generated release notes.
 
-### Manual fallback
-
-See [Publishing](./publishing.md).
+First-time npm Trusted Publishing and local fallback: [Publishing](./publishing.md).
 
 ## Changelogs
 
@@ -191,4 +139,5 @@ Security fixes target the **latest minor** on npm. See [SECURITY.md](../../SECUR
 ## Related docs
 
 - [Publishing](./publishing.md) — first publish, Trusted Publishing, npm commands
+- [Agent Skill](./agent-skill.md) — skill pack, WIP `internal` flag, skills.sh
 - [.changeset/README.md](../../.changeset/README.md) — quick changeset reference

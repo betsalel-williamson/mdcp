@@ -18,4 +18,4 @@ The CLI (`@bwilliamson/mdcp-cli`) depends on this package. Install `@bwilliamson
 
 ## Stability
 
-**Pre-1.0 / open alpha (0.4.0):** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Pin `@bwilliamson/mdcp-core@0.4.1` and read package changelogs before upgrading.
+**Pre-1.0 / open alpha (0.5.x):** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Pin `@bwilliamson/mdcp-core@0.5.0` and read package changelogs before upgrading.

@@ -29,8 +29,8 @@ body:
     id: mdcp-version
     attributes:
       label: mdcp-cli version
-      description: e.g. 0.4.1 (from package.json or `mdcp --version`)
-      placeholder: '0.4.1'
+      description: e.g. 0.5.0 (from package.json or `mdcp --version`)
+      placeholder: '0.5.0'
     validations:
       required: false
 

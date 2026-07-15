@@ -77,11 +77,9 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` ta
 - Revoke any legacy `NPM_TOKEN` secrets from GitHub once OIDC is verified
 - The release workflow uses OIDC (`id-token: write`) and `NPM_CONFIG_PROVENANCE=true`
 
-## Release workflow (NPM Packages)
+## Routine releases
 
-1. Merge PRs with changesets to `main`.
-2. Run **`pnpm release:tag:push`** on `main` (applies changesets, tags `vX.Y.Z`, pushes).
-3. [`.github/workflows/release.yml`](../../.github/workflows/release.yml) publishes to npm on tag push (OIDC, no `NPM_TOKEN`).
+For every cut after Trusted Publishing is configured, follow the **Release checklist** in [Versioning and releases](./versioning-and-releases.md) (`pnpm release:tag:push` on clean `main`). That checklist covers skills version sync, skills.sh telemetry, and npm verification.
 
 Preview locally:
 

@@ -4,7 +4,8 @@
 
 | Version | Supported |
 | ------- | --------- |
-| 0.1.x   | Yes       |
+| 0.5.x   | Yes       |
+| < 0.5   | No        |
 
 Update this table when a new minor line is published. Versioning policy: [docs/developer/versioning-and-releases.md](docs/developer/versioning-and-releases.md).
 
