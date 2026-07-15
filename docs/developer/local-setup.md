@@ -16,7 +16,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ## Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](./agent-work-item-tracking.md) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type prompts ([skills/mdcp/agents/](../../skills/mdcp/agents/)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](./agent-work-item-tracking.md) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ## Daily commands
 
@@ -27,7 +27,7 @@ If you use coding agents with task-type prompts ([.agents/skills/mdcp/agents/](.
 | `pnpm run typecheck`     | TypeScript across packages                                               |
 | `pnpm run lint`          | ESLint on TypeScript sources                                             |
 | `pnpm run format:check`  | Prettier check                                                           |
-| `pnpm run check`         | Full gate: typecheck, lint, format, build, test, `docs:check`            |
+| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check           |
 | `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs) |
 | `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                            |
 

@@ -2,7 +2,7 @@
 
 This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
-**Fastest path:** copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent for first-time setup.
+**Fastest path:** copy [getting-started.md](../../skills/mdcp/agents/getting-started.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent for first-time setup.
 
 ## Requirements
 
@@ -46,7 +46,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ## Quick start
 
-**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.agents/skills/mdcp/agents/` — see [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/).
+**Agent index (optional day zero)** — prefer installing the Agent Skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`). Task prompts then live under `.agents/skills/mdcp/agents/` — upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents/).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 

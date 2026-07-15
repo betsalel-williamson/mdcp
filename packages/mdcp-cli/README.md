@@ -31,7 +31,7 @@ Discover shards with host search (`rg`, IDE search) → edit shards → `mdcp co
 
 ### Get started
 
-First-time setup in a consumer repo: copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load from `.agents/skills/mdcp/agents/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
+First-time setup in a consumer repo: copy [getting-started.md](../../skills/mdcp/agents/getting-started.md) (or load from `.agents/skills/mdcp/agents/` after skill install), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](#llm-collaboration).
 
 For command and capability depth, read the [feature catalog](../../docs/features/feature-catalog.md).
 
@@ -39,30 +39,30 @@ For command and capability depth, read the [feature catalog](../../docs/features
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
 
-**Source of truth:** versioned prompts live under [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents). `mdcp export --llms-index --fetch` caches them at `.agents/skills/mdcp/agents/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** versioned prompts live under [skills/mdcp/agents/](../../skills/mdcp/agents). After `npx skills add`, the same files land under `.agents/skills/mdcp/agents/` in the consumer repo. This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ### Prompt library
 
-Copy from [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents).
+Copy from [skills/mdcp/agents/](../../skills/mdcp/agents).
 
-- [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) — first-time pipeline setup in a consumer repo
-- [doc-only.md](../../.agents/skills/mdcp/agents/doc-only.md) — documentation-only work
-- [design-architecture.md](../../.agents/skills/mdcp/agents/design-architecture.md) — RFCs, ADRs, data models
-- [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md) — feature work, docs-first then TDD
-- [ux.md](../../.agents/skills/mdcp/agents/ux.md) — UI flows and client-guide updates
-- [review.md](../../.agents/skills/mdcp/agents/review.md) — architecture and security review; one node per PR; atomic findings
+- [getting-started.md](../../skills/mdcp/agents/getting-started.md) — first-time pipeline setup in a consumer repo
+- [doc-only.md](../../skills/mdcp/agents/doc-only.md) — documentation-only work
+- [design-architecture.md](../../skills/mdcp/agents/design-architecture.md) — RFCs, ADRs, data models
+- [feature-level.md](../../skills/mdcp/agents/feature-level.md) — feature work, docs-first then TDD
+- [ux.md](../../skills/mdcp/agents/ux.md) — UI flows and client-guide updates
+- [review.md](../../skills/mdcp/agents/review.md) — architecture and security review; one node per PR; atomic findings
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
 ### Bootstrap prompt (copy-paste)
 
-First-time setup for a consumer repo: [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md).
+First-time setup for a consumer repo: [getting-started.md](../../skills/mdcp/agents/getting-started.md).
 
 Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring. Best for **Learner** and **Author** archetypes — see [Personas and priority tiers](../../docs/features/personas-and-priority-tiers.md).
 
 ### Follow-up prompts
 
-Use these after the pipeline exists (inline here — not duplicated in `.agents/skills/mdcp/agents/`).
+Use these after the pipeline exists (inline here — not duplicated in `skills/mdcp/agents/`).
 
 **Add documentation for a new feature:**
 
@@ -87,7 +87,7 @@ I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using
 
 ### Docs-first feature workflow
 
-Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md).
+Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level.md](../../skills/mdcp/agents/feature-level.md).
 
 #### Workflow best practices
 
@@ -101,12 +101,12 @@ Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`,
 | Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
 | Implement | Code + tests     | TDD against the documented contract                    |
 
-For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture.md](../../.agents/skills/mdcp/agents/design-architecture.md).
+For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture.md](../../skills/mdcp/agents/design-architecture.md).
 
 #### Sharding keeps context lean
 
 - **Core workflow** — bootstrap prompt and repo script wiring
-- **On demand** — task-type prompts from `.agents/skills/mdcp/agents/` or `.agents/skills/mdcp/agents/`; load only what the current task needs
+- **On demand** — task-type prompts from `skills/mdcp/agents/` (or `.agents/skills/mdcp/agents/` after install); load only what the current task needs
 - **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
 
 Prefer structured prompts over permanently importing rigid always-on rules into every repo.
@@ -124,17 +124,17 @@ This repository documents its stack in [Agent work-item tracking](../../DEVELOPE
 
 ### Task-type prompt templates
 
-- [doc-only.md](../../.agents/skills/mdcp/agents/doc-only.md) — technical writers; documentation, tutorials, guides
-- [design-architecture.md](../../.agents/skills/mdcp/agents/design-architecture.md) — architects; RFCs, ADRs, data models before code
-- [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md) — server-side or full-stack feature work
-- [ux.md](../../.agents/skills/mdcp/agents/ux.md) — UX and frontend; flows, accessibility, client guides
-- [review.md](../../.agents/skills/mdcp/agents/review.md) — security and systems review; atomic findings, checklist evidence, feature stubs
+- [doc-only.md](../../skills/mdcp/agents/doc-only.md) — technical writers; documentation, tutorials, guides
+- [design-architecture.md](../../skills/mdcp/agents/design-architecture.md) — architects; RFCs, ADRs, data models before code
+- [feature-level.md](../../skills/mdcp/agents/feature-level.md) — server-side or full-stack feature work
+- [ux.md](../../skills/mdcp/agents/ux.md) — UX and frontend; flows, accessibility, client guides
+- [review.md](../../skills/mdcp/agents/review.md) — security and systems review; atomic findings, checklist evidence, feature stubs
 
 ### Toolchain integration
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — paste prompts from `.agents/skills/mdcp/agents/` or `.agents/skills/mdcp/agents/`; reference shard files for context; run the repo's doc check before ending a turn
+- **Cursor / Composer** — paste prompts from `skills/mdcp/agents/` (or `.agents/skills/mdcp/agents/` after install); reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — discover with host search; validate fragments with `mdcp check` (optional `mdcp refs list`)
@@ -192,7 +192,7 @@ When reviewing an agent's documentation PR:
 
 - [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
 - [Agent integration](#agent-integration) — npm scripts quick reference
-- [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents) — versioned copy-paste prompt files
+- [skills/mdcp/agents/](../../skills/mdcp/agents) — versioned copy-paste prompt files
 - [Project layout](#project-layout) — shard directory structure
 - [Cross-links and refs](#cross-links-and-refs) — validate fragments after compile
 - [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
@@ -201,7 +201,7 @@ When reviewing an agent's documentation PR:
 
 This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
-**Fastest path:** copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent for first-time setup.
+**Fastest path:** copy [getting-started.md](../../skills/mdcp/agents/getting-started.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent for first-time setup.
 
 ### Requirements
 
@@ -245,7 +245,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ### Quick start
 
-**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.agents/skills/mdcp/agents/` — see [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents).
+**Agent index (optional day zero)** — prefer installing the Agent Skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`). Task prompts then live under `.agents/skills/mdcp/agents/` — upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
@@ -339,7 +339,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
 ```
 
-Zero-install alternative: copy `.agents/skills/mdcp/` from this repository into your project (plus complementary skill folders when you need them). Prefer `.agents/skills/` over host-specific aliases.
+That vendors the skill into `.agents/skills/`. Zero-install alternative: copy `skills/mdcp/` from the upstream repository into your project's `.agents/skills/mdcp/`. Prefer `.agents/skills/` over host-specific aliases.
 
 ### Versioning and Upgrades
 
@@ -363,7 +363,9 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 ### How this relates to CLI scripts
 
-Keep using npm scripts for compile and check — see [Agent integration](#agent-integration). The skill teaches agents **when** to run those commands and **how** to load the smallest useful shard context. It does not replace `@bwilliamson/mdcp-cli`.
+Keep using npm scripts for compile and check — see [Agent integration](#agent-integration).
+
+Plain-language: **compile** builds compiled docs from shards; **check** validates the documentation tree; **refs** is the cross-link fragment registry. The skill’s `scripts/` are thin wrappers into `@bwilliamson/mdcp-cli` — they do not replace the CLI.
 
 ### Next steps
 
@@ -1017,9 +1019,9 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 ## Agent Skills
 
-Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Instead of fetching a monolithic `mdcp.v*.llms.txt` (llms-index) bootstrap file, MDCP ships as a vendored skill under `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time as ideas keep arriving — across Cursor, Copilot, Claude Code, and similar hosts.
+Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Upstream source in this monorepo is `skills/mdcp/`; consumers vendor via `npx skills add` into `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time — across Cursor, Copilot, Claude Code, and similar hosts.
 
-Verification is split: [skill content lint](#skill-content-lint) is the CI static check on `SKILL.md` text; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
+Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:lint`) plus agentskills.io validation (`pnpm skill:validate` / skills-ref) in CI; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
 
 ## protocol version
 
@@ -1035,11 +1037,13 @@ Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implem
 
 ## skill content lint
 
-CI/static check that required or forbidden language still appears in the parent `SKILL.md` (plus frontmatter and line-budget rules). Run with `pnpm skill:lint`; fixtures live under `scripts/mdcp-skill-content-lint/` (repo CI assets — not part of the portable skill pack). This is substring analysis of Markdown on disk — **not** a [live skill eval](#live-skill-eval), and it does not run agents or measure triggering.
+CI/static check that required or forbidden language still appears in the parent `SKILL.md` (plus frontmatter and line-budget rules). Run with `pnpm skill:lint` against `skills/mdcp/SKILL.md`; fixtures live under `scripts/mdcp-skill-content-lint/` (repo CI assets — not part of the portable skill pack). This is substring analysis of Markdown on disk — **not** a [live skill eval](#live-skill-eval), and it does not run agents or measure triggering.
+
+Companion gate: `pnpm skill:validate` runs [skills-ref](https://agentskills.io/specification) on each publishable skill under `skills/`.
 
 ## live skill eval
 
-Optional local skill-creator workflow: run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `.agents/skills/mdcp/evals/`. Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
+Optional local skill-creator workflow: run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `skills/mdcp/evals/`. Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
 
 ## GFM
 

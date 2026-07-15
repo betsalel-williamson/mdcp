@@ -56,7 +56,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ### Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([.agents/skills/mdcp/agents/](.agents/skills/mdcp/agents)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type prompts ([skills/mdcp/agents/](skills/mdcp/agents)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ### Daily commands
 
@@ -67,7 +67,7 @@ If you use coding agents with task-type prompts ([.agents/skills/mdcp/agents/](.
 | `pnpm run typecheck`     | TypeScript across packages                                               |
 | `pnpm run lint`          | ESLint on TypeScript sources                                             |
 | `pnpm run format:check`  | Prettier check                                                           |
-| `pnpm run check`         | Full gate: typecheck, lint, format, build, test, `docs:check`            |
+| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check           |
 | `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs) |
 | `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                            |
 
@@ -94,7 +94,7 @@ CI runs the full gate: `pnpm run check`.
 
 ## Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [.agents/skills/mdcp/agents/](.agents/skills/mdcp/agents) (cached at `.agents/skills/mdcp/agents/` after fetch) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [skills/mdcp/agents/](skills/mdcp/agents) (also present under `.agents/skills/mdcp/agents/` after a local dogfood install) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 
@@ -157,7 +157,12 @@ mdcp/
 ├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
-├── .agents/skills/mdcp/    # Portable Agent Skill (SKILL.md) — lower install friction
+├── skills/                 # Publishable Agent Skills source (skills.sh layout)
+│   ├── mdcp/               # Parent documentation-system skill
+│   ├── mdcp-arch-oss-library/
+│   └── mdcp-arch-product-docs-site/
+├── skills.sh.json          # skills.sh repo page groupings
+├── .agents/skills/         # Local dogfood installs + workspaces (gitignored publishable copies)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
@@ -169,7 +174,6 @@ mdcp/
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
 │   ├── client-core/        # → packages/mdcp-core/README.md
 │   └── repo-readme/        # → README.md (publish landing)
-├── spec/                   # llms-index + extensions (protocol source of truth)
 ├── examples/sample-guides/ # Minimal consumer fixture for tests and tutorials
 ├── legacy/                 # Original bash/Python reference implementation
 ├── .changeset/             # Changesets for semver releases
@@ -292,21 +296,27 @@ Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on
 
 ## Agent Skill
 
-Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill at [`.agents/skills/mdcp/SKILL.md`](.agents/skills/mdcp/SKILL.md). Complementary skills (prompts, archetypes, format packs) migrate from [complementary skills](../../spec/extensions/) into sibling directories under `.agents/skills/`.
+Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary skills live under `skills/mdcp-arch-*`.
 
-The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`. Keep `spec/llms-index/` and extension packs only while migration issues remain open.
+The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`.
 
 ### Local dogfood
 
-Agents in this repository should discover `.agents/skills/mdcp/` automatically. Manual invoke (hosts that support slash skills): `/mdcp`.
+Author under `skills/`. Then install into this repo for agents:
+
+```bash
+npx skills add . --skill mdcp
+```
+
+Installed copies under `.agents/skills/mdcp*` are gitignored so they do not duplicate upstream source. Manual invoke (hosts that support slash skills): `/mdcp`.
 
 When changing skill instructions:
 
-1. Edit `.agents/skills/mdcp/SKILL.md` (and `references/` as needed).
-2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages / `spec/schemas`.
-3. For prompts, archetypes, or format packs, prefer complementary skills (or land them via migration issues) instead of growing the parent forever.
-4. Update [Agent Skill delivery](docs/features/agent-skill.md) when install or migration phases change.
-5. Run `pnpm skill:lint` and `pnpm docs:check`.
+1. Edit `skills/mdcp/SKILL.md` (and `references/` as needed) — keep the activation body under 500 lines; put depth in `references/`.
+2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
+3. For archetypes, edit `skills/mdcp-arch-*` instead of growing the parent forever.
+4. Update [Agent Skill delivery](docs/features/agent-skill.md) when install or layout changes.
+5. Run `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
 
 ### Quality Assurance (QA) Principles
 
@@ -322,26 +332,27 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 ### Verification
 
-| Command           | Purpose                                                         |
-| ----------------- | --------------------------------------------------------------- |
-| `pnpm skill:lint` | Static content lint on parent `SKILL.md` (phrases, frontmatter) |
-| `pnpm docs:check` | Docs compile + lint gate after shard edits                      |
+| Command               | Purpose                                                                         |
+| --------------------- | ------------------------------------------------------------------------------- |
+| `pnpm skill:lint`     | MDCP content lint on parent `SKILL.md` (phrases, frontmatter, line budget)      |
+| `pnpm skill:validate` | [skills-ref](https://agentskills.io/specification) validate on all three skills |
+| `pnpm docs:check`     | Docs compile + lint gate after shard edits                                      |
 
-`skill:lint` is the [skill content lint](docs/glossary/skill-content-lint.md) gate. It is required in local `pnpm check` and in GitHub Actions CI. It is **not** a [live skill eval](docs/glossary/live-skill-eval.md). Changes to the skill or `scripts/lint-mdcp-skill.mjs` must keep that step green.
+Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [live skill eval](docs/glossary/live-skill-eval.md).
 
 ### Optional local improve loop
 
-For qualitative description tuning and agent behavior checks, install Anthropic's `skill-creator` locally (`npx skills add anthropics/skills --skill skill-creator`) and use fixtures under `.agents/skills/mdcp/evals/`. That [live skill eval](docs/glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
+For qualitative description tuning and agent behavior checks, install Anthropic's `skill-creator` locally (`npx skills add anthropics/skills --skill skill-creator`) and use fixtures under `skills/mdcp/evals/`. That [live skill eval](docs/glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
 
 ### Publishing the skill pack
 
-Ship `.agents/skills/mdcp/` (and complementary skill directories as they migrate). Prefer:
+Ship `skills/mdcp/` (and complementary `skills/mdcp-arch-*` directories). Prefer:
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-Documented portable path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
+Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
 
 ## Versioning and releases
 
@@ -364,7 +375,7 @@ There is **no calendar cadence**. Releases are **event-driven**:
 3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
 4. CI publishes to npm when the **`v*`** tag lands on GitHub.
 
-**Note on Agent Skills:** The Agent Skills located in `.agents/skills/` are not published to npm. They evolve continuously on the `main` branch. When a git tag (e.g., `v0.4.1`) is created for npm releases, it simultaneously marks the version of the Agent Skills in version control. Consumers pull skills via Git (e.g., `npx skills add`) and vendor them into their own repositories.
+**Note on Agent Skills:** Publishable skills live under `skills/` (not npm). They evolve on `main` and are tagged with npm releases (e.g., `v0.4.1`). Bump each skill’s `metadata.version` with that release. Consumers install via Git (`npx skills add`) into `.agents/skills/`.
 
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
@@ -407,7 +418,7 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 Completed for the **0.4.0** open alpha:
 
 - [x] **`docs/mdcp.config.json`** — `protocol.ref` pinned to `v0.4.0`
-- [x] **`.agents/skills/mdcp/agents/getting-started.md`** — phase-2 example `ref`: `v0.4.0`
+- [x] **`skills/mdcp/agents/getting-started.md`** — phase-2 example `ref`: `v0.4.0`
 - [x] **Consumer install docs** — `--fetch-ref v0.4.0` + `--fetch-profile alpha`
 
 Remote `--fetch` with `ref: v0.4.0` requires the **`v0.4.0` git tag** on `main` (pushed by `pnpm release:tag:push`). Protocol version stays **`0.4.0.0`**; only git `ref` pins move between branch dogfood and release tags.
@@ -417,7 +428,7 @@ Remote `--fetch` with `ref: v0.4.0` requires the **`v0.4.0` git tag** on `main` 
 Pending for **0.4.1** (first patch after 0.4.0 open alpha):
 
 - [x] **`docs/mdcp.config.json`** — `protocol.ref` pinned to `v0.4.1`
-- [x] **`.agents/skills/mdcp/agents/getting-started.md`** — phase-2 example `ref`: `v0.4.1`
+- [x] **`skills/mdcp/agents/getting-started.md`** — phase-2 example `ref`: `v0.4.1`
 - [x] **Consumer install docs** — `--fetch-ref v0.4.1` + `--fetch-profile alpha`
 - [ ] **Three pending changesets** on `main` — `#62` refs registry, `#64` perf, `#57` Node 24 + llms-index indirection
 - [ ] **`pnpm release:tag:push`** — human runs interactively; select **patch** → `v0.4.1`
@@ -684,9 +695,9 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 ## Agent Skills
 
-Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Instead of fetching a monolithic `mdcp.v*.llms.txt` (llms-index) bootstrap file, MDCP ships as a vendored skill under `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time as ideas keep arriving — across Cursor, Copilot, Claude Code, and similar hosts.
+Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Upstream source in this monorepo is `skills/mdcp/`; consumers vendor via `npx skills add` into `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time — across Cursor, Copilot, Claude Code, and similar hosts.
 
-Verification is split: [skill content lint](#skill-content-lint) is the CI static check on `SKILL.md` text; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
+Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:lint`) plus agentskills.io validation (`pnpm skill:validate` / skills-ref) in CI; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
 
 ## MDCP
 
@@ -710,11 +721,13 @@ Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implem
 
 ## skill content lint
 
-CI/static check that required or forbidden language still appears in the parent `SKILL.md` (plus frontmatter and line-budget rules). Run with `pnpm skill:lint`; fixtures live under `scripts/mdcp-skill-content-lint/` (repo CI assets — not part of the portable skill pack). This is substring analysis of Markdown on disk — **not** a [live skill eval](#live-skill-eval), and it does not run agents or measure triggering.
+CI/static check that required or forbidden language still appears in the parent `SKILL.md` (plus frontmatter and line-budget rules). Run with `pnpm skill:lint` against `skills/mdcp/SKILL.md`; fixtures live under `scripts/mdcp-skill-content-lint/` (repo CI assets — not part of the portable skill pack). This is substring analysis of Markdown on disk — **not** a [live skill eval](#live-skill-eval), and it does not run agents or measure triggering.
+
+Companion gate: `pnpm skill:validate` runs [skills-ref](https://agentskills.io/specification) on each publishable skill under `skills/`.
 
 ## live skill eval
 
-Optional local skill-creator workflow: run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `.agents/skills/mdcp/evals/`. Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
+Optional local skill-creator workflow: run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `skills/mdcp/evals/`. Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
 
 ## GFM
 

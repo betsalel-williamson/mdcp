@@ -33,9 +33,9 @@ Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split
 
 ## 4. Agent task prompts
 
-Copy-paste prompts in `.agents/skills/mdcp/agents/` are part of the MDCP 1.0 authoring profile (cached at `.agents/skills/mdcp/agents/` after fetch). See [Agent task prompts](./agent-task-prompts.md).
+Copy-paste prompts in `skills/mdcp/agents/` are part of the MDCP 1.0 authoring profile (vendored under `.agents/skills/mdcp/agents/` after skill install). See [Agent task prompts](./agent-task-prompts.md).
 
-Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md). Review work **SHOULD** use [review.md](../../.agents/skills/mdcp/agents/review.md) with `REVIEW_NODE` set.
+Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level.md](../../skills/mdcp/agents/feature-level.md). Review work **SHOULD** use [review.md](../../skills/mdcp/agents/review.md) with `REVIEW_NODE` set.
 
 ## 5. Skills and immutability
 

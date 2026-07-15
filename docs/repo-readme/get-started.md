@@ -10,7 +10,7 @@ Install the core documentation-system Agent Skill into your repository:
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-_(This copies the `.agents/skills/mdcp/` folder into your repository. Commit it to git so every teammate and agent shares the same documentation discipline)._
+_(This copies the skill into `.agents/skills/mdcp/` in your repository. Commit it to git so every teammate and agent shares the same documentation discipline)._
 
 Once installed, agents proactively look up shard context, compile documentation, and validate references before writing code.
 

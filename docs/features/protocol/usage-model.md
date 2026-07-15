@@ -29,7 +29,7 @@ Multi-guide `compileOrder`, publish outputs (`compile.outputFile`).
 
 ### Agent-native
 
-Above plus `export --llm`, three-tier shards (`features` / `client` / `developer`), task prompts from `.agents/skills/mdcp/agents/` (cached at `.agents/skills/mdcp/agents/` after fetch).
+Above plus `export --llm`, three-tier shards (`features` / `client` / `developer`), task prompts from `skills/mdcp/agents/` (install target `.agents/skills/mdcp/agents/`).
 
 ## Coexistence
 
@@ -42,7 +42,7 @@ Above plus `export --llm`, three-tier shards (`features` / `client` / `developer
 ## Query preference order
 
 1. Read `mdcp.v*.llms.txt` in docs root (agent index)
-2. Load task prompt from `.agents/skills/mdcp/agents/` (or [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/)) with `WORK_ITEM` set — see [Agent task prompts](./agent-task-prompts.md)
+2. Load task prompt from `skills/mdcp/agents/` (or [skills/mdcp/agents/](../../skills/mdcp/agents/)) with `WORK_ITEM` set — see [Agent task prompts](./agent-task-prompts.md)
 3. Discover the shard with host tools (`rg`, IDE search, guide `index.md`) and **read one shard**
 4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs list`)
 5. `mdcp export --llm` only when broader context is required

@@ -2,30 +2,30 @@
 
 Spec-driven prompts and workflow for coding agents. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](./why-mdcp-for-agents.md).
 
-**Source of truth:** versioned prompts live under [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/). `mdcp export --llms-index --fetch` caches them at `.agents/skills/mdcp/agents/` in your docs root. This page indexes them and covers mdcp-specific workflow — not full prompt text.
+**Source of truth:** versioned prompts live under [skills/mdcp/agents/](../../skills/mdcp/agents/). After `npx skills add`, the same files land under `.agents/skills/mdcp/agents/` in the consumer repo. This page indexes them and covers mdcp-specific workflow — not full prompt text.
 
 ## Prompt library
 
-Copy from [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/).
+Copy from [skills/mdcp/agents/](../../skills/mdcp/agents/).
 
-- [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) — first-time pipeline setup in a consumer repo
-- [doc-only.md](../../.agents/skills/mdcp/agents/doc-only.md) — documentation-only work
-- [design-architecture.md](../../.agents/skills/mdcp/agents/design-architecture.md) — RFCs, ADRs, data models
-- [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md) — feature work, docs-first then TDD
-- [ux.md](../../.agents/skills/mdcp/agents/ux.md) — UI flows and client-guide updates
-- [review.md](../../.agents/skills/mdcp/agents/review.md) — architecture and security review; one node per PR; atomic findings
+- [getting-started.md](../../skills/mdcp/agents/getting-started.md) — first-time pipeline setup in a consumer repo
+- [doc-only.md](../../skills/mdcp/agents/doc-only.md) — documentation-only work
+- [design-architecture.md](../../skills/mdcp/agents/design-architecture.md) — RFCs, ADRs, data models
+- [feature-level.md](../../skills/mdcp/agents/feature-level.md) — feature work, docs-first then TDD
+- [ux.md](../../skills/mdcp/agents/ux.md) — UI flows and client-guide updates
+- [review.md](../../skills/mdcp/agents/review.md) — architecture and security review; one node per PR; atomic findings
 
 Each prompt uses a **Replace before sending** code block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
 
 ## Bootstrap prompt (copy-paste)
 
-First-time setup for a consumer repo: [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md).
+First-time setup for a consumer repo: [getting-started.md](../../skills/mdcp/agents/getting-started.md).
 
 Fill in `FEATURE=` and `PERSONA=`, then send. The prompt instructs the agent to inspect the repository and mdcp docs before installing or configuring. Best for **Learner** and **Author** archetypes — see [Personas and priority tiers](../features/personas-and-priority-tiers.md).
 
 ## Follow-up prompts
 
-Use these after the pipeline exists (inline here — not duplicated in `.agents/skills/mdcp/agents/`).
+Use these after the pipeline exists (inline here — not duplicated in `skills/mdcp/agents/`).
 
 **Add documentation for a new feature:**
 
@@ -50,7 +50,7 @@ I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using
 
 ## Docs-first feature workflow
 
-Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md).
+Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — use [feature-level.md](../../skills/mdcp/agents/feature-level.md).
 
 ### Workflow best practices
 
@@ -64,12 +64,12 @@ Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`,
 | Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
 | Implement | Code + tests     | TDD against the documented contract                    |
 
-For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture.md](../../.agents/skills/mdcp/agents/design-architecture.md).
+For architecture-heavy work before coding (RFCs, ADRs, data models), use [design-architecture.md](../../skills/mdcp/agents/design-architecture.md).
 
 ### Sharding keeps context lean
 
 - **Core workflow** — bootstrap prompt and repo script wiring
-- **On demand** — task-type prompts from `.agents/skills/mdcp/agents/` or `.agents/skills/mdcp/agents/`; load only what the current task needs
+- **On demand** — task-type prompts from `skills/mdcp/agents/` (or `.agents/skills/mdcp/agents/` after install); load only what the current task needs
 - **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
 
 Prefer structured prompts over permanently importing rigid always-on rules into every repo.
@@ -87,17 +87,17 @@ This repository documents its stack in [Agent work-item tracking](../developer/a
 
 ## Task-type prompt templates
 
-- [doc-only.md](../../.agents/skills/mdcp/agents/doc-only.md) — technical writers; documentation, tutorials, guides
-- [design-architecture.md](../../.agents/skills/mdcp/agents/design-architecture.md) — architects; RFCs, ADRs, data models before code
-- [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md) — server-side or full-stack feature work
-- [ux.md](../../.agents/skills/mdcp/agents/ux.md) — UX and frontend; flows, accessibility, client guides
-- [review.md](../../.agents/skills/mdcp/agents/review.md) — security and systems review; atomic findings, checklist evidence, feature stubs
+- [doc-only.md](../../skills/mdcp/agents/doc-only.md) — technical writers; documentation, tutorials, guides
+- [design-architecture.md](../../skills/mdcp/agents/design-architecture.md) — architects; RFCs, ADRs, data models before code
+- [feature-level.md](../../skills/mdcp/agents/feature-level.md) — server-side or full-stack feature work
+- [ux.md](../../skills/mdcp/agents/ux.md) — UX and frontend; flows, accessibility, client guides
+- [review.md](../../skills/mdcp/agents/review.md) — security and systems review; atomic findings, checklist evidence, feature stubs
 
 ## Toolchain integration
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — paste prompts from `.agents/skills/mdcp/agents/` or `.agents/skills/mdcp/agents/`; reference shard files for context; run the repo's doc check before ending a turn
+- **Cursor / Composer** — paste prompts from `skills/mdcp/agents/` (or `.agents/skills/mdcp/agents/` after install); reference shard files for context; run the repo's doc check before ending a turn
 - **Terminal agents** — start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — discover with host search; validate fragments with `mdcp check` (optional `mdcp refs list`)
@@ -155,7 +155,7 @@ When reviewing an agent's documentation PR:
 
 - [Why mdcp for coding agents](./why-mdcp-for-agents.md) — developer pain and which commands address it
 - [Agent integration](./agent-integration.md) — npm scripts quick reference
-- [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/) — versioned copy-paste prompt files
+- [skills/mdcp/agents/](../../skills/mdcp/agents/) — versioned copy-paste prompt files
 - [Project layout](./project-layout.md) — shard directory structure
 - [Cross-links and refs](./cross-links-and-refs.md) — validate fragments after compile
 - [Optional linters](./optional-linters.md) — markdownlint, Vale, link check peers

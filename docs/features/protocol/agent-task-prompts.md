@@ -6,7 +6,7 @@ Normative profile for **copy-paste agent prompts** that drive shard authoring ac
 
 Prompts are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge.
 
-Reference copies live in [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/). The canonical prompt list is summarized below. **Do not edit** the `.agents/skills/mdcp/agents/` copies directly if you want changes to persist — propose upstream or add extensions.
+Reference copies live in [skills/mdcp/agents/](../../skills/mdcp/agents/). The canonical prompt list is summarized below. **Do not edit** the `skills/mdcp/agents/` copies directly if you want changes to persist — propose upstream or add extensions.
 
 ## Required prompt shape
 
@@ -26,16 +26,16 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 
 ## Standard prompts (protocol 0.4.0.0)
 
-| Prompt                                                                            | Role                             | Primary guides                       |
-| --------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
-| [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md)         | Bootstrap pipeline               | all tiers                            |
-| [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md)             | Feature engineering              | `features/`, `client/`, code + tests |
-| [doc-only.md](../../.agents/skills/mdcp/agents/doc-only.md)                       | Technical writing                | `features/`, `client/`, `developer/` |
-| [design-architecture.md](../../.agents/skills/mdcp/agents/design-architecture.md) | ADRs, RFCs                       | `features/protocol/`, `features/`    |
-| [ux.md](../../.agents/skills/mdcp/agents/ux.md)                                   | End-user experience              | `client/`                            |
-| [review.md](../../.agents/skills/mdcp/agents/review.md)                           | Architecture and security review | `review/`, `features/` (stubs)       |
+| Prompt                                                                    | Role                             | Primary guides                       |
+| ------------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
+| [getting-started.md](../../skills/mdcp/agents/getting-started.md)         | Bootstrap pipeline               | all tiers                            |
+| [feature-level.md](../../skills/mdcp/agents/feature-level.md)             | Feature engineering              | `features/`, `client/`, code + tests |
+| [doc-only.md](../../skills/mdcp/agents/doc-only.md)                       | Technical writing                | `features/`, `client/`, `developer/` |
+| [design-architecture.md](../../skills/mdcp/agents/design-architecture.md) | ADRs, RFCs                       | `features/protocol/`, `features/`    |
+| [ux.md](../../skills/mdcp/agents/ux.md)                                   | End-user experience              | `client/`                            |
+| [review.md](../../skills/mdcp/agents/review.md)                           | Architecture and security review | `review/`, `features/` (stubs)       |
 
-Index: [.agents/skills/mdcp/agents/](../../.agents/skills/mdcp/agents/).
+Index: [skills/mdcp/agents/](../../skills/mdcp/agents/).
 
 ## Three-tier authoring obligations
 
@@ -49,7 +49,7 @@ Shared terms: `docs/glossary/` — all prompts that introduce vocabulary.
 
 ## Feature-level workflow (normative summary)
 
-When using [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md):
+When using [feature-level.md](../../skills/mdcp/agents/feature-level.md):
 
 1. Branch from updated `main` for `WORK_ITEM`
 2. Load issue via `WORK_ITEM_LOOKUP`
@@ -61,14 +61,14 @@ When using [feature-level.md](../../.agents/skills/mdcp/agents/feature-level.md)
 ## Entrypoint chain
 
 ```text
-.agents/skills/mdcp/agents/getting-started.md  →  .agents/skills/mdcp/agents/*.prompt.md (WORK_ITEM set)  →  shards  →  mdcp check
+skills/mdcp/agents/getting-started.md  →  skills/mdcp/agents/*.prompt.md (WORK_ITEM set)  →  shards  →  mdcp check
 ```
 
 The Agent Skill points agents at subagents and query commands; task prompts point at `WORK_ITEM_LOOKUP` for scope.
 
 ## Review workflow (normative summary)
 
-When using [review.md](../../.agents/skills/mdcp/agents/review.md):
+When using [review.md](../../skills/mdcp/agents/review.md):
 
 1. Branch per `REVIEW_NODE` (one manifest node per PR)
 2. Load `WORK_ITEM` via `WORK_ITEM_LOOKUP`

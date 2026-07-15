@@ -15,7 +15,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
 ```
 
-Zero-install alternative: copy `.agents/skills/mdcp/` from this repository into your project (plus complementary skill folders when you need them). Prefer `.agents/skills/` over host-specific aliases.
+That vendors the skill into `.agents/skills/`. Zero-install alternative: copy `skills/mdcp/` from the upstream repository into your project's `.agents/skills/mdcp/`. Prefer `.agents/skills/` over host-specific aliases.
 
 ## Versioning and Upgrades
 
@@ -39,7 +39,9 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 ## How this relates to CLI scripts
 
-Keep using npm scripts for compile and check — see [Agent integration](./agent-integration.md). The skill teaches agents **when** to run those commands and **how** to load the smallest useful shard context. It does not replace `@bwilliamson/mdcp-cli`.
+Keep using npm scripts for compile and check — see [Agent integration](./agent-integration.md).
+
+Plain-language: **compile** builds compiled docs from shards; **check** validates the documentation tree; **refs** is the cross-link fragment registry. The skill’s `scripts/` are thin wrappers into `@bwilliamson/mdcp-cli` — they do not replace the CLI.
 
 ## Next steps
 

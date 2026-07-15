@@ -23,6 +23,6 @@ Discover shards with host search (`rg`, IDE search) → edit shards → `mdcp co
 
 ## Get started
 
-First-time setup in a consumer repo: copy [getting-started.md](../../.agents/skills/mdcp/agents/getting-started.md) (or load from `.agents/skills/mdcp/agents/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](./llm-collaboration.md).
+First-time setup in a consumer repo: copy [getting-started.md](../../skills/mdcp/agents/getting-started.md) (or load from `.agents/skills/mdcp/agents/` after skill install), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](./llm-collaboration.md).
 
 For command and capability depth, read the [feature catalog](../features/feature-catalog.md).
