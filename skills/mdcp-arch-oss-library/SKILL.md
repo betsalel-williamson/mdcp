@@ -13,7 +13,8 @@ compatibility: >-
   wrappers; they do not replace the CLI. Install the mdcp parent skill first.
 metadata:
   author: betsalel-williamson
-  version: '0.4.1'
+  internal: true
+  version: '0.5.0'
 ---
 
 # MDCP Archetype: OSS Library

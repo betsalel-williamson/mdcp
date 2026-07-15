@@ -17,7 +17,7 @@ compatibility: >-
   wrappers; they do not replace the CLI.
 metadata:
   author: betsalel-williamson
-  version: '0.4.1'
+  version: '0.5.0'
 ---
 
 # MDCP (parent skill)
