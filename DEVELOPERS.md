@@ -302,6 +302,26 @@ Prefer host search then read one shard under `docs/`. Compiled monoliths under `
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
 
+## Markdown formatting
+
+### Base Requirement
+
+When contributing documentation, rely on **simple GFM (GitHub Flavored Markdown)** as the standard.
+
+### We do not enforce OKF
+
+We explicitly decided not to adopt OKF (One Knowledge Format) or any other highly opinionated, rigid document structure (see [ADR 0003](docs/features/adr/0003-do-not-adopt-okf.md)). The goal is to keep the authoring experience simple, flexible, and accessible. You do not need to adhere to complex metadata schemas or strict structural hierarchies when writing documentation shards.
+
+### Strict Link Validity
+
+While we are unopinionated about document structure, we are **strict about links**.
+
+- All links in your documentation must be valid and point to existing files or headings.
+- If a link is invalid, the CI and documentation checks will fail.
+- Do not create links to files that do not exist yet. If you need to indicate a placeholder, comment it out or write `(TBD)`.
+
+For more details on the link validation rules, please consult the [Format specification](docs/features/protocol/format-specification.md).
+
 ## Agent Skill
 
 Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary archetype skills under `skills/mdcp-arch-*` are **WIP**: they carry `metadata.internal: true` so the skills CLI hides them from default `--list` / public install prompts. Keep them out of consumer get-started docs and [`skills.sh.json`](skills.sh.json) until ready. Maintainers can surface them with `INSTALL_INTERNAL_SKILLS=1`.
