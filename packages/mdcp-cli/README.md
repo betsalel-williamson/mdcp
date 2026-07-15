@@ -305,10 +305,9 @@ When a manifest has preamble prose with example inline links before an ordered `
 
 ### Schema-only fields
 
-| Field                       | Notes                                                      |
-| --------------------------- | ---------------------------------------------------------- |
-| `refs.slugAlgorithm`        | Informational only — only `github` is implemented          |
-| `export.llm.skipIndexFiles` | No-op — compile output never includes `index.md` manifests |
+| Field                | Notes                                             |
+| -------------------- | ------------------------------------------------- |
+| `refs.slugAlgorithm` | Informational only — only `github` is implemented |
 
 Full schema and examples: [mdcp.config.json in sample-guides](../../examples/sample-guides/mdcp.config.json).
 
@@ -346,17 +345,16 @@ mdcp check
 
 ### Command summary
 
-| Command             | When you need it                                                                                   |
-| ------------------- | -------------------------------------------------------------------------------------------------- |
-| `mdcp compile`      | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
-| `mdcp check`        | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
-| `mdcp shard`        | Split a monolith into shards (requires `config.source`)                                            |
-| `mdcp refs list`    | List heading slugs from `refs.json` as JSON                                                        |
-| `mdcp export --llm` | Token-stripped compiled output for LLM context                                                     |
-| `mdcp lint`         | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
-| `mdcp prose`        | Vale prose lint (peer, if installed)                                                               |
-| `mdcp links`        | markdown-link-check on compiled output (peer, if installed)                                        |
-| `mdcp fix`          | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
+| Command          | When you need it                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
+| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
+| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
+| `mdcp refs list` | List heading slugs from `refs.json` as JSON                                                        |
+| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
+| `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
+| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
+| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
 
 ### Refs subcommands
 
@@ -368,18 +366,17 @@ mdcp check
 
 Discover shards with host search (`rg`, IDE search). Validate fragment links with `mdcp check`; use `mdcp refs list` when you need to inspect registry slugs.
 
-### LLM and agent context
+### Agent context
 
 ```bash
-# Token-stripped compiled output for coding agents
-mdcp export --llm --stdout
-
 # Full structural gate (includes refs + link validation)
 mdcp check
 
 # Optional: inspect registry headings after compile or check
 mdcp refs list
 ```
+
+Discover shards with host search, then read **one** file. Prefer that over pasting a full compiled monolith.
 
 ## Compile and the refs registry
 
@@ -565,7 +562,7 @@ Which **CLI commands** address common docs failures when agents edit the repo:
 | **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                          |
 | **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`    |
 
-Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs list` / `mdcp export --llm`.
+Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs list` → read one shard when the next turn needs doc context.
 
 Install and flags: [Install and quick start](#install-and-quick-start). Agent **behavior** (when to edit docs, subagents) is the [Agent Skill](../../README.md), not this package.
 
@@ -577,14 +574,12 @@ Wire **`@bwilliamson/mdcp-cli`** into CI or coding agents with npm scripts. This
 {
   "scripts": {
     "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint"
   }
 }
 ```
 
 ```bash
-mdcp export --llm --stdout --config docs/mdcp.config.json
 mdcp check --require-lint
 mdcp refs list
 ```

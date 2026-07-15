@@ -12,10 +12,9 @@ Policy for public copy — README, npm package openings, and adoption material. 
 
 ## Common corrections
 
-- **`export --llm` scopes context** — Scope comes from **workflow** ([usage model](./usage-model.md): read one shard). `export --llm` strips comments and banners from whatever you export.
+- **Scoped context** — Comes from **workflow** ([usage model](./usage-model.md): read one shard), not from a token-strip export profile.
 - **`refs lookup` / retrieval as WIIFM** — Forbidden. Doc discovery is host search; do not claim a MDCP lookup verb for context size or accuracy.
 - **Ship faster with agents** — Tier C; use adoption stories or measured outcomes.
-- **Strips tokens for scoped context** — Split: export **strips HTML comments and banners** (Tier A); **smaller per-turn reads when agents load one shard** (Tier B, [context-size measurement](#context-size-measurement-dogfood-repo)).
 
 ## Context-size measurement (dogfood repo)
 
@@ -30,13 +29,11 @@ pnpm build && pnpm docs:compile:repo && pnpm bench:context-size
 ### How to read the numbers
 
 - **Sharding** can reduce per-turn context **when agents read one feature shard instead of the full features monolith** — see `median_shard_pct_of_monolith` in the CSV.
-- **`export --llm`** removes comment, banner, and frontmatter bytes (`llm_strip_delta_chars`) — a smaller delta than shard scoping; do not conflate the two.
 - MDCP does **not** stop an agent from reading the whole monolith — discipline and Agent Skill instructions matter.
 
 ### Tier B wording (dogfood measurement, 2026-06-25)
 
 On this repository, the median `docs/features/` shard is **~4.4%** of the compiled features monolith by character count (median ~4.6k chars vs ~105k chars). When agents read one shard instead of the full monolith, per-turn context can be smaller — if they follow the [usage model](./usage-model.md). MDCP does not enforce that discipline; the Agent Skill and your workflow do.
-`export --llm` removed **0** bytes on the features guide in this run (no HTML comments or banners in that output). Do not conflate export stripping with shard scoping.
 
 ## Evidence elsewhere
 

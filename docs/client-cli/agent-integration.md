@@ -6,14 +6,12 @@ Wire **`@bwilliamson/mdcp-cli`** into CI or coding agents with npm scripts. This
 {
   "scripts": {
     "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint"
   }
 }
 ```
 
 ```bash
-mdcp export --llm --stdout --config docs/mdcp.config.json
 mdcp check --require-lint
 mdcp refs list
 ```

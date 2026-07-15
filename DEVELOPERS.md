@@ -207,7 +207,7 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Refs / slugs       | `src/refs/`                   |
 | Validation         | `src/validate/`, `src/xrefs/` |
 | Shard (split)      | `src/shard/`                  |
-| Export (LLM)       | `src/export/`                 |
+| Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
 ```bash
@@ -291,11 +291,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 
 ### Agent context
 
-```bash
-pnpm docs:context    # mdcp export --llm from features monolith only
-```
-
-The monolith compiles **`features`** only (see `compileOrder` in config). The developer guide, consumer publish guides, and npm README outputs are omitted from LLM export source.
+Prefer host search then read one shard under `docs/`. Compiled monoliths under `docs/_build/` are available when a broader read is intentional.
 
 ### Linting docs
 
@@ -668,11 +664,11 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 
 ### Install surfaces
 
-| Use case       | Command                                                               |
-| -------------- | --------------------------------------------------------------------- |
-| Dev dependency | `npm i -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets`            |
-| Global CLI     | `npm i -g @bwilliamson/mdcp-cli`                                      |
-| Programmatic   | `import { compileGuides, stripForLlm } from '@bwilliamson/mdcp-core'` |
+| Use case       | Command                                                    |
+| -------------- | ---------------------------------------------------------- |
+| Dev dependency | `npm i -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets` |
+| Global CLI     | `npm i -g @bwilliamson/mdcp-cli`                           |
+| Programmatic   | `import { compileGuides } from '@bwilliamson/mdcp-core'`   |
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
@@ -712,7 +708,7 @@ Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:li
 
 MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
 
-The CLI (`compile`, `check`, [refs](#refs) registry maintenance, and `export --llm`) implements that shared context layer alongside the skill’s behavioral guardrails.
+The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements that shared context layer alongside the skill’s behavioral guardrails.
 
 ## protocol version
 
@@ -724,7 +720,7 @@ Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli` remains pre-
 
 ## mdcp-llms-index
 
-**Legacy.** Deprecated CLI export profile (`export --llms-index` / `--fetch`) replaced by [Agent Skills](#agent-skills). Keep this glossary entry only so docs can name the deprecated flags; do not use it for new agent bootstrap.
+**Legacy.** Removed CLI export profile (`mdcp export`, including `--llms-index` / `--fetch` / `--llm`) replaced by [Agent Skills](#agent-skills). Keep this glossary entry only so docs can name the old flags; do not use it for new agent bootstrap.
 
 ## skill content lint
 

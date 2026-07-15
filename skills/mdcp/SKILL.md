@@ -102,7 +102,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 ### 2. Prefer smallest context
 
 Discover the relevant shard with host search (`rg`, IDE search) or the guide
-`index.md`, then open **one** `.md` shard. Broader `mdcp export --llm` is last
+`index.md`, then open **one** `.md` shard. Broader compiled monolith reads are last
 resort.
 
 ### 3. Edit shards, then validate

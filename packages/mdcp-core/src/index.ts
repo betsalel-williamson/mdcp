@@ -113,7 +113,6 @@ export {
   type LintLinksOptions,
 } from './links/lint.js';
 export { checkOrphansForGuides, type OrphanIssue, type GuideDirEntry } from './validate/orphans.js';
-export { stripForLlm, getLlmExportOptions } from './export/llm.js';
 export {
   abbreviateProtocolVersion,
   expandProtocolVersion,

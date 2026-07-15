@@ -138,26 +138,6 @@ export const MdcpConfigSchema = z.object({
       scanGlobs: z.array(z.string()).optional(),
     })
     .optional(),
-
-  export: z
-    .object({
-      llm: z
-        .object({
-          stripHtmlComments: z.boolean().default(true),
-          stripFrontmatter: z.boolean().default(true),
-          stripBanner: z.boolean().default(true),
-          skipIndexFiles: z.boolean().default(true),
-          collapseBlankLines: z.boolean().default(true),
-        })
-        .default({
-          stripHtmlComments: true,
-          stripFrontmatter: true,
-          stripBanner: true,
-          skipIndexFiles: true,
-          collapseBlankLines: true,
-        }),
-    })
-    .optional(),
 });
 
 export type MdcpConfig = z.infer<typeof MdcpConfigSchema>;

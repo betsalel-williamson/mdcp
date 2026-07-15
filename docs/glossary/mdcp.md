@@ -4,4 +4,4 @@
 
 MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
 
-The CLI (`compile`, `check`, [refs](./refs.md) registry maintenance, and `export --llm`) implements that shared context layer alongside the skill’s behavioral guardrails.
+The CLI (`compile`, `check`, and [refs](./refs.md) registry maintenance) implements that shared context layer alongside the skill’s behavioral guardrails.

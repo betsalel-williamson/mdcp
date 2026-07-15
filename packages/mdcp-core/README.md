@@ -46,8 +46,6 @@ import {
   genRefsFromCompiled,
   resolveRefsPath,
   checkRefsRegistry,
-  stripForLlm,
-  getLlmExportOptions,
 } from '@bwilliamson/mdcp-core';
 
 const docsRoot = '/path/to/docs';
@@ -65,8 +63,6 @@ const compiled = compileGuides({
 const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
 genRefsFromCompiled(compiled, refsPath);
 checkRefsRegistry(compiled, refsPath);
-
-const llmText = stripForLlm(compiled, getLlmExportOptions(config));
 ```
 
 Use `writeCompiledGuides` when you need to write the monolith and per-guide publish outputs to disk.
@@ -229,9 +225,7 @@ CLI authoring rules: [Cross-links and refs — heading slugs](../mdcp-cli/README
 
 ### Export
 
-| Export                               | Purpose                           |
-| ------------------------------------ | --------------------------------- |
-| `stripForLlm`, `getLlmExportOptions` | Token-optimized output for agents |
+There is no token-strip LLM export API. Prefer the Agent Skill and one-shard reads.
 
 ### Shard (split)
 

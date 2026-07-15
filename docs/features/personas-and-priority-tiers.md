@@ -42,12 +42,12 @@ Reference: [`docs/repo-readme/`](../repo-readme/index.md) → `README.md`.
 
 ## Tool operator personas
 
-| Persona                | Job                             | Command                                                  |
-| ---------------------- | ------------------------------- | -------------------------------------------------------- |
-| **LLM doc author**     | Edit shards, insert cross-links | `shard`, `compile`, `check` (broken `#` links)           |
-| **LLM feature agent**  | Read doc context while coding   | Host search → one shard read, `export --llm` when needed |
-| **Human doc reviewer** | PR quality gate                 | `check`, `prose`, `lint`, `xrefs`, `links`               |
-| **End-user reader**    | Read glossary, guides, reviews  | `compile` output                                         |
+| Persona                | Job                             | Command                                        |
+| ---------------------- | ------------------------------- | ---------------------------------------------- |
+| **LLM doc author**     | Edit shards, insert cross-links | `shard`, `compile`, `check` (broken `#` links) |
+| **LLM feature agent**  | Read doc context while coding   | Host search → one shard read                   |
+| **Human doc reviewer** | PR quality gate                 | `check`, `prose`, `lint`, `xrefs`, `links`     |
+| **End-user reader**    | Read glossary, guides, reviews  | `compile` output                               |
 
 ## P0 adoption — evaluator onboarding (validated 2026-06)
 
@@ -64,10 +64,9 @@ Aligns with GitHub project **Track: 0.5 Spec & adoption** — see [Agent work it
 | ------------- | --------------------- | -------------------- | ----------- |
 | Compile       | `mdcp compile`        | `compile/`           | Implemented |
 | Refs registry | `mdcp refs` / `check` | `refs/`              | Implemented |
-| LLM export    | `mdcp export --llm`   | `export/llm.ts`      | Implemented |
 | Check (core)  | `mdcp check`          | orphans, refs, xrefs | Implemented |
 
-Dogfood: `mdcp export --llm` + `mdcp check` on `docs/` and `examples/sample-guides`.
+Dogfood: `mdcp check` on `docs/` and `examples/sample-guides`.
 
 ## P1 — LLM can write docs in shards safely
 

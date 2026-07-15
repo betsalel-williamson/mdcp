@@ -16,14 +16,6 @@ Guides compile to per-guide files under `outputDir` by default (`{name}.md`, or 
 
 Heading-slug **registry** for validation after compile — see [Refs registry path](./refs-registry-path.md). Discover shards with host search (`rg`); confirm `#` cross-links with `mdcp check`. There is no lookup CLI verb.
 
-## LLM export (P0.3)
-
-Token-stripped context for agents.
-
-```bash
-mdcp export --llm --stdout --config mdcp.config.json
-```
-
 ## Agent Skill delivery
 
 Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill delivery](./agent-skill.md).
@@ -32,7 +24,7 @@ Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdc
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-Legacy `mdcp export --llms-index` / `--fetch` bootstraps are deprecated — prefer the Agent Skill.
+Legacy `mdcp export` (`--llm`, `--llms-index`, `--fetch`) is removed — prefer the Agent Skill and one-shard reads.
 
 ## Check gate (P0.4)
 
@@ -83,7 +75,7 @@ Built-in hooks:
 ```json
 {
   "scripts": {
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json",
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
     "docs:check:mdcp": "mdcp check --config docs/mdcp.config.json --require-lint"
   }
 }

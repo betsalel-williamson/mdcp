@@ -56,13 +56,5 @@
   "vale": {
     "config": ".vale.ini",
     "scanGlobs": ["overview", "admin-guide", "developer-guide"]
-  },
-  "export": {
-    "llm": {
-      "stripHtmlComments": true,
-      "stripFrontmatter": true,
-      "stripBanner": true,
-      "collapseBlankLines": true
-    }
   }
 }

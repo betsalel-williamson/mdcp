@@ -11,7 +11,7 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | Refs / slugs       | `src/refs/`                   |
 | Validation         | `src/validate/`, `src/xrefs/` |
 | Shard (split)      | `src/shard/`                  |
-| Export (LLM)       | `src/export/`                 |
+| Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
 ```bash

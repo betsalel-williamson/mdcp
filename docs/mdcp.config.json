@@ -105,13 +105,5 @@
       "repo-readme",
       "presentation-la-devops"
     ]
-  },
-  "export": {
-    "llm": {
-      "stripHtmlComments": true,
-      "stripFrontmatter": true,
-      "stripBanner": true,
-      "collapseBlankLines": true
-    }
   }
 }

@@ -49,7 +49,7 @@ Collect these via intake (or from the conversation if already stated):
 
 ### Step 4: Scripts
 
-1. Wire `mdcp compile`, `mdcp check`, and `mdcp export --llm` into this repo's script runner (discover naming from existing `package.json` or developer docs).
+1. Wire `mdcp compile` and `mdcp check` into this repo's script runner (discover naming from existing `package.json` or developer docs).
 2. When optional linters are installed, use `mdcp check --require-lint` and/or `--require-vale` for CI gates.
 
 ### Step 5: Guide Layout

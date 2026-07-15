@@ -2,7 +2,7 @@
 
 Normative specification for the MarkDown Context Protocol. Parent: [GitHub #48](https://github.com/betsalel-williamson/mdcp/issues/48).
 
-> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before npm **1.0.0**. npm **0.4.x** (open alpha) implements this draft. Agent entrypoint is the parent **Agent Skill** (`/mdcp`); legacy `export --llms-index` / `--fetch` is deprecated.
+> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before npm **1.0.0**. npm **0.4.x** (open alpha) implements this draft. Agent entrypoint is the parent **Agent Skill** (`/mdcp`); legacy `mdcp export` profiles are removed.
 
 ## 1. Introduction
 
@@ -43,9 +43,7 @@ The Agent Skills pack in a consumer docs root **MUST NOT** be hand-edited by age
 
 ## 9. Export profiles
 
-### 9.1 LLM export (`export.llm`)
-
-Token-stripped compiled output for agents. Implemented by `mdcp export --llm`.
+There is no token-strip LLM export profile. Agent context comes from the parent **Agent Skill** and one-shard reads. Legacy `mdcp export` flags are removed.
 
 ## Appendix A (informative)
 

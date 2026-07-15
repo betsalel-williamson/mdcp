@@ -44,11 +44,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 
 ## Agent context
 
-```bash
-pnpm docs:context    # mdcp export --llm from features monolith only
-```
-
-The monolith compiles **`features`** only (see `compileOrder` in config). The developer guide, consumer publish guides, and npm README outputs are omitted from LLM export source.
+Prefer host search then read one shard under `docs/`. Compiled monoliths under `docs/_build/` are available when a broader read is intentional.
 
 ## Linting docs
 

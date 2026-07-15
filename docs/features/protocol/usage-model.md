@@ -8,12 +8,12 @@ Agents should load the parent **Agent Skill** (`/mdcp`, install target `.agents/
 
 ## Actors and obligations
 
-| Actor                    | Reads                                                 | Writes           | Must run                                     |
-| ------------------------ | ----------------------------------------------------- | ---------------- | -------------------------------------------- |
-| Author (human/agent)     | shards, Agent Skill                                   | shards, manifest | `check` before PR                            |
-| CI                       | config                                                | —                | `check --require-lint` when peers configured |
-| Agent (context consumer) | Agent Skill, single shards (`rg`/IDE), `export --llm` | —                | —                                            |
-| Maintainer               | skill pack + conformance                              | protocol shards  | `docs:check:repo`                            |
+| Actor                    | Reads                                 | Writes           | Must run                                     |
+| ------------------------ | ------------------------------------- | ---------------- | -------------------------------------------- |
+| Author (human/agent)     | shards, Agent Skill                   | shards, manifest | `check` before PR                            |
+| CI                       | config                                | —                | `check --require-lint` when peers configured |
+| Agent (context consumer) | Agent Skill, single shards (`rg`/IDE) | —                | —                                            |
+| Maintainer               | skill pack + conformance              | protocol shards  | `docs:check:repo`                            |
 
 **Shards are source of truth; compiled files are generated.**
 
@@ -29,7 +29,7 @@ Multi-guide `compileOrder`, publish outputs (`compile.outputFile`).
 
 ### Agent-native
 
-Above plus `export --llm`, three-tier shards (`features` / `client` / `developer`), task subagents from `skills/mdcp/agents/` (install target `.agents/skills/mdcp/agents/`).
+Above plus three-tier shards (`features` / `client` / `developer`), task subagents from `skills/mdcp/agents/` (install target `.agents/skills/mdcp/agents/`).
 
 ## Coexistence
 
@@ -45,6 +45,5 @@ Above plus `export --llm`, three-tier shards (`features` / `client` / `developer
 2. Load a task subagent from `skills/mdcp/agents/` (or [skills/mdcp/agents/](../../skills/mdcp/agents/)); complete intake for `WORK_ITEM` — see [Agent task subagents](./agent-task-prompts.md)
 3. Discover the shard with host tools (`rg`, IDE search, guide `index.md`) and **read one shard**
 4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs list`)
-5. `mdcp export --llm` only when broader context is required
 
 Read [`skills/mdcp/references/agents.md`](../../../skills/mdcp/references/agents.md) for subagent catalog and workflow index.

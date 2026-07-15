@@ -104,11 +104,11 @@ Changesets config: [`.changeset/config.json`](../../.changeset/config.json) — 
 
 ## Install surfaces
 
-| Use case       | Command                                                               |
-| -------------- | --------------------------------------------------------------------- |
-| Dev dependency | `npm i -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets`            |
-| Global CLI     | `npm i -g @bwilliamson/mdcp-cli`                                      |
-| Programmatic   | `import { compileGuides, stripForLlm } from '@bwilliamson/mdcp-core'` |
+| Use case       | Command                                                    |
+| -------------- | ---------------------------------------------------------- |
+| Dev dependency | `npm i -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets` |
+| Global CLI     | `npm i -g @bwilliamson/mdcp-cli`                           |
+| Programmatic   | `import { compileGuides } from '@bwilliamson/mdcp-core'`   |
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 

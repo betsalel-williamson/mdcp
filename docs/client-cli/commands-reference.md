@@ -32,17 +32,16 @@ mdcp check
 
 ## Command summary
 
-| Command             | When you need it                                                                                   |
-| ------------------- | -------------------------------------------------------------------------------------------------- |
-| `mdcp compile`      | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
-| `mdcp check`        | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
-| `mdcp shard`        | Split a monolith into shards (requires `config.source`)                                            |
-| `mdcp refs list`    | List heading slugs from `refs.json` as JSON                                                        |
-| `mdcp export --llm` | Token-stripped compiled output for LLM context                                                     |
-| `mdcp lint`         | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
-| `mdcp prose`        | Vale prose lint (peer, if installed)                                                               |
-| `mdcp links`        | markdown-link-check on compiled output (peer, if installed)                                        |
-| `mdcp fix`          | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
+| Command          | When you need it                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
+| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
+| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
+| `mdcp refs list` | List heading slugs from `refs.json` as JSON                                                        |
+| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
+| `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
+| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
+| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
 
 ## Refs subcommands
 
@@ -54,15 +53,14 @@ mdcp check
 
 Discover shards with host search (`rg`, IDE search). Validate fragment links with `mdcp check`; use `mdcp refs list` when you need to inspect registry slugs.
 
-## LLM and agent context
+## Agent context
 
 ```bash
-# Token-stripped compiled output for coding agents
-mdcp export --llm --stdout
-
 # Full structural gate (includes refs + link validation)
 mdcp check
 
 # Optional: inspect registry headings after compile or check
 mdcp refs list
 ```
+
+Discover shards with host search, then read **one** file. Prefer that over pasting a full compiled monolith.

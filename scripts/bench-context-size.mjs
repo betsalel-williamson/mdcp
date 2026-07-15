@@ -6,7 +6,6 @@
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { stripForLlm } from '../packages/mdcp-core/dist/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, '..');
@@ -47,16 +46,12 @@ function main() {
 
   const featuresCompiled = join(DOCS_ROOT, '_build/features.md');
   let rawGuideChars = 0;
-  let llmExportChars = 0;
   try {
-    const raw = readFileSync(featuresCompiled, 'utf-8');
-    rawGuideChars = raw.length;
-    llmExportChars = stripForLlm(raw).length;
+    rawGuideChars = charCount(featuresCompiled);
   } catch {
     /* features.md may not exist when only monolith is built */
   }
 
-  const llmStripDelta = rawGuideChars > 0 ? rawGuideChars - llmExportChars : 0;
   const medianPctOfMonolith =
     monolithChars > 0 ? Math.round((medianShard / monolithChars) * 1000) / 10 : 0;
   const recordedAt = new Date().toISOString().slice(0, 10);
@@ -91,20 +86,6 @@ function main() {
       String(rawGuideChars),
       'chars',
       'per-guide output if present',
-      recordedAt,
-    ],
-    [
-      'features_guide_llm_export_chars',
-      String(llmExportChars),
-      'chars',
-      'stripForLlm on features guide',
-      recordedAt,
-    ],
-    [
-      'llm_strip_delta_chars',
-      String(llmStripDelta),
-      'chars',
-      'comments/banners/frontmatter removed',
       recordedAt,
     ],
   ];

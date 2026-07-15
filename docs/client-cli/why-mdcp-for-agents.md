@@ -10,6 +10,6 @@ Which **CLI commands** address common docs failures when agents edit the repo:
 | **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                          |
 | **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`    |
 
-Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs list` / `mdcp export --llm`.
+Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs list` → read one shard when the next turn needs doc context.
 
 Install and flags: [Install and quick start](./install-and-quick-start.md). Agent **behavior** (when to edit docs, subagents) is the [Agent Skill](../../README.md), not this package.

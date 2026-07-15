@@ -8,8 +8,6 @@ import {
   genRefsFromCompiled,
   resolveRefsPath,
   checkRefsRegistry,
-  stripForLlm,
-  getLlmExportOptions,
 } from '@bwilliamson/mdcp-core';
 
 const docsRoot = '/path/to/docs';
@@ -27,8 +25,6 @@ const compiled = compileGuides({
 const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
 genRefsFromCompiled(compiled, refsPath);
 checkRefsRegistry(compiled, refsPath);
-
-const llmText = stripForLlm(compiled, getLlmExportOptions(config));
 ```
 
 Use `writeCompiledGuides` when you need to write the monolith and per-guide publish outputs to disk.

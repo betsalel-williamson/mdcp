@@ -17,13 +17,13 @@ The parent Agent Skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`) 
 1. Delete any `mdcp.v*.llms.txt` (and draft variants) from the docs root.
 2. Install or refresh the skill: `npx skills add betsalel-williamson/mdcp --skill mdcp` (or `pnpm skill:install` in this monorepo).
 3. Start agent bootstrap with `/mdcp help me get started` (not the old index file).
-4. Stop using `mdcp export --llms-index` / `--fetch` — those flags are deprecated; use the skill + `mdcp compile` / `mdcp check` instead.
+4. Stop using `mdcp export` entirely (`--llm`, `--llms-index`, `--fetch`) — removed; use the skill + one-shard reads + `mdcp compile` / `mdcp check` instead.
 
 **Migration Guide for Early Adopters:**
 
 1. **Update Config**: Remove the `"extensions": { "packs": [...] }` block and the `"protocol": { "llmsIndex": { ... } }` block from your `mdcp.config.json`.
 2. **Clean Cache & Legacy Files**: Delete the legacy `.caches/` directory from your documentation root (which contained downloaded prompts and artifacts), as well as any generated `mdcp.v*.llms.txt` bootstrap files.
-3. **Handle Removed CLI Commands**: The `--fetch` and `--llms-index` CLI arguments are now deprecated and will throw an error indicating that Agent Skills should be used instead.
+3. **Handle Removed CLI Commands**: `mdcp export` (including `--llm`, `--llms-index`, and `--fetch`) is removed and exits with an error pointing at the Agent Skill and shard reads.
 4. **Install New Skills**: Run `npx skills add betsalel-williamson/mdcp --skill mdcp` to install the new parent skill directly into your repository.
 5. **Update Workflows**: Point your agents at `.agents/skills/mdcp/` (invoke `/mdcp`) rather than `.caches/mdcp/prompts/` or `mdcp.v*.llms.txt`.
 

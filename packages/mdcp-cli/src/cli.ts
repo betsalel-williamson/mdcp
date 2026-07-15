@@ -18,13 +18,9 @@ import {
   resolveRefsPath,
   readRefsRegistry,
   lintXrefs,
-  stripForLlm,
-  getLlmExportOptions,
   findPeerBinary,
   runPeer,
   shardFromMonolith,
-  writeOutputFile,
-  resolveBackupOptions,
   formatLinkIssue,
   type LinkIssue,
   type LinkSeverity,
@@ -89,10 +85,6 @@ function cliBackupFlags(opts: GlobalOpts) {
     backupDir: opts.backupDir,
     backupExt: opts.backupExt,
   };
-}
-
-function backupOptions(config: MdcpConfig, opts: GlobalOpts) {
-  return resolveBackupOptions(config, cliBackupFlags(opts));
 }
 
 /** Print link diagnostics; returns true when caller should fail (severity error + issues). */
@@ -216,45 +208,14 @@ refs
 
 program
   .command('export')
-  .description('Export compiled document')
-  .option('--llm', 'Token-optimized output for LLM context')
-  .option('--llms-index', 'Write mdcp.v*.llms.txt agent index for docs root')
-  .option('--fetch', 'Fetch mdcp.v*.llms.txt from upstream GitHub (see --fetch-repo, --fetch-ref)')
-  .option('--fetch-repo <repo>', 'Upstream owner/repo (default betsalel-williamson/mdcp)')
-  .option(
-    '--fetch-ref <ref>',
-    'Upstream git ref: main, latest (release tag), branch, or tag (e.g. v1.0.0)',
-  )
-  .option(
-    '--fetch-profile <profile>',
-    'Spec artifact profile: alpha (valpha) or dev (vdev); default dev',
-  )
-  .option('--fetch-path <path>', 'Path in upstream repo (default spec/llms-index/vdev or valpha)')
-  .option('--fetch-local', 'Read from local spec/llms-index/ in repo root instead of GitHub')
-  .option('--stdout', 'Write to stdout instead of file')
-  .action(async (exportOpts, cmd) => {
-    const opts = cmd.parent.opts() as GlobalOpts;
-    const docsRoot = getDocsRoot(opts);
-
-    const config = getConfig(opts);
-    let text = compileToString(config, docsRoot, opts);
-    if (exportOpts.llm) {
-      text = stripForLlm(text, getLlmExportOptions(config));
-    }
-    if (exportOpts.stdout) {
-      process.stdout.write(text);
-    } else {
-      const monolithPath = resolveOutputPath(config, docsRoot);
-      const base = monolithPath ?? resolve(docsRoot, config.outputDir, 'guide.md');
-      const outPath = base.replace(/\.md$/, '.llm.md');
-      const { backupPath } = writeOutputFile(outPath, text, {
-        docsRoot,
-        outputDir: config.outputDir,
-        backup: backupOptions(config, opts),
-      });
-      if (backupPath) console.log(`backed up → ${backupPath}`);
-      console.log(`→ ${outPath}`);
-    }
+  .description('Removed — use the Agent Skill and shard reads')
+  .allowUnknownOption()
+  .allowExcessArguments()
+  .action(() => {
+    console.error(
+      'mdcp export was removed. Install the Agent Skill (npx skills add betsalel-williamson/mdcp --skill mdcp), read one shard via host search, or use compiled output under outputDir. Legacy --llm / --llms-index / --fetch are no longer supported.',
+    );
+    process.exit(1);
   });
 
 program

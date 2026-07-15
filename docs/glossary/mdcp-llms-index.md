@@ -1,3 +1,3 @@
 # mdcp-llms-index
 
-**Legacy.** Deprecated CLI export profile (`export --llms-index` / `--fetch`) replaced by [Agent Skills](./agent-skills.md). Keep this glossary entry only so docs can name the deprecated flags; do not use it for new agent bootstrap.
+**Legacy.** Removed CLI export profile (`mdcp export`, including `--llms-index` / `--fetch` / `--llm`) replaced by [Agent Skills](./agent-skills.md). Keep this glossary entry only so docs can name the old flags; do not use it for new agent bootstrap.
