@@ -12,13 +12,13 @@ Skill `scripts/*.sh` are **thin entrypoints**. They call `@bwilliamson/mdcp-cli`
 
 ## Why wrappers instead of self-contained skill engines
 
-Compile, check, refs, and doc lint/prose are one **shared system** in `@bwilliamson/mdcp-core`, exposed by `@bwilliamson/mdcp-cli`. Putting that logic in skill bash would fork the pipeline and drift from CI and `pnpm docs:check`. The skill teaches **workflow**; the packages are the **engine**. Extra dependency complexity is the cost of one pipeline for agents, humans, and CI.
+Compile, check, refs, and doc lint/prose are one **shared system** in `@bwilliamson/mdcp-core`, exposed by `@bwilliamson/mdcp-cli`. Putting that logic in skill bash would fork the pipeline and drift from CI validation. The skill teaches **workflow**; the packages are the **engine**. Extra dependency complexity is the cost of one pipeline for agents, humans, and CI.
 
-Upstream implementation (this monorepo):
+The core packages are:
 
-- `packages/mdcp-cli` — CLI commands
-- `packages/mdcp-core` — compile / check / refs / lint / prose engine
-- `packages/mdcp-presets` — shared markdownlint / Prettier / Vale wiring
+- `@bwilliamson/mdcp-cli` — CLI commands
+- `@bwilliamson/mdcp-core` — compile / check / refs / lint / prose engine
+- `@bwilliamson/mdcp-presets` — shared markdownlint / Prettier / Vale wiring
 
 ## Dependencies
 

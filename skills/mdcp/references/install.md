@@ -7,10 +7,10 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
 That copies the skill into your repo under `.agents/skills/mdcp/` (the install
-target). Upstream source of truth in this repository is `skills/mdcp/`.
+target).
 
-Zero-install: copy `skills/mdcp/` from this repository into
-`.agents/skills/mdcp/` in the consumer repository.
+Zero-install: copy the `mdcp` skill folder into
+`.agents/skills/mdcp/` in your repository.
 
 Prefer `.agents/skills/` as the portable install path. Some hosts also discover
 `.github/skills/` or `.claude/skills/`.
