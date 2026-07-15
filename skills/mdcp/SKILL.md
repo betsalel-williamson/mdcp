@@ -149,16 +149,22 @@ Prefer this parent skill for day-to-day work. Optional archetype skills under
 treat them as supported entrypoints. For repo-specific packs, use
 `docs/extensions/` or complementary skills you maintain locally.
 
-### 6. Subagents (Task Prompts)
+### 6. Subagents
 
-The parent skill includes several specialized subagents located in `.agents/skills/mdcp/agents/`. Use the Task tool to spawn these subagents when performing specific types of work:
+Task-type instructions live under `agents/` as skill resources — not separate
+slash skills. After `/mdcp`, name a subagent id and read `agents/<id>.md`. Full
+invoke recipe and catalog: [references/agents.md](references/agents.md).
 
-- `design-architecture.md` — For high-level architectural design and planning.
-- `feature-level.md` — For implementing and documenting new features.
-- `doc-only.md` — For tasks that only involve writing or refactoring documentation.
-- `ux.md` — For user experience design and documentation.
-- `review.md` — For reviewing documentation and code against MDCP skill and shard conventions.
-- `getting-started.md` — For bootstrapping a new repo with MDCP.
+- `getting-started` — bootstrap a new repo with MDCP
+- `doc-only` — documentation-only work
+- `design-architecture` — high-level design and planning (RFCs, ADRs)
+- `feature-level` — implement and document features (docs-first, then TDD)
+- `ux` — user experience design and client-guide updates
+- `review` — review docs/code against MDCP conventions
+
+Hosts that can fork work (Task tool, `context: fork`, and similar) may run the
+chosen `agents/<id>.md` in an isolated agent; otherwise follow it in the main
+session.
 
 ### 7. Optional workspace scaffold
 

@@ -20,6 +20,10 @@ Prefer `.agents/skills/` as the portable install path. Some hosts also discover
 The `mdcp` parent skill includes core subagents under
 `.agents/skills/mdcp/agents/` after install.
 
+Activate the parent skill with `/mdcp` (hosts that support slash skills), then
+name a subagent id (for example `feature-level` or `getting-started`). See
+[agents.md](agents.md) for the invoke recipe and catalog.
+
 Optional archetype skills under `skills/mdcp-arch-*` are WIP and are not part of
 the consumer install path yet.
 
