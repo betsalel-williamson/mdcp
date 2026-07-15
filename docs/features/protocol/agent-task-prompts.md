@@ -1,4 +1,4 @@
-# Agent task subagents (MDCP 1.0)
+# Agent task subagents
 
 Normative profile for **task-type subagents** under the parent MDCP Agent Skill that drive shard authoring across the three-tier guide layout. Parent spec: [MDCP 1.0 (draft)](./mdcp-1.0-spec.md).
 
@@ -23,7 +23,7 @@ Bootstrap (`getting-started`) **MUST** ask for `FEATURE` and `PERSONA` instead o
 
 Agents **MUST** load the issue (or equivalent) before editing shards or code. One `WORK_ITEM` per branch.
 
-## Standard subagents (protocol 0.4.0.0)
+## Standard subagents
 
 | Subagent                                                                  | Role                | Primary guides                       |
 | ------------------------------------------------------------------------- | ------------------- | ------------------------------------ |
