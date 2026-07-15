@@ -16,7 +16,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 - [Agent Skills](#agent-skills)
 - [MDCP](#mdcp)
-- [protocol version](#protocol-version)
 
 ### Skill verification
 
@@ -658,14 +657,6 @@ Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:li
 MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
 
 The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements that shared context layer alongside the skill’s behavioral guardrails.
-
-## protocol version
-
-Optional four-part string for MDCP **artifact and config compatibility** (historically default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` when present.
-
-Prefer [Agent Skills](#agent-skills) for agent delivery. This config field is not an agent bootstrap path.
-
-Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli` remains pre-1.0 while tooling and agent delivery continue to evolve.
 
 ## skill content lint
 
