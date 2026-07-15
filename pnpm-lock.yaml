@@ -41,6 +41,9 @@ importers:
       prettier:
         specifier: ^3.5.3
         version: 3.9.4
+      skills-ref:
+        specifier: ^0.1.5
+        version: 0.1.5
       typescript-eslint:
         specifier: ^8.28.0
         version: 8.63.0(eslint@10.6.0(jiti@2.7.0))(typescript@6.0.3)
@@ -2236,6 +2239,10 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
+  commander@12.1.0:
+    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
+    engines: {node: '>=18'}
+
   commander@15.0.0:
     resolution: {integrity: sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==}
     engines: {node: '>=22.12.0'}
@@ -4028,6 +4035,11 @@ packages:
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+
+  skills-ref@0.1.5:
+    resolution: {integrity: sha512-C2vyZbUQqt3PXA9vcdUmJ0lwbH9jK19C9fwQjl/ICPy2e5bzV3CaropViakJCv+HLt/9zsgjZ/NLJ5xEri0jSA==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
 
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
@@ -7138,6 +7150,8 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
+  commander@12.1.0: {}
+
   commander@15.0.0: {}
 
   commander@4.1.1: {}
@@ -9223,6 +9237,11 @@ snapshots:
       totalist: 3.0.1
 
   sisteransi@1.0.5: {}
+
+  skills-ref@0.1.5:
+    dependencies:
+      commander: 12.1.0
+      js-yaml: 4.3.0
 
   slash@3.0.0: {}
 
