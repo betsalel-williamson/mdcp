@@ -1,10 +1,9 @@
 {
   "skillBodyMustInclude": [
-    "scripts/compile.sh",
-    "scripts/check.sh",
-    "scripts/setup-linters.sh",
-    "scripts/fix.sh",
-    "scripts/prose.sh",
+    "mdcp compile",
+    "mdcp check",
+    "mdcp fix",
+    "mdcp prose",
     "one shard",
     "complementary",
     "npx skills add",
@@ -59,7 +58,7 @@
     {
       "id": "compile-check",
       "prompt": "Compile and validate docs after editing shards",
-      "mustMention": ["scripts/compile.sh", "scripts/check.sh"]
+      "mustMention": ["mdcp compile", "mdcp check"]
     },
     {
       "id": "refs",

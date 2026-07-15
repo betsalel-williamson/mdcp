@@ -30,7 +30,7 @@ This **parent skill** is the intended agent entrypoint. Complementary archetype
 skills extend it for specific documentation architectures.
 
 Install help: [references/install.md](references/install.md).
-What compile / check / refs mean and why scripts wrap the CLI:
+What compile / check / refs mean and CLI commands:
 [references/cli-and-scripts.md](references/cli-and-scripts.md).
 
 ## Hard rules
@@ -114,62 +114,45 @@ resort.
    these mean):
 
 ```bash
-./.agents/skills/mdcp/scripts/compile.sh
-./.agents/skills/mdcp/scripts/check.sh
+mdcp compile
+mdcp check
 ```
 
 ### 4. Code Formatting and Linting
 
-If the user asks to set up formatting or linting, run:
-
-```bash
-./.agents/skills/mdcp/scripts/setup-linters.sh
-```
-
-This installs `prettier`, `markdownlint-cli2`, and `@bwilliamson/mdcp-presets`. It will also remind you to install `vale` separately. (Note: MDCP is flexible; if the user prefers other formatting or linting tools, you can integrate those instead.)
+If the user asks to set up formatting or linting, they should install `prettier`, `markdownlint-cli2`, and `@bwilliamson/mdcp-presets` via their package manager. (Note: MDCP is flexible; if the user prefers other formatting or linting tools, you can integrate those instead.)
 
 To automatically format documents using the default tools:
 
 ```bash
-./.agents/skills/mdcp/scripts/fix.sh
+mdcp fix
 ```
 
 To run prose linting (requires Vale):
 
 ```bash
-./.agents/skills/mdcp/scripts/prose.sh
+mdcp prose
 ```
 
-### 5. Complementary skills
+### 5. Helper Commands
 
-Prefer this parent skill for day-to-day work. Optional archetype skills under
-`skills/mdcp-arch-*` are **WIP** and not ready for consumer install yet — do not
-treat them as supported entrypoints. For repo-specific packs, use
-`docs/extensions/` or complementary skills you maintain locally.
+Task-type instructions live in independent helper skills. Once the MDCP CLI is installed, you can invoke these helpers directly.
 
-### 6. Subagents
+| Helper Skill               | Description                                            |
+| -------------------------- | ------------------------------------------------------ |
+| `mdcp-getting-started`     | Bootstrap MDCP in a new repository                     |
+| `mdcp-doc-only`            | Documentation-only work                                |
+| `mdcp-design-architecture` | High-level design and planning (RFCs, ADRs)            |
+| `mdcp-feature-level`       | Implement and document features (docs-first, then TDD) |
+| `mdcp-ux`                  | User experience design and client-guide updates        |
 
-Task-type instructions live under `agents/` as skill resources — not separate
-slash skills. After `/mdcp`, state the task in plain language (or name a
-subagent id) and read `agents/<id>.md`. Bootstrap example:
+Bootstrap example:
 
 ```text
-/mdcp help me get started
+/mdcp-getting-started
 ```
 
-Full invoke recipe and catalog: [references/agents.md](references/agents.md).
-
-- `getting-started` — bootstrap a new repo with MDCP
-- `doc-only` — documentation-only work
-- `design-architecture` — high-level design and planning (RFCs, ADRs)
-- `feature-level` — implement and document features (docs-first, then TDD)
-- `ux` — user experience design and client-guide updates
-
-Hosts that can fork work (Task tool, `context: fork`, and similar) may run the
-chosen `agents/<id>.md` in an isolated agent; otherwise follow it in the main
-session.
-
-### 7. Optional workspace scaffold
+Hosts that can fork work (Task tool, `context: fork`, and similar) may run the chosen helper in an isolated agent; otherwise follow it in the main session.
 
 When no `mdcp.config.json` yet: create docs root + config + guide dirs, install
 the parent skill under `.agents/skills/mdcp/`, optionally add
