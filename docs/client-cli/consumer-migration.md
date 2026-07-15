@@ -48,7 +48,7 @@ CLI config path rules remain in [Config essentials](./config-essentials.md).
 4. Discover shards with host search; validate cross-link slugs with `mdcp check` (optional `mdcp refs list`; prefer GitHub auto-slugs over `{#heading-ids}`)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
-Upgrade notes from earlier MDCP releases are in the package **changeset** files at release time, not in the feature catalog.
+Upgrade notes from earlier MDCP releases are in package **CHANGELOGs** (and GitHub Releases), not in the feature catalog.
 
 ## Verification checklist
 

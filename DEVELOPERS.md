@@ -129,9 +129,9 @@ Feature branches=descriptive (e.g. feature/issue-29-default-compile-hooks)
 One branch per WORK_ITEM=do not mix unrelated features, designs, or doc scopes in one PR
 Branch before work=create the feature branch before shards, tests, or code
 Commits=conventional; atomic and logically grouped
-Release notes=changeset in .changeset/ for user-facing doc changes
-Docs=describe current behavior only; removed or breaking behavior belongs in changeset release notes, not feature/client shards
-ADRs=docs/features/adr/ (scope/removal decisions; not the feature catalog)
+Release notes=changeset in .changeset/ for published package changes (temporary until versioned into CHANGELOGs)
+Docs=describe current behavior only; removed or breaking behavior belongs in changeset → package CHANGELOG, not feature/client shards
+ADRs=docs/features/adr/ (scope/removal decisions; link CHANGELOGs, never pending .changeset/*.md)
 Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 ```
 
@@ -140,7 +140,7 @@ Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 1. **Load scope** — fetch WORK_ITEM (title, body, acceptance criteria) before planning or editing.
 2. **Branch first** — `git checkout main`, pull, then `git checkout -b feature/...` tied to the issue. Never start on `main`.
 3. **Stay focused** — one feature or design at a time. Treat acceptance criteria as the boundary unless WORK_ITEM explicitly expands scope.
-4. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record that in the changeset instead.
+4. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record consumer notice in the changeset (lands in package CHANGELOGs). Never link durable shards or ADRs to pending `.changeset/*.md` files.
 
 ### Example intake answers
 
@@ -332,11 +332,11 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 - **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
 - **Update as you go:** Continuously update documentation as work progresses.
-- **Current docs only:** Shards must describe the product **as it works now**. When behavior or guidance changes, remove superseded or stale text from durable docs — do not leave “old way” sections for archaeology. Git history preserves prior wording; consumer notice of breaking or removed behavior belongs in the **changeset**, not in feature/client/developer shards.
+- **Current docs only:** Shards must describe the product **as it works now**. When behavior or guidance changes, remove superseded or stale text from durable docs — do not leave “old way” sections for archaeology. Git history preserves prior wording; consumer notice of breaking or removed behavior belongs in the **changeset** (folded into package CHANGELOGs at release), not in feature/client/developer shards. Never link durable shards or ADRs to pending `.changeset/*.md` files — those notes are temporary.
 - **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
 - **Break it down:** Organize information into the smallest possible pieces (shards).
 - **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
-- **No temp info:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools.
+- **No temp info:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools. Pending `.changeset/*.md` files are temporary release notes — write them for the release pipeline; do not link them from ADRs or other durable docs.
 - **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
 
 ### Verification
@@ -423,6 +423,10 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 7. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
 
 Preview without writes: `pnpm release:tag --dry-run`.
+
+### Durable docs vs pending changesets
+
+Pending files under `.changeset/*.md` (other than `README.md`) are **temporary**: `pnpm release:tag` consumes them into package `CHANGELOG.md` files and deletes them. Do **not** link ADRs, feature, client, or developer narrative shards to those pending files. Point consumers at package CHANGELOGs or GitHub Releases instead. Linking `.changeset/config.json` or `.changeset/README.md` from developer release docs is fine — those are stable tooling references. `pnpm docs:check` runs `docs:lint:changeset-links` to enforce this.
 
 ### When to add a changeset
 

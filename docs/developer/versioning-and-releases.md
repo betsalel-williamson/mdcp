@@ -57,6 +57,10 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 
 Preview without writes: `pnpm release:tag --dry-run`.
 
+## Durable docs vs pending changesets
+
+Pending files under `.changeset/*.md` (other than `README.md`) are **temporary**: `pnpm release:tag` consumes them into package `CHANGELOG.md` files and deletes them. Do **not** link ADRs, feature, client, or developer narrative shards to those pending files. Point consumers at package CHANGELOGs or GitHub Releases instead. Linking `.changeset/config.json` or `.changeset/README.md` from developer release docs is fine — those are stable tooling references. `pnpm docs:check` runs `docs:lint:changeset-links` to enforce this.
+
 ## When to add a changeset
 
 Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR changes:

@@ -55,7 +55,7 @@ When using [feature-level.md](../../skills/mdcp/agents/feature-level.md):
 4. **Docs first** — update `features/` and `client/` shards; update each guide `index.md`
 5. **TDD** — implement against documented acceptance criteria
 6. **Validate** — `mdcp check` (and repo test commands)
-7. **Wrap-up** — changeset for breaking/removed behavior; docs describe current behavior only
+7. **Wrap-up** — changeset for breaking/removed behavior (do not link durable shards/ADRs to `.changeset/*.md`); docs describe current behavior only
 
 ## Entrypoint chain
 
