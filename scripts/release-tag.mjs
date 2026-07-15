@@ -149,6 +149,41 @@ function setVersionAllPackages(version) {
   }
 }
 
+/**
+ * Keep each skills/<name>/SKILL.md metadata.version in lockstep with the npm/git tag.
+ * Preserves other frontmatter keys (e.g. metadata.internal).
+ */
+function setSkillMetadataVersions(version) {
+  const skillsDir = join(root, 'skills');
+  let entries;
+  try {
+    entries = readdirSync(skillsDir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    const skillPath = join(skillsDir, entry.name, 'SKILL.md');
+    let content;
+    try {
+      content = readFileSync(skillPath, 'utf-8');
+    } catch {
+      continue;
+    }
+    if (!content.startsWith('---')) continue;
+    const end = content.indexOf('\n---', 3);
+    if (end === -1) continue;
+    const frontmatter = content.slice(4, end);
+    if (!/^\s*version:\s*/m.test(frontmatter)) continue;
+    const nextFrontmatter = frontmatter.replace(
+      /^(\s*version:\s*)(['"]?)[^'"\n]+\2\s*$/m,
+      `$1'${version}'`,
+    );
+    if (nextFrontmatter === frontmatter) continue;
+    writeFileSync(skillPath, `---${nextFrontmatter}${content.slice(end)}`);
+  }
+}
+
 function prependChangelog(version, summaries) {
   const body = summaries.join('\n\n');
   const block = `## ${version}\n\n${body}\n\n`;
@@ -198,6 +233,7 @@ function applyVersionBump(bumpType, pending, summaries) {
     if (!dryRun) {
       setVersionAllPackages(next);
       prependChangelog(next, summaries.length > 0 ? summaries : ['Build release.']);
+      setSkillMetadataVersions(next);
       removePendingChangesets(pending);
     }
     return next;
@@ -212,6 +248,7 @@ function applyVersionBump(bumpType, pending, summaries) {
     } catch {
       // consumed by changeset version
     }
+    setSkillMetadataVersions(readVersion());
   }
 
   return dryRun ? bumpVersion(readVersion(), bumpType) : readVersion();
