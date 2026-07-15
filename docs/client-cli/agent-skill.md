@@ -1,6 +1,6 @@
 # Agent Skill (consumer)
 
-Install the MDCP **parent Agent Skill** so coding agents follow sharded-docs workflows without a host-specific IDE extension. Complementary skills (prompts, archetypes, format packs) install beside the parent.
+Install the MDCP **parent Agent Skill** when you want a documentation system coding agents will follow — sharded docs, compile/check discipline — without a host-specific IDE extension. Complementary archetype skills install beside the parent for OSS libraries or product docs sites.
 
 This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplace, or any single product.
 

@@ -1,6 +1,6 @@
 # Agent Skill delivery
 
-MDCP ships as a portable **Agent Skills** pack so projects inherit documentation guardrails without installing a host-specific IDE extension. The **parent skill** is the intended agent entrypoint.
+MDCP ships as a portable **documentation system** Agent Skills pack so projects inherit docs-as-code guardrails without a host-specific IDE extension. The **parent skill** is the intended agent entrypoint for people who want maintainable sharded docs as ideas keep coming.
 
 ## Why skills instead of IDE extensions or llms-index alone
 
@@ -13,9 +13,9 @@ Compared with a custom IDE extension or a fetched llms-index plus extension pack
 
 ## Parent skill and complementary skills
 
-- `.agents/skills/mdcp/` — parent (bootstrap, hard rules, CLI, smallest-context)
-- `.agents/skills/mdcp-arch-oss-library/` — OSS library archetype
-- `.agents/skills/mdcp-arch-product-docs-site/` — product docs site archetype
+- `.agents/skills/mdcp/` — parent documentation system (bootstrap, hard rules, CLI, smallest-context)
+- `.agents/skills/mdcp-arch-oss-library/` — OSS library documentation architecture
+- `.agents/skills/mdcp-arch-product-docs-site/` — product docs site architecture
 
 ## Format and location
 
@@ -80,4 +80,4 @@ Primary discovery: [skills.sh](https://skills.sh) via `npx skills`. Secondary re
 Landing identity for skills.sh:
 
 - Root [README](../../README.md) includes the [install-count badge](https://www.skills.sh/docs#badge) (`https://skills.sh/b/betsalel-williamson/mdcp`) and `npx skills add` install commands.
-- Repo-root [`skills.sh.json`](../../skills.sh.json) groups Core / Archetypes on the [skills.sh repo page](https://www.skills.sh/docs/customize).
+- Repo-root [`skills.sh.json`](../../skills.sh.json) groups Documentation system / Documentation architectures on the [skills.sh repo page](https://www.skills.sh/docs/customize).

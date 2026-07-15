@@ -1,6 +1,6 @@
-# MDCP — MarkDown Context Protocol (Agent Skill)
+# MDCP — documentation system Agent Skill
 
-- [MDCP — MarkDown Context Protocol (Agent Skill)](#table-of-contents)
+- [MDCP — documentation system Agent Skill](#table-of-contents)
   - [What this tool is](./what-this-tool-is.md)
   - [Get started](./get-started.md)
   - [Why use MDCP?](./about.md)
