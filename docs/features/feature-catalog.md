@@ -14,7 +14,7 @@ Guides compile to per-guide files under `outputDir` by default (`{name}.md`, or 
 
 ## Refs registry (P0.2)
 
-Heading-slug **registry** for validation after compile — see [Refs registry path](./refs-registry-path.md). Discover shards with host search (`rg`); confirm `#` cross-links with `mdcp check`. There is no lookup CLI verb.
+Heading-slug **registry** for validation after compile — see [Refs registry path](./refs-registry-path.md). Discover shards with host search (`rg`); confirm `#` cross-links with `mdcp check`.
 
 ## Agent Skill delivery
 

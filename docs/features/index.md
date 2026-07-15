@@ -18,6 +18,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
 - [Agent Skill delivery](./agent-skill.md)
 - [Architecture decision records](./adr/index.md)
   - [ADR 0001 — Remove `mdcp export` profiles](./adr/0001-remove-export-profiles.md)
+  - [ADR 0002 — Remove `mdcp refs lookup`](./adr/0002-remove-refs-lookup.md)
 - [Design constraints](./design-constraints/index.md)
   - [Protocol](./protocol/00-vision-and-roadmap.md)
 

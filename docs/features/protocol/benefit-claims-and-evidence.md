@@ -13,7 +13,7 @@ Policy for public copy — README, npm package openings, and adoption material. 
 ## Common corrections
 
 - **Scoped context** — Comes from **workflow** ([usage model](./usage-model.md): read one shard), not from a token-strip export profile.
-- **`refs lookup` / retrieval as WIIFM** — Forbidden. Doc discovery is host search; do not claim a MDCP lookup verb for context size or accuracy.
+- **Retrieval / lookup verb as WIIFM** — Forbidden. Doc discovery is host search; do not claim MDCP retrieves context by slug — see [ADR 0002](../adr/0002-remove-refs-lookup.md).
 - **Ship faster with agents** — Tier C; use adoption stories or measured outcomes.
 
 ## Context-size measurement (dogfood repo)

@@ -7,3 +7,4 @@ Delivery backlog and roadmap tracks stay in GitHub issues / the project board �
 ## Records
 
 - [ADR 0001 — Remove `mdcp export` profiles](./0001-remove-export-profiles.md)
+- [ADR 0002 — Remove `mdcp refs lookup`](./0002-remove-refs-lookup.md)

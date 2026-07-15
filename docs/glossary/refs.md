@@ -15,6 +15,6 @@ The problem refs solve is structural, not retrieval: shards merge, heading level
 | **list refs**      | Print registry headings (`mdcp refs list`)                                        |
 | **check refs**     | Confirm registry matches compiled headings (`mdcp refs check` / via `mdcp check`) |
 
-There is no `refs lookup` verb. Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs list`**.
+Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs list`**. Refs are not a retrieval API — see [ADR 0002](../features/adr/0002-remove-refs-lookup.md).
 
 Not the same as ordinary “search the docs.” Refs are about **correct anchors and paths after compile**.
