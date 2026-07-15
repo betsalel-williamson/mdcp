@@ -10,6 +10,14 @@ description: >-
   for documentation systems, docs-as-code, feature docs, mdcp.config.json,
   glossary shards, refs, or when the user mentions MDCP, sharded docs, or
   agent documentation workflows.
+license: MIT
+compatibility: >-
+  Requires Node.js 24+ and npx for @bwilliamson/mdcp-cli (docs compile,
+  validate, and cross-link registry commands). Skill scripts are thin
+  wrappers; they do not replace the CLI.
+metadata:
+  author: betsalel-williamson
+  version: '0.4.1'
 ---
 
 # MDCP (parent skill)

@@ -6,6 +6,14 @@ description: >-
   Markdown shards hold intent, stability promises, and migration notes. Use when
   building a docs-as-code system for libraries, packages, API references, or
   when users mention OSS, publishable packages, or Javadoc-style documentation.
+license: MIT
+compatibility: >-
+  Requires Node.js 24+ and npx for @bwilliamson/mdcp-cli (docs compile,
+  validate, and cross-link registry commands). Skill scripts are thin
+  wrappers; they do not replace the CLI. Install the mdcp parent skill first.
+metadata:
+  author: betsalel-williamson
+  version: '0.4.1'
 ---
 
 # MDCP Archetype: OSS Library

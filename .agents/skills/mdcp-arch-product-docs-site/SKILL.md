@@ -7,6 +7,14 @@ description: >-
   downstream. Use when building docs-as-code pipelines, documentation systems
   for product sites, or when users mention MkDocs, Docusaurus, VitePress, or
   publishing documentation to the web.
+license: MIT
+compatibility: >-
+  Requires Node.js 24+ and npx for @bwilliamson/mdcp-cli (docs compile,
+  validate, and cross-link registry commands). Skill scripts are thin
+  wrappers; they do not replace the CLI. Install the mdcp parent skill first.
+metadata:
+  author: betsalel-williamson
+  version: '0.4.1'
 ---
 
 # MDCP Archetype: Product Docs Site
