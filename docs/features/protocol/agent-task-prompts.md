@@ -1,16 +1,16 @@
-# Agent task prompts (MDCP 1.0)
+# Agent task subagents (MDCP 1.0)
 
-Normative profile for **copy-paste agent prompts** that drive shard authoring across the three-tier guide layout. Parent spec: [MDCP 1.0 (draft)](./mdcp-1.0-spec.md).
+Normative profile for **task-type subagents** under the parent MDCP Agent Skill that drive shard authoring across the three-tier guide layout. Parent spec: [MDCP 1.0 (draft)](./mdcp-1.0-spec.md).
 
 ## Purpose
 
-Prompts are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge.
+Subagent files are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge. Activate the parent skill (`/mdcp`), then name a subagent id and read `agents/<id>.md`. Invoke recipe: [skills/mdcp/references/agents.md](../../skills/mdcp/references/agents.md). Consumer index: [LLM collaboration](../../client-cli/llm-collaboration.md).
 
-Reference copies live in [skills/mdcp/agents/](../../skills/mdcp/agents/). The canonical prompt list is summarized below. **Do not edit** the `skills/mdcp/agents/` copies directly if you want changes to persist — propose upstream or add extensions.
+Reference copies live in [skills/mdcp/agents/](../../skills/mdcp/agents/). The canonical catalog is summarized below. **Do not edit** the `skills/mdcp/agents/` copies directly if you want changes to persist — propose upstream or add extensions.
 
-## Required prompt shape
+## Required replace block
 
-Every task-type prompt **MUST** include a **Replace before sending** block:
+Every task-type subagent **MUST** include a **Replace before sending** block:
 
 ```text
 WORK_ITEM=
@@ -24,9 +24,9 @@ WORK_ITEM_LOOKUP=
 
 Agents **MUST** load the issue (or equivalent) before editing shards or code. One `WORK_ITEM` per branch.
 
-## Standard prompts (protocol 0.4.0.0)
+## Standard subagents (protocol 0.4.0.0)
 
-| Prompt                                                                    | Role                             | Primary guides                       |
+| Subagent                                                                  | Role                             | Primary guides                       |
 | ------------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
 | [getting-started.md](../../skills/mdcp/agents/getting-started.md)         | Bootstrap pipeline               | all tiers                            |
 | [feature-level.md](../../skills/mdcp/agents/feature-level.md)             | Feature engineering              | `features/`, `client/`, code + tests |
@@ -39,13 +39,13 @@ Index: [skills/mdcp/agents/](../../skills/mdcp/agents/).
 
 ## Three-tier authoring obligations
 
-| Guide             | Holds                                                  | Prompts that write here                      |
+| Guide             | Holds                                                  | Subagents that write here                    |
 | ----------------- | ------------------------------------------------------ | -------------------------------------------- |
 | `docs/features/`  | Capabilities, design, API surface, acceptance criteria | feature-level, doc-only, design-architecture |
 | `docs/client/`    | End-user value, how to use the feature                 | feature-level, doc-only, ux                  |
 | `docs/developer/` | Repo workflow, tracker integration, releases           | doc-only, getting-started                    |
 
-Shared terms: `docs/glossary/` — all prompts that introduce vocabulary.
+Shared terms: `docs/glossary/` — all subagents that introduce vocabulary.
 
 ## Feature-level workflow (normative summary)
 
@@ -61,10 +61,10 @@ When using [feature-level.md](../../skills/mdcp/agents/feature-level.md):
 ## Entrypoint chain
 
 ```text
-skills/mdcp/agents/getting-started.md  →  skills/mdcp/agents/*.prompt.md (WORK_ITEM set)  →  shards  →  mdcp check
+/mdcp → agents/getting-started.md  →  agents/<id>.md (WORK_ITEM set)  →  shards  →  mdcp check
 ```
 
-The Agent Skill points agents at subagents and query commands; task prompts point at `WORK_ITEM_LOOKUP` for scope.
+The parent Agent Skill points agents at subagents; subagents point at `WORK_ITEM_LOOKUP` for scope.
 
 ## Review workflow (normative summary)
 
@@ -76,4 +76,4 @@ When using [review.md](../../skills/mdcp/agents/review.md):
 4. Log **atomic findings** — one implementable unit per finding shard
 5. Validate with review + `mdcp check`
 
-Review prompts **MAY** add `REVIEW_NODE=` to the Replace block alongside `WORK_ITEM`.
+Review subagents **MAY** add `REVIEW_NODE=` to the Replace block alongside `WORK_ITEM`.

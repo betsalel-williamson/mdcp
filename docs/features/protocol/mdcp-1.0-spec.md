@@ -31,11 +31,11 @@ Each guide **MUST** have a manifest (`index.md` or `shards.md`) defining compile
 
 Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split manifests across `index.md` and sub-index files (for example `index-protocol.md`) that link term shards; transitive manifest links include terms in compile output.
 
-## 4. Agent task prompts
+## 4. Agent task subagents
 
-Copy-paste prompts in `skills/mdcp/agents/` are part of the MDCP 1.0 authoring profile (vendored under `.agents/skills/mdcp/agents/` after skill install). See [Agent task prompts](./agent-task-prompts.md).
+Task subagents in `skills/mdcp/agents/` are part of the MDCP 1.0 authoring profile (vendored under `.agents/skills/mdcp/agents/` after skill install). Activate via the parent skill (`/mdcp`), then name a subagent id. See [Agent task subagents](./agent-task-prompts.md).
 
-Task-type prompts **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level.md](../../skills/mdcp/agents/feature-level.md). Review work **SHOULD** use [review.md](../../skills/mdcp/agents/review.md) with `REVIEW_NODE` set.
+Task-type subagents **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level.md](../../skills/mdcp/agents/feature-level.md). Review work **SHOULD** use [review.md](../../skills/mdcp/agents/review.md) with `REVIEW_NODE` set.
 
 ## 5. Skills and immutability
 

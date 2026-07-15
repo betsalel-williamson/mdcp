@@ -1,6 +1,6 @@
 # Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [skills/mdcp/agents/](../../skills/mdcp/agents/) (also present under `.agents/skills/mdcp/agents/` after a local dogfood install) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type subagents in [skills/mdcp/agents/](../../skills/mdcp/agents/) (also present under `.agents/skills/mdcp/agents/` after a local dogfood install) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](./local-setup.md).
 
@@ -47,11 +47,11 @@ Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 3. **Stay focused** — one feature or design at a time. Treat acceptance criteria as the boundary unless WORK_ITEM explicitly expands scope.
 4. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record that in the changeset instead.
 
-## Example prompt header
+## Example replace block
 
 ```text
 WORK_ITEM=39
 WORK_ITEM_LOOKUP=Branch from main (pull first). One issue per branch. Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
 ```
 
-For task-type prompt templates, read [LLM collaboration](../client-cli/llm-collaboration.md).
+For subagent catalog and invoke recipe, read [LLM collaboration](../client-cli/llm-collaboration.md).

@@ -2,7 +2,7 @@
 
 This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
-**Fastest path:** copy [getting-started.md](../../skills/mdcp/agents/getting-started.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent for first-time setup.
+**Fastest path:** install the Agent Skill, activate `/mdcp`, name the `getting-started` subagent ([getting-started.md](../../skills/mdcp/agents/getting-started.md)), fill in `FEATURE=` and `PERSONA=`.
 
 ## Requirements
 
@@ -46,7 +46,7 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ## Quick start
 
-**Agent index (optional day zero)** — prefer installing the Agent Skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`). Task prompts then live under `.agents/skills/mdcp/agents/` — upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents/).
+**Agent Skill (optional day zero)** — prefer installing the Agent Skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`). Subagents then live under `.agents/skills/mdcp/agents/` — upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents/). Invoke with `/mdcp` then a subagent id — see [LLM collaboration](./llm-collaboration.md).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 

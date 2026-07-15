@@ -24,11 +24,11 @@ Filter for new capabilities: [Direct value bar](../design-constraints/direct-val
 
 ## Phased delivery
 
-| Phase  | Surface                                                                                                         | Access model                  |
-| ------ | --------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| **V1** | **Agent Skills** pack (`skills/mdcp`, install to `.agents/skills/mdcp`) + `mdcp compile`/`check` + task prompts | Repo access (SSH, clone, IDE) |
-| **V2** | MDCP MCP server (shard read, glossary search)                                                                   | Repo access                   |
-| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                                   | Opt-in publish                |
+| Phase  | Surface                                                                                                           | Access model                  |
+| ------ | ----------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| **V1** | **Agent Skills** pack (`skills/mdcp`, install to `.agents/skills/mdcp`) + `mdcp compile`/`check` + task subagents | Repo access (SSH, clone, IDE) |
+| **V2** | MDCP MCP server (shard read, glossary search)                                                                     | Repo access                   |
+| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                                     | Opt-in publish                |
 
 ```text
   V1 authoring     shards → compile → check → mdcp.v*.llms.txt
@@ -56,7 +56,7 @@ MDCP is **not** an MCP server. MCP delivers runtime access; MDCP enforces shard 
 
 MDCP authoring is [GFM-only](../design-constraints/gfm-scope.md). Compiled GFM output can feed Pandoc, MkDocs, Docusaurus, or other publish pipelines. Agent-only guides and publish-only guides may differ in scope.
 
-Task-type prompts in `skills/mdcp/agents/` are part of the V1 authoring profile — [Agent task prompts](./agent-task-prompts.md).
+Task-type subagents in `skills/mdcp/agents/` are part of the V1 authoring profile — [Agent task subagents](./agent-task-prompts.md).
 
 ## Related issues
 

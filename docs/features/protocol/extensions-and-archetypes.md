@@ -107,5 +107,5 @@ MDCP is designed to outgrow a single vendor implementation. The long-term goal i
 ## Related
 
 - [Vision and roadmap](./00-vision-and-roadmap.md)
-- [Agent task prompts](./agent-task-prompts.md)
+- [Agent task subagents](./agent-task-prompts.md)
 - [spec/extensions/README.md](../../../spec/extensions/README.md)
