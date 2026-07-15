@@ -19,15 +19,13 @@ Publish landing style for root README: [Personas and priority tiers](../features
 
 ### Agent Skill dogfood
 
-Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`](../../skills/mdcp/), not a fetched `mdcp.v*.llms.txt` bootstrap. After editing skill files, refresh the local install:
+Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`](../../skills/mdcp/). After editing skill files, refresh the local install:
 
 ```bash
 pnpm skill:install
 ```
 
 That copies `skills/mdcp/` into `.agents/skills/mdcp/` (gitignored). Manual invoke: `/mdcp`. See [Agent Skill](./agent-skill.md).
-
-Do not use `mdcp export --llms-index` / `--fetch` for dogfood — those flags are deprecated in favor of Agent Skills (see [mdcp-llms-index](../glossary/mdcp-llms-index.md)).
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).
 

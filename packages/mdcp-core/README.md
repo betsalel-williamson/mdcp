@@ -1002,13 +1002,13 @@ The CLI (`compile`, `check`, [refs](#refs) registry maintenance, and `export --l
 
 Optional four-part string for MDCP **artifact and config compatibility** (historically default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` when present.
 
-Legacy `mdcp.v*.llms.txt` files used the same string in a first-line header (`mdcp-llms-index: 0.4.0.0`). That bootstrap path is deprecated — prefer [Agent Skills](#agent-skills). See [mdcp-llms-index](#mdcp-llms-index).
+Prefer [Agent Skills](#agent-skills) for agent delivery. The deprecated [mdcp-llms-index](#mdcp-llms-index) export profile is separate from this config field.
 
 Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli` remains pre-1.0 while tooling and agent delivery continue to evolve.
 
 ## mdcp-llms-index
 
-**Legacy.** The legacy export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root, which was replaced by [Agent Skills](#agent-skills).
+**Legacy.** Deprecated CLI export profile (`export --llms-index` / `--fetch`) replaced by [Agent Skills](#agent-skills). Keep this glossary entry only so docs can name the deprecated flags; do not use it for new agent bootstrap.
 
 ## skill content lint
 

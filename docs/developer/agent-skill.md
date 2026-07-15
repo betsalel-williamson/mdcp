@@ -2,8 +2,6 @@
 
 Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](../../skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary archetype skills under `skills/mdcp-arch-*` are **WIP** — keep them out of consumer get-started docs until ready.
 
-The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`.
-
 ## Local dogfood
 
 Author under `skills/`. Then install into this repo for agents:

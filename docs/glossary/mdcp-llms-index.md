@@ -1,3 +1,3 @@
 # mdcp-llms-index
 
-**Legacy.** The legacy export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root, which was replaced by [Agent Skills](./agent-skills.md).
+**Legacy.** Deprecated CLI export profile (`export --llms-index` / `--fetch`) replaced by [Agent Skills](./agent-skills.md). Keep this glossary entry only so docs can name the deprecated flags; do not use it for new agent bootstrap.

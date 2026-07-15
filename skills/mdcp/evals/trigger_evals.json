@@ -12,7 +12,7 @@
     "should_trigger": true
   },
   {
-    "query": "How does mdcp relate to the deprecated mdcp.v0.4.llms.txt format?",
+    "query": "Looking for a documentation system Agent Skill for sharded Markdown docs",
     "should_trigger": true
   },
   {

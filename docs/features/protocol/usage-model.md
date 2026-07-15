@@ -6,8 +6,6 @@ Operational roles for Markdown as Context. Parent: [GitHub #45](https://github.c
 
 Agents should load the parent **Agent Skill** (`/mdcp`, install target `.agents/skills/mdcp/`) first. That skill teaches how to query with smallest context — discover one shard at a time — without loading entire guides. See [Agent Skill delivery](../agent-skill.md).
 
-Legacy `mdcp.v*.llms.txt` bootstraps are deprecated; do not regenerate them with `export --llms-index` / `--fetch`.
-
 ## Actors and obligations
 
 | Actor                    | Reads                                                 | Writes           | Must run                                     |

@@ -26,9 +26,8 @@ Host-agnostic **documentation system** Agent Skill for MDCP. Prefer this over
 IDE extensions when you want durable, sharded docs that agents and humans can
 maintain as ideas keep coming.
 
-This **parent skill** is the intended agent entrypoint (successor to the
-agent-facing role of `mdcp.v*.llms.txt`). Complementary archetype skills extend
-it for specific documentation architectures.
+This **parent skill** is the intended agent entrypoint. Complementary archetype
+skills extend it for specific documentation architectures.
 
 Install help: [references/install.md](references/install.md).
 What compile / check / refs mean and why scripts wrap the CLI:
@@ -37,8 +36,9 @@ What compile / check / refs mean and why scripts wrap the CLI:
 ## Hard rules
 
 - **NEVER** invent MDCP workflow when this skill already defines it — follow the skill first.
-- **NEVER** hand-edit fetched `mdcp.v*.llms.txt` for repo-specific guidance —
-  use complementary skills, `docs/extensions/`, or normative shards.
+- **NEVER** hand-edit vendored skill files under `.agents/skills/` for
+  repo-specific guidance — use complementary skills, `docs/extensions/`, or
+  normative shards.
 - **NEVER** edit generated compile output (`docs/_build/`, compiled publish
   targets) — fix shards and recompile.
 - **NEVER** dump whole monoliths into context — discover with host search (`rg`,
@@ -92,8 +92,7 @@ Spell out domain terms on first use; link shared vocabulary from `docs/glossary/
 ### 1. Prefer the parent skill
 
 1. Follow this skill’s workflow.
-2. If a local `mdcp.v*.llms.txt` still exists, it is considered deprecated legacy — do not expand it; do not hand-edit it.
-3. Install / rediscover via:
+2. Install / rediscover via:
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp

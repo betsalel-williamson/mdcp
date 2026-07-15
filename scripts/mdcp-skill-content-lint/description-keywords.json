@@ -9,7 +9,7 @@
     {
       "id": "bootstrap-mdcp",
       "query": "Bootstrap MDCP in a new repository for agent documentation",
-      "mustMatchAny": ["MDCP", "bootstrap", "llms-index", "skill", "docs"]
+      "mustMatchAny": ["MDCP", "bootstrap", "skill", "docs"]
     },
     {
       "id": "cross-links-check",
@@ -17,9 +17,9 @@
       "mustMatchAny": ["refs", "check", "MDCP", "shard"]
     },
     {
-      "id": "llms-index-mention",
-      "query": "How does mdcp relate to the deprecated mdcp.v0.4.llms.txt format?",
-      "mustMatchAny": ["llms", "MDCP", "skill", "legacy", "index"]
+      "id": "documentation-system-skill",
+      "query": "Looking for a documentation system Agent Skill for sharded Markdown docs",
+      "mustMatchAny": ["MDCP", "skill", "documentation", "shard"]
     },
     {
       "id": "documentation-system-search",
@@ -36,7 +36,7 @@
     {
       "id": "unrelated-css",
       "query": "Change the button hover color in the marketing landing page CSS",
-      "mustNotRequireAll": ["MDCP", "shard", "llms-index", "compile"]
+      "mustNotRequireAll": ["MDCP", "shard", "compile"]
     },
     {
       "id": "unrelated-deps",

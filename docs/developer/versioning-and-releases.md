@@ -39,12 +39,12 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 
 ## 0.4.0 open alpha milestone
 
-**0.4.0** is the first public alpha for external testers. It shipped compile/check, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy. Agent Skills now supersede the temporary `mdcp.v*.llms.txt` / `--llms-index --fetch` bootstrap path.
+**0.4.0** is the first public alpha for external testers. It shipped compile/check, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy. Agent Skills are the supported agent delivery path (`npx skills add`).
 
-| Track              | 0.4.0 status                                                                  |
-| ------------------ | ----------------------------------------------------------------------------- |
-| **npm packages**   | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee        |
-| **Agent delivery** | Prefer Agent Skills (`npx skills add`); legacy llms-index fetch is deprecated |
+| Track              | 0.4.0 status                                                           |
+| ------------------ | ---------------------------------------------------------------------- |
+| **npm packages**   | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee |
+| **Agent delivery** | Prefer Agent Skills (`npx skills add`)                                 |
 
 **Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
 

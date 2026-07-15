@@ -70,7 +70,7 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 
 1. Parent skill is a valid Agent Skills package (`name: mdcp` matches folder under `skills/`).
 2. Install documents the parent skill via `npx skills add` (complementary archetype skills stay unpublished in consumer docs until ready).
-3. Parent skill encodes bootstrap / smallest-context / hard rules formerly unique to the agent index.
+3. Parent skill encodes bootstrap / smallest-context / hard rules for docs-as-code agents.
 4. Skill is host-agnostic — no Marketplace-only required steps.
 5. [`skill content lint`](../glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.
 

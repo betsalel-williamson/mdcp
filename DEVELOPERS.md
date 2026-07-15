@@ -261,15 +261,13 @@ Publish landing style for root README: [Personas and priority tiers](docs/featur
 
 #### Agent Skill dogfood
 
-Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`](skills/mdcp), not a fetched `mdcp.v*.llms.txt` bootstrap. After editing skill files, refresh the local install:
+Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`](skills/mdcp). After editing skill files, refresh the local install:
 
 ```bash
 pnpm skill:install
 ```
 
 That copies `skills/mdcp/` into `.agents/skills/mdcp/` (gitignored). Manual invoke: `/mdcp`. See [Agent Skill](#agent-skill).
-
-Do not use `mdcp export --llms-index` / `--fetch` for dogfood — those flags are deprecated in favor of Agent Skills (see [mdcp-llms-index](docs/glossary/mdcp-llms-index.md)).
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](./packages/mdcp-core/README.md#publish-relative-link-rewriting).
 
@@ -304,8 +302,6 @@ Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on
 ## Agent Skill
 
 Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary archetype skills under `skills/mdcp-arch-*` are **WIP** — keep them out of consumer get-started docs until ready.
-
-The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`.
 
 ### Local dogfood
 
@@ -404,12 +400,12 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 
 ### 0.4.0 open alpha milestone
 
-**0.4.0** is the first public alpha for external testers. It shipped compile/check, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy. Agent Skills now supersede the temporary `mdcp.v*.llms.txt` / `--llms-index --fetch` bootstrap path.
+**0.4.0** is the first public alpha for external testers. It shipped compile/check, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy. Agent Skills are the supported agent delivery path (`npx skills add`).
 
-| Track              | 0.4.0 status                                                                  |
-| ------------------ | ----------------------------------------------------------------------------- |
-| **npm packages**   | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee        |
-| **Agent delivery** | Prefer Agent Skills (`npx skills add`); legacy llms-index fetch is deprecated |
+| Track              | 0.4.0 status                                                           |
+| ------------------ | ---------------------------------------------------------------------- |
+| **npm packages**   | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee |
+| **Agent delivery** | Prefer Agent Skills (`npx skills add`)                                 |
 
 **Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
 
@@ -714,13 +710,13 @@ The CLI (`compile`, `check`, [refs](#refs) registry maintenance, and `export --l
 
 Optional four-part string for MDCP **artifact and config compatibility** (historically default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` when present.
 
-Legacy `mdcp.v*.llms.txt` files used the same string in a first-line header (`mdcp-llms-index: 0.4.0.0`). That bootstrap path is deprecated — prefer [Agent Skills](#agent-skills). See [mdcp-llms-index](#mdcp-llms-index).
+Prefer [Agent Skills](#agent-skills) for agent delivery. The deprecated [mdcp-llms-index](#mdcp-llms-index) export profile is separate from this config field.
 
 Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli` remains pre-1.0 while tooling and agent delivery continue to evolve.
 
 ## mdcp-llms-index
 
-**Legacy.** The legacy export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root, which was replaced by [Agent Skills](#agent-skills).
+**Legacy.** Deprecated CLI export profile (`export --llms-index` / `--fetch`) replaced by [Agent Skills](#agent-skills). Keep this glossary entry only so docs can name the deprecated flags; do not use it for new agent bootstrap.
 
 ## skill content lint
 

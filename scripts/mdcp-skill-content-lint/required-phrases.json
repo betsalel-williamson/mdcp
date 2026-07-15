@@ -7,7 +7,6 @@
     "scripts/prose.sh",
     "one shard",
     "complementary",
-    "legacy",
     "npx skills add",
     ".agents/skills/mdcp"
   ],
@@ -17,12 +16,14 @@
     "VS Code Marketplace",
     "Open VSX",
     "scripts/lookup.sh",
-    "refs lookup"
+    "refs lookup",
+    "mdcp.v",
+    "llms.txt"
   ],
   "hardRulesMustMention": [
     {
-      "id": "no-hand-edit-index",
-      "patterns": ["hand-edit", "mdcp.v", "extensions"]
+      "id": "no-hand-edit-skill",
+      "patterns": ["hand-edit", ".agents/skills", "extensions"]
     },
     {
       "id": "no-monolith-dump",
@@ -67,9 +68,9 @@
       "mustMention": ["one shard"]
     },
     {
-      "id": "anti-hand-edit-index",
+      "id": "anti-hand-edit-skill",
       "prompt": "Customize agent rules for this repo",
-      "mustMention": ["legacy", "complementary"]
+      "mustMention": ["complementary", "extensions"]
     },
     {
       "id": "remove-old-info",

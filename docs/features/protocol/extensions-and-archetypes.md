@@ -16,7 +16,7 @@ MDCP separates:
 
 ## Do not hand-edit agent entrypoints for repo-specific guidance
 
-The parent **Agent Skill** (`skills/mdcp/` → `.agents/skills/mdcp/`) is the portable agent entrypoint. Legacy `mdcp.v*.llms.txt` files are deprecated.
+The parent **Agent Skill** (`skills/mdcp/` → `.agents/skills/mdcp/`) is the portable agent entrypoint.
 
 | Rule                                                                       | Detail                                                    |
 | -------------------------------------------------------------------------- | --------------------------------------------------------- |
