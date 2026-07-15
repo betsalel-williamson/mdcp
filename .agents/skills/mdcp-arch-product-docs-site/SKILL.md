@@ -1,16 +1,17 @@
 ---
 name: mdcp-arch-product-docs-site
 description: >-
-  Archetype skill for Product Docs Sites (MkDocs, Docusaurus, VitePress). Use
-  this skill when the user is building, documenting, or architecting a human-facing
-  documentation site where MDCP shards are the authoring source of truth.
-  Triggers when users mention MkDocs, Docusaurus, VitePress, site generators,
-  or publishing documentation to the web.
+  Documentation system archetype for product docs sites (MkDocs, Docusaurus,
+  VitePress): keep human-facing docs maintainable as features keep shipping —
+  MDCP shards stay the authoring source of truth, site generators publish
+  downstream. Use when building docs-as-code pipelines, documentation systems
+  for product sites, or when users mention MkDocs, Docusaurus, VitePress, or
+  publishing documentation to the web.
 ---
 
 # MDCP Archetype: Product Docs Site
 
-For products that publish human-facing docs via **MkDocs, Docusaurus, VitePress**, or similar while keeping MDCP shards as the authoring source of truth.
+For products that publish human-facing docs via **MkDocs, Docusaurus, VitePress**, or similar while a sharded MDCP documentation system remains the authoring source of truth — so site navigation can grow without turning the authoring tree into a monolith.
 
 ## Layout
 

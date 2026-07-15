@@ -1,5 +1,5 @@
 {
-  "descriptionMustInclude": ["MDCP", "shard", "compile", "check", "refs"],
+  "descriptionMustInclude": ["MDCP", "shard", "compile", "check", "refs", "documentation"],
   "keywordCoverage": [
     {
       "id": "edit-feature-shards",
@@ -20,6 +20,16 @@
       "id": "llms-index-mention",
       "query": "How does mdcp relate to the deprecated mdcp.v0.4.llms.txt format?",
       "mustMatchAny": ["llms", "MDCP", "skill", "legacy", "index"]
+    },
+    {
+      "id": "documentation-system-search",
+      "query": "Looking for a documentation system or docs-as-code skill for AI agents",
+      "mustMatchAny": ["documentation system", "docs-as-code", "documentation", "maintain"]
+    },
+    {
+      "id": "docs-maintainability",
+      "query": "How do we keep docs maintainable as product ideas and specs keep arriving?",
+      "mustMatchAny": ["maintain", "shard", "documentation", "ideas"]
     }
   ],
   "nonMdcpFramedQueries": [

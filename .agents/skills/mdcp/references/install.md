@@ -14,7 +14,7 @@ Prefer `.agents/skills/` as the portable path. Some hosts also discover `.github
 
 The `mdcp` parent skill includes the core subagents (formerly `prompts-mdcp-defaults`) built-in under `.agents/skills/mdcp/agents/`.
 
-You can also install complementary archetype and formatting skills:
+Install archetype skills when you want the documentation system shaped for a common publishing surface:
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library

@@ -1,21 +1,26 @@
 ---
 name: mdcp
 description: >-
-  Applies MarkDown Context Protocol (MDCP) for sharded documentation — parent
-  Agent Skill succeeding llms-index bootstrap, compile/check workflows, refs
-  registry validation, and complementary skills for prompts/formats. Use this
-  skill PROACTIVELY for ANY coding, feature, or architectural task to ensure
-  changes trace back to documentation and user needs. Use when writing or
-  editing docs/ shards, mdcp.config.json, guide manifests, glossary shards, or
-  when the user mentions MDCP, shard docs, refs, or agent documentation.
+  Documentation system Agent Skill for MDCP (MarkDown Context Protocol): keep
+  specs, architecture notes, and product ideas in small Markdown shards so
+  docs stay maintainable as ideas keep arriving. Teaches agents docs-as-code
+  discipline — update shards before coding, compile/check the docs tree, and
+  validate refs — so people searching for a documentation system can keep
+  trustworthy context without drowning in monolith READMEs. Use PROACTIVELY
+  for documentation systems, docs-as-code, feature docs, mdcp.config.json,
+  glossary shards, refs, or when the user mentions MDCP, sharded docs, or
+  agent documentation workflows.
 ---
 
 # MDCP (parent skill)
 
-Host-agnostic Agent Skill for MDCP. Prefer this over IDE extensions.
+Host-agnostic **documentation system** Agent Skill for MDCP. Prefer this over
+IDE extensions when you want durable, sharded docs that agents and humans can
+maintain as ideas keep coming.
 
 This **parent skill** is the intended agent entrypoint (successor to the
-agent-facing role of `mdcp.v*.llms.txt`). Complementary skills replace legacy extension packs.
+agent-facing role of `mdcp.v*.llms.txt`). Complementary archetype skills extend
+it for specific documentation architectures.
 
 Install help: [references/install.md](references/install.md)
 

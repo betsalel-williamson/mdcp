@@ -1,16 +1,16 @@
 ---
 name: mdcp-arch-oss-library
 description: >-
-  Archetype skill for OSS libraries (npm, PyPI, crates.io). Use this skill when
-  the user is building, documenting, or architecting a publishable package where
-  the API truth lives in source code, and documentation shards hold intent,
-  stability guarantees, and migration notes. Triggers when users mention OSS,
-  libraries, packages, API references, or Javadoc-style documentation.
+  Documentation system archetype for OSS libraries (npm, PyPI, crates.io): keep
+  package docs maintainable as APIs and ideas evolve — source holds API truth;
+  Markdown shards hold intent, stability promises, and migration notes. Use when
+  building a docs-as-code system for libraries, packages, API references, or
+  when users mention OSS, publishable packages, or Javadoc-style documentation.
 ---
 
 # MDCP Archetype: OSS Library
 
-For publishable packages (npm, PyPI, crates.io) where **API truth lives in source** and documentation shards hold intent, stability guarantees, and migration notes.
+For publishable packages (npm, PyPI, crates.io) where **API truth lives in source** and a sharded documentation system holds intent, stability guarantees, and migration notes without duplicating the API surface.
 
 ## Layout
 
