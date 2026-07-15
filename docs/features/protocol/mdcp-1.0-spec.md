@@ -35,7 +35,7 @@ Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split
 
 Task subagents in `skills/mdcp/agents/` are part of the MDCP 1.0 authoring profile (vendored under `.agents/skills/mdcp/agents/` after skill install). Activate via the parent skill (`/mdcp`), then name a subagent id. See [Agent task subagents](./agent-task-prompts.md).
 
-Task-type subagents **MUST** include `WORK_ITEM` and `WORK_ITEM_LOOKUP`. Feature work **SHOULD** use [feature-level.md](../../skills/mdcp/agents/feature-level.md). Review work **SHOULD** use [review.md](../../skills/mdcp/agents/review.md) with `REVIEW_NODE` set.
+Task-type subagents **MUST** collect `WORK_ITEM` and `WORK_ITEM_LOOKUP` via interactive intake before editing. Feature work **SHOULD** use [feature-level.md](../../skills/mdcp/agents/feature-level.md).
 
 ## 5. Skills and immutability
 

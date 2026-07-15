@@ -10,8 +10,8 @@ Agent Skills discover only directories with `SKILL.md`. The portable slash entry
 
 1. Activate the parent skill: `/mdcp` (hosts that support slash skills), or let the host auto-load from the skill description.
 2. Name the **subagent id** in the same turn (for example `feature-level` or `getting-started`).
-3. Fill that file’s **Replace before sending** block (`WORK_ITEM`, `WORK_ITEM_LOOKUP`, or bootstrap fields such as `FEATURE=` / `PERSONA=`).
-4. The agent **reads** `.agents/skills/mdcp/agents/<id>.md` (after install) or `skills/mdcp/agents/<id>.md` (upstream) and follows it.
+3. The agent **reads** `.agents/skills/mdcp/agents/<id>.md` (after install) or `skills/mdcp/agents/<id>.md` (upstream) and follows it.
+4. The subagent **asks intake questions** for missing values (`WORK_ITEM`, `FEATURE` / `PERSONA`) before editing — answer in chat; do not pre-fill a template.
 
 **Fallback** (hosts without slash skills): attach or open the same `agents/<id>.md` path. Same content; not a different delivery model.
 
@@ -19,20 +19,19 @@ Agent Skills discover only directories with `SKILL.md`. The portable slash entry
 
 ## Subagents
 
-| Id                    | When to use                                       | Path after install                                  |
-| --------------------- | ------------------------------------------------- | --------------------------------------------------- |
-| `getting-started`     | Bootstrap MDCP in a consumer repo                 | `.agents/skills/mdcp/agents/getting-started.md`     |
-| `doc-only`            | Documentation-only work                           | `.agents/skills/mdcp/agents/doc-only.md`            |
-| `design-architecture` | RFCs, ADRs, data models                           | `.agents/skills/mdcp/agents/design-architecture.md` |
-| `feature-level`       | Feature work, docs-first then TDD                 | `.agents/skills/mdcp/agents/feature-level.md`       |
-| `ux`                  | UI flows and client-guide updates                 | `.agents/skills/mdcp/agents/ux.md`                  |
-| `review`              | Architecture and security review; atomic findings | `.agents/skills/mdcp/agents/review.md`              |
+| Id                    | When to use                       | Path after install                                  |
+| --------------------- | --------------------------------- | --------------------------------------------------- |
+| `getting-started`     | Bootstrap MDCP in a consumer repo | `.agents/skills/mdcp/agents/getting-started.md`     |
+| `doc-only`            | Documentation-only work           | `.agents/skills/mdcp/agents/doc-only.md`            |
+| `design-architecture` | RFCs, ADRs, data models           | `.agents/skills/mdcp/agents/design-architecture.md` |
+| `feature-level`       | Feature work, docs-first then TDD | `.agents/skills/mdcp/agents/feature-level.md`       |
+| `ux`                  | UI flows and client-guide updates | `.agents/skills/mdcp/agents/ux.md`                  |
 
-Upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents/). Each subagent uses a **Replace before sending** block at the top; the agent plans from repo context rather than vendor-specific commands baked into the template.
+Upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents/). Each subagent opens with an **Intake (ask before editing)** section — the agent asks for missing parameters in chat and waits for answers rather than requiring a pre-filled template.
 
 ## Bootstrap (getting-started)
 
-First-time setup for a consumer repo: activate `/mdcp`, name `getting-started`, and fill `FEATURE=` and `PERSONA=` in [getting-started.md](../../skills/mdcp/agents/getting-started.md).
+First-time setup for a consumer repo: activate `/mdcp`, name `getting-started`. The subagent asks for `FEATURE` and `PERSONA` before installing or configuring ([getting-started.md](../../skills/mdcp/agents/getting-started.md)).
 
 The subagent instructs the agent to inspect the repository and mdcp docs before installing or configuring. Best for **Learner** and **Author** archetypes — see [Personas and priority tiers](../features/personas-and-priority-tiers.md).
 
@@ -89,20 +88,20 @@ Prefer named subagents under the parent skill over permanently importing rigid a
 
 ## Work item tracking
 
-Task-type subagents include a **Replace before sending** block with `WORK_ITEM` and `WORK_ITEM_LOOKUP`:
+Task-type subagents collect `WORK_ITEM` and `WORK_ITEM_LOOKUP` via **intake questions** before editing:
 
 - **`WORK_ITEM`** — ticket identifier or URL
 - **`WORK_ITEM_LOOKUP`** — where the agent loads scope and delivery conventions (do not hard-code a tracker in the subagent file)
 
-Point `WORK_ITEM_LOOKUP` at a shard under `docs/developer/` in your repo. The agent discovers GitHub MCP, `gh issue view`, Linear MCP, or other tools from that doc — not from the subagent template.
+Point `WORK_ITEM_LOOKUP` at a shard under `docs/developer/` in your repo. The agent discovers GitHub MCP, `gh issue view`, Linear MCP, or other tools from that doc — not from a pasted template.
 
-This repository documents its stack in [Agent work-item tracking](../developer/agent-work-item-tracking.md) — use that path in `WORK_ITEM_LOOKUP` when dogfooding mdcp.
+This repository documents its stack in [Agent work-item tracking](../developer/agent-work-item-tracking.md) — prefer that path when the agent asks for `WORK_ITEM_LOOKUP` while dogfooding mdcp.
 
 ## Toolchain integration
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — activate `/mdcp`, name the subagent id, fill the Replace block; optionally attach `agents/<id>.md`; run the repo's doc check before ending a turn
+- **Cursor / Composer** — activate `/mdcp`, name the subagent id; answer intake questions in chat; optionally attach `agents/<id>.md`; run the repo's doc check before ending a turn
 - **Terminal agents** — load `SKILL.md` then the matching `agents/<id>.md`; or start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — discover with host search; validate fragments with `mdcp check` (optional `mdcp refs list`)
@@ -152,7 +151,7 @@ When reviewing an agent's documentation PR:
 - Doc check passes locally and in CI (repo's documented commands)
 - Cross-links pass `mdcp check` (optional `mdcp refs list` to inspect slugs), not guessed anchors
 - Client guide opens with persona context in `about-this-guide.md`
-- Subagents use only the top replace block — fill in `WORK_ITEM` and `WORK_ITEM_LOOKUP` before sending
+- Subagents ask intake questions for `WORK_ITEM` / `WORK_ITEM_LOOKUP` (and related fields) before editing — answers live in the chat transcript
 - One WORK_ITEM per PR — branch and scope match a single feature or design
 - Shards describe current behavior; breaking or removed behavior is in the changeset, not feature/client guides
 

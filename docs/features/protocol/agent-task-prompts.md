@@ -8,32 +8,30 @@ Subagent files are part of the MDCP **authoring protocol** — not host-specific
 
 Reference copies live in [skills/mdcp/agents/](../../skills/mdcp/agents/). The canonical catalog is summarized below. **Do not edit** the `skills/mdcp/agents/` copies directly if you want changes to persist — propose upstream or add extensions.
 
-## Required replace block
+## Required intake
 
-Every task-type subagent **MUST** include a **Replace before sending** block:
+Every task-type subagent **MUST** open with an **Intake (ask before editing)** section. The agent **MUST** ask the user for any missing required fields and **MUST** wait for answers before branching or editing shards. Skip a question only when the user already provided that value in the conversation. Do not invent values.
 
-```text
-WORK_ITEM=
-WORK_ITEM_LOOKUP=
-```
+Required fields for work-item-driven subagents:
 
-| Field              | Meaning                                                          |
-| ------------------ | ---------------------------------------------------------------- |
-| `WORK_ITEM`        | Tracker id or URL (e.g. GitHub issue number)                     |
-| `WORK_ITEM_LOOKUP` | Shard path describing how to load scope and delivery conventions |
+| Field              | Meaning                                                          | Example intake question                                                                   |
+| ------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `WORK_ITEM`        | Tracker id or URL (e.g. GitHub issue number)                     | What issue, ticket URL, or task should this session cover?                                |
+| `WORK_ITEM_LOOKUP` | Shard path describing how to load scope and delivery conventions | Where should you load scope and delivery conventions? (Prefer a `docs/developer/` shard.) |
+
+Bootstrap (`getting-started`) **MUST** ask for `FEATURE` and `PERSONA` instead of `WORK_ITEM`.
 
 Agents **MUST** load the issue (or equivalent) before editing shards or code. One `WORK_ITEM` per branch.
 
 ## Standard subagents (protocol 0.4.0.0)
 
-| Subagent                                                                  | Role                             | Primary guides                       |
-| ------------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
-| [getting-started.md](../../skills/mdcp/agents/getting-started.md)         | Bootstrap pipeline               | all tiers                            |
-| [feature-level.md](../../skills/mdcp/agents/feature-level.md)             | Feature engineering              | `features/`, `client/`, code + tests |
-| [doc-only.md](../../skills/mdcp/agents/doc-only.md)                       | Technical writing                | `features/`, `client/`, `developer/` |
-| [design-architecture.md](../../skills/mdcp/agents/design-architecture.md) | ADRs, RFCs                       | `features/protocol/`, `features/`    |
-| [ux.md](../../skills/mdcp/agents/ux.md)                                   | End-user experience              | `client/`                            |
-| [review.md](../../skills/mdcp/agents/review.md)                           | Architecture and security review | `review/`, `features/` (stubs)       |
+| Subagent                                                                  | Role                | Primary guides                       |
+| ------------------------------------------------------------------------- | ------------------- | ------------------------------------ |
+| [getting-started.md](../../skills/mdcp/agents/getting-started.md)         | Bootstrap pipeline  | all tiers                            |
+| [feature-level.md](../../skills/mdcp/agents/feature-level.md)             | Feature engineering | `features/`, `client/`, code + tests |
+| [doc-only.md](../../skills/mdcp/agents/doc-only.md)                       | Technical writing   | `features/`, `client/`, `developer/` |
+| [design-architecture.md](../../skills/mdcp/agents/design-architecture.md) | ADRs, RFCs          | `features/protocol/`, `features/`    |
+| [ux.md](../../skills/mdcp/agents/ux.md)                                   | End-user experience | `client/`                            |
 
 Index: [skills/mdcp/agents/](../../skills/mdcp/agents/).
 
@@ -51,29 +49,18 @@ Shared terms: `docs/glossary/` — all subagents that introduce vocabulary.
 
 When using [feature-level.md](../../skills/mdcp/agents/feature-level.md):
 
-1. Branch from updated `main` for `WORK_ITEM`
-2. Load issue via `WORK_ITEM_LOOKUP`
-3. **Docs first** — update `features/` and `client/` shards; update each guide `index.md`
-4. **TDD** — implement against documented acceptance criteria
-5. **Validate** — `mdcp check` (and repo test commands)
-6. **Wrap-up** — changeset for breaking/removed behavior; docs describe current behavior only
+1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
+2. Branch from updated `main` for `WORK_ITEM`
+3. Load issue via `WORK_ITEM_LOOKUP`
+4. **Docs first** — update `features/` and `client/` shards; update each guide `index.md`
+5. **TDD** — implement against documented acceptance criteria
+6. **Validate** — `mdcp check` (and repo test commands)
+7. **Wrap-up** — changeset for breaking/removed behavior; docs describe current behavior only
 
 ## Entrypoint chain
 
 ```text
-/mdcp → agents/getting-started.md  →  agents/<id>.md (WORK_ITEM set)  →  shards  →  mdcp check
+/mdcp → agents/<id>.md → intake questions → shards → mdcp check
 ```
 
-The parent Agent Skill points agents at subagents; subagents point at `WORK_ITEM_LOOKUP` for scope.
-
-## Review workflow (normative summary)
-
-When using [review.md](../../skills/mdcp/agents/review.md):
-
-1. Branch per `REVIEW_NODE` (one manifest node per PR)
-2. Load `WORK_ITEM` via `WORK_ITEM_LOOKUP`
-3. Run repo review commands from `docs/review/` playbook
-4. Log **atomic findings** — one implementable unit per finding shard
-5. Validate with review + `mdcp check`
-
-Review subagents **MAY** add `REVIEW_NODE=` to the Replace block alongside `WORK_ITEM`.
+The parent Agent Skill points agents at subagents; subagents collect `WORK_ITEM_LOOKUP` via intake for scope.

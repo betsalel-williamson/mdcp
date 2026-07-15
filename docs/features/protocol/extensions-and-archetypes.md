@@ -83,7 +83,7 @@ V1 wires **extension packs** into `mdcp.config.json` — enable built-in packs (
 
 **Security:** Agent Skills operate with identical permissions to the user. Treat third-party Agent Skills as untrusted. Future work: trusted-source allowlist and sandboxed execution.
 
-Built-in subagents (such as the `mdcp` feature and doc review subagents) resolve directly via the `.agents/skills/` directory. Each Agent Skill is an isolated, independent entity.
+Built-in subagents (such as the `mdcp` feature and doc-only subagents) resolve directly via the `.agents/skills/` directory. Each Agent Skill is an isolated, independent entity.
 
 ## Archetypes
 

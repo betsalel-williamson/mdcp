@@ -42,7 +42,7 @@ Above plus `export --llm`, three-tier shards (`features` / `client` / `developer
 ## Query preference order
 
 1. Activate the parent Agent Skill (`/mdcp`) when available
-2. Load a task subagent from `skills/mdcp/agents/` (or [skills/mdcp/agents/](../../skills/mdcp/agents/)) with `WORK_ITEM` set — see [Agent task subagents](./agent-task-prompts.md)
+2. Load a task subagent from `skills/mdcp/agents/` (or [skills/mdcp/agents/](../../skills/mdcp/agents/)); complete intake for `WORK_ITEM` — see [Agent task subagents](./agent-task-prompts.md)
 3. Discover the shard with host tools (`rg`, IDE search, guide `index.md`) and **read one shard**
 4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs list`)
 5. `mdcp export --llm` only when broader context is required

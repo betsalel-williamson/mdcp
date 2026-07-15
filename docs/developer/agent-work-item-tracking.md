@@ -47,11 +47,13 @@ Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 3. **Stay focused** — one feature or design at a time. Treat acceptance criteria as the boundary unless WORK_ITEM explicitly expands scope.
 4. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record that in the changeset instead.
 
-## Example replace block
+## Example intake answers
+
+When a subagent asks for scope, answers can look like:
 
 ```text
 WORK_ITEM=39
-WORK_ITEM_LOOKUP=Branch from main (pull first). One issue per branch. Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
+WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md
 ```
 
-For subagent catalog and invoke recipe, read [LLM collaboration](../client-cli/llm-collaboration.md).
+Prefer stating the shard path for `WORK_ITEM_LOOKUP` so the agent loads tracker conventions from this file. For subagent catalog and invoke recipe, read [LLM collaboration](../client-cli/llm-collaboration.md).

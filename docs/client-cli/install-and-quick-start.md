@@ -2,7 +2,7 @@
 
 This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
-**Fastest path:** install the Agent Skill, activate `/mdcp`, name the `getting-started` subagent ([getting-started.md](../../skills/mdcp/agents/getting-started.md)), fill in `FEATURE=` and `PERSONA=`.
+**Fastest path:** install the Agent Skill, activate `/mdcp`, name the `getting-started` subagent ([getting-started.md](../../skills/mdcp/agents/getting-started.md)). Answer the agent’s intake questions for `FEATURE` and `PERSONA`.
 
 ## Requirements
 
