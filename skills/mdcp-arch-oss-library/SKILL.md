@@ -15,6 +15,8 @@ metadata:
   author: betsalel-williamson
   internal: true
   version: '0.5.0'
+  openclaw:
+    category: 'documentation'
 ---
 
 # MDCP Archetype: OSS Library

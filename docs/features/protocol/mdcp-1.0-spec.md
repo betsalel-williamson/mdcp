@@ -21,7 +21,7 @@ Conforming repositories **SHOULD** organize shards into guides listed in `compil
 | Developer  | `developer/` | Repo workflow, tracker integration, releases |
 | Glossary   | `glossary/`  | Shared terms and disambiguation              |
 
-This four-tier taxonomy is fundamental to preventing the system from falling apart as it scales. It enforces strict, proven boundaries that keep developer workflows out of client usage and separate high-level feature specs from low-level code.
+This four-tier taxonomy is fundamental to preventing the system from falling apart as it scales. It enforces strict boundaries that keep developer workflows out of client usage and separate high-level feature specs from low-level code.
 
 Each guide **MUST** have a manifest (`index.md` or `shards.md`) defining compile order.
 

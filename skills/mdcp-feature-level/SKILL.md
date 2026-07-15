@@ -7,6 +7,12 @@ compatibility: >-
 metadata:
   author: betsalel-williamson
   version: '0.5.0'
+  openclaw:
+    category: 'documentation'
+    requires:
+      bins:
+        - mdcp
+    cliHelp: 'mdcp --help'
 ---
 
 # Feature-Level Helper

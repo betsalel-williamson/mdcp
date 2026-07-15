@@ -18,6 +18,13 @@ compatibility: >-
 metadata:
   author: betsalel-williamson
   version: '0.5.0'
+  openclaw:
+    category: 'documentation'
+    requires:
+      bins:
+        - npm
+        - npx
+    cliHelp: 'mdcp --help'
 ---
 
 # MDCP (parent skill)
