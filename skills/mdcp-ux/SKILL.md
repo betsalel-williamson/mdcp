@@ -1,6 +1,31 @@
-# UX Agent
+---
+name: mdcp-ux
+description: 'MDCP Helper: Act as an expert UX Designer and Frontend Engineer to design and implement user experiences using MDCP shards.'
+license: MIT
+compatibility: >-
+  Requires Node.js 24+ and the mdcp-cli installed globally or locally.
+metadata:
+  author: betsalel-williamson
+  version: '0.5.0'
+  openclaw:
+    category: 'documentation'
+    requires:
+      bins:
+        - mdcp
+    cliHelp: 'mdcp --help'
+---
+
+# UX Helper
+
+> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
 
 Act as an expert UX Designer and Frontend Engineer to design and implement user experiences using MDCP shards.
+
+**Typical invoke** (after the parent skill is installed):
+
+```text
+/mdcp-ux
+```
 
 ## Role
 

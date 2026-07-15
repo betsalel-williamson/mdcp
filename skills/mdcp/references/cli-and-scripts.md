@@ -1,6 +1,6 @@
-# CLI, scripts, and what the commands mean
+# CLI commands
 
-Skill `scripts/*.sh` are **thin entrypoints**. They call `@bwilliamson/mdcp-cli` via `npx`. They are not a self-contained reimplementation of MDCP.
+MDCP relies on the `@bwilliamson/mdcp-cli` package to perform documentation operations.
 
 ## What compile / check / refs mean
 
@@ -10,9 +10,9 @@ Skill `scripts/*.sh` are **thin entrypoints**. They call `@bwilliamson/mdcp-cli`
 | `mdcp check`   | **Validate the documentation tree.** Run structural checks (cross-links, orphans, and optional lint/prose gates) so shards and compiled output stay trustworthy. Prefer this before trusting compiled docs.         |
 | `mdcp refs`    | **Cross-link registry tools** (`refs list`, `refs gen`, …). Inspect or regenerate the fragment/slug registry (for example `refs.json`) so `#` links match **compiled** headings, not hand-guessed shard titles.     |
 
-## Why wrappers instead of self-contained skill engines
+## Why an installed CLI instead of self-contained skill engines
 
-Compile, check, refs, and doc lint/prose are one **shared system** in `@bwilliamson/mdcp-core`, exposed by `@bwilliamson/mdcp-cli`. Putting that logic in skill bash would fork the pipeline and drift from CI validation. The skill teaches **workflow**; the packages are the **engine**. Extra dependency complexity is the cost of one pipeline for agents, humans, and CI.
+Compile, check, refs, and doc lint/prose are one **shared system** in `@bwilliamson/mdcp-core`, exposed by `@bwilliamson/mdcp-cli`. Putting that logic in skill bash would fork the pipeline and drift from CI validation. The skill teaches **workflow**; the packages are the **engine**.
 
 The core packages are:
 
@@ -22,24 +22,17 @@ The core packages are:
 
 ## Dependencies
 
-- Node.js **24+** and `npx` (see skill frontmatter `compatibility`)
-- Network/registry access to fetch `@bwilliamson/mdcp-cli` when not linked locally
-- Optional: Vale on `PATH` for prose (`prose.sh` / `mdcp check --require-vale`)
+- Node.js **24+**
+- `npm install -g @bwilliamson/mdcp-cli` or `npm install -D @bwilliamson/mdcp-cli`
+- Optional: Vale on `PATH` for prose (`mdcp prose` / `mdcp check --require-vale`)
 
-## Script → CLI map
+## Commands
 
-| Script (after install)     | Invokes                                                              |
-| -------------------------- | -------------------------------------------------------------------- |
-| `scripts/compile.sh`       | `mdcp compile` — build compiled docs from shards                     |
-| `scripts/check.sh`         | `mdcp check` — validate the docs tree                                |
-| `scripts/mdcp-cli.sh`      | `mdcp` with passthrough args                                         |
-| `scripts/fix.sh`           | `mdcp fix` — format shards (Prettier / markdownlint auto-fix)        |
-| `scripts/prose.sh`         | `mdcp prose` — Vale prose lint                                       |
-| `scripts/setup-linters.sh` | Install peer lint tooling (`prettier`, `markdownlint-cli2`, presets) |
+| CLI Command    | Invokes                                          |
+| -------------- | ------------------------------------------------ |
+| `mdcp compile` | Build compiled docs from shards                  |
+| `mdcp check`   | Validate the docs tree                           |
+| `mdcp fix`     | Format shards (Prettier / markdownlint auto-fix) |
+| `mdcp prose`   | Vale prose lint                                  |
 
-After `npx skills add`, invoke from the consumer repo, for example:
-
-```bash
-./.agents/skills/mdcp/scripts/compile.sh
-./.agents/skills/mdcp/scripts/check.sh
-```
+Invoke these commands directly in your repository after installing the CLI.

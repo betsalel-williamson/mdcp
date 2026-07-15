@@ -35,8 +35,8 @@ OpenAPI defines HTTP API contracts. MDCP defines **documentation context contrac
 
 | Layer                     | Owner                                             |
 | ------------------------- | ------------------------------------------------- |
-| Normative spec (MDCP 1.0) | `docs/features/protocol/` + `spec/schemas/`       |
-| Protocol artifacts        | `spec/conformance/`                               |
+| Normative spec (MDCP 1.0) | `docs/features/protocol/`                         |
+| Protocol artifacts        | Schema files in `packages/mdcp-core/`             |
 | Extension packs           | complementary skills + local `docs/extensions/`   |
 | Reference implementation  | `@bwilliamson/mdcp-cli`, `@bwilliamson/mdcp-core` |
 | Delivery adapters (V2/V3) | MCP server, hosted API                            |

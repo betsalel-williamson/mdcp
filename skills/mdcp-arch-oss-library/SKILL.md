@@ -15,6 +15,8 @@ metadata:
   author: betsalel-williamson
   internal: true
   version: '0.5.0'
+  openclaw:
+    category: 'documentation'
 ---
 
 # MDCP Archetype: OSS Library
@@ -59,4 +61,4 @@ Agents use host search and the [refs](../../../docs/glossary/refs.md) registry /
 ## Extension hooks
 
 - Add `docs/extensions/api-pointer-conventions.md` for language-specific path rules.
-- Optional formatting pack under `spec/extensions/format-*` for JavaDoc-style cross-links in compiled README output (future).
+- Optional formatting pack under `skills/mdcp-format-*` for JavaDoc-style cross-links in compiled README output (future).

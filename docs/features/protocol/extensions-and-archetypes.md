@@ -41,11 +41,11 @@ Design constraints for the protocol and its ecosystem — analogous to SOLID in 
 
 Published and community extensions live as complementary skills under `skills/mdcp-arch-*` (WIP) or local `docs/extensions/`.
 
-| Kind                | Purpose                                                        | Example                                   |
-| ------------------- | -------------------------------------------------------------- | ----------------------------------------- |
-| **Archetype**       | End-to-end layout + conventions for a project class            | OSS library, product docs site            |
-| **Formatting pack** | Lint and style presets for a doc framework                     | Vale/Markdownlint for Docusaurus          |
-| **Pointer profile** | Shards as stable links into source; agents read code on demand | API surface via heading refs + file paths |
+| Kind                | Purpose                                                            | Example                                   |
+| ------------------- | ------------------------------------------------------------------ | ----------------------------------------- |
+| **Archetype**       | "Battery type" end-to-end layout + conventions for a project class | OSS library, product docs site            |
+| **Formatting pack** | Lint and style presets for a doc framework                         | Vale/Markdownlint for Docusaurus          |
+| **Pointer profile** | Shards as stable links into source; agents read code on demand     | API surface via heading refs + file paths |
 
 ### Fork, use locally, or contribute back
 
@@ -59,27 +59,32 @@ Published and community extensions live as complementary skills under `skills/md
 
 Built-in subagents (such as the `mdcp` feature and doc-only subagents) resolve directly via the `.agents/skills/` directory. Each Agent Skill is an isolated, independent entity.
 
-## Archetypes
+## Archetypes ("Battery Types")
 
-An **archetype** is a documented bundle: guide layout, glossary seeds, optional prompts, and extension pointers for one project class.
+An **archetype** (or "battery type") is a documented bundle: guide layout, glossary seeds, optional prompts, and extension pointers for one project class. The goal is to enforce useful structure for human/AI collaboration.
 
-| Archetype         | Extension id             | When to use                   | Shard emphasis                                              |
-| ----------------- | ------------------------ | ----------------------------- | ----------------------------------------------------------- |
-| OSS library       | `arch-oss-library`       | npm/crates publishable API    | Pointer shards to `src/`; minimal duplication of signatures |
-| Product docs site | `arch-product-docs-site` | MkDocs, Docusaurus, VitePress | `format-*` extension + client guide tier                    |
+The default MDCP installation provides the **Code Repository Archetype** (`features/`, `client/`, `developer/`, `glossary/`). This is the "batteries-included" pack for software engineering that keeps developer workflows out of client usage and separates high-level feature specs from low-level code.
 
-Archetype READMEs live under complementary skills — for example `arch-oss-library/` and `arch-product-docs-site/`.
+Because the underlying MDCP engine (`mdcp compile`, `mdcp check`) is domain-agnostic, teams can define alternative archetypes for other documentation systems (e.g. Legal Operations, HR Policies) that use completely different guide tiers.
 
-Formatting packs use the `format-*` prefix — see `spec/extensions/format/`.
+Current public archetypes:
+
+| Archetype         | Extension id                  | When to use                   | Shard emphasis                                              |
+| ----------------- | ----------------------------- | ----------------------------- | ----------------------------------------------------------- |
+| OSS library       | `mdcp-arch-oss-library`       | npm/crates publishable API    | Pointer shards to `src/`; minimal duplication of signatures |
+| Product docs site | `mdcp-arch-product-docs-site` | MkDocs, Docusaurus, VitePress | `format-*` extension + client guide tier                    |
+
+Archetype READMEs live under complementary skills — for example `mdcp-arch-oss-library/` and `mdcp-arch-product-docs-site/`.
+
+Formatting packs use the `mdcp-format-*` prefix.
 
 Start from an archetype README, copy patterns into `docs/`, then customize under `docs/extensions/`.
 
 ## Governance vision
 
-MDCP is designed to outgrow a single vendor implementation. The long-term goal is sponsorship under a **neutral foundation** (for example Linux Foundation or similar) so protocol artifacts, extension catalogs, and conformance vectors have a trusted home. Until then, the mdcp repository hosts the reference implementation and `spec/` tree.
+MDCP is designed to outgrow a single vendor implementation. The long-term goal is sponsorship under a **neutral foundation** (for example Linux Foundation or similar) so protocol artifacts, extension catalogs, and conformance vectors have a trusted home. Until then, the mdcp repository hosts the reference implementation.
 
 ## Related
 
 - [Vision and roadmap](./00-vision-and-roadmap.md)
-- [Agent task subagents](./agent-task-prompts.md)
-- [spec/extensions/README.md](../../../spec/extensions/README.md)
+- [Agent helper skills](./agent-task-prompts.md)

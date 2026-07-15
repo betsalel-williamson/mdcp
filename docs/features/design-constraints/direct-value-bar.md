@@ -18,7 +18,7 @@ A feature earns a place in core when it closes a gap that hosts and ordinary too
 - Marketing story without Tier A/B evidence
 - Workflow succeeds with shards + `check` alone
 
-Features without a clear direct-value case go **back to the drawing board** — keep the problem statement, drop or demote the surface until a distinct value is proven.
+Features without a clear direct-value case go **back to the drawing board** — keep the problem statement, drop or demote the surface until a distinct value is demonstrated.
 
 ## Applies to
 

@@ -17,30 +17,38 @@ Prefer `.agents/skills/` as the portable install path. Some hosts also discover
 
 ## After install
 
-The `mdcp` parent skill includes core subagents under
-`.agents/skills/mdcp/agents/` after install.
+The `mdcp` parent skill provides the core system. To perform specific tasks, you should install the helper skills alongside it (e.g., `mdcp-getting-started`, `mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`).
 
-Start a bootstrap session with a natural-language turn under the parent skill:
+Start a bootstrap session with a natural-language turn under the getting-started helper skill:
 
 ```text
-/mdcp help me get started
+/mdcp-getting-started
 ```
 
-That loads the `getting-started` subagent. The agent asks for `FEATURE` and
-`PERSONA` before installing or writing shards. For other task types, see
-[agents.md](agents.md).
+The agent asks for `FEATURE` and
+`PERSONA` before installing or writing shards.
 
 Optional archetype skills under `skills/mdcp-arch-*` are WIP and are not part of
 the consumer install path yet.
 
 ## CLI still required (build, validate, cross-link registry)
 
-Scripts under the skill are thin wrappers. You need Node.js 24+ and
-`@bwilliamson/mdcp-cli` for:
+The skills rely on the `mdcp` CLI. You need Node.js 24+ and must install
+`@bwilliamson/mdcp-cli` globally or locally in your project:
+
+```bash
+npm install -g @bwilliamson/mdcp-cli
+# or locally
+npm install -D @bwilliamson/mdcp-cli
+```
+
+This provides the `mdcp` commands for:
 
 - **compile** — build compiled docs from Markdown shards
 - **check** — validate the documentation tree (links, structure, optional lint)
 - **refs** — inspect/regenerate the cross-link fragment registry
+- **fix** — format shards (Prettier / markdownlint auto-fix)
+- **prose** — Vale prose lint
 
 ```bash
 mdcp compile --config <config> --docs-root <docs-root>

@@ -1,6 +1,31 @@
-# Doc-Only Agent
+---
+name: mdcp-doc-only
+description: 'MDCP Helper: Act as an expert Technical Writer to author or refactor documentation using MDCP shards.'
+license: MIT
+compatibility: >-
+  Requires Node.js 24+ and the mdcp-cli installed globally or locally.
+metadata:
+  author: betsalel-williamson
+  version: '0.5.0'
+  openclaw:
+    category: 'documentation'
+    requires:
+      bins:
+        - mdcp
+    cliHelp: 'mdcp --help'
+---
+
+# Doc-Only Helper
+
+> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
 
 Act as an expert Technical Writer to author or refactor documentation using MDCP shards.
+
+**Typical invoke** (after the parent skill is installed):
+
+```text
+/mdcp-doc-only
+```
 
 ## Role
 

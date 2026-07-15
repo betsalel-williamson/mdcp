@@ -23,7 +23,7 @@ export function parseLlmsIndexFilename(filename: string): string | null {
   return expandProtocolVersion(match[1]!);
 }
 
-/** Map four-part protocol version to npm release tag (e.g. `0.4.0.0` → `v0.4.0`). */
+/** Map four-part protocol version to npm release tag (e.g. `0.5.0.0` → `v0.5.0`). */
 export function protocolVersionToReleaseRef(protocolVersion: string): string {
   const parts = expandProtocolVersion(protocolVersion).split('.');
   return `v${parts.slice(0, 3).join('.')}`;

@@ -29,7 +29,7 @@ Multi-guide `compileOrder`, publish outputs (`compile.outputFile`).
 
 ### Agent-native
 
-Above plus three-tier shards (`features` / `client` / `developer`), task subagents from `skills/mdcp/agents/` (install target `.agents/skills/mdcp/agents/`).
+Above plus three-tier shards (`features` / `client` / `developer`), helper skills.
 
 ## Coexistence
 
@@ -42,8 +42,8 @@ Above plus three-tier shards (`features` / `client` / `developer`), task subagen
 ## Query preference order
 
 1. Activate the parent Agent Skill (`/mdcp`) when available
-2. Load a task subagent from `skills/mdcp/agents/` (or [skills/mdcp/agents/](../../skills/mdcp/agents/)); complete intake for `WORK_ITEM` — see [Agent task subagents](./agent-task-prompts.md)
+2. Load a helper skill; complete intake for `WORK_ITEM` — see [Agent helper skills](./agent-task-prompts.md)
 3. Discover the shard with host tools (`rg`, IDE search, guide `index.md`) and **read one shard**
 4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs list`)
 
-Read [`skills/mdcp/references/agents.md`](../../../skills/mdcp/references/agents.md) for subagent catalog and workflow index.
+Read [`docs/skills.md`](../../../docs/skills.md) for the helper skills catalog and workflow index.

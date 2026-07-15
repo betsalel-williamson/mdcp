@@ -71,8 +71,8 @@ const GuideSchema = z.object({
 });
 
 export const MdcpConfigSchema = z.object({
-  /** Four-part protocol version for conforming repositories (default 0.4.0.0). */
-  protocolVersion: z.string().default('0.4.0.0'),
+  /** Four-part protocol version for conforming repositories (default 0.5.0.0). */
+  protocolVersion: z.string().default('0.5.0.0'),
 
   source: z.string().optional(),
   /** Generated output root relative to docs root (default `_build`). */
