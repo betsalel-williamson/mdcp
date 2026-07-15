@@ -23,7 +23,10 @@ coverage/
 .cursor/
 .cursorindexingignore
 
-# Agent Skills Workspaces
+# Agent Skills — local installs / workspaces (publishable source lives in skills/)
+.agents/skills/mdcp/
+.agents/skills/mdcp-arch-oss-library/
+.agents/skills/mdcp-arch-product-docs-site/
 .agents/skills/*-workspace/
 .agents/skills/skill-creator/
 skills-lock.json

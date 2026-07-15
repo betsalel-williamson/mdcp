@@ -9,7 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const skillPath = path.join(root, '.agents/skills/mdcp/SKILL.md');
+const skillPath = path.join(root, 'skills/mdcp/SKILL.md');
 const fixturesDir = path.join(root, 'scripts/mdcp-skill-content-lint');
 const descriptionKeywordsPath = path.join(fixturesDir, 'description-keywords.json');
 const requiredPhrasesPath = path.join(fixturesDir, 'required-phrases.json');
