@@ -14,11 +14,11 @@ That vendors the skill into `.agents/skills/`. Zero-install alternative: copy `s
 
 ## Versioning and Upgrades
 
-Agent Skills use a **vendoring** strategy. Instead of relying on a hidden `.caches/` directory and dynamic fetches pinned by `mdcp.config.json` (as the old extension packs did), skills become part of your project's source code:
+Agent Skills use a **vendoring** strategy: skill files become part of your project's source code under `.agents/skills/`.
 
-1. The `npx skills add` command downloads the skill directly into your `.agents/skills/` directory.
-2. You **commit** these files to your repository. This ensures that every developer and agent on your team operates with the exact same instructions, and any changes to the skill are reviewable in pull requests.
-3. To **upgrade**, simply re-run the `npx skills add` command, review the `git diff`, and commit the changes.
+1. The `npx skills add` command copies the skill into your `.agents/skills/` directory.
+2. You **commit** these files to your repository. Every developer and agent on your team then uses the same instructions, and skill changes are reviewable in pull requests.
+3. To **upgrade**, re-run `npx skills add`, review the `git diff`, and commit the changes.
 
 ## Quality Assurance (QA) Principles
 

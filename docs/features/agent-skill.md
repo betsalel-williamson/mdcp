@@ -2,14 +2,15 @@
 
 MDCP ships as a portable **documentation system** Agent Skills pack so projects inherit docs-as-code guardrails without a host-specific IDE extension. The **parent skill** is the intended agent entrypoint for people who want maintainable sharded docs as ideas keep coming.
 
-## Why skills instead of IDE extensions or llms-index alone
+## Why Agent Skills
 
-Compared with a custom IDE extension or a fetched llms-index plus extension packs, Agent Skills give:
+Agent Skills give:
 
 - **Lower friction** — zero-install in the repo, or `npx skills add`
 - **Host interoperability** — Cursor, Copilot, Claude Code, VS Code, and CLI hosts
-- **Simpler maintenance** — markdown skill directories instead of host UI or dual index/pack formats
-- **Composition** — parent skill plus complementary skills instead of one monolithic pack (archetype skills are WIP)
+- **Simpler maintenance** — markdown skill directories agents load from the repo
+- **Composition** — parent skill plus complementary skills (archetype skills are WIP)
+- **Reviewable instructions** — vendored under `.agents/skills/` and committed with the project
 
 ## Parent skill and complementary skills
 
@@ -32,11 +33,11 @@ Skill `scripts/` are thin wrappers into the CLI — see [`skills/mdcp/references
 
 ## Versioning Strategy (Vendoring)
 
-Unlike the old extension pack system—which explicitly pinned `protocol.ref: "v0.4.1"` in `mdcp.config.json` and dynamically fetched artifacts into a `.caches/` directory—Agent Skills use a **vendoring** approach:
+Agent Skills use a **vendoring** approach: skill files live in the project and are versioned with Git.
 
 1. **Commit to Git:** When you run `npx skills add`, the skill's files are copied into your project's `.agents/skills/` directory and tracked in your own source control.
-2. **Docs-as-code Evolution:** The skill version is tied to the commit in your repository. This makes agent instruction changes explicitly reviewable in Pull Requests alongside the code or configuration changes they support.
-3. **Upgrading:** To upgrade a skill, re-run the `npx skills add` command (or manually copy the updated folder), review the resulting `git diff`, and commit the changes.
+2. **Docs-as-code Evolution:** The skill version is tied to the commit in your repository. Agent instruction changes are reviewable in Pull Requests alongside the code or configuration changes they support.
+3. **Upgrading:** To upgrade a skill, re-run `npx skills add` (or manually copy the updated folder), review the resulting `git diff`, and commit the changes.
 4. **Authoring/Maintainer Versioning:** Upstream skills live under `skills/` and evolve on `main`, tagged alongside npm package releases (e.g., `v0.4.1`). Bump `metadata.version` on all three publishable skills with the same release. Consumers can point `npx skills add` to specific tags if necessary.
 
 ## Install surfaces
