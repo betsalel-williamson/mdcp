@@ -1,13 +1,13 @@
 {
   "name": "mdcp-monorepo",
   "private": true,
-  "description": "MDCP — MarkDown Context Protocol",
+  "description": "MDCP — documentation system Agent Skill (MarkDown Context Protocol)",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/betsalel-williamson/mdcp.git"
   },
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "pnpm@11.13.0",
   "scripts": {
     "build": "pnpm -r run build",
     "test": "pnpm -r run test",
@@ -19,31 +19,34 @@
     "vale:sync": "mkdir -p examples/sample-guides/styles docs/styles && (cd examples/sample-guides && vale sync) && (cd docs && vale sync)",
     "verify:peers": "node_modules/.bin/markdownlint-cli2 --version && vale --version",
     "prepare:docs": "pnpm run verify:peers && pnpm run vale:sync",
-    "docs:compile:repo": "node packages/mdcp-cli/dist/cli.js compile --config docs/mdcp.config.json --docs-root docs --warn-broken-links && node packages/mdcp-cli/dist/cli.js export --llms-index --config docs/mdcp.config.json --docs-root docs",
-    "spec:sync-llms-index": "node scripts/sync-llms-index-spec.mjs",
-    "spec:check-llms-index": "node scripts/sync-llms-index-spec.mjs && git diff --exit-code spec/llms-index/",
+    "docs:compile:repo": "node packages/mdcp-cli/dist/cli.js compile --config docs/mdcp.config.json --docs-root docs --warn-broken-links",
     "docs:check:repo": "node packages/mdcp-cli/dist/cli.js check --config docs/mdcp.config.json --docs-root docs --require-lint --require-vale",
     "bench:dogfood": "node scripts/bench-dogfood-performance.mjs",
     "bench:context-size": "node scripts/bench-context-size.mjs",
-    "docs:context": "node packages/mdcp-cli/dist/cli.js export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
     "docs:lint": "node packages/mdcp-cli/dist/cli.js lint --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --require-lint",
     "docs:prose": "node packages/mdcp-cli/dist/cli.js prose --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --require-vale",
     "docs:check:examples": "node packages/mdcp-cli/dist/cli.js check --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --require-lint --require-vale",
     "docs:check": "pnpm run docs:check:repo && pnpm run docs:check:examples",
-    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run docs:check",
+    "presentation:compile": "node packages/mdcp-cli/dist/cli.js compile --config docs/mdcp.config.json --docs-root docs --warn-broken-links",
+    "presentation:render": "pnpm run presentation:compile && slidev build presentations/la-devops-2026.md --out ../build/presentations/dist",
+    "presentation:render:pdf": "pnpm run presentation:compile && slidev export presentations/la-devops-2026.md --output build/presentations/la-devops-2026.pdf",
+    "presentation:serve": "pnpm run presentation:compile && slidev presentations/la-devops-2026.md",
+    "presentation:preview": "pnpm run presentation:compile && slidev presentations/la-devops-2026.md",
+    "presentation:verify": "pnpm run presentation:compile && slidev export presentations/la-devops-2026.md --format png --output .tmp/slides/",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run skill:lint && pnpm run skill:validate && pnpm run docs:check",
     "changeset": "changeset",
-    "changeset:status": "changeset status --since=origin/main",
+    "changeset:status": "node scripts/changeset-status.mjs",
     "release:tag": "node scripts/release-tag.mjs",
     "release:tag:push": "node scripts/release-tag.mjs --push",
-    "prepare": "husky"
+    "prepare": "husky",
+    "skill:lint": "node scripts/lint-mdcp-skill.mjs",
+    "skill:validate": "skills-ref validate ./skills/mdcp && skills-ref validate ./skills/mdcp-arch-oss-library && skills-ref validate ./skills/mdcp-arch-product-docs-site",
+    "skill:install": "npx skills add . --skill mdcp",
+    "docs:compile:examples": "node packages/mdcp-cli/dist/cli.js compile --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --warn-broken-links",
+    "docs:compile": "pnpm run docs:compile:repo && pnpm run docs:compile:examples"
   },
   "engines": {
     "node": ">=24.0.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "esbuild": ">=0.28.1"
-    }
   },
   "lint-staged": {
     "packages/**/*.{ts,mjs}": [
@@ -67,11 +70,14 @@
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "^10.0.1",
+    "@slidev/cli": "latest",
+    "@slidev/theme-default": "latest",
     "eslint": "^10.5.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.7",
     "markdownlint-cli2": "^0.22.1",
     "prettier": "^3.5.3",
+    "skills-ref": "^0.1.5",
     "typescript-eslint": "^8.28.0"
   }
 }

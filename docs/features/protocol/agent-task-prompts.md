@@ -1,81 +1,66 @@
-# Agent task prompts (MDCP 1.0)
+# Agent task subagents
 
-Normative profile for **copy-paste agent prompts** that drive shard authoring across the three-tier guide layout. Parent spec: [MDCP 1.0 (draft)](./mdcp-1.0-spec.md).
+Normative profile for **task-type subagents** under the parent MDCP Agent Skill that drive shard authoring across the three-tier guide layout. Parent spec: [MDCP 1.0 (draft)](./mdcp-1.0-spec.md).
 
 ## Purpose
 
-Prompts are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge.
+Subagent files are part of the MDCP **authoring protocol** — not host-specific rules. They tell agents how to load a `WORK_ITEM`, which guides to write, and how to validate before merge. Activate the parent skill (`/mdcp`), then name a subagent id and read `agents/<id>.md`. Invoke recipe and consumer index: [skills/mdcp/references/agents.md](../../skills/mdcp/references/agents.md).
 
-Reference copies live in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/). The canonical prompt list is embedded in [spec/llms-index/](../../spec/llms-index/) llms-index artifacts and summarized below. `mdcp export --llms-index --fetch` caches prompts under `.caches/mdcp/prompts/` in the consumer docs root.
+Reference copies live in [skills/mdcp/agents/](../../skills/mdcp/agents/). The canonical catalog is summarized below. **Do not edit** the `skills/mdcp/agents/` copies directly if you want changes to persist — propose upstream or add extensions.
 
-**Do not edit** fetched `mdcp.v*.llms.txt` for prompt or workflow changes — propose upstream or add [extensions](./extensions-and-archetypes.md) under `docs/extensions/`.
+## Required intake
 
-## Required prompt shape
+Every task-type subagent **MUST** open with an **Intake (ask before editing)** section. The agent **MUST** ask the user for any missing required fields and **MUST** wait for answers before branching or editing shards. Skip a question only when the user already provided that value in the conversation. Do not invent values.
 
-Every task-type prompt **MUST** include a **Replace before sending** block:
+Required fields for work-item-driven subagents:
 
-```text
-WORK_ITEM=
-WORK_ITEM_LOOKUP=
-```
+| Field              | Meaning                                                                                   | Example intake question                                                                   |
+| ------------------ | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `WORK_ITEM`        | Enough to resolve the task — tracker id, URL, or short issue name/description             | What issue, ticket URL, or task should this session cover?                                |
+| `WORK_ITEM_LOOKUP` | Where to load scope and delivery conventions — shard path or plain location (e.g. GitHub) | Where should you load scope and delivery conventions? (Prefer a `docs/developer/` shard.) |
 
-| Field              | Meaning                                                          |
-| ------------------ | ---------------------------------------------------------------- |
-| `WORK_ITEM`        | Tracker id or URL (e.g. GitHub issue number)                     |
-| `WORK_ITEM_LOOKUP` | Shard path describing how to load scope and delivery conventions |
+Bootstrap (`getting-started`) **MUST** ask for `FEATURE` and `PERSONA` instead of `WORK_ITEM`.
 
 Agents **MUST** load the issue (or equivalent) before editing shards or code. One `WORK_ITEM` per branch.
 
-## Standard prompts (protocol 0.4.0.0)
+## Standard subagents
 
-| Prompt                                                                                                                         | Role                             | Primary guides                       |
-| ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- | ------------------------------------ |
-| [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) | Bootstrap pipeline               | all tiers                            |
-| [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md)               | Feature engineering              | `features/`, `client/`, code + tests |
-| [doc-only-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/doc-only-task.prompt.md)                         | Technical writing                | `features/`, `client/`, `developer/` |
-| [design-architecture-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/design-architecture-task.prompt.md)   | ADRs, RFCs                       | `features/protocol/`, `features/`    |
-| [ux-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/ux-task.prompt.md)                                     | End-user experience              | `client/`                            |
-| [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md)                             | Architecture and security review | `review/`, `features/` (stubs)       |
+| Subagent                                                                  | Role                | Primary guides                       |
+| ------------------------------------------------------------------------- | ------------------- | ------------------------------------ |
+| [getting-started.md](../../skills/mdcp/agents/getting-started.md)         | Bootstrap pipeline  | all tiers                            |
+| [feature-level.md](../../skills/mdcp/agents/feature-level.md)             | Feature engineering | `features/`, `client/`, code + tests |
+| [doc-only.md](../../skills/mdcp/agents/doc-only.md)                       | Technical writing   | `features/`, `client/`, `developer/` |
+| [design-architecture.md](../../skills/mdcp/agents/design-architecture.md) | ADRs, RFCs          | `features/protocol/`, `features/`    |
+| [ux.md](../../skills/mdcp/agents/ux.md)                                   | End-user experience | `client/`                            |
 
-Index: [spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md). Cached in consumer repos at `.caches/mdcp/prompts/` after fetch.
+Index: [skills/mdcp/agents/](../../skills/mdcp/agents/).
 
 ## Three-tier authoring obligations
 
-| Guide             | Holds                                                  | Prompts that write here                      |
+| Guide             | Holds                                                  | Subagents that write here                    |
 | ----------------- | ------------------------------------------------------ | -------------------------------------------- |
 | `docs/features/`  | Capabilities, design, API surface, acceptance criteria | feature-level, doc-only, design-architecture |
 | `docs/client/`    | End-user value, how to use the feature                 | feature-level, doc-only, ux                  |
 | `docs/developer/` | Repo workflow, tracker integration, releases           | doc-only, getting-started                    |
 
-Shared terms: `docs/glossary/` — all prompts that introduce vocabulary.
+Shared terms: `docs/glossary/` — all subagents that introduce vocabulary.
 
 ## Feature-level workflow (normative summary)
 
-When using [feature-level-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/feature-level-task.prompt.md):
+When using [feature-level.md](../../skills/mdcp/agents/feature-level.md):
 
-1. Branch from updated `main` for `WORK_ITEM`
-2. Load issue via `WORK_ITEM_LOOKUP`
-3. **Docs first** — update `features/` and `client/` shards; update each guide `index.md`
-4. **TDD** — implement against documented acceptance criteria
-5. **Validate** — `mdcp check` (and repo test commands)
-6. **Wrap-up** — changeset for breaking/removed behavior; docs describe current behavior only
+1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
+2. Branch from updated `main` for `WORK_ITEM`
+3. Load issue via `WORK_ITEM_LOOKUP`
+4. **Docs first** — update `features/` and `client/` shards; update each guide `index.md`
+5. **TDD** — implement against documented acceptance criteria
+6. **Validate** — `mdcp check` (and repo test commands)
+7. **Wrap-up** — changeset for breaking/removed behavior; docs describe current behavior only
 
 ## Entrypoint chain
 
 ```text
-mdcp.v0.4.llms.txt  →  .caches/mdcp/prompts/*.prompt.md (WORK_ITEM set)  →  shards  →  mdcp check
+/mdcp → agents/<id>.md → intake questions → shards → mdcp check
 ```
 
-The llms-index file points agents at prompts and query commands; prompts point at `WORK_ITEM_LOOKUP` for scope.
-
-## Review workflow (normative summary)
-
-When using [review-task.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/review-task.prompt.md):
-
-1. Branch per `REVIEW_NODE` (one manifest node per PR)
-2. Load `WORK_ITEM` via `WORK_ITEM_LOOKUP`
-3. Run repo review commands from `docs/review/` playbook
-4. Log **atomic findings** — one implementable unit per finding shard
-5. Validate with review + `mdcp check`
-
-Review prompts **MAY** add `REVIEW_NODE=` to the Replace block alongside `WORK_ITEM`.
+The parent Agent Skill points agents at subagents; subagents collect `WORK_ITEM_LOOKUP` via intake for scope.

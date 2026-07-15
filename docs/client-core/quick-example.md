@@ -7,10 +7,7 @@ import {
   resolveDocsRoot,
   genRefsFromCompiled,
   resolveRefsPath,
-  lookupHeadings,
-  buildSlugRegistry,
-  stripForLlm,
-  getLlmExportOptions,
+  checkRefsRegistry,
 } from '@bwilliamson/mdcp-core';
 
 const docsRoot = '/path/to/docs';
@@ -27,11 +24,7 @@ const compiled = compileGuides({
 
 const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
 genRefsFromCompiled(compiled, refsPath);
-
-const registry = buildSlugRegistry(compiled);
-const matches = lookupHeadings(registry, 'authentication');
-
-const llmText = stripForLlm(compiled, getLlmExportOptions(config));
+checkRefsRegistry(compiled, refsPath);
 ```
 
 Use `writeCompiledGuides` when you need to write the monolith and per-guide publish outputs to disk.

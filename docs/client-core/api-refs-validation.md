@@ -5,7 +5,6 @@
 | Export                                                         | Purpose                                 |
 | -------------------------------------------------------------- | --------------------------------------- |
 | `headingTextToPlain`, `githubSlugify`, `buildSlugRegistry`     | GitHub heading slugs via github-slugger |
-| `lookupHeadings`                                               | Fuzzy search over `refs.json` headings  |
 | `genRefsFromCompiled`, `readRefsRegistry`, `checkRefsRegistry` | `refs.json` lifecycle                   |
 | `resolveRefsPath`, `writeRefsRegistry`                         | Path and I/O helpers                    |
 
@@ -49,7 +48,7 @@ githubSlugify('`--config` vs `--docs-root`');
 // → '--config-vs---docs-root'
 ```
 
-Consumer docs: [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules).
+CLI authoring rules: [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules).
 
 ## Manifest
 

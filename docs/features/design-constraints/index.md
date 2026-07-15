@@ -2,6 +2,7 @@
 
 Intentional limits on what mdcp compiles, validates, and transforms.
 
+- [Direct value bar](./direct-value-bar.md)
 - [md-tree integration](./md-tree-integration.md)
 - [Fork criteria](./fork-criteria.md)
 - [Heading references](./heading-references.md)

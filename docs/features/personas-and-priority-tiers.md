@@ -11,9 +11,9 @@ Four goals — not job titles. Interns and students map to **Learner**; technica
 | **Builder**  | Integrate mdcp into repo scripts and CI  | One gate for humans, agents, and CI; smaller doc PRs       | Paste prompt or `mdcp init` |
 | **Learner**  | Try mdcp before mastering every CLI flag | Paste a prompt; agent runs setup                           | Getting started prompt      |
 | **Author**   | Own content, not the toolchain           | One topic per file; load the section that matches the task | Paste prompt + usage model  |
-| **Champion** | Evaluate or sponsor adoption             | Reviewable doc contract (OpenAPI-style positioning)        | Vision and claims shards    |
+| **Champion** | Evaluate or sponsor adoption             | Slash MTTR and accelerate onboarding with instant context  | Vision and claims shards    |
 
-Paths: [CLI README](../../packages/mdcp-cli/README.md), [getting started prompt](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md), [usage model](./protocol/usage-model.md), [vision](./protocol/00-vision-and-roadmap.md), [claims policy](./protocol/benefit-claims-and-evidence.md).
+Paths: [CLI README](../../packages/mdcp-cli/README.md), [getting-started subagent](../../skills/mdcp/agents/getting-started.md), [usage model](./protocol/usage-model.md), [vision](./protocol/00-vision-and-roadmap.md), [claims policy](./protocol/benefit-claims-and-evidence.md).
 
 Once a pipeline exists, adoption archetypes map to **tool operator personas** below (for example Author → LLM doc author; Builder → wires CI `check`).
 
@@ -42,12 +42,12 @@ Reference: [`docs/repo-readme/`](../repo-readme/index.md) → `README.md`.
 
 ## Tool operator personas
 
-| Persona                | Job                             | Command                                    |
-| ---------------------- | ------------------------------- | ------------------------------------------ |
-| **LLM doc author**     | Edit shards, insert cross-links | `shard`, `refs lookup`, `compile`, `check` |
-| **LLM feature agent**  | Read doc context while coding   | `refs lookup`, shard read, `export --llm`  |
-| **Human doc reviewer** | PR quality gate                 | `check`, `prose`, `lint`, `xrefs`, `links` |
-| **End-user reader**    | Read glossary, guides, reviews  | `compile` output                           |
+| Persona                | Job                             | Command                                        |
+| ---------------------- | ------------------------------- | ---------------------------------------------- |
+| **LLM doc author**     | Edit shards, insert cross-links | `shard`, `compile`, `check` (broken `#` links) |
+| **LLM feature agent**  | Read doc context while coding   | Host search → one shard read                   |
+| **Human doc reviewer** | PR quality gate                 | `check`, `prose`, `lint`, `xrefs`, `links`     |
+| **End-user reader**    | Read glossary, guides, reviews  | `compile` output                               |
 
 ## P0 adoption — evaluator onboarding (validated 2026-06)
 
@@ -60,14 +60,13 @@ Aligns with GitHub project **Track: 0.5 Spec & adoption** — see [Agent work it
 
 ## P0 — LLM can read docs and write correct links
 
-| Feature       | CLI                 | Core module          | Status      |
-| ------------- | ------------------- | -------------------- | ----------- |
-| Compile       | `mdcp compile`      | `compile/`           | Implemented |
-| Refs + lookup | `mdcp refs *`       | `refs/`              | Implemented |
-| LLM export    | `mdcp export --llm` | `export/llm.ts`      | Implemented |
-| Check (core)  | `mdcp check`        | orphans, refs, xrefs | Implemented |
+| Feature       | CLI                   | Core module          | Status      |
+| ------------- | --------------------- | -------------------- | ----------- |
+| Compile       | `mdcp compile`        | `compile/`           | Implemented |
+| Refs registry | `mdcp refs` / `check` | `refs/`              | Implemented |
+| Check (core)  | `mdcp check`          | orphans, refs, xrefs | Implemented |
 
-**Dogfood:** `mdcp export --llm` + `mdcp refs lookup` + `mdcp check` on `docs/` and `examples/sample-guides`.
+Dogfood: `mdcp check` on `docs/` and `examples/sample-guides`.
 
 ## P1 — LLM can write docs in shards safely
 

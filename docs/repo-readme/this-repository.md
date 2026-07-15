@@ -7,9 +7,9 @@ pnpm install && pnpm build
 pnpm docs:check
 ```
 
-Full guide: [DEVELOPERS.md](DEVELOPERS.md). Sharded docs layout: [Docs dogfooding](../developer/docs-dogfooding.md). Publish landing style: [Personas and priority tiers](../features/personas-and-priority-tiers.md#publish-landing-style).
+Full guide: [DEVELOPERS.md](DEVELOPERS.md). Sharded docs layout: [Docs dogfooding](docs/developer/docs-dogfooding.md). Publish landing style: [Personas and priority tiers](docs/features/personas-and-priority-tiers.md#publish-landing-style).
 
-This project follows the [Contributor Covenant Code of Conduct](../../CODE_OF_CONDUCT.md).
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Status
 

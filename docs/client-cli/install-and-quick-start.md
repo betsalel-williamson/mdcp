@@ -1,8 +1,8 @@
 # Install and quick start
 
-This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
+This package installs the **`mdcp` CLI** for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
-**Fastest path:** copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent for first-time setup. More context: [So what — how do I use this in my project?](./why-mdcp-overview.md#so-what--how-do-i-use-this-in-my-project).
+This is **not** the Agent Skill. For skill install (`npx skills add`, `/mdcp help me get started`), see [root README](../../README.md) or [Agent Skill (related)](./agent-skill.md).
 
 ## Requirements
 
@@ -16,7 +16,6 @@ npm install -D @bwilliamson/mdcp-cli
 
 # Or run without installing
 npx @bwilliamson/mdcp-cli check --config mdcp.config.json
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
 
 # Global install
 npm install -g @bwilliamson/mdcp-cli
@@ -45,8 +44,6 @@ npm install -D markdownlint-cli2 @bwilliamson/mdcp-presets
 For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https://vale.sh/docs/vale-cli/installation/) separately so `vale` is on your `PATH`.
 
 ## Quick start
-
-**Agent index (optional day zero)** — fetch the pinned open-alpha bootstrap into your docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs`). Use `--fetch-profile dev` only when tracking the in-progress draft. Agents read the index for query commands; task prompts are cached at `.caches/mdcp/prompts/` — see [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/README.md).
 
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 

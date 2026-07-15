@@ -1,6 +1,6 @@
 # Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type subagents in [skills/mdcp/agents/](../../skills/mdcp/agents/) (also present under `.agents/skills/mdcp/agents/` after a local dogfood install) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](./local-setup.md).
 
@@ -10,7 +10,7 @@ Configure an equivalent shard in consumer repos during [local setup](./local-set
 Host=GitHub (betsalel-williamson/mdcp)
 Issue base URL=https://github.com/betsalel-williamson/mdcp/issues/
 Project board=https://github.com/users/betsalel-williamson/projects/4
-WORK_ITEM=issue number (e.g. 39) or full issue URL
+WORK_ITEM=enough to resolve the issue — number, URL, or short name/description
 ```
 
 All repo issues live on the public [MarkDown Context Protocol project board](https://github.com/users/betsalel-williamson/projects/4). **Status** tracks delivery (Todo / In Progress / Done); **Track** groups work by roadmap area (0.5 Spec & adoption, 1.0 Formalization, Maintenance, Performance, Future V2+). Move items to **In Progress** when you start a branch; set **Done** when the issue closes.
@@ -37,6 +37,7 @@ Branch before work=create the feature branch before shards, tests, or code
 Commits=conventional; atomic and logically grouped
 Release notes=changeset in .changeset/ for user-facing doc changes
 Docs=describe current behavior only; removed or breaking behavior belongs in changeset release notes, not feature/client shards
+ADRs=docs/features/adr/ (scope/removal decisions; not the feature catalog)
 Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 ```
 
@@ -47,11 +48,18 @@ Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 3. **Stay focused** — one feature or design at a time. Treat acceptance criteria as the boundary unless WORK_ITEM explicitly expands scope.
 4. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record that in the changeset instead.
 
-## Example prompt header
+## Example intake answers
+
+When a subagent asks for scope, answers can look like:
 
 ```text
 WORK_ITEM=39
-WORK_ITEM_LOOKUP=Branch from main (pull first). One issue per branch. Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
+WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md
 ```
 
-For task-type prompt templates, read [LLM collaboration](../client-cli/llm-collaboration.md).
+```text
+WORK_ITEM=default compile hooks
+WORK_ITEM_LOOKUP=GitHub
+```
+
+`WORK_ITEM` may be an issue number, URL, or a short name/description the agent can resolve. `WORK_ITEM_LOOKUP` may be this shard path or a plain location (e.g. GitHub) that points the agent at the tracker conventions here. For subagent catalog and invoke recipe, read [`skills/mdcp/references/agents.md`](../../skills/mdcp/references/agents.md).

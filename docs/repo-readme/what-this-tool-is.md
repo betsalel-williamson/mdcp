@@ -1,5 +1,7 @@
 # What this tool is
 
-**mdcp** is an open protocol for **technical documentation context** — sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. Software repositories are the most common adoption path; the same shard model applies to factory procedures, equipment manuals, training curricula, and other durable technical knowledge.
+[![skills.sh](https://skills.sh/b/betsalel-williamson/mdcp)](https://skills.sh/betsalel-williamson/mdcp)
 
-New to MDCP? Read [Vision and roadmap](../features/protocol/00-vision-and-roadmap.md) for problem, principles, and phased delivery.
+**mdcp** is a **documentation system** delivered as an [Agent Skill](https://agentskills.io) plus a small compile/check toolchain. It is for people who know good docs compound — and that unvalidated monolith READMEs get expensive as product ideas keep arriving.
+
+Instead of dumping every mind map, architecture note, and spec into one file that overwhelms both humans and LLM context windows, MDCP keeps that intent in small, validated Markdown **shards** (for example `docs/features/my-feature.md`). Agents learn to read **one shard at a time**, update docs before coding, and run checks in CI — so documentation stays findable and trustworthy as the system grows. Discover and install via [skills.sh](https://skills.sh/betsalel-williamson/mdcp).

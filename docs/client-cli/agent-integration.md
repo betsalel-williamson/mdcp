@@ -1,29 +1,19 @@
 # Agent integration
 
-npm script stubs for wiring mdcp into any coding agent. For setup prompts, docs-first feature workflow, and task-type templates, see [LLM collaboration](./llm-collaboration.md).
-
-Add npm scripts in your consumer repo:
+Wire **`@bwilliamson/mdcp-cli`** into CI or coding agents with npm scripts. This is CLI packaging — not the Agent Skill ([root README](../../README.md)).
 
 ```json
 {
   "scripts": {
     "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs",
-    "docs:refs": "mdcp refs lookup"
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint"
   }
 }
 ```
 
 ```bash
-# Compact context for feature work
-mdcp export --llm --stdout --config docs/mdcp.config.json
-
-# Find the right section link while writing
-mdcp refs lookup "authentication" --format json
-
-# Full structural gate
 mdcp check --require-lint
+mdcp refs list
 ```
 
 ## Related packages
@@ -35,10 +25,10 @@ mdcp check --require-lint
 
 ## Further reading
 
-- [Why mdcp for coding agents](./why-mdcp-for-agents.md) — developer pain and which commands address it
-- [LLM collaboration](./llm-collaboration.md) — spec-driven workflow, prompts, toolchain integration
-- [Project README](../../README.md) — concepts and design rationale
-- [Feature catalog](../features/feature-catalog.md) — full maintainer docs
+- [Project README](../../README.md) — Agent Skill landing
+- [Commands reference](./commands-reference.md) — full `mdcp` command list
+- [Core API](../client-core/index.md) — programmatic library
+- [Feature catalog](../features/feature-catalog.md) — maintainer depth
 - [Sample guides](../../examples/sample-guides/)
 
 ## License

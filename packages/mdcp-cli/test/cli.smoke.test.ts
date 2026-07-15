@@ -217,8 +217,8 @@ describe('cli smoke', () => {
     }
   });
 
-  it('backs up existing llm export with --backup', () => {
-    const docs = mkdtempSync(join(tmpdir(), 'mdcp-backup-export-'));
+  it('rejects removed export command', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-export-gone-'));
     try {
       const guide = join(docs, 'g');
       mkdirSync(guide, { recursive: true });
@@ -234,23 +234,13 @@ describe('cli smoke', () => {
         }),
       );
 
-      execFileSync('node', [CLI, 'compile', '--config', 'mdcp.config.json', '--docs-root', docs], {
-        encoding: 'utf-8',
-        cwd: docs,
-      });
-
-      const llmPath = join(docs, '_build', 'guides.llm.md');
-      writeFileSync(llmPath, 'old llm export\n');
-
-      execFileSync(
-        'node',
-        [CLI, 'export', '--llm', '--backup', '--config', 'mdcp.config.json', '--docs-root', docs],
-        { encoding: 'utf-8', cwd: docs },
-      );
-
-      const backupPath = join(docs, '_build', '.caches', 'backups', '_build', 'guides.llm.md');
-      expect(existsSync(backupPath)).toBe(true);
-      expect(readFileSync(backupPath, 'utf-8')).toBe('old llm export\n');
+      expect(() =>
+        execFileSync(
+          'node',
+          [CLI, 'export', '--llm', '--config', 'mdcp.config.json', '--docs-root', docs],
+          { encoding: 'utf-8', cwd: docs },
+        ),
+      ).toThrow();
     } finally {
       rmSync(docs, { recursive: true, force: true });
     }

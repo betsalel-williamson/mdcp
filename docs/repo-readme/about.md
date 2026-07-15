@@ -1,12 +1,8 @@
-# What's in it for you
+# Why use MDCP?
 
-Pick the goal that matches you — not a job title:
-
-| Archetype    | What you get                                                                                             |
-| ------------ | -------------------------------------------------------------------------------------------------------- |
-| **Builder**  | One validation gate for humans, agents, and CI; edit small files instead of one giant doc.               |
-| **Learner**  | Paste a prompt into your agent; it sets up the pipeline while you learn the commands.                    |
-| **Author**   | One topic per file; load matching sections per the [usage model](docs/features/protocol/usage-model.md). |
-| **Champion** | A reviewable doc contract for your org (OpenAPI-style intent, not performance claims).                   |
-
-Messaging rules: [Benefit claims and evidence](../features/protocol/benefit-claims-and-evidence.md).
+- **Built for documentation-system thinkers:** Puts durable intent (specs, design notes, glossaries) in the repo where it compounds — not only in chat history or slide decks.
+- **Lower maintenance as ideas keep coming:** One topic per shard means new features extend the docs tree instead of bloating a monolith you no longer trust.
+- **Docs-as-code for agents:** Coding agents update shards before implementing, so “what we meant” stays reviewable in git alongside the change.
+- **Smaller, safer context loads:** People and LLMs read the section that matches the task — not the whole guide every turn.
+- **Validation gate:** `mdcp check` keeps cross-links and refs trustworthy in CI when the docs system grows.
+- **Portable skill:** Works in Cursor, GitHub Copilot, Claude Code, and other hosts that support [Agent Skills](https://agentskills.io).

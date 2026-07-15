@@ -6,13 +6,13 @@ MDCP is designed for **full programs** — hundreds of shards across multiple gu
 
 ## Why performance matters
 
-| Actor                    | Hot path                             | Expectation                                                                        |
-| ------------------------ | ------------------------------------ | ---------------------------------------------------------------------------------- |
-| LLM doc author           | `refs lookup` → edit shard → `check` | Sub-second feedback per lookup; compile+check under a few seconds during authoring |
-| CI                       | `mdcp check --require-lint`          | PR gate completes before reviewer context switches                                 |
-| Agent (context consumer) | `refs lookup`, single-shard read     | No full-repo compile on every query                                                |
+| Actor                    | Hot path                        | Expectation                                        |
+| ------------------------ | ------------------------------- | -------------------------------------------------- |
+| LLM doc author           | edit shard → `check`            | Compile+check under a few seconds during authoring |
+| CI                       | `mdcp check --require-lint`     | PR gate completes before reviewer context switches |
+| Agent (context consumer) | Host search → single-shard read | No full-repo compile on every query                |
 
-The [usage model](./usage-model.md) prefers granular context (`refs lookup` → one shard). Performance work keeps that model viable as repos grow.
+The [usage model](./usage-model.md) prefers granular context (one shard at a time). Performance work keeps that model viable as repos grow.
 
 ## Measured results (dogfood `docs/` repo)
 
@@ -77,7 +77,6 @@ Normative targets below. Measured compliance for dogfood is in [performance-dogf
 
 | Operation                | Target                    | Rationale                                    |
 | ------------------------ | ------------------------- | -------------------------------------------- |
-| `refs lookup`            | **< 200 ms** @ 500 shards | Called many times per session                |
 | `compile` (single guide) | **< 500 ms** @ 200 shards | Fast feedback while editing one feature area |
 | `compile` (full repo)    | **< 2 s** @ 200 shards    | Pre-push sanity check                        |
 
@@ -117,15 +116,14 @@ mdcp check (after P1)
   Vale
 ```
 
-| Hot path                                     | Status                                                                                       |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `writeCompiled` + `runBuiltInLinkLint`       | **Fixed (P0)** — single compile per command                                                  |
-| `validateCompiledLinkTarget`                 | **Fixed (P0)** — slug registries cached per output file                                      |
-| `buildSlugRegistry`                          | **Fixed (P0)** — single line split                                                           |
-| `lintShardLinks` → `shardSlugSet`            | **Fixed (P0)** — slug set computed once per shard                                            |
-| `refs lookup`                                | **Deferred (P2)** — still recompiles monolith (~128 ms dogfood); acceptable at current scale |
-| `linkedSectionFiles` / `buildSectionSlugMap` | **Fixed (P1)** — compile-scoped shard cache; one read per shard                              |
-| Peer linters                                 | Separate cost; scales with file count and rules                                              |
+| Hot path                                     | Status                                                          |
+| -------------------------------------------- | --------------------------------------------------------------- |
+| `writeCompiled` + `runBuiltInLinkLint`       | **Fixed (P0)** — single compile per command                     |
+| `validateCompiledLinkTarget`                 | **Fixed (P0)** — slug registries cached per output file         |
+| `buildSlugRegistry`                          | **Fixed (P0)** — single line split                              |
+| `lintShardLinks` → `shardSlugSet`            | **Fixed (P0)** — slug set computed once per shard               |
+| `linkedSectionFiles` / `buildSectionSlugMap` | **Fixed (P1)** — compile-scoped shard cache; one read per shard |
+| Peer linters                                 | Separate cost; scales with file count and rules                 |
 
 ## Optimization roadmap
 
@@ -151,8 +149,8 @@ P0+P1 shipped ([#64](https://github.com/betsalel-williamson/mdcp/issues/64)). P2
 
 Deferred — dogfood meets SLOs; revisit at 200-shard scale or if agent-loop latency becomes a blocker ([#67](https://github.com/betsalel-williamson/mdcp/issues/67)).
 
-- Persist `refs.json`; make `refs lookup` query registry (no compile)
 - Optional `--guide` scope for compile/lint during authoring
+- Keep `refs.json` / `refs list` cheap relative to full compile when agent loops grow
 
 ### P3 — Observability (deferred)
 

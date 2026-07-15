@@ -11,19 +11,23 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
 | `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
-| `repo-readme/` | GitHub visitors, adopters        | `README.md` at repo root                          |
+| `repo-readme/` | GitHub visitors, skill adopters  | `README.md` at repo root                          |
+
+**Surface ownership:** `repo-readme/` = Agent Skill landing; `client-cli/` = CLI commands/config only; `client-core/` = library API/hooks only. Cross-link the other surfaces instead of duplicating skill, CLI, or API narrative across package READMEs.
 
 Config: [`docs/mdcp.config.json`](../mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
 Publish landing style for root README: [Personas and priority tiers](../features/personas-and-priority-tiers.md#publish-landing-style).
 
-### Upstream refs (dogfood)
+### Agent Skill dogfood
 
-`mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.1`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
+Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`](../../skills/mdcp/). After editing skill files, refresh the local install:
 
-**Dogfood agent index:** do not edit `docs/mdcp.v0.4.llms.txt` (protocol `0.4.0.0` — fetch-only). When `compileOrder` or repo scripts change, bump `protocolVersion` and `protocol.llmsIndex.outputFile` (for example `mdcp.v0.4.0.1.llms.txt`), run `pnpm docs:compile:repo`, and commit the new versioned file.
+```bash
+pnpm skill:install
+```
 
-Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
+That copies `skills/mdcp/` into `.agents/skills/mdcp/` (gitignored). Manual invoke: `/mdcp`. See [Agent Skill](./agent-skill.md).
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).
 
@@ -40,11 +44,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 
 ## Agent context
 
-```bash
-pnpm docs:context    # mdcp export --llm from features monolith only
-```
-
-The monolith compiles **`features`** only (see `compileOrder` in config). The developer guide, consumer publish guides, and npm README outputs are omitted from LLM export source.
+Prefer host search then read one shard under `docs/`. Compiled monoliths under `docs/_build/` are available when a broader read is intentional.
 
 ## Linting docs
 

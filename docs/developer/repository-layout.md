@@ -5,6 +5,12 @@ mdcp/
 ├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
+├── skills/                 # Publishable Agent Skills source (skills.sh layout)
+│   ├── mdcp/               # Parent documentation-system skill
+│   ├── mdcp-arch-oss-library/
+│   └── mdcp-arch-product-docs-site/
+├── skills.sh.json          # skills.sh repo page groupings
+├── .agents/skills/         # Local dogfood installs + workspaces (gitignored publishable copies)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary

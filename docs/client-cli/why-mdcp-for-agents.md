@@ -1,28 +1,15 @@
 # Why mdcp for coding agents
 
-**MDCP** ([MarkDown Context Protocol](../glossary/mdcp.md)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
+Which **CLI commands** address common docs failures when agents edit the repo:
 
-## The pain
+| Pain                       | What goes wrong                 | Command                                            |
+| -------------------------- | ------------------------------- | -------------------------------------------------- |
+| **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans       |
+| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp check` (optional `mdcp refs list` for slugs) |
+| **Context overload**       | Monolith pasted each agent turn | Host search, then read one shard                   |
+| **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                          |
+| **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`    |
 
-LLM pair-coding on a repo breaks down when documentation is a single monolith, unvalidated, and mixed up with implementation:
+Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs list` → read one shard when the next turn needs doc context.
 
-| Pain                       | What goes wrong                 | Command                                                |
-| -------------------------- | ------------------------------- | ------------------------------------------------------ |
-| **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans           |
-| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp refs lookup` on compiled output                  |
-| **Context overload**       | Monolith pasted each agent turn | `refs lookup` then read one shard                      |
-| **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                              |
-| **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`        |
-| **Plan mixed with code**   | Stale prose drives wrong code   | Shards under `docs/features/`, `client/`, `developer/` |
-
-Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way. For granular reads, follow the [usage model](../features/protocol/usage-model.md).
-
-## Typical agent loop
-
-Edit shards → `mdcp refs lookup "topic"` while writing links → `mdcp compile` → `mdcp check` → `mdcp export --llm` when the next turn needs doc context.
-
-## Get started
-
-First-time setup in a consumer repo: copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) (or load from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send. Task-type prompts and workflow index: [LLM collaboration](./llm-collaboration.md).
-
-For command and capability depth, read the [feature catalog](../features/feature-catalog.md).
+Install and flags: [Install and quick start](./install-and-quick-start.md). Agent **behavior** (when to edit docs, subagents) is the [Agent Skill](../../README.md), not this package.

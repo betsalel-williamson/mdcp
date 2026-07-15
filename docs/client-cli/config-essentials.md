@@ -169,9 +169,8 @@ When a manifest has preamble prose with example inline links before an ordered `
 
 ## Schema-only fields
 
-| Field                       | Notes                                                      |
-| --------------------------- | ---------------------------------------------------------- |
-| `refs.slugAlgorithm`        | Informational only — only `github` is implemented          |
-| `export.llm.skipIndexFiles` | No-op — compile output never includes `index.md` manifests |
+| Field                | Notes                                             |
+| -------------------- | ------------------------------------------------- |
+| `refs.slugAlgorithm` | Informational only — only `github` is implemented |
 
 Full schema and examples: [mdcp.config.json in sample-guides](../../examples/sample-guides/mdcp.config.json).

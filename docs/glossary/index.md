@@ -6,15 +6,24 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ## Protocol terms
 
+- [Agent Skills](./agent-skills.md)
 - [MDCP](./mdcp.md)
 - [protocol version](./protocol-version.md)
-- [mdcp-llms-index](./mdcp-llms-index.md)
+
+## Skill verification
+
+- [skill content lint](./skill-content-lint.md)
+- [live skill eval](./live-skill-eval.md)
 
 ## Format and compile terms
 
 - [GFM](./gfm.md)
 - [Authored GFM](./authored-gfm.md)
 - [ignoreGuides](./ignore-guides.md)
+- [refs](./refs.md)
+- [refs registry](./refs-registry.md)
+- [heading slug](./heading-slug.md)
+- [cross-link](./cross-link.md)
 
 ## Adoption and messaging
 

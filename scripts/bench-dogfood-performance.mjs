@@ -28,7 +28,6 @@ const PRE_P0 = {
   'link lint ms per link': { value: 8, unit: 'ms/link', source: 'github-issue-64' },
   'compile invocations per check': { value: 3, unit: 'count', source: 'github-issue-64' },
   'file reads per shard (compile)': { value: 5, unit: 'count', source: 'github-issue-64' },
-  'refs lookup': { value: 700, unit: 'ms', source: 'github-issue-64' },
 };
 
 const COMPILED_LINK_COUNT = 357;
@@ -176,21 +175,9 @@ async function main() {
     rmSync(benchDir, { recursive: true, force: true });
   }
 
-  const refsLookupMs = timeCliMedian([
-    'refs',
-    'lookup',
-    'compile',
-    '--config',
-    'docs/mdcp.config.json',
-    '--docs-root',
-    'docs',
-  ]);
-
   const msPerLink = Number((lintMs / COMPILED_LINK_COUNT).toFixed(3));
   const compileInvocations = 1;
   const fileReadsPerShard = 1;
-
-  const refsLookupStatus = 'open (P2)';
 
   const rows = [
     scorecardRow({
@@ -287,18 +274,6 @@ async function main() {
       postSource: 'packages/mdcp-core/test/shard-cache.test.ts',
       status: fileReadsPerShard === 1 ? 'met' : 'miss',
       notes: 'Verified by unit test readFileSync count during compileGuideResultsWithContext',
-      recordedAt,
-    }),
-    scorecardRow({
-      operation: 'refs lookup',
-      tier: 1,
-      sloTarget: '< 200 ms',
-      sloShards: 500,
-      pre: PRE_P0['refs lookup'],
-      post: { value: refsLookupMs, unit: 'ms' },
-      postSource,
-      status: refsLookupStatus,
-      notes: 'Still recompiles monolith; P2 targets refs.json query',
       recordedAt,
     }),
   ];

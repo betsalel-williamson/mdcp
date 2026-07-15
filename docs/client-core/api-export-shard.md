@@ -2,9 +2,7 @@
 
 ## Export
 
-| Export                               | Purpose                           |
-| ------------------------------------ | --------------------------------- |
-| `stripForLlm`, `getLlmExportOptions` | Token-optimized output for agents |
+There is no token-strip LLM export API. Prefer the Agent Skill and one-shard reads.
 
 ## Shard (split)
 

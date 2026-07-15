@@ -4,13 +4,13 @@ Specification for opt-in backup of existing compile and export targets before ov
 
 ## Purpose
 
-Compile output paths can target existing files — monolith `outputFile`, per-guide `compile.outputFile`, and `mdcp export` `.llm.md` beside the compiled output. In a git-tracked repo, overwrite is the expected workflow: `git diff` is the safety net.
+Compile output paths can target existing files — monolith `outputFile` and per-guide `compile.outputFile`. In a git-tracked repo, overwrite is the expected workflow: `git diff` is the safety net.
 
 For operators working **outside version control**, or who want a recoverable copy before a risky publish-path overwrite (for example `README.md`), opt-in backup moves the prior file into the gitignored cache tree under `outputDir`.
 
 ## Overwrite default
 
-`mdcp compile` and `mdcp export` **overwrite** existing output files with no backup. No existence check, no sibling `.bak` files next to tracked publish targets.
+`mdcp compile` **overwrites** existing output files with no backup. No existence check, no sibling `.bak` files next to tracked publish targets.
 
 ## Opt-in backup
 
@@ -59,11 +59,11 @@ Delete `_build/` to clean generated output and all backups. Root `.gitignore` in
 }
 ```
 
-| Field     | Default           | Role                                        |
-| --------- | ----------------- | ------------------------------------------- |
-| `enabled` | `false`           | Enable backup for all compile/export writes |
-| `dir`     | `.caches/backups` | Relative to `outputDir`                     |
-| `ext`     | `''`              | Suffix appended to backup filename          |
+| Field     | Default           | Role                               |
+| --------- | ----------------- | ---------------------------------- |
+| `enabled` | `false`           | Enable backup for compile writes   |
+| `dir`     | `.caches/backups` | Relative to `outputDir`            |
+| `ext`     | `''`              | Suffix appended to backup filename |
 
 Resolution order: explicit CLI flag > config > built-in default.
 
@@ -77,7 +77,7 @@ Global options (all commands that write compile output):
 | `--backup-dir <path>` | Backup directory relative to `outputDir` (default `.caches/backups`) |
 | `--backup-ext <ext>`  | Suffix on backup filename (default none)                             |
 
-Commands affected: `compile`, `export`, `refs gen`, `lint`, `links`, `check`.
+Commands affected: `compile`, `refs gen`, `lint`, `links`, `check`.
 
 ## Backup acceptance criteria
 
@@ -88,7 +88,6 @@ Commands affected: `compile`, `export`, `refs gen`, `lint`, `links`, `check`.
 - Custom `backup.dir` and `backup.ext` respected
 - Config `backup` object parses with defaults (`enabled: false`, `dir: '.caches/backups'`, `ext: ''`)
 - CLI `mdcp compile --backup` creates cache backup on re-compile
-- CLI `mdcp export --llm --backup` backs up existing `.llm.md` export
 
 ## Related
 

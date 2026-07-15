@@ -4,16 +4,16 @@ Operational roles for Markdown as Context. Parent: [GitHub #45](https://github.c
 
 ## Agent entrypoint
 
-Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `mdcp.v0.4.llms.txt` (protocol `0.4.0.0`). That file explains how to query without loading entire guides.
+Agents should load the parent **Agent Skill** (`/mdcp`, install target `.agents/skills/mdcp/`) first. That skill teaches how to query with smallest context — discover one shard at a time — without loading entire guides. See [Agent Skill delivery](../agent-skill.md).
 
 ## Actors and obligations
 
-| Actor                    | Reads                                          | Writes           | Must run                                     |
-| ------------------------ | ---------------------------------------------- | ---------------- | -------------------------------------------- |
-| Author (human/agent)     | shards, `refs lookup`, bootstrap index         | shards, manifest | `check` before PR                            |
-| CI                       | config                                         | —                | `check --require-lint` when peers configured |
-| Agent (context consumer) | bootstrap index, `export --llm`, single shards | —                | —                                            |
-| Maintainer               | spec + conformance                             | protocol shards  | `docs:check:repo`                            |
+| Actor                    | Reads                                 | Writes           | Must run                                     |
+| ------------------------ | ------------------------------------- | ---------------- | -------------------------------------------- |
+| Author (human/agent)     | shards, Agent Skill                   | shards, manifest | `check` before PR                            |
+| CI                       | config                                | —                | `check --require-lint` when peers configured |
+| Agent (context consumer) | Agent Skill, single shards (`rg`/IDE) | —                | —                                            |
+| Maintainer               | skill pack + conformance              | protocol shards  | `docs:check:repo`                            |
 
 **Shards are source of truth; compiled files are generated.**
 
@@ -21,15 +21,15 @@ Agents should read **`mdcp.v*.llms.txt`** in the docs root first — typically `
 
 ### Minimal
 
-One guide, `compile` + `check`, monolith output. Fetch or copy `mdcp.v0.4.llms.txt` to docs root (`npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-ref v0.4.1 --fetch-profile alpha`).
+One guide, `compile` + `check`, monolith output. Install the parent skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`).
 
-### Standard
+### Typical
 
-Multi-guide `compileOrder`, publish outputs (`compile.outputFile`), `refs lookup`.
+Multi-guide `compileOrder`, publish outputs (`compile.outputFile`).
 
 ### Agent-native
 
-Above plus `export --llm`, three-tier shards (`features` / `client` / `developer`), task prompts from `spec/extensions/prompts-mdcp-defaults/0.4.0.0/` (cached at `.caches/mdcp/prompts/` after fetch).
+Above plus three-tier shards (`features` / `client` / `developer`), task subagents from `skills/mdcp/agents/` (install target `.agents/skills/mdcp/agents/`).
 
 ## Coexistence
 
@@ -41,10 +41,9 @@ Above plus `export --llm`, three-tier shards (`features` / `client` / `developer
 
 ## Query preference order
 
-1. Read `mdcp.v*.llms.txt` in docs root (agent index)
-2. Load task prompt from `.caches/mdcp/prompts/` (or [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/)) with `WORK_ITEM` set — see [Agent task prompts](./agent-task-prompts.md)
-3. `mdcp refs lookup "<topic>"`
-4. Read one shard from lookup result
-5. `mdcp export --llm` only when broader context is required
+1. Activate the parent Agent Skill (`/mdcp`) when available
+2. Load a task subagent from `skills/mdcp/agents/` (or [skills/mdcp/agents/](../../skills/mdcp/agents/)); complete intake for `WORK_ITEM` — see [Agent task subagents](./agent-task-prompts.md)
+3. Discover the shard with host tools (`rg`, IDE search, guide `index.md`) and **read one shard**
+4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs list`)
 
-Read [LLM collaboration](../../client-cli/llm-collaboration.md) for prompts and workflow index.
+Read [`skills/mdcp/references/agents.md`](../../../skills/mdcp/references/agents.md) for subagent catalog and workflow index.

@@ -4,6 +4,7 @@ node_modules/
 
 # Build output
 dist/
+build/
 
 # MDCP temp / cache
 .compile-build/
@@ -21,6 +22,14 @@ coverage/
 # Local IDE / indexing
 .cursor/
 .cursorindexingignore
+
+# Agent Skills — local installs / workspaces (publishable source lives in skills/)
+.agents/skills/mdcp/
+.agents/skills/mdcp-arch-oss-library/
+.agents/skills/mdcp-arch-product-docs-site/
+.agents/skills/*-workspace/
+.agents/skills/skill-creator/
+skills-lock.json
 
 # VS Code (keep shared workspace config)
 .vscode/*
@@ -40,6 +49,11 @@ docs/styles/*
 
 # MDCP compiled output (repo docs — regenerate with pnpm docs:compile:repo)
 docs/_build/
+
+# Rendered presentation artifacts — source lives in docs/presentation-la-devops/
+build/presentations/
+docs/presentation-la-devops/assets/*.png
+docs/presentation-la-devops/assets/*.svg
 
 # Sample guides fixture output
 examples/sample-guides/_build/

@@ -12,31 +12,17 @@ mdcp compile --config mdcp.config.json --docs-root .
 
 Guides compile to per-guide files under `outputDir` by default (`{name}.md`, or `guide.md` when alone). Set top-level `outputFile` for an optional stitched monolith. Path layout: [Config essentials](../client-cli/config-essentials.md#path-layout).
 
-## Refs + lookup (P0.2)
+## Refs registry (P0.2)
 
-GitHub slugs from compiled output. Agents query headings while writing links.
+Heading-slug **registry** for validation after compile — see [Refs registry path](./refs-registry-path.md). Discover shards with host search (`rg`); confirm `#` cross-links with `mdcp check`.
 
-```bash
-mdcp refs lookup "authentication" --format json
-```
+## Agent Skill delivery
 
-## LLM export (P0.3)
-
-Token-stripped context for agents.
+Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill delivery](./agent-skill.md).
 
 ```bash
-mdcp export --llm --stdout --config mdcp.config.json
+npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
-
-## llms-index export (V1)
-
-Versioned agent bootstrap at docs root (`mdcp.v0.4.llms.txt`, protocol `0.4.0.0`).
-
-```bash
-mdcp export --llms-index --config mdcp.config.json --docs-root docs
-```
-
-Drop the static file in any docs root before config exists; regenerate after `compileOrder` changes. See [Vision and roadmap](./protocol/00-vision-and-roadmap.md).
 
 ## Check gate (P0.4)
 
@@ -87,8 +73,7 @@ Built-in hooks:
 ```json
 {
   "scripts": {
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json",
-    "docs:refs": "mdcp refs lookup",
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
     "docs:check:mdcp": "mdcp check --config docs/mdcp.config.json --require-lint"
   }
 }

@@ -1,67 +1,24 @@
 # @bwilliamson/mdcp-core
 
-## Why MDCP
+## About @bwilliamson/mdcp-core
 
-LLM pair-coding on a real repo breaks down when documentation is a single monolith, unvalidated, and tangled up with implementation. Merge conflicts stack up on one giant README. Agents guess `#anchor` slugs that rot after the next edit. Every turn dumps the whole guide into context. Shards and published output drift apart silently. A one-off bash script holds it together until nobody owns it.
+The **programmatic core library** for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
 
-### The usual fixes do not solve that
+Use this package when you need compile, validation, refs, and export APIs in scripts, CI, editors, or other tools **without** shelling out to the CLI.
 
-| Approach                            | What it misses                                                                                   |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Monolithic README / full `llms.txt` | No sharding, no validation gate, no stable refs registry                                         |
-| Context7 / large crawled corpora    | Fuzzy retrieval — not author-controlled, deterministic, or PR-reviewable                         |
-| Cursor rules / `AGENTS.md`          | Host-native friction hints, not validated product context in git                                 |
-| Docusaurus / MkDocs / VitePress     | Strong public doc sites — weak agent-first `refs lookup`, scoped export, and CI structural gates |
-| MCP filesystem reads                | Delivers whatever exists; does not enforce shard discipline at authoring time                    |
+### Not the CLI or the Agent Skill
 
-MDCP is complementary to MCP and doc-site generators: it owns **authoring, compile invariants, and the validation gate** upstream of delivery. See [Scope and positioning](../../docs/features/protocol/01-scope-and-positioning.md).
+- **This library** — TypeScript/Node API via `@bwilliamson/mdcp-core` on npm
+- **CLI** — command-line wrapper around this library: [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
+- **Agent Skill** — host instructions for docs-as-code agents: [root README](../../README.md) / `npx skills add … --skill mdcp`
 
-### What MDCP does not replace
-
-MDCP is a **middle layer** in your stack — not a substitute for what sits above or below it:
-
-- **Ephemeral work docs** — sprint plans, task briefs, spike notes, and scratch docs that help turn meta ideas into code. Those stay temporary and task-scoped; mdcp shards hold **durable product context** that outlives a single PR or agent session.
-- **Orchestrators and agent systems** — Cursor rules, MCP servers, CI pipelines, and multi-agent coordinators still run your workflow. MDCP feeds them validated, scoped documentation context; it does not replace how they schedule, route, or hand off work.
-- **Checked-in prompts and playbooks** — many teams already version agent prompts, rules files, and workflow templates in git. MDCP complements that habit with a formal, open framework: validated product-context shards, compile/check gates, `refs lookup`, and versioned task prompts — so prompt libraries and durable documentation share the same discipline.
-- **Implementation** — code, tests, and config remain the source of truth for behavior. Shards carry intent, constraints, and acceptance criteria — not line-by-line instructions that duplicate the repo.
-
-The goal is to **reduce friction between** durable context and active work: smaller documentation batches, fewer context-switching interruptions, and less time re-explaining the system each turn — so humans and agents stay closer to flow state.
-
-### Adopt it today
-
-The open-alpha CLI and core library are a working foundation, not a slide deck:
-
-- **Ship faster with agents** — `mdcp refs lookup` resolves link targets from compiled output; `mdcp export --llm` scopes context to what the next turn needs instead of re-sending the entire README.
-- **Stop doc drift before merge** — `mdcp check` runs the same compile → refs → xrefs pipeline for agents, CI, and human reviewers.
-- **Edit docs like code** — small shards, manifest order, one compile step; publish to monolith, `DEVELOPERS.md`, or npm READMEs from the same source.
-- **Keep plan separate from implementation** — shards hold context and the high-level plan; code holds how. Structure enforces that split.
-
-Integrate programmatically with `@bwilliamson/mdcp-core` for compile, refs, validation, and LLM export in CI, editors, and custom tooling. Consumer workflow: [Why mdcp for coding agents](../mdcp-cli/README.md#why-mdcp-for-coding-agents), [Alternatives and adoption](../../docs/features/protocol/02-alternatives-and-adoption.md).
-
-### So what — how do I use this in my project?
-
-Start with [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli) in **any** repository — monorepo or single app, any language or framework. mdcp cares about your **documentation shards and compile pipeline**, not your application architecture. Add `@bwilliamson/mdcp-core` later when you need programmatic compile, refs, or export in CI or custom tooling.
-
-1. `npm install -D @bwilliamson/mdcp-cli`
-2. Copy [getting-started-with-mdcp.prompt.md](../../spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md) (or load it from `.caches/mdcp/prompts/` after fetch), fill in `FEATURE=` and `PERSONA=`, and send it to your coding agent — it inspects the repo and walks through config, shard layout, and first `mdcp check`.
-
-Fetch the bootstrap index and prompts into your docs root:
-
-```bash
-npx @bwilliamson/mdcp-cli export --llms-index --fetch --fetch-profile alpha --fetch-ref v0.4.1 --docs-root docs
-```
-
-CLI walkthrough: [Install and quick start](../mdcp-cli/README.md#install-and-quick-start).
-
-### Where it is going
-
-Like [OpenAPI](https://www.openapis.org/) standardized HTTP API contracts, MDCP is evolving into an open contract for **documentation context** — intent, design, and terminology you can share with other systems. That benefits inter-agent development (validated shards and glossaries instead of re-crawling ad hoc prose) and human-in-the-loop verification: reviewers read the same compiled context agents use and confirm the system behaves as documented. Roadmap: [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
+`@bwilliamson/mdcp-cli` depends on this package. Install `@bwilliamson/mdcp-core` directly only when you need the programmatic API. Agent Skill install does **not** replace this library.
 
 ## Overview
 
 Core library for **mdcp** — compile sharded Markdown guides, build section link registries, validate structure, and export LLM-friendly output.
 
-Use this package when you need mdcp behavior in scripts, CI pipelines, editors, or other tools without shelling out to the CLI.
+Use this package when you need mdcp behavior in scripts, CI pipelines, editors, or other tools without shelling out to the CLI. For the Agent Skill (host instructions), see [root README](../../README.md) — that is a separate install.
 
 ### Requirements
 
@@ -79,28 +36,6 @@ The CLI (`@bwilliamson/mdcp-cli`) depends on this package. Install `@bwilliamson
 
 **Pre-1.0 / open alpha (0.4.0):** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Pin `@bwilliamson/mdcp-core@0.4.1` and read package changelogs before upgrading.
 
-## Glossary
-
-Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
-
-Each term is its own shard under `docs/glossary/`. For large glossaries, split manifests across sub-index files (for example `index-protocol.md`, `index-format.md`) and set `compile.scopeRoot` to `glossary` so transitive links pull term shards into other guides. Read [domain glossary](#domain-glossary).
-
-### Protocol terms
-
-- [MDCP](#mdcp)
-- [protocol version](#protocol-version)
-- [mdcp-llms-index](#mdcp-llms-index)
-
-### Format and compile terms
-
-- [GFM](#gfm)
-- [Authored GFM](#authored-gfm)
-- [ignoreGuides](#ignoreguides)
-
-### Adoption and messaging
-
-- [WIIFM](#wiifm)
-
 ## Quick example
 
 ```typescript
@@ -110,10 +45,7 @@ import {
   resolveDocsRoot,
   genRefsFromCompiled,
   resolveRefsPath,
-  lookupHeadings,
-  buildSlugRegistry,
-  stripForLlm,
-  getLlmExportOptions,
+  checkRefsRegistry,
 } from '@bwilliamson/mdcp-core';
 
 const docsRoot = '/path/to/docs';
@@ -130,11 +62,7 @@ const compiled = compileGuides({
 
 const refsPath = resolveRefsPath(docsRoot, config.outputDir, config.refs.registryFile);
 genRefsFromCompiled(compiled, refsPath);
-
-const registry = buildSlugRegistry(compiled);
-const matches = lookupHeadings(registry, 'authentication');
-
-const llmText = stripForLlm(compiled, getLlmExportOptions(config));
+checkRefsRegistry(compiled, refsPath);
 ```
 
 Use `writeCompiledGuides` when you need to write the monolith and per-guide publish outputs to disk.
@@ -235,7 +163,6 @@ Full spec: [Compile output backup](../../docs/features/compile-output-backup.md)
 | Export                                                         | Purpose                                 |
 | -------------------------------------------------------------- | --------------------------------------- |
 | `headingTextToPlain`, `githubSlugify`, `buildSlugRegistry`     | GitHub heading slugs via github-slugger |
-| `lookupHeadings`                                               | Fuzzy search over `refs.json` headings  |
 | `genRefsFromCompiled`, `readRefsRegistry`, `checkRefsRegistry` | `refs.json` lifecycle                   |
 | `resolveRefsPath`, `writeRefsRegistry`                         | Path and I/O helpers                    |
 
@@ -279,7 +206,7 @@ githubSlugify('`--config` vs `--docs-root`');
 // → '--config-vs---docs-root'
 ```
 
-Consumer docs: [Cross-links and refs — heading slugs](../mdcp-cli/README.md#heading-slugs-github-rules).
+CLI authoring rules: [Cross-links and refs — heading slugs](../mdcp-cli/README.md#heading-slugs-github-rules).
 
 ### Manifest
 
@@ -298,9 +225,7 @@ Consumer docs: [Cross-links and refs — heading slugs](../mdcp-cli/README.md#he
 
 ### Export
 
-| Export                               | Purpose                           |
-| ------------------------------------ | --------------------------------- |
-| `stripForLlm`, `getLlmExportOptions` | Token-optimized output for agents |
+There is no token-strip LLM export API. Prefer the Agent Skill and one-shard reads.
 
 ### Shard (split)
 
@@ -320,7 +245,7 @@ Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → 
 
 Per-shard transforms run during `assembleGuide` **before** sections are stitched. Hooks receive each shard body after heading demotion and preamble stripping; assembly-time passes (cross-guide rewrite, publish-relative rewrite on `compile.outputFile` outputs, anchor stripping, intra-guide rewrite) run around the hook pipeline.
 
-Hooks assemble [authored GFM](#authored-gfm) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
+Hooks assemble [authored GFM](../../docs/glossary/authored-gfm.md) — not variable substitution or template logic. See [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 ### Architecture
 
@@ -987,66 +912,18 @@ Link validation accepts those shard paths when the target guide is listed in `ig
 | [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)         | `mdcp` command-line interface |
 | [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) | Starter markdownlint configs  |
 
+The [Agent Skill](../../README.md) is a separate install (`npx skills add`) — not an npm dependency of this library.
+
 ### Further reading
 
-- [Project README](../../README.md)
-- [Design constraints](../../docs/features/design-constraints/index.md)
 - [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
+- [Project README](../../README.md) — Agent Skill landing
+- [Design constraints](../../docs/features/design-constraints/index.md)
 
 ### License
 
 MIT
 
-## domain glossary
-
-Per-repository glossary shards under `docs/glossary/` for acronyms and product vocabulary. When legacy systems reuse the same term for different concepts, add a **disambiguation** entry and link from feature shards on first use. Start the glossary before large feature shards when migrating or onboarding new projects.
-
-### One term per shard
-
-Each definition lives in its own `.md` file with a single `#` heading (the term). Link the term from feature shards on first use, for example `[GFM](./gfm.md)` or `../glossary/gfm.md` from another guide.
-
-### Multiple index files
-
-When a glossary grows beyond a comfortable manifest size, group entries in sub-index manifests:
-
-| File                | Role                                                                                     |
-| ------------------- | ---------------------------------------------------------------------------------------- |
-| `index.md`          | Master index — preamble plus links to every term shard (required for cross-guide stitch) |
-| `index-protocol.md` | Example sub-index — protocol-related terms only                                          |
-| `index-format.md`   | Example sub-index — format and compile terms                                             |
-
-**Stitched into other guides:** link `../glossary/index.md` from each guide `index.md`. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
-
-**Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.
-
-## MDCP
-
-**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
-
-## protocol version
-
-Four-part version for MDCP **artifact and config compatibility** (default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 0.4.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v0.4.llms.txt` ≡ `0.4.0.0`).
-
-**Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](../../DEVELOPERS.md#040-open-alpha-milestone).
-
-Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
-
-## mdcp-llms-index
-
-Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. Read [Vision and roadmap](../../docs/features/protocol/00-vision-and-roadmap.md).
-
-## GFM
-
-**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
-
-## Authored GFM
-
-Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; read [Preprocessor / templating (out of scope)](../../docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
-
 ## ignoreGuides
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](#cross-guide-link-rewriting).
-
-## WIIFM
-
-**What's In It For Me** — reader-first benefit before mechanics or toolchain detail. On mdcp landing pages, each [adoption archetype](../../docs/features/personas-and-priority-tiers.md#adoption-archetypes) gets one WIIFM line; copy must follow [Benefit claims and evidence](../../docs/features/protocol/benefit-claims-and-evidence.md) tiers (Tier A/B on README, never unmeasured Tier C claims).

@@ -77,7 +77,7 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` ta
 - Revoke any legacy `NPM_TOKEN` secrets from GitHub once OIDC is verified
 - The release workflow uses OIDC (`id-token: write`) and `NPM_CONFIG_PROVENANCE=true`
 
-## Release workflow
+## Release workflow (NPM Packages)
 
 1. Merge PRs with changesets to `main`.
 2. Run **`pnpm release:tag:push`** on `main` (applies changesets, tags `vX.Y.Z`, pushes).
@@ -104,11 +104,11 @@ Changesets config: [`.changeset/config.json`](../../.changeset/config.json) — 
 
 ## Install surfaces
 
-| Use case       | Command                                                               |
-| -------------- | --------------------------------------------------------------------- |
-| Dev dependency | `npm i -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets`            |
-| Global CLI     | `npm i -g @bwilliamson/mdcp-cli`                                      |
-| Programmatic   | `import { compileGuides, stripForLlm } from '@bwilliamson/mdcp-core'` |
+| Use case       | Command                                                    |
+| -------------- | ---------------------------------------------------------- |
+| Dev dependency | `npm i -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets` |
+| Global CLI     | `npm i -g @bwilliamson/mdcp-cli`                           |
+| Programmatic   | `import { compileGuides } from '@bwilliamson/mdcp-core'`   |
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 

@@ -27,8 +27,8 @@ Example:
 
 ```bash
 mdcp compile --config docs/mdcp.config.json --docs-root docs
+mdcp check --config docs/mdcp.config.json --docs-root docs
 mdcp refs list --config docs/mdcp.config.json --docs-root docs
-mdcp refs lookup "section title" --config docs/mdcp.config.json --docs-root docs
 ```
 
-`mdcp refs lookup` compiles fresh in memory; `mdcp refs list` reads the registry file that `compile` just wrote.
+Discover shards with host search (`rg`, IDE search). `mdcp check` validates cross-link fragments against compiled slugs; `mdcp refs list` reads the registry file that `compile` just wrote.

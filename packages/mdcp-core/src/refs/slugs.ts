@@ -95,13 +95,3 @@ export function buildSlugRegistry(
 
   return { generatedFrom: 'compiled', headings, slugs };
 }
-
-export function lookupHeadings(registry: RefsRegistry, query: string): HeadingEntry[] {
-  const q = query.toLowerCase();
-  return registry.headings.filter(
-    (h) =>
-      h.title.toLowerCase().includes(q) ||
-      h.slug.includes(q) ||
-      (h.key?.toLowerCase().includes(q) ?? false),
-  );
-}

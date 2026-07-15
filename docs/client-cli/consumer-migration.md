@@ -30,93 +30,22 @@ MDCP uses an NPM-style two-root layout.
 
 Path resolution details: [Config essentials — path layout](./config-essentials.md#path-layout).
 
-## Compile hooks
+## Compile hooks and multi-guide links
 
-Built-in hooks run **by default** on every guide — omit `compile.hooks` for the common case. See [Default compile hooks](../features/default-compile-hooks.md).
+Built-in hooks run by default — omit `compile.hooks` for the common case. Specs and multi-guide / `ignoreGuides` examples live in **core** docs (not duplicated here):
 
-| Hook            | Purpose                                                               |
-| --------------- | --------------------------------------------------------------------- |
-| `stripAnchors`  | Remove explicit heading anchor markers from shard bodies              |
-| `inlineInserts` | Inline diagram, table, figure, and media catalog shards on first link |
-| `codeEvidence`  | Resolve evidence links to GitHub line-number fragments                |
+- [Default compile hooks](../features/default-compile-hooks.md)
+- [Compile hooks](../client-core/compile-hooks/index.md)
+- [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md)
 
-Opt out per hook: `"hooks": { "codeEvidence": false }`. Replace the pipeline entirely with a string array when needed.
-
-Cross-guide `.md` links rewrite automatically at assembly from `compileOrder` and per-guide `compile.outputFile`. Optional `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard paths for listed guides — see [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md). Hook specs: [Compile hooks](../client-core/compile-hooks/index.md).
-
-## Multi-guide config
-
-Multi-guide repos typically set per-guide publish targets and `sectionsHeading` — hooks need not be listed.
-
-### Default multi-guide
-
-```json
-{
-  "outputDir": "_build",
-  "compileOrder": ["glossary", "architecture-review", "technical-guide"],
-  "guides": [
-    {
-      "name": "glossary",
-      "compile": {
-        "outputFile": "glossary.md",
-        "sectionsHeading": "Sections"
-      }
-    },
-    {
-      "name": "architecture-review",
-      "path": "review",
-      "compile": {
-        "manifest": "shards.md",
-        "outputFile": "architecture-review.md",
-        "sectionsHeading": "Sections",
-        "scopeRoot": "."
-      }
-    },
-    {
-      "name": "technical-guide",
-      "path": "technical",
-      "compile": {
-        "outputFile": "technical-guide.md",
-        "sectionsHeading": "Sections"
-      }
-    }
-  ],
-  "refs": { "registryFile": ".caches/refs.json" },
-  "lint": { "xrefs": { "enabled": true } }
-}
-```
-
-Cross-guide links in compiled output rewrite to each target guide's `compile.outputFile` automatically.
-
-### Optional: shard links for one guide
-
-When one compiled guide should link to live shard files for a specific guide instead of that guide's monolith `#slug` target, set `compile.crossGuideLinks.ignoreGuides` on the **compiling** guide:
-
-```json
-{
-  "name": "glossary",
-  "compile": {
-    "outputFile": "glossary.md",
-    "sectionsHeading": "Sections",
-    "crossGuideLinks": {
-      "ignoreGuides": ["technical-guide"]
-    }
-  }
-}
-```
-
-See [Cross-guide links](../client-core/compile-hooks/cross-guide-links.md#cross-guide-ignore-example-mixed-monolith-and-shard-links).
-
-- `compile.scopeRoot` helps resolve shard-relative paths in nested guide trees (for example `review/outcomes/FIND-004.md`).
-- `compile.crossGuideLinks.ignoreGuides` on the compiling guide keeps shard `.md` links for listed guides instead of monolith `#slug` targets.
-- Publish paths like `../packages/foo/README.md` resolve from `outputDir` (`_build`).
+CLI config path rules remain in [Config essentials](./config-essentials.md).
 
 ## Steps for a new consumer repo
 
 1. Add `mdcp.config.json` to your docs shard directory
 2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](./config-essentials.md#--config-vs---docs-root))
 3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
-4. Use `mdcp refs lookup` for cross-link slugs (no `{#heading-ids}`)
+4. Discover shards with host search; validate cross-link slugs with `mdcp check` (optional `mdcp refs list`; prefer GitHub auto-slugs over `{#heading-ids}`)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
 Upgrade notes from earlier MDCP releases are in the package **changeset** files at release time, not in the feature catalog.

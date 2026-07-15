@@ -13,7 +13,7 @@ MDCP inverts the workflow:
 1. **Authors edit shards** — one file per section, listed in the guide manifest (`index.md` or `shards.md`).
 2. **Compile stitches shards** — heading levels are normalized, preambles stripped, links rewritten.
 3. **Validation catches drift** — orphans, stale refs, bare cross-references, optional prose/style linters.
-4. **Export serves consumers** — full monolith for humans, token-stripped output for LLM context.
+4. **Compiled output serves consumers** — monolith and publish files for humans, agents, and CI.
 
 You never hand-maintain the compiled file. Shards are the source of truth; `guides.md` (or a publish target like `README.md`) is generated.
 
@@ -67,7 +67,6 @@ flowchart TB
     monolith["guides.md monolith"]
     publish["Per-guide publish files"]
     refs["refs.json"]
-    llm["LLM export .llm.md"]
   end
 
   subgraph validate["Validation"]
@@ -84,16 +83,15 @@ flowchart TB
   core --> monolith
   core --> publish
   core --> refs
-  core --> llm
   monolith --> validate
   shards --> validate
 ```
 
-| Package                         | Role                                                                                           |
-| ------------------------------- | ---------------------------------------------------------------------------------------------- |
-| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `shard`, `refs`, `export`, peer linter wrappers. |
-| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.        |
-| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs for shard and compiled trees (not bundled; opt-in via config).    |
+| Package                         | Role                                                                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------- |
+| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `shard`, `refs`, peer linter wrappers.        |
+| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.     |
+| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs for shard and compiled trees (not bundled; opt-in via config). |
 
 The CLI is a thin wrapper over core. Integrators (CI, editors, agents) can call core directly or shell out to the CLI.
 
@@ -111,8 +109,6 @@ Understanding this sequence explains why most commands exist:
   mdcp refs generate           Write refs.json from compiled headings
            ↓
   mdcp check                   Orphans → compile → refs → xrefs → optional linters
-           ↓
-  mdcp export --llm            Token-stripped context for agents (optional)
 ```
 
 **Split** (`mdcp shard`) is the inverse path — used when bootstrapping shards from an existing monolith, not on every edit cycle.
@@ -151,7 +147,6 @@ Peer linters are **not bundled**. CI uses `--require-lint` / `--require-vale` to
 - **`guides[].compile`** — per-guide manifest name, hooks, publish path, title, scope root, etc.
 - **`refs`** — `registryFile` and monolith `outputFile` paths (relative to `outputDir`) and slug algorithm.
 - **`lint` / `vale`** — peer linter config paths and scan globs.
-- **`export.llm`** — what to strip for agent context.
 
 This repository dogfoods under `docs/`: the features guide compiles into `docs/_build/guides.md`; developer, CLI, and core guides publish to `DEVELOPERS.md` and package READMEs. See `docs/mdcp.config.json` for a multi-output layout.
 
@@ -166,7 +161,6 @@ This repository dogfoods under `docs/`: the features guide compiles into `docs/_
 | Slugs + refs registry           | `src/refs/`                 | `refs`                          |
 | Orphan validation               | `src/validate/orphans.ts`   | `check`                         |
 | Xref lint                       | `src/xrefs/lint.ts`         | `check`                         |
-| LLM export                      | `src/export/llm.ts`         | `export --llm`                  |
 | Peer binary resolution          | `src/peers/resolve.ts`      | `lint`, `prose`, `links`, `fix` |
 
 Start with `assemble.ts` and `cli.ts` if you are tracing a compile from config to disk.
@@ -175,7 +169,7 @@ Start with `assemble.ts` and `cli.ts` if you are tracing a compile from config t
 
 ### LLM authoring a new section
 
-Edit a shard (and `index.md` if section membership changed) → `mdcp refs lookup "topic"` while writing links → `mdcp check`.
+Edit a shard (and `index.md` if section membership changed) → insert cross-links carefully → `mdcp check` (catches bad `#` fragments).
 
 ### Human PR review
 
@@ -183,7 +177,7 @@ Edit a shard (and `index.md` if section membership changed) → `mdcp refs looku
 
 ### Agent reading repo docs
 
-`mdcp export --llm --stdout` or read the compiled monolith; `mdcp refs lookup` for stable anchor targets.
+Find shards with host search and read **one** file; use compiled output under `outputDir` only when a broader read is intentional.
 
 ### Publishing package README from shards
 

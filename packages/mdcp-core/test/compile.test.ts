@@ -420,15 +420,29 @@ describe('cli e2e', () => {
     expect(existsSync(join(FIXTURE, '_build', 'guides.md'))).toBe(true);
   });
 
-  it('mdcp refs lookup returns JSON matches', () => {
+  it('mdcp refs lookup is removed (non-zero exit)', () => {
+    expect(() =>
+      execFileSync(
+        'node',
+        [CLI, 'refs', 'lookup', 'admin', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
+        { encoding: 'utf-8', cwd: REPO_ROOT },
+      ),
+    ).toThrow();
+  });
+
+  it('mdcp refs list still works after compile', () => {
+    execFileSync('node', [CLI, 'compile', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE], {
+      encoding: 'utf-8',
+      cwd: REPO_ROOT,
+    });
     const out = execFileSync(
       'node',
-      [CLI, 'refs', 'lookup', 'admin', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
+      [CLI, 'refs', 'list', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
-    const matches = JSON.parse(out);
-    expect(Array.isArray(matches)).toBe(true);
-    expect(matches.length).toBeGreaterThan(0);
+    const headings = JSON.parse(out);
+    expect(Array.isArray(headings)).toBe(true);
+    expect(headings.length).toBeGreaterThan(0);
   });
 
   it('mdcp check passes on sample-guides (core, no peer require)', () => {

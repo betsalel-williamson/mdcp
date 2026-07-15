@@ -14,15 +14,24 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ### Protocol terms
 
+- [Agent Skills](#agent-skills)
 - [MDCP](#mdcp)
 - [protocol version](#protocol-version)
-- [mdcp-llms-index](#mdcp-llms-index)
+
+### Skill verification
+
+- [skill content lint](#skill-content-lint)
+- [live skill eval](#live-skill-eval)
 
 ### Format and compile terms
 
 - [GFM](#gfm)
 - [Authored GFM](#authored-gfm)
 - [ignoreGuides](#ignoreguides)
+- [refs](#refs)
+- [refs registry](#refs-registry)
+- [heading slug](#heading-slug)
+- [cross-link](#cross-link)
 
 ### Adoption and messaging
 
@@ -46,7 +55,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ### Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type subagents ([skills/mdcp/agents/](skills/mdcp/agents)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ### Daily commands
 
@@ -57,7 +66,8 @@ If you use coding agents with task-type prompts ([spec/extensions/prompts-mdcp-d
 | `pnpm run typecheck`     | TypeScript across packages                                               |
 | `pnpm run lint`          | ESLint on TypeScript sources                                             |
 | `pnpm run format:check`  | Prettier check                                                           |
-| `pnpm run check`         | Full gate: typecheck, lint, format, build, test, `docs:check`            |
+| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check           |
+| `pnpm skill:install`     | Dogfood-install parent skill from `skills/mdcp/` into `.agents/skills/`  |
 | `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs) |
 | `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                            |
 
@@ -84,7 +94,7 @@ CI runs the full gate: `pnpm run check`.
 
 ## Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [spec/extensions/prompts-mdcp-defaults/0.4.0.0/](spec/extensions/prompts-mdcp-defaults/0.4.0.0) (cached at `.caches/mdcp/prompts/` after fetch) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type subagents in [skills/mdcp/agents/](skills/mdcp/agents) (also present under `.agents/skills/mdcp/agents/` after a local dogfood install) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 
@@ -94,7 +104,7 @@ Configure an equivalent shard in consumer repos during [local setup](#local-setu
 Host=GitHub (betsalel-williamson/mdcp)
 Issue base URL=https://github.com/betsalel-williamson/mdcp/issues/
 Project board=https://github.com/users/betsalel-williamson/projects/4
-WORK_ITEM=issue number (e.g. 39) or full issue URL
+WORK_ITEM=enough to resolve the issue — number, URL, or short name/description
 ```
 
 All repo issues live on the public [MarkDown Context Protocol project board](https://github.com/users/betsalel-williamson/projects/4). **Status** tracks delivery (Todo / In Progress / Done); **Track** groups work by roadmap area (0.5 Spec & adoption, 1.0 Formalization, Maintenance, Performance, Future V2+). Move items to **In Progress** when you start a branch; set **Done** when the issue closes.
@@ -121,6 +131,7 @@ Branch before work=create the feature branch before shards, tests, or code
 Commits=conventional; atomic and logically grouped
 Release notes=changeset in .changeset/ for user-facing doc changes
 Docs=describe current behavior only; removed or breaking behavior belongs in changeset release notes, not feature/client shards
+ADRs=docs/features/adr/ (scope/removal decisions; not the feature catalog)
 Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 ```
 
@@ -131,14 +142,21 @@ Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 3. **Stay focused** — one feature or design at a time. Treat acceptance criteria as the boundary unless WORK_ITEM explicitly expands scope.
 4. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record that in the changeset instead.
 
-### Example prompt header
+### Example intake answers
+
+When a subagent asks for scope, answers can look like:
 
 ```text
 WORK_ITEM=39
-WORK_ITEM_LOOKUP=Branch from main (pull first). One issue per branch. Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
+WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md
 ```
 
-For task-type prompt templates, read [LLM collaboration](./packages/mdcp-cli/README.md#llm-collaboration).
+```text
+WORK_ITEM=default compile hooks
+WORK_ITEM_LOOKUP=GitHub
+```
+
+`WORK_ITEM` may be an issue number, URL, or a short name/description the agent can resolve. `WORK_ITEM_LOOKUP` may be this shard path or a plain location (e.g. GitHub) that points the agent at the tracker conventions here. For subagent catalog and invoke recipe, read [`skills/mdcp/references/agents.md`](skills/mdcp/references/agents.md).
 
 ## Repository layout
 
@@ -147,6 +165,12 @@ mdcp/
 ├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
+├── skills/                 # Publishable Agent Skills source (skills.sh layout)
+│   ├── mdcp/               # Parent documentation-system skill
+│   ├── mdcp-arch-oss-library/
+│   └── mdcp-arch-product-docs-site/
+├── skills.sh.json          # skills.sh repo page groupings
+├── .agents/skills/         # Local dogfood installs + workspaces (gitignored publishable copies)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
@@ -183,7 +207,7 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Refs / slugs       | `src/refs/`                   |
 | Validation         | `src/validate/`, `src/xrefs/` |
 | Shard (split)      | `src/shard/`                  |
-| Export (LLM)       | `src/export/`                 |
+| Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
 ```bash
@@ -234,19 +258,23 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 | `developer/`   | Contributing to this repo        | `DEVELOPERS.md` at repo root                      |
 | `client-cli/`  | npm CLI consumers                | `packages/mdcp-cli/README.md`                     |
 | `client-core/` | Programmatic API consumers       | `packages/mdcp-core/README.md`                    |
-| `repo-readme/` | GitHub visitors, adopters        | `README.md` at repo root                          |
+| `repo-readme/` | GitHub visitors, skill adopters  | `README.md` at repo root                          |
+
+**Surface ownership:** `repo-readme/` = Agent Skill landing; `client-cli/` = CLI commands/config only; `client-core/` = library API/hooks only. Cross-link the other surfaces instead of duplicating skill, CLI, or API narrative across package READMEs.
 
 Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
 
 Publish landing style for root README: [Personas and priority tiers](docs/features/personas-and-priority-tiers.md#publish-landing-style).
 
-#### Upstream refs (dogfood)
+#### Agent Skill dogfood
 
-`mdcp.config.json` pins **`protocol.profile`** (`alpha` for `valpha`) and **`protocol.ref`** (`v0.4.1`) so `mdcp export --llms-index --fetch` and extension cache pulls resolve the open-alpha tag on GitHub. Bump `protocol.ref` when cutting the next alpha release tag.
+Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`](skills/mdcp). After editing skill files, refresh the local install:
 
-**Dogfood agent index:** do not edit `docs/mdcp.v0.4.llms.txt` (protocol `0.4.0.0` — fetch-only). When `compileOrder` or repo scripts change, bump `protocolVersion` and `protocol.llmsIndex.outputFile` (for example `mdcp.v0.4.0.1.llms.txt`), run `pnpm docs:compile:repo`, and commit the new versioned file.
+```bash
+pnpm skill:install
+```
 
-Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Local verification uses in-repo `spec/` via `pnpm docs:compile:repo` (no network). `--fetch-local` from repo root also copies from `spec/` without GitHub.
+That copies `skills/mdcp/` into `.agents/skills/mdcp/` (gitignored). Manual invoke: `/mdcp`. See [Agent Skill](#agent-skill).
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](./packages/mdcp-core/README.md#publish-relative-link-rewriting).
 
@@ -263,11 +291,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 
 ### Agent context
 
-```bash
-pnpm docs:context    # mdcp export --llm from features monolith only
-```
-
-The monolith compiles **`features`** only (see `compileOrder` in config). The developer guide, consumer publish guides, and npm README outputs are omitted from LLM export source.
+Prefer host search then read one shard under `docs/`. Compiled monoliths under `docs/_build/` are available when a broader read is intentional.
 
 ### Linting docs
 
@@ -277,6 +301,67 @@ The monolith compiles **`features`** only (see `compileOrder` in config). The de
 - **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
+
+## Agent Skill
+
+Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary archetype skills under `skills/mdcp-arch-*` are **WIP** — keep them out of consumer get-started docs until ready.
+
+### Local dogfood
+
+Author under `skills/`. Then install into this repo for agents:
+
+```bash
+pnpm skill:install
+```
+
+That runs `npx skills add . --skill mdcp` and copies the parent skill into `.agents/skills/mdcp/`.
+
+Installed copies under `.agents/skills/mdcp*` are gitignored so they do not duplicate upstream source. Manual invoke (hosts that support slash skills): `/mdcp`. First-time consumer bootstrap: `/mdcp help me get started`.
+
+When changing skill instructions:
+
+1. Edit `skills/mdcp/SKILL.md` (and `references/` as needed) — keep the activation body under 500 lines; put depth in `references/`.
+2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
+3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs yet.
+4. Update [Agent Skill delivery](docs/features/agent-skill.md) when install or layout changes.
+5. Run `pnpm skill:install` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
+
+### Quality Assurance (QA) Principles
+
+When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
+
+- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
+- **Update as you go:** Continuously update documentation as work progresses.
+- **Current docs only:** Shards must describe the product **as it works now**. When behavior or guidance changes, remove superseded or stale text from durable docs — do not leave “old way” sections for archaeology. Git history preserves prior wording; consumer notice of breaking or removed behavior belongs in the **changeset**, not in feature/client/developer shards.
+- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
+- **Break it down:** Organize information into the smallest possible pieces (shards).
+- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
+- **No temp info:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools.
+- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
+
+### Verification
+
+| Command               | Purpose                                                                         |
+| --------------------- | ------------------------------------------------------------------------------- |
+| `pnpm skill:lint`     | MDCP content lint on parent `SKILL.md` (phrases, frontmatter, line budget)      |
+| `pnpm skill:validate` | [skills-ref](https://agentskills.io/specification) validate on all three skills |
+| `pnpm docs:check`     | Docs compile + lint gate after shard edits                                      |
+
+Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [live skill eval](docs/glossary/live-skill-eval.md).
+
+### Optional local improve loop
+
+For qualitative description tuning and agent behavior checks, install Anthropic's `skill-creator` locally (`npx skills add anthropics/skills --skill skill-creator`) and use fixtures under `skills/mdcp/evals/`. That [live skill eval](docs/glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
+
+### Publishing the skill pack
+
+Ship `skills/mdcp/` as the consumer entrypoint. Complementary `skills/mdcp-arch-*` directories remain WIP — do not highlight them on get-started or skills.sh until ready. Prefer:
+
+```bash
+npx skills add betsalel-williamson/mdcp --skill mdcp
+```
+
+Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
 
 ## Versioning and releases
 
@@ -299,6 +384,8 @@ There is **no calendar cadence**. Releases are **event-driven**:
 3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
 4. CI publishes to npm when the **`v*`** tag lands on GitHub.
 
+**Note on Agent Skills:** Publishable skills live under `skills/` (not npm). They evolve on `main` and are tagged with npm releases (e.g., `v0.4.1`). Bump each skill’s `metadata.version` with that release. Consumers install via Git (`npx skills add`) into `.agents/skills/`.
+
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
 ### Pre-1.0 policy (`0.x.y`)
@@ -317,17 +404,18 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 
 ### 0.4.0 open alpha milestone
 
-**0.4.0** is the first public alpha for external testers. It ships llms-index export, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy.
+**0.4.0** is the first public alpha for external testers. It shipped compile/check, built-in link validation, cross-guide link assembly, sharded glossary support, and unified output layout — with breaking changes since 0.3.0 allowed under pre-1.0 policy. Agent Skills are the supported agent delivery path (`npx skills add`).
 
-| Track                  | 0.4.0 status                                                                                                                               |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **npm packages**       | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee                                                                     |
-| **Protocol `0.4.0.0`** | Draft profile (`mdcp.v0.4.llms.txt`); first published llms-index spec; fetch via `--fetch-profile alpha` / `valpha` + `--fetch-ref v0.4.0` |
+| Track              | 0.4.0 status                                                           |
+| ------------------ | ---------------------------------------------------------------------- |
+| **npm packages**   | Open alpha — pin `@bwilliamson/mdcp-cli@0.4.0`; no stability guarantee |
+| **Agent delivery** | Prefer Agent Skills (`npx skills add`)                                 |
 
-**Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, llms-index export, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
-| **Roadmap V1 phase** | Reference implementation shipped; not a semver 1.0 stability promise |
+**Pre-0.4 doc-style evolution:** npm **0.1.0–0.3.0** changes are in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md). The **0.4.0** batch (link validation, output layout, glossary manifest, etc.) is recorded in pending [.changeset/](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) files — merged into `packages/*/CHANGELOG.md` at release.
 
-**Path to 1.0.0:** npm and protocol graduate together when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
+**Roadmap V1 phase:** Reference implementation shipped; not a semver 1.0 stability promise.
+
+**Path to 1.0.0:** npm graduates when the core mechanics survive real-world adoption without breaking changes for several months. Until then, iterate in `0.5.x` as feedback arrives.
 
 #### Community feedback
 
@@ -337,25 +425,18 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 
 #### Open alpha (0.4.0) release checklist
 
-Completed for the **0.4.0** open alpha:
+Completed for the **0.4.0** open alpha (historical — agent delivery has since moved to Agent Skills):
 
-- [x] **`docs/mdcp.config.json`** — `protocol.ref` pinned to `v0.4.0`
-- [x] **`spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md`** — phase-2 example `ref`: `v0.4.0`
-- [x] **Consumer install docs** — `--fetch-ref v0.4.0` + `--fetch-profile alpha`
-
-Remote `--fetch` with `ref: v0.4.0` requires the **`v0.4.0` git tag** on `main` (pushed by `pnpm release:tag:push`). Protocol version stays **`0.4.0.0`**; only git `ref` pins move between branch dogfood and release tags.
+- [x] Open alpha npm tag and consumer install docs
+- [x] `skills/mdcp` parent skill as agent entrypoint
 
 #### Open alpha (0.4.1) patch release checklist
 
 Pending for **0.4.1** (first patch after 0.4.0 open alpha):
 
-- [x] **`docs/mdcp.config.json`** — `protocol.ref` pinned to `v0.4.1`
-- [x] **`spec/extensions/prompts-mdcp-defaults/0.4.0.0/getting-started-with-mdcp.prompt.md`** — phase-2 example `ref`: `v0.4.1`
-- [x] **Consumer install docs** — `--fetch-ref v0.4.1` + `--fetch-profile alpha`
-- [ ] **Three pending changesets** on `main` — `#62` refs registry, `#64` perf, `#57` Node 24 + llms-index indirection
+- [x] Agent Skill install docs (`npx skills add betsalel-williamson/mdcp --skill mdcp`)
+- [ ] **Pending changesets** on `main` — merge and release as needed
 - [ ] **`pnpm release:tag:push`** — human runs interactively; select **patch** → `v0.4.1`
-
-Remote `--fetch` with `ref: v0.4.1` requires the **`v0.4.1` git tag** on `main`. Protocol version stays **`0.4.0.0`**; only git `ref` pins move.
 
 ### When to add a changeset
 
@@ -411,7 +492,7 @@ pnpm changeset          # interactive; commit the new .changeset/*.md file
 #### Verify locally (optional)
 
 ```bash
-pnpm changeset:status   # fails if package changes since origin/main lack a changeset
+pnpm changeset:status   # fails if package changes since the PR/upstream base lack a changeset
 ```
 
 #### Tag and publish (maintainers)
@@ -556,7 +637,7 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` ta
 - Revoke any legacy `NPM_TOKEN` secrets from GitHub once OIDC is verified
 - The release workflow uses OIDC (`id-token: write`) and `NPM_CONFIG_PROVENANCE=true`
 
-### Release workflow
+### Release workflow (NPM Packages)
 
 1. Merge PRs with changesets to `main`.
 2. Run **`pnpm release:tag:push`** on `main` (applies changesets, tags `vX.Y.Z`, pushes).
@@ -583,11 +664,11 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 
 ### Install surfaces
 
-| Use case       | Command                                                               |
-| -------------- | --------------------------------------------------------------------- |
-| Dev dependency | `npm i -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets`            |
-| Global CLI     | `npm i -g @bwilliamson/mdcp-cli`                                      |
-| Programmatic   | `import { compileGuides, stripForLlm } from '@bwilliamson/mdcp-core'` |
+| Use case       | Command                                                    |
+| -------------- | ---------------------------------------------------------- |
+| Dev dependency | `npm i -D @bwilliamson/mdcp-cli @bwilliamson/mdcp-presets` |
+| Global CLI     | `npm i -g @bwilliamson/mdcp-cli`                           |
+| Programmatic   | `import { compileGuides } from '@bwilliamson/mdcp-core'`   |
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
@@ -611,25 +692,41 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 | `index-protocol.md` | Example sub-index — protocol-related terms only                                          |
 | `index-format.md`   | Example sub-index — format and compile terms                                             |
 
-**Stitched into other guides:** link `../glossary/index.md` from each guide `index.md`. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
+**Stitched into other guides:** link `../glossary/index.md` from each guide that should publish the full glossary TOC (typically maintainer guides). Lean consumer READMEs may omit the TOC and link individual terms instead. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
 
 **Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.
 
+## Agent Skills
+
+Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Upstream source in this monorepo is `skills/mdcp/`; consumers vendor via `npx skills add` into `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time — across Cursor, Copilot, Claude Code, and similar hosts.
+
+Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:lint`) plus agentskills.io validation (`pnpm skill:validate` / skills-ref) in CI; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
+
 ## MDCP
 
-**MarkDown Context Protocol** — a protocol for repository documentation context: sharded intent and design in Markdown, validated compile output for agents, CI, and human readers. The CLI is one surface; `compile`, `check`, `refs lookup`, and `export --llm` implement the shared context layer.
+**MarkDown Context Protocol** — a **documentation system** delivered as an [Agent Skill](#agent-skills) and lightweight toolchain. It helps teams who care about durable docs distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays reviewable in git, maintainable as ideas keep arriving, and readable one shard at a time by people and coding agents.
+
+MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
+
+The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements that shared context layer alongside the skill’s behavioral guardrails.
 
 ## protocol version
 
-Four-part version for MDCP **artifact and config compatibility** (default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` and in `mdcp.v*.llms.txt` as the first-line header `mdcp-llms-index: 0.4.0.0`. Filename may abbreviate trailing `.0` segments (`mdcp.v0.4.llms.txt` ≡ `0.4.0.0`).
+Optional four-part string for MDCP **artifact and config compatibility** (historically default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` when present.
 
-**Version history:** `0.4.0.0` is the first published llms-index spec (open alpha). Pre-0.4 compile and doc-authoring evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the [0.4.0 changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/) — see [Versioning and releases](#040-open-alpha-milestone).
+Prefer [Agent Skills](#agent-skills) for agent delivery. This config field is not an agent bootstrap path.
 
-Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli@0.4.1` implements this draft protocol profile while tooling remains pre-1.0. **`valpha`** is the open-alpha symlink; **`vstable`** is reserved for npm **1.0.0**.
+Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli` remains pre-1.0 while tooling and agent delivery continue to evolve.
 
-## mdcp-llms-index
+## skill content lint
 
-Export profile for the versioned agent bootstrap file `mdcp.v*.llms.txt` in the docs root. Short index (~80–200 lines) describing how to adopt and query MDCP — not a full documentation dump. Read [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md).
+CI/static check that required or forbidden language still appears in the parent `SKILL.md` (plus frontmatter and line-budget rules). Run with `pnpm skill:lint` against `skills/mdcp/SKILL.md`; fixtures live under `scripts/mdcp-skill-content-lint/` (repo CI assets — not part of the portable skill pack). This is substring analysis of Markdown on disk — **not** a [live skill eval](#live-skill-eval), and it does not run agents or measure triggering.
+
+Companion gate: `pnpm skill:validate` runs [skills-ref](https://agentskills.io/specification) on each publishable skill under `skills/`.
+
+## live skill eval
+
+Optional local skill-creator workflow: run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `skills/mdcp/evals/`. Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
 
 ## GFM
 
@@ -642,6 +739,45 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 ## ignoreGuides
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](./packages/mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](./packages/mdcp-core/README.md#cross-guide-link-rewriting).
+
+## refs
+
+**Refs** (short for **references**) are the organized set of heading [slugs](#heading-slug) and [cross-links](#cross-link) MDCP derives from compiled guides so authors and CI can keep Markdown links coherent after stitch.
+
+The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](#refs-registry) and validates links at `check` time so the **compiled** document still targets the right sections and files.
+
+### Related wording
+
+| Form               | Meaning                                                                           |
+| ------------------ | --------------------------------------------------------------------------------- |
+| **refs** (noun)    | The reference system as a whole (slugs + links + registry)                        |
+| **refs registry**  | Derived catalog (`refs.json`) of compiled heading entries                         |
+| **ref** (informal) | One heading entry or one link target under that system                            |
+| **generate refs**  | Rebuild the registry from compiled output (`mdcp refs gen` / compile side effect) |
+| **list refs**      | Print registry headings (`mdcp refs list`)                                        |
+| **check refs**     | Confirm registry matches compiled headings (`mdcp refs check` / via `mdcp check`) |
+
+Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs list`**. Refs are not a retrieval API — see [ADR 0002](docs/features/adr/0002-remove-refs-lookup.md).
+
+Not the same as ordinary “search the docs.” Refs are about **correct anchors and paths after compile**.
+
+## refs registry
+
+Derived catalog of [heading slugs](#heading-slug) from compiled guide output, typically written as `refs.json` under `outputDir`. Parent concept: [refs](#refs).
+
+The registry is **generated state**, not authored shards. `mdcp compile` (and `mdcp refs gen`) rebuild it; `mdcp check` / `mdcp refs check` verify it still matches the latest compile. Path rules: [Refs registry path](docs/features/refs-registry-path.md).
+
+## heading slug
+
+GitHub-style fragment id for a heading in **compiled** Markdown (the part after `#` in `[label](#slug)`). Parent concept: [refs](#refs).
+
+MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Duplicate titles in one document get `-1`, `-2` suffixes. Authors should not invent fragments from shard-only titles; [cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
+
+## cross-link
+
+A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
+
+Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](docs/features/link-validation.md).
 
 ## WIIFM
 

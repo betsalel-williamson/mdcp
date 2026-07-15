@@ -8,5 +8,6 @@
   - [Repository layout](./repository-layout.md)
   - [Packages and tests](./packages-and-tests.md)
   - [Docs dogfooding](./docs-dogfooding.md)
+  - [Agent Skill](./agent-skill.md)
   - [Versioning and releases](./versioning-and-releases.md)
   - [Publishing](./publishing.md)

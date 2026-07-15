@@ -4,14 +4,15 @@ Read [Scope and positioning](./01-scope-and-positioning.md) and [Vision and road
 
 ## Alternatives comparison
 
-| Incumbent                           | What it does well        | What MDCP adds                                                |
-| ----------------------------------- | ------------------------ | ------------------------------------------------------------- |
-| Monolithic README / full `llms.txt` | Zero tooling             | Sharding, `refs lookup`, validation gate, versioned index     |
-| Context7 / large crawled corpora    | Fuzzy retrieval at scale | Author-controlled, deterministic, PR-reviewable shards        |
-| Custom bash/Python glue             | Flexible                 | Owned `check` gate, link rewrite, publish paths               |
-| Docusaurus / MkDocs / VitePress     | Public doc sites         | Agent-first `refs lookup`, `export --llm`, CI structural gate |
-| Cursor rules / `AGENTS.md`          | Host-native friction     | Validated product context separate from host config           |
-| MCP filesystem                      | Live file reads          | Upstream authoring discipline and validated artifacts         |
+| Incumbent                           | What it does well        | What MDCP adds                                         |
+| ----------------------------------- | ------------------------ | ------------------------------------------------------ |
+| Monolithic README / full `llms.txt` | Zero tooling             | Sharding, validation gate, Agent Skill                 |
+| Context7 / large crawled corpora    | Fuzzy retrieval at scale | Author-controlled, deterministic, PR-reviewable shards |
+| Custom bash/Python glue             | Flexible                 | Owned `check` gate, link rewrite, publish paths        |
+| Docusaurus / MkDocs / VitePress     | Public doc sites         | Agent-first shards + CI structural gate                |
+| Cursor rules / `AGENTS.md`          | Host-native friction     | Validated product context separate from host config    |
+| Custom IDE extension                | Editor UI / bundled CLI  | Portable Agent Skill + unchanged CLI                   |
+| MCP filesystem                      | Live file reads          | Upstream authoring discipline and validated artifacts  |
 
 ## Pandoc and advanced publish stacks
 
@@ -24,9 +25,9 @@ MDCP shards are [GFM-only](../design-constraints/gfm-scope.md). Adopters with Pa
 
 Suited to **Learner** and **Author** archetypes — see [Personas and priority tiers](../personas-and-priority-tiers.md). Public copy must follow [Benefit claims and evidence](./benefit-claims-and-evidence.md).
 
-1. Copy `mdcp.v0.4.llms.txt` into docs root **before** `mdcp.config.json` exists.
-2. Use your existing agent to shard a monolith and plan glossary entries.
-3. Wire mdcp, compile, validate, regenerate index with `mdcp export --llms-index`.
+1. Install the parent Agent Skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`) before or alongside CLI setup.
+2. Use your existing agent (with `/mdcp`) to shard a monolith and plan glossary entries.
+3. Wire mdcp, compile, and validate (`mdcp compile` / `mdcp check`).
 
 ## When to adopt MDCP
 

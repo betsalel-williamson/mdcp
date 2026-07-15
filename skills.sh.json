@@ -1,0 +1,11 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Documentation system",
+      "description": "Keep specs and product ideas in maintainable Markdown shards as your docs grow. Install this first.",
+      "skills": ["mdcp"]
+    }
+  ]
+}
