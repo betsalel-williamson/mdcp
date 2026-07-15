@@ -37,6 +37,7 @@ Branch before work=create the feature branch before shards, tests, or code
 Commits=conventional; atomic and logically grouped
 Release notes=changeset in .changeset/ for user-facing doc changes
 Docs=describe current behavior only; removed or breaking behavior belongs in changeset release notes, not feature/client shards
+ADRs=docs/features/adr/ (scope/removal decisions; not the feature catalog)
 Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 ```
 

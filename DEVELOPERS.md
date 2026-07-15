@@ -17,7 +17,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [Agent Skills](#agent-skills)
 - [MDCP](#mdcp)
 - [protocol version](#protocol-version)
-- [mdcp-llms-index](#mdcp-llms-index)
 
 ### Skill verification
 
@@ -132,6 +131,7 @@ Branch before work=create the feature branch before shards, tests, or code
 Commits=conventional; atomic and logically grouped
 Release notes=changeset in .changeset/ for user-facing doc changes
 Docs=describe current behavior only; removed or breaking behavior belongs in changeset release notes, not feature/client shards
+ADRs=docs/features/adr/ (scope/removal decisions; not the feature catalog)
 Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 ```
 
@@ -428,7 +428,7 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 Completed for the **0.4.0** open alpha (historical — agent delivery has since moved to Agent Skills):
 
 - [x] Open alpha npm tag and consumer install docs
-- [x] `skills/mdcp` parent skill as agent entrypoint (succeeds llms-index)
+- [x] `skills/mdcp` parent skill as agent entrypoint
 
 #### Open alpha (0.4.1) patch release checklist
 
@@ -714,13 +714,9 @@ The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements 
 
 Optional four-part string for MDCP **artifact and config compatibility** (historically default `0.4.0.0`). Declared in `mdcp.config.json` as `protocolVersion` when present.
 
-Prefer [Agent Skills](#agent-skills) for agent delivery. The deprecated [mdcp-llms-index](#mdcp-llms-index) export profile is separate from this config field.
+Prefer [Agent Skills](#agent-skills) for agent delivery. This config field is not an agent bootstrap path.
 
 Protocol version is **not** npm semver. npm `@bwilliamson/mdcp-cli` remains pre-1.0 while tooling and agent delivery continue to evolve.
-
-## mdcp-llms-index
-
-**Legacy.** Removed CLI export profile (`mdcp export`, including `--llms-index` / `--fetch` / `--llm`) replaced by [Agent Skills](#agent-skills). Keep this glossary entry only so docs can name the old flags; do not use it for new agent bootstrap.
 
 ## skill content lint
 

@@ -63,7 +63,7 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump.
 Completed for the **0.4.0** open alpha (historical — agent delivery has since moved to Agent Skills):
 
 - [x] Open alpha npm tag and consumer install docs
-- [x] `skills/mdcp` parent skill as agent entrypoint (succeeds llms-index)
+- [x] `skills/mdcp` parent skill as agent entrypoint
 
 ### Open alpha (0.4.1) patch release checklist
 

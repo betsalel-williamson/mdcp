@@ -9,7 +9,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [Agent Skills](./agent-skills.md)
 - [MDCP](./mdcp.md)
 - [protocol version](./protocol-version.md)
-- [mdcp-llms-index](./mdcp-llms-index.md)
 
 ## Skill verification
 

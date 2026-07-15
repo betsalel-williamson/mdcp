@@ -2,11 +2,11 @@
 
 Normative specification for the MarkDown Context Protocol. Parent: [GitHub #48](https://github.com/betsalel-williamson/mdcp/issues/48).
 
-> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before npm **1.0.0**. npm **0.4.x** (open alpha) implements this draft. Agent entrypoint is the parent **Agent Skill** (`/mdcp`); legacy `mdcp export` profiles are removed.
+> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before npm **1.0.0**. npm **0.4.x** (open alpha) implements this draft. Agent entrypoint is the parent **Agent Skill** (`/mdcp`).
 
 ## 1. Introduction
 
-MDCP defines **offline document context preparation**: shard layout, compile semantics, validation pipeline, and export profiles. It does **not** define wire transport (see [Scope and positioning](./01-scope-and-positioning.md)).
+MDCP defines **offline document context preparation**: shard layout, compile semantics, validation pipeline, and Agent Skill delivery. It does **not** define wire transport (see [Scope and positioning](./01-scope-and-positioning.md)).
 
 Conformance keywords: **MUST**, **SHOULD**, **MAY** (RFC 2119 sense).
 
@@ -14,7 +14,7 @@ Conformance keywords: **MUST**, **SHOULD**, **MAY** (RFC 2119 sense).
 
 Conforming `mdcp.config.json` **MUST** declare `protocolVersion` as a four-part string (default `0.4.0.0`).
 
-Published protocol profiles start at **0.4.0.0**. Pre-0.4 tooling and doc-style evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the **0.4.0** [changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/). Agent delivery uses [Agent Skills](../../glossary/agent-skills.md), not llms-index artifacts.
+Published protocol profiles start at **0.4.0.0**. Pre-0.4 tooling and doc-style evolution is recorded in [package changelogs](https://github.com/betsalel-williamson/mdcp/blob/main/packages/mdcp-cli/CHANGELOG.md) and the **0.4.0** [changesets](https://github.com/betsalel-williamson/mdcp/tree/main/.changeset/). Agent delivery uses [Agent Skills](../../glossary/agent-skills.md).
 
 ## 3. Guide layout and three-tier authoring
 
@@ -41,9 +41,9 @@ Task-type subagents **MUST** collect `WORK_ITEM` and `WORK_ITEM_LOOKUP` via inte
 
 The Agent Skills pack in a consumer docs root **MUST NOT** be hand-edited by agents for repo-specific content. Project overlays belong in `docs/extensions/` or normative shards. Extension packs and archetypes: [Extensions and archetypes](./extensions-and-archetypes.md).
 
-## 9. Export profiles
+## 9. Agent context delivery
 
-There is no token-strip LLM export profile. Agent context comes from the parent **Agent Skill** and one-shard reads. Legacy `mdcp export` flags are removed.
+Agent context comes from the parent **Agent Skill** and one-shard reads. There is no token-strip export profile — see [ADR 0001](../adr/0001-remove-export-profiles.md).
 
 ## Appendix A (informative)
 

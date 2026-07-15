@@ -24,8 +24,6 @@ Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdc
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-Legacy `mdcp export` (`--llm`, `--llms-index`, `--fetch`) is removed — prefer the Agent Skill and one-shard reads.
-
 ## Check gate (P0.4)
 
 Structural validation: orphans → compile → refs → **links** → xrefs; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md). Latency targets for large shard sets: [Performance goals and review](./protocol/performance.md).

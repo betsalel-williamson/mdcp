@@ -2,7 +2,7 @@
 
 Product documentation for **what mdcp is designed to do** — the problems it solves, how commands connect, and where to read implementation details.
 
-**Start here:** [Overview](./overview.md) explains the mental model (shards → compile → validate → export), package roles, and a code map. The sections below go deeper on specific topics.
+**Start here:** [Overview](./overview.md) explains the mental model (shards → compile → validate → Agent Skill), package roles, and a code map. The sections below go deeper on specific topics.
 
 - [MDCP Feature Catalog](#table-of-contents)
   - [About this guide](./about-this-guide.md)
@@ -16,8 +16,11 @@ Product documentation for **what mdcp is designed to do** — the problems it so
 - [Link validation](./link-validation.md)
 - [Refs registry path](./refs-registry-path.md)
 - [Agent Skill delivery](./agent-skill.md)
+- [Architecture decision records](./adr/index.md)
+  - [ADR 0001 — Remove `mdcp export` profiles](./adr/0001-remove-export-profiles.md)
 - [Design constraints](./design-constraints/index.md)
   - [Protocol](./protocol/00-vision-and-roadmap.md)
+
     - [Vision and roadmap](./protocol/00-vision-and-roadmap.md)
     - [Scope and positioning](./protocol/01-scope-and-positioning.md)
     - [Alternatives and adoption](./protocol/02-alternatives-and-adoption.md)
