@@ -76,16 +76,15 @@ Current public archetypes:
 
 Archetype READMEs live under complementary skills — for example `mdcp-arch-oss-library/` and `mdcp-arch-product-docs-site/`.
 
-Formatting packs use the `format-*` prefix — see `spec/extensions/format/`.
+Formatting packs use the `mdcp-format-*` prefix.
 
 Start from an archetype README, copy patterns into `docs/`, then customize under `docs/extensions/`.
 
 ## Governance vision
 
-MDCP is designed to outgrow a single vendor implementation. The long-term goal is sponsorship under a **neutral foundation** (for example Linux Foundation or similar) so protocol artifacts, extension catalogs, and conformance vectors have a trusted home. Until then, the mdcp repository hosts the reference implementation and `spec/` tree.
+MDCP is designed to outgrow a single vendor implementation. The long-term goal is sponsorship under a **neutral foundation** (for example Linux Foundation or similar) so protocol artifacts, extension catalogs, and conformance vectors have a trusted home. Until then, the mdcp repository hosts the reference implementation.
 
 ## Related
 
 - [Vision and roadmap](./00-vision-and-roadmap.md)
-- [Agent task subagents](./agent-task-prompts.md)
-- [spec/extensions/README.md](../../../spec/extensions/README.md)
+- [Agent helper skills](./agent-task-prompts.md)
