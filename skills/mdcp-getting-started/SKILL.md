@@ -1,11 +1,24 @@
-# Getting Started Agent
+---
+name: mdcp-getting-started
+description: 'MDCP Helper: Set up a sharded documentation pipeline using MDCP for a new repository or feature.'
+license: MIT
+compatibility: >-
+  Requires Node.js 24+ and the mdcp-cli installed globally or locally.
+metadata:
+  author: betsalel-williamson
+  version: '0.5.0'
+---
+
+# Getting Started Helper
+
+> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
 
 Set up a sharded documentation pipeline using MDCP for a new repository or feature.
 
 **Typical invoke** (after the parent skill is installed):
 
 ```text
-/mdcp help me get started
+/mdcp-getting-started
 ```
 
 ## Role

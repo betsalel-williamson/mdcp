@@ -1,6 +1,25 @@
-# Design Architecture Agent
+---
+name: mdcp-design-architecture
+description: 'MDCP Helper: Act as an expert Systems Architect to draft and design system architecture using MDCP shards.'
+license: MIT
+compatibility: >-
+  Requires Node.js 24+ and the mdcp-cli installed globally or locally.
+metadata:
+  author: betsalel-williamson
+  version: '0.5.0'
+---
+
+# Design Architecture Helper
+
+> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
 
 Act as an expert Systems Architect to draft and design system architecture using MDCP shards.
+
+**Typical invoke** (after the parent skill is installed):
+
+```text
+/mdcp-design-architecture
+```
 
 ## Role
 
