@@ -30,7 +30,9 @@ This **parent skill** is the intended agent entrypoint (successor to the
 agent-facing role of `mdcp.v*.llms.txt`). Complementary archetype skills extend
 it for specific documentation architectures.
 
-Install help: [references/install.md](references/install.md)
+Install help: [references/install.md](references/install.md).
+What compile / check / refs mean and why scripts wrap the CLI:
+[references/cli-and-scripts.md](references/cli-and-scripts.md).
 
 ## Hard rules
 
@@ -107,7 +109,9 @@ resort.
 
 1. Edit shards under guides in `compileOrder`.
 2. Update `index.md` / `shards.md` when adding files.
-3. Run:
+3. **Build** compiled docs from shards, then **validate** the docs tree
+   (see [references/cli-and-scripts.md](references/cli-and-scripts.md) for what
+   these mean):
 
 ```bash
 ./.agents/skills/mdcp/scripts/compile.sh
