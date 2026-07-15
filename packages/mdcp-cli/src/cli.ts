@@ -95,15 +95,57 @@ function reportLinkIssues(issues: LinkIssue[], severity: LinkSeverity): boolean 
   return severity === 'error' && issues.length > 0;
 }
 
+function collectBuiltInLinkIssues(
+  config: MdcpConfig,
+  docsRoot: string,
+  globalOpts: GlobalOpts,
+  workspace: ReturnType<typeof compileWorkspace>,
+): { issues: LinkIssue[]; severity: LinkSeverity } {
+  const issues = runBuiltInLinkLintFromWorkspace(config, docsRoot, workspace);
+  const severity = resolveLinkSeverity(globalOpts.warnBrokenLinks, config);
+  return { issues, severity };
+}
+
 function runBuiltInLinkLint(
   config: MdcpConfig,
   docsRoot: string,
   globalOpts: GlobalOpts,
   workspace: ReturnType<typeof compileWorkspace>,
 ): boolean {
-  const issues = runBuiltInLinkLintFromWorkspace(config, docsRoot, workspace);
-  const severity = resolveLinkSeverity(globalOpts.warnBrokenLinks, config);
+  const { issues, severity } = collectBuiltInLinkIssues(config, docsRoot, globalOpts, workspace);
   return reportLinkIssues(issues, severity);
+}
+
+interface CheckFailure {
+  step: string;
+  detail: string;
+  hints: string[];
+}
+
+const LINK_KIND_HINTS: Record<LinkIssue['kind'], string> = {
+  'dead anchor':
+    'dead anchor: update the #fragment to a slug from compiled output (`mdcp refs list`).',
+  'missing file': 'missing file: create the target file or fix the relative path in the shard.',
+  'missing publish path':
+    'missing publish path: link a published guide outputFile, or list the target guide in compile.crossGuideLinks.ignoreGuides when shard paths are intentional. Do not link durable docs to pending .changeset/*.md files.',
+};
+
+function linkRemediationHints(issues: LinkIssue[]): string[] {
+  const kinds = [...new Set(issues.map((i) => i.kind))];
+  return kinds.map((k) => LINK_KIND_HINTS[k]);
+}
+
+function reportCheckFailures(failures: CheckFailure[]): void {
+  console.error('');
+  console.error('mdcp check failed:');
+  for (const f of failures) {
+    console.error(`  - ${f.step}: ${f.detail}`);
+    for (const hint of f.hints) {
+      console.error(`    → ${hint}`);
+    }
+  }
+  console.error('');
+  console.error('Resolve the diagnostics above, then re-run: mdcp check');
 }
 
 function compileToString(config: MdcpConfig, docsRoot: string, globalOpts: GlobalOpts): string {
@@ -357,14 +399,19 @@ program
   .action((checkOpts, cmd) => {
     const opts = cmd.parent.opts() as GlobalOpts;
     const config = getConfig(opts);
-    let failed = false;
+    const failures: CheckFailure[] = [];
 
     const orphans = checkOrphansForGuides(guideEntries(config, getDocsRoot(opts)));
     for (const o of orphans) {
       console.error(`orphan: ${o.message}`);
-      failed = true;
     }
-    if (failed) process.exit(1);
+    if (orphans.length > 0) {
+      console.error('');
+      console.error(
+        `mdcp check failed: ${orphans.length} orphan shard(s). Add them to a guide index or remove unused files.`,
+      );
+      process.exit(1);
+    }
 
     const docsRoot = getDocsRoot(opts);
     const workspace = compileWorkspace(config, docsRoot, cliBackupFlags(opts));
@@ -375,15 +422,39 @@ program
     genRefsFromCompiled(workspace.compiled, refsPath);
     const refsResult = checkRefsRegistry(workspace.compiled, refsPath);
     console.log(refsResult.message);
-    if (!refsResult.ok) process.exit(1);
+    if (!refsResult.ok) {
+      console.error('');
+      console.error(
+        'mdcp check failed: refs registry mismatch. Re-run `mdcp compile` or `mdcp refs gen`, then `mdcp check`.',
+      );
+      process.exit(1);
+    }
 
-    if (runBuiltInLinkLint(config, docsRoot, opts, workspace)) failed = true;
+    const { issues: linkIssues, severity: linkSeverity } = collectBuiltInLinkIssues(
+      config,
+      docsRoot,
+      opts,
+      workspace,
+    );
+    if (reportLinkIssues(linkIssues, linkSeverity)) {
+      failures.push({
+        step: 'built-in links',
+        detail: `${linkIssues.length} issue(s) (see \`link:\` lines above)`,
+        hints: linkRemediationHints(linkIssues),
+      });
+    }
 
     if (config.lint?.xrefs?.enabled !== false) {
       const xrefs = lintXrefs(xrefScanDirs(config, getDocsRoot(opts)));
       for (const x of xrefs) {
         console.error(`xref: ${x}`);
-        failed = true;
+      }
+      if (xrefs.length > 0) {
+        failures.push({
+          step: 'xrefs',
+          detail: `${xrefs.length} issue(s) (see \`xref:\` lines above)`,
+          hints: ['Turn bare Ch. N / chapter mentions into markdown links to the target shard.'],
+        });
       }
     }
 
@@ -397,7 +468,15 @@ program
         cwd: getDocsRoot(opts),
         args: ['--config', shardsCfg, ...shardPaths],
       });
-      if (r.exitCode !== 0) failed = true;
+      if (r.exitCode !== 0) {
+        failures.push({
+          step: 'markdownlint (shards)',
+          detail: 'peer exited non-zero (see markdownlint output above)',
+          hints: [
+            'Fix flagged shard markdown, or run `mdcp fix` when Prettier/markdownlint fix is configured.',
+          ],
+        });
+      }
     }
     if (compiledCfg) {
       const r = runPeer(mdlint, {
@@ -405,7 +484,13 @@ program
         cwd: getDocsRoot(opts),
         args: ['--config', compiledCfg],
       });
-      if (r.exitCode !== 0) failed = true;
+      if (r.exitCode !== 0) {
+        failures.push({
+          step: 'markdownlint (compiled)',
+          detail: 'peer exited non-zero (see markdownlint output above)',
+          hints: ['Fix shard sources that compile into the flagged output, then recompile.'],
+        });
+      }
     }
 
     const linkTool = findPeerBinary('markdown-link-check', getDocsRoot(opts));
@@ -416,7 +501,15 @@ program
         cwd: getDocsRoot(opts),
         args: [linkTarget, '--config', linkCfg],
       });
-      if (r.exitCode !== 0) failed = true;
+      if (r.exitCode !== 0) {
+        failures.push({
+          step: 'markdown-link-check',
+          detail: 'peer exited non-zero (see peer output above)',
+          hints: [
+            'Repair external/HTTP URLs reported by markdown-link-check, or adjust lint.links.config.',
+          ],
+        });
+      }
     }
 
     if (!checkOpts.skipVale) {
@@ -429,10 +522,21 @@ program
         cwd: getDocsRoot(opts),
         args: ['--config', valeConfig, `--minAlertLevel=${minLevel}`, ...scanPaths],
       });
-      if (r.exitCode !== 0) failed = true;
+      if (r.exitCode !== 0) {
+        failures.push({
+          step: 'vale',
+          detail: 'peer exited non-zero (see Vale output above)',
+          hints: [
+            'Fix prose style alerts, or use `--skip-vale` only when prose is intentionally out of scope.',
+          ],
+        });
+      }
     }
 
-    if (failed) process.exit(1);
+    if (failures.length > 0) {
+      reportCheckFailures(failures);
+      process.exit(1);
+    }
     console.log('mdcp check passed');
   });
 

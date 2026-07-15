@@ -72,6 +72,31 @@ Built-in link validation runs when `lint.links.enabled !== false` (default **on*
 
 Warn mode: global `--warn-broken-links` or `lint.links.severity: "warn"`. Resolution: CLI flag > config > default `"error"`.
 
+## Check failure summary
+
+`mdcp check` may continue peer linters (markdownlint, Vale) after built-in link or xref failures so one run surfaces every gate. Peer tools often print their own “0 errors” success lines afterward, which can hide why the process still exits **1**.
+
+When any gate fails, `mdcp check` ends with a stderr **failure summary** after all steps:
+
+```text
+mdcp check failed:
+  - built-in links: 2 issue(s) (see `link:` lines above)
+    → Fix shard targets cited above, then re-run mdcp check.
+      missing publish path: link a published outputFile (or list the guide in
+      compile.crossGuideLinks.ignoreGuides when shard paths are intentional).
+      Do not link durable docs to pending .changeset/*.md files.
+
+Resolve the diagnostics above, then re-run: mdcp check
+```
+
+| Summary line includes | Role                                                             |
+| --------------------- | ---------------------------------------------------------------- |
+| Failed step name      | Which gate failed (orphans, built-in links, xrefs, peer linters) |
+| Count / pointer       | How many issues, or “see `link:` / `xref:` / peer output above”  |
+| Remediation hint      | Concrete next action for the failure kinds present in that run   |
+
+Success still ends with `mdcp check passed` on stdout. Early hard stops (orphans, refs registry mismatch) keep exiting immediately after their own diagnostics — they do not need a multi-step summary.
+
 ## Link validation config
 
 ```json
@@ -126,6 +151,7 @@ link: docs/client-cli/consumer-migration.md:42: dead anchor "#missing-slug" (slu
 - `mdcp check` / `mdcp compile` exit **1** on broken links by default
 - `--warn-broken-links` exits **0** with `link-warn:` diagnostics
 - Config parses link validation defaults
+- `mdcp check` prints a stderr failure summary after peer linters when any continuing gate failed, with step names and remediation hints (not only a bare exit code after “0 errors” peer output)
 
 ## Link validation related
 

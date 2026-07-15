@@ -30,6 +30,8 @@ mdcp check
 
 `mdcp compile` and `mdcp check` exit **1** when broken internal links are found (default). Use `--warn-broken-links` to surface `link-warn:` diagnostics without failing CI. See [Link validation](../features/link-validation.md).
 
+When `mdcp check` fails after continuing through peer linters, it prints a stderr **failure summary** (which steps failed and how to fix them) so CI logs are not only peer “0 errors” lines plus a bare exit code.
+
 ## Command summary
 
 | Command          | When you need it                                                                                   |

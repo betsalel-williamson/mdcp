@@ -394,6 +394,10 @@ describe('cli smoke', () => {
       );
       expect(r.status).toBe(1);
       expect(r.stderr).toMatch(/link:/);
+      expect(r.stderr).toMatch(/mdcp check failed:/);
+      expect(r.stderr).toMatch(/built-in links:/);
+      expect(r.stderr).toMatch(/dead anchor:/);
+      expect(r.stderr).toMatch(/Resolve the diagnostics above, then re-run: mdcp check/);
     } finally {
       rmSync(docs, { recursive: true, force: true });
     }
