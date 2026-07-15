@@ -42,6 +42,7 @@
     "prepare": "husky",
     "skill:lint": "node scripts/lint-mdcp-skill.mjs",
     "skill:validate": "skills-ref validate ./skills/mdcp && skills-ref validate ./skills/mdcp-arch-oss-library && skills-ref validate ./skills/mdcp-arch-product-docs-site",
+    "skill:install": "npx skills add . --skill mdcp",
     "docs:compile:examples": "node packages/mdcp-cli/dist/cli.js compile --config examples/sample-guides/mdcp.config.json --docs-root examples/sample-guides --warn-broken-links",
     "docs:compile": "pnpm run docs:compile:repo && pnpm run docs:compile:examples"
   },

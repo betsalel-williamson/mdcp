@@ -56,7 +56,7 @@ pnpm vale:sync            # once — requires Vale on PATH; syncs styles for doc
 
 ### Work-item tracking setup step
 
-If you use coding agents with task-type prompts ([skills/mdcp/agents/](skills/mdcp/agents)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
+If you use coding agents with task-type subagents ([skills/mdcp/agents/](skills/mdcp/agents)), document how to load tracker issues **once per repo**. This project maintains that in [Agent work-item tracking](#agent-work-item-tracking) — add it to your setup checklist alongside install and build steps. Consumer repos should add a similar shard under `docs/developer/` and link it from local setup.
 
 ### Daily commands
 
@@ -68,6 +68,7 @@ If you use coding agents with task-type prompts ([skills/mdcp/agents/](skills/md
 | `pnpm run lint`          | ESLint on TypeScript sources                                             |
 | `pnpm run format:check`  | Prettier check                                                           |
 | `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check           |
+| `pnpm skill:install`     | Dogfood-install parent skill from `skills/mdcp/` into `.agents/skills/`  |
 | `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs) |
 | `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                            |
 
@@ -94,7 +95,7 @@ CI runs the full gate: `pnpm run check`.
 
 ## Agent work-item tracking
 
-How coding agents load tracker issues and delivery conventions **for this repository**. Task-type prompts in [skills/mdcp/agents/](skills/mdcp/agents) (also present under `.agents/skills/mdcp/agents/` after a local dogfood install) point here via `WORK_ITEM_LOOKUP`.
+How coding agents load tracker issues and delivery conventions **for this repository**. Task-type subagents in [skills/mdcp/agents/](skills/mdcp/agents) (also present under `.agents/skills/mdcp/agents/` after a local dogfood install) point here via `WORK_ITEM_LOOKUP`.
 
 Configure an equivalent shard in consumer repos during [local setup](#local-setup).
 
@@ -141,14 +142,14 @@ Code review=gh pr create; link WORK_ITEM in PR body (Closes #N when appropriate)
 3. **Stay focused** — one feature or design at a time. Treat acceptance criteria as the boundary unless WORK_ITEM explicitly expands scope.
 4. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record that in the changeset instead.
 
-### Example prompt header
+### Example replace block
 
 ```text
 WORK_ITEM=39
 WORK_ITEM_LOOKUP=Branch from main (pull first). One issue per branch. Load WORK_ITEM per docs/developer/agent-work-item-tracking.md.
 ```
 
-For task-type prompt templates, read [LLM collaboration](./packages/mdcp-cli/README.md#llm-collaboration).
+For subagent catalog and invoke recipe, read [LLM collaboration](./packages/mdcp-cli/README.md#llm-collaboration).
 
 ## Repository layout
 
@@ -305,8 +306,10 @@ The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`.
 Author under `skills/`. Then install into this repo for agents:
 
 ```bash
-npx skills add . --skill mdcp
+pnpm skill:install
 ```
+
+That runs `npx skills add . --skill mdcp` and copies the parent skill into `.agents/skills/mdcp/`.
 
 Installed copies under `.agents/skills/mdcp*` are gitignored so they do not duplicate upstream source. Manual invoke (hosts that support slash skills): `/mdcp`.
 
@@ -316,7 +319,7 @@ When changing skill instructions:
 2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
 3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs yet.
 4. Update [Agent Skill delivery](docs/features/agent-skill.md) when install or layout changes.
-5. Run `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
+5. Run `pnpm skill:install` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
 
 ### Quality Assurance (QA) Principles
 

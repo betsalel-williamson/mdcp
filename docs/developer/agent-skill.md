@@ -9,8 +9,10 @@ The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`.
 Author under `skills/`. Then install into this repo for agents:
 
 ```bash
-npx skills add . --skill mdcp
+pnpm skill:install
 ```
+
+That runs `npx skills add . --skill mdcp` and copies the parent skill into `.agents/skills/mdcp/`.
 
 Installed copies under `.agents/skills/mdcp*` are gitignored so they do not duplicate upstream source. Manual invoke (hosts that support slash skills): `/mdcp`.
 
@@ -20,7 +22,7 @@ When changing skill instructions:
 2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
 3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs yet.
 4. Update [Agent Skill delivery](../features/agent-skill.md) when install or layout changes.
-5. Run `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
+5. Run `pnpm skill:install` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
 
 ## Quality Assurance (QA) Principles
 
