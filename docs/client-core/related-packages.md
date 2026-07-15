@@ -5,11 +5,13 @@
 | [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)         | `mdcp` command-line interface |
 | [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) | Starter markdownlint configs  |
 
+The [Agent Skill](../../README.md) is a separate install (`npx skills add`) — not an npm dependency of this library.
+
 ## Further reading
 
-- [Project README](../../README.md)
-- [Design constraints](../features/design-constraints/index.md)
 - [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
+- [Project README](../../README.md) — Agent Skill landing
+- [Design constraints](../features/design-constraints/index.md)
 
 ## License
 

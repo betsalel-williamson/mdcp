@@ -2,17 +2,23 @@
 
 ## About @bwilliamson/mdcp-core
 
-The programmatic core library for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
+The **programmatic core library** for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
 
-This package provides the underlying compiler, validation engine, and reference registry that powers `@bwilliamson/mdcp-cli` and the broader MDCP Agent Skill ecosystem.
+Use this package when you need compile, validation, refs, and export APIs in scripts, CI, editors, or other tools **without** shelling out to the CLI.
 
-Use this package if you are building custom tooling, MCP servers, editor extensions, or advanced CI integrations that need to programmatically interact with MDCP documentation shards.
+### Not the CLI or the Agent Skill
+
+- **This library** — TypeScript/Node API via `@bwilliamson/mdcp-core` on npm
+- **CLI** — command-line wrapper around this library: [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
+- **Agent Skill** — host instructions for docs-as-code agents: [root README](../../README.md) / `npx skills add … --skill mdcp`
+
+`@bwilliamson/mdcp-cli` depends on this package. Install `@bwilliamson/mdcp-core` directly only when you need the programmatic API. Agent Skill install does **not** replace this library.
 
 ## Overview
 
 Core library for **mdcp** — compile sharded Markdown guides, build section link registries, validate structure, and export LLM-friendly output.
 
-Use this package when you need mdcp behavior in scripts, CI pipelines, editors, or other tools without shelling out to the CLI.
+Use this package when you need mdcp behavior in scripts, CI pipelines, editors, or other tools without shelling out to the CLI. For the Agent Skill (host instructions), see [root README](../../README.md) — that is a separate install.
 
 ### Requirements
 
@@ -944,11 +950,13 @@ Link validation accepts those shard paths when the target guide is listed in `ig
 | [`@bwilliamson/mdcp-cli`](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)         | `mdcp` command-line interface |
 | [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) | Starter markdownlint configs  |
 
+The [Agent Skill](../../README.md) is a separate install (`npx skills add`) — not an npm dependency of this library.
+
 ### Further reading
 
-- [Project README](../../README.md)
-- [Design constraints](../../docs/features/design-constraints/index.md)
 - [CLI package docs](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
+- [Project README](../../README.md) — Agent Skill landing
+- [Design constraints](../../docs/features/design-constraints/index.md)
 
 ### License
 

@@ -1,6 +1,8 @@
-# Agent Skill (consumer)
+# Agent Skill (related)
 
-Install the MDCP **parent Agent Skill** when you want a documentation system coding agents will follow — sharded docs, compile/check discipline — without a host-specific IDE extension.
+This section is about the **MDCP Agent Skill**, not `@bwilliamson/mdcp-cli`. The skill is a separate install (`npx skills add`) and a separate product surface from this CLI package. Prefer the [root README](../../README.md) as the skill-first landing; this page is a cross-link for CLI consumers.
+
+Install the **parent Agent Skill** when you want coding agents to follow docs-as-code discipline — sharded docs, compile/check habits — without a host-specific IDE extension. The skill still expects this CLI (or equivalent) for `mdcp compile` / `mdcp check`.
 
 This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplace, or any single product.
 
@@ -32,13 +34,14 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 - **No temp info:** Do not record temporary project information, tickets, or incident logs in the durable documentation.
 - **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
 
-## How this relates to CLI scripts
+## How this relates to the CLI
 
-Keep using npm scripts for compile and check — see [Agent integration](./agent-integration.md).
+The skill does **not** ship the `mdcp` binary. Keep using this package (or [Agent integration](./agent-integration.md) scripts) for compile and check.
 
 Plain-language: **compile** builds compiled docs from shards; **check** validates the documentation tree; **refs** is the cross-link fragment registry. The skill’s `scripts/` are thin wrappers into `@bwilliamson/mdcp-cli` — they do not replace the CLI.
 
 ## Next steps
 
-1. Install the parent skill.
-2. Add [Install and quick start](./install-and-quick-start.md) CLI wiring.
+1. Install the parent skill (`npx skills add … --skill mdcp`).
+2. Run `/mdcp help me get started` and answer `FEATURE` / `PERSONA`.
+3. Ensure [Install and quick start](./install-and-quick-start.md) CLI wiring exists so agents can run `mdcp compile` / `mdcp check`.

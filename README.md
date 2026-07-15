@@ -22,7 +22,13 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 
 _(This copies the skill into `.agents/skills/mdcp/` in your repository. Commit it to git so every teammate and agent shares the same documentation discipline)._
 
-Once installed, agents proactively look up shard context, compile documentation, and validate references before writing code.
+Then start a bootstrap session:
+
+```text
+/mdcp help me get started
+```
+
+The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout, and validation. Once the pipeline exists, agents proactively look up shard context, compile documentation, and validate references before writing code.
 
 ## Why use MDCP?
 
@@ -35,17 +41,21 @@ Once installed, agents proactively look up shard context, compile documentation,
 
 ## The Toolchain
 
-The MDCP workflow is enforced by the skill, but executed by the underlying CLI and Core libraries:
+MDCP has **three separate surfaces**. Do not treat the Agent Skill and the npm packages as the same install.
 
-- [`@bwilliamson/mdcp-cli`](./packages/mdcp-cli/README.md) - The command-line interface for compiling and checking shards.
-- [`@bwilliamson/mdcp-core`](./packages/mdcp-core/README.md) - The programmatic API for integrating MDCP into custom tooling.
+- **Agent Skill** — host-loaded instructions (`/mdcp`, subagents) for how agents maintain shards. Install with `npx skills add … --skill mdcp`. Docs: this README.
+- **CLI** — shell tool: `mdcp compile`, `mdcp check`, refs, optional lint. Docs: [`@bwilliamson/mdcp-cli`](./packages/mdcp-cli/README.md).
+- **Core** — programmatic API used by the CLI and custom tooling. Docs: [`@bwilliamson/mdcp-core`](./packages/mdcp-core/README.md).
+
+The skill tells agents _when_ and _how_ to use documentation; the CLI/core **execute** compile and validation. Agents still need `@bwilliamson/mdcp-cli` (or equivalent scripts) in the repo for those commands to run.
 
 ## Learn More
 
 - [skills.sh — MDCP skills](https://skills.sh/betsalel-williamson/mdcp)
 - [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md)
 - [Agent Skill delivery](docs/features/agent-skill.md)
-- [CLI consumer guide](docs/client-cli/index.md)
+- [CLI consumer guide](docs/client-cli/index.md) — `@bwilliamson/mdcp-cli` (not the skill)
+- [Core API guide](docs/client-core/index.md) — `@bwilliamson/mdcp-core`
 
 ## This repository
 

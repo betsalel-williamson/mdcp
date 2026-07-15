@@ -1,15 +1,22 @@
 # LLM collaboration
 
-Spec-driven subagents and workflow for coding agents under the parent MDCP Agent Skill. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](./why-mdcp-for-agents.md).
+How coding agents use **this CLI** together with the separate **Agent Skill**. For CLI pain points and commands, see [Why mdcp for coding agents](./why-mdcp-for-agents.md).
 
-**Source of truth:** versioned subagent instructions live under [skills/mdcp/agents/](../../skills/mdcp/agents/). After `npx skills add`, the same files land under `.agents/skills/mdcp/agents/` in the consumer repo. This page indexes them and covers mdcp-specific workflow — not full agent text. Skill-side invoke recipe: [`skills/mdcp/references/agents.md`](../../skills/mdcp/references/agents.md).
+**Do not confuse:** slash `/mdcp` is the Agent Skill; the shell command `mdcp` is `@bwilliamson/mdcp-cli`. This page indexes skill subagents for consumers who already installed the skill — primary skill docs live in the [root README](../../README.md) and [Agent Skill (related)](./agent-skill.md).
+
+**Source of truth for subagent text:** [skills/mdcp/agents/](../../skills/mdcp/agents/). After `npx skills add`, the same files land under `.agents/skills/mdcp/agents/`. Skill-side invoke recipe: [`skills/mdcp/references/agents.md`](../../skills/mdcp/references/agents.md).
 
 ## How to call subagents
 
 Agent Skills discover only directories with `SKILL.md`. The portable slash entrypoint is **`/mdcp`** (the parent skill). Files under `agents/` are **resources** of that skill — not separate slash commands like `/mdcp:feature-level`.
 
-1. Activate the parent skill: `/mdcp` (hosts that support slash skills), or let the host auto-load from the skill description.
-2. Name the **subagent id** in the same turn (for example `feature-level` or `getting-started`).
+1. Activate `/mdcp` (hosts that support slash skills), or let the host auto-load from the skill description.
+2. State the task in the same turn — plain language or a subagent id. Bootstrap example:
+
+   ```text
+   /mdcp help me get started
+   ```
+
 3. The agent **reads** `.agents/skills/mdcp/agents/<id>.md` (after install) or `skills/mdcp/agents/<id>.md` (upstream) and follows it.
 4. The subagent **asks intake questions** for missing values (`WORK_ITEM`, `FEATURE` / `PERSONA`) before editing — answer in chat; do not pre-fill a template.
 
@@ -31,7 +38,13 @@ Upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents/). Each subagent
 
 ## Bootstrap (getting-started)
 
-First-time setup for a consumer repo: activate `/mdcp`, name `getting-started`. The subagent asks for `FEATURE` and `PERSONA` before installing or configuring ([getting-started.md](../../skills/mdcp/agents/getting-started.md)).
+First-time setup for a consumer repo:
+
+```text
+/mdcp help me get started
+```
+
+That loads [getting-started.md](../../skills/mdcp/agents/getting-started.md). The subagent asks for `FEATURE` and `PERSONA` before installing or configuring.
 
 The subagent instructs the agent to inspect the repository and mdcp docs before installing or configuring. Best for **Learner** and **Author** archetypes — see [Personas and priority tiers](../features/personas-and-priority-tiers.md).
 
@@ -101,7 +114,7 @@ This repository documents its stack in [Agent work-item tracking](../developer/a
 
 mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
 
-- **Cursor / Composer** — activate `/mdcp`, name the subagent id; answer intake questions in chat; optionally attach `agents/<id>.md`; run the repo's doc check before ending a turn
+- **Cursor / Composer** — `/mdcp help me get started` (or another plain-language / subagent turn); answer intake questions in chat; optionally attach `agents/<id>.md`; run the repo's doc check before ending a turn
 - **Terminal agents** — load `SKILL.md` then the matching `agents/<id>.md`; or start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
 - **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
 - **Cross-links** — discover with host search; validate fragments with `mdcp check` (optional `mdcp refs list`)

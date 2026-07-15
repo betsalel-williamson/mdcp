@@ -14,7 +14,7 @@ pnpm skill:install
 
 That runs `npx skills add . --skill mdcp` and copies the parent skill into `.agents/skills/mdcp/`.
 
-Installed copies under `.agents/skills/mdcp*` are gitignored so they do not duplicate upstream source. Manual invoke (hosts that support slash skills): `/mdcp`.
+Installed copies under `.agents/skills/mdcp*` are gitignored so they do not duplicate upstream source. Manual invoke (hosts that support slash skills): `/mdcp`. First-time consumer bootstrap: `/mdcp help me get started`.
 
 When changing skill instructions:
 

@@ -46,6 +46,12 @@ Agent Skills use a **vendoring** approach: skill files live in the project and a
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
+Then start bootstrap:
+
+```text
+/mdcp help me get started
+```
+
 Zero-install: copy `skills/mdcp/` from this repository into the consumer's `.agents/skills/mdcp/`. Do not document complementary archetype install commands until those skills are ready for use.
 
 ## Quality Assurance (QA) Principles

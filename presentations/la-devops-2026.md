@@ -407,8 +407,8 @@ mdcp compile --config docs/mdcp.config.json
 This isn't a magic bullet that instantly understands your legacy codebase. It's a frictionless, 5-minute starting point that puts docs in the right place so they scale.
 
 - Open **Cursor** (or any LLM tool) in a repo.
-- Type: _"Help me write a new feature using the MDCP skill."_
-- The agent reads `.agents/skills/mdcp/SKILL.md` automatically.
+- Install the skill, then type: `/mdcp help me get started`
+- The agent reads `.agents/skills/mdcp/SKILL.md` and the getting-started subagent.
 - Watch it set up your documentation shards and capture intent _before_ writing code.
 
 ---

@@ -2,6 +2,12 @@
 
 Set up a sharded documentation pipeline using MDCP for a new repository or feature.
 
+**Typical invoke** (after the parent skill is installed):
+
+```text
+/mdcp help me get started
+```
+
 ## Role
 
 You are a Documentation Architect. Your job is to bootstrap a new repository with MDCP, setting up the configuration, layout, and initial shards.

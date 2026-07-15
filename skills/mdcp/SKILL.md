@@ -152,8 +152,14 @@ treat them as supported entrypoints. For repo-specific packs, use
 ### 6. Subagents
 
 Task-type instructions live under `agents/` as skill resources — not separate
-slash skills. After `/mdcp`, name a subagent id and read `agents/<id>.md`. Full
-invoke recipe and catalog: [references/agents.md](references/agents.md).
+slash skills. After `/mdcp`, state the task in plain language (or name a
+subagent id) and read `agents/<id>.md`. Bootstrap example:
+
+```text
+/mdcp help me get started
+```
+
+Full invoke recipe and catalog: [references/agents.md](references/agents.md).
 
 - `getting-started` — bootstrap a new repo with MDCP
 - `doc-only` — documentation-only work

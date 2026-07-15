@@ -2,211 +2,25 @@
 
 ## About @bwilliamson/mdcp-cli
 
-The command-line interface for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
+The **command-line interface** for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
 
-This CLI works in tandem with the MDCP **Agent Skill**. While the Agent Skill instructs your AI coding assistants on _how_ and _when_ to interact with your documentation, the CLI provides the actual execution engine to compile shards, look up references, and validate documentation integrity.
+Install this package when you need the `mdcp` binary: **compile** shards into guides, **check** the docs tree, manage **refs**, and optionally **lint** / **prose** / **export**.
 
-## Why mdcp for coding agents
+### Not the Agent Skill
 
-**MDCP** ([MarkDown Context Protocol](#mdcp)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
+This npm package is **not** the MDCP Agent Skill.
 
-### The pain
+- **This CLI** — shell/`npx` tool (`mdcp compile`, `mdcp check`, …) via `@bwilliamson/mdcp-cli` on npm
+- **Core** — programmatic library used by the CLI: [`@bwilliamson/mdcp-core`](https://www.npmjs.com/package/@bwilliamson/mdcp-core)
+- **Agent Skill** — host instructions (`SKILL.md`, subagents): [root README](../../README.md) / `npx skills add … --skill mdcp`
 
-LLM pair-coding on a repo breaks down when documentation is a single monolith, unvalidated, and mixed up with implementation:
-
-| Pain                       | What goes wrong                 | Command                                                |
-| -------------------------- | ------------------------------- | ------------------------------------------------------ |
-| **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans           |
-| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp check` (optional `mdcp refs list` for slugs)     |
-| **Context overload**       | Monolith pasted each agent turn | Host search, then read one shard                       |
-| **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                              |
-| **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`        |
-| **Plan mixed with code**   | Stale prose drives wrong code   | Shards under `docs/features/`, `client/`, `developer/` |
-
-Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way. For granular reads, follow the [usage model](../../docs/features/protocol/usage-model.md).
-
-### Typical agent loop
-
-Discover shards with host search (`rg`, IDE search) → edit shards → `mdcp compile` → `mdcp check` (optional `mdcp refs list` to inspect slugs) → `mdcp export --llm` when the next turn needs doc context.
-
-### Get started
-
-First-time setup in a consumer repo: activate `/mdcp`, name the `getting-started` subagent ([getting-started.md](../../skills/mdcp/agents/getting-started.md)). The agent asks for `FEATURE` and `PERSONA` before editing. Subagent catalog and workflow: [LLM collaboration](#llm-collaboration).
-
-For command and capability depth, read the [feature catalog](../../docs/features/feature-catalog.md).
-
-## LLM collaboration
-
-Spec-driven subagents and workflow for coding agents under the parent MDCP Agent Skill. For the problems mdcp solves and which commands address them, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
-
-**Source of truth:** versioned subagent instructions live under [skills/mdcp/agents/](../../skills/mdcp/agents). After `npx skills add`, the same files land under `.agents/skills/mdcp/agents/` in the consumer repo. This page indexes them and covers mdcp-specific workflow — not full agent text. Skill-side invoke recipe: [`skills/mdcp/references/agents.md`](../../skills/mdcp/references/agents.md).
-
-### How to call subagents
-
-Agent Skills discover only directories with `SKILL.md`. The portable slash entrypoint is **`/mdcp`** (the parent skill). Files under `agents/` are **resources** of that skill — not separate slash commands like `/mdcp:feature-level`.
-
-1. Activate the parent skill: `/mdcp` (hosts that support slash skills), or let the host auto-load from the skill description.
-2. Name the **subagent id** in the same turn (for example `feature-level` or `getting-started`).
-3. The agent **reads** `.agents/skills/mdcp/agents/<id>.md` (after install) or `skills/mdcp/agents/<id>.md` (upstream) and follows it.
-4. The subagent **asks intake questions** for missing values (`WORK_ITEM`, `FEATURE` / `PERSONA`) before editing — answer in chat; do not pre-fill a template.
-
-**Fallback** (hosts without slash skills): attach or open the same `agents/<id>.md` path. Same content; not a different delivery model.
-
-**Optional:** hosts that can fork work (Cursor Task, Claude `context: fork`, and similar) may spawn an isolated agent with that markdown as the task prompt.
-
-### Subagents
-
-| Id                    | When to use                       | Path after install                                  |
-| --------------------- | --------------------------------- | --------------------------------------------------- |
-| `getting-started`     | Bootstrap MDCP in a consumer repo | `.agents/skills/mdcp/agents/getting-started.md`     |
-| `doc-only`            | Documentation-only work           | `.agents/skills/mdcp/agents/doc-only.md`            |
-| `design-architecture` | RFCs, ADRs, data models           | `.agents/skills/mdcp/agents/design-architecture.md` |
-| `feature-level`       | Feature work, docs-first then TDD | `.agents/skills/mdcp/agents/feature-level.md`       |
-| `ux`                  | UI flows and client-guide updates | `.agents/skills/mdcp/agents/ux.md`                  |
-
-Upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents). Each subagent opens with an **Intake (ask before editing)** section — the agent asks for missing parameters in chat and waits for answers rather than requiring a pre-filled template.
-
-### Bootstrap (getting-started)
-
-First-time setup for a consumer repo: activate `/mdcp`, name `getting-started`. The subagent asks for `FEATURE` and `PERSONA` before installing or configuring ([getting-started.md](../../skills/mdcp/agents/getting-started.md)).
-
-The subagent instructs the agent to inspect the repository and mdcp docs before installing or configuring. Best for **Learner** and **Author** archetypes — see [Personas and priority tiers](../../docs/features/personas-and-priority-tiers.md).
-
-### Follow-up turns
-
-Use these after the pipeline exists (inline here — not duplicated in `skills/mdcp/agents/`). Prefer activating `/mdcp` first so docs-as-code rules stay in context.
-
-**Add documentation for a new feature:**
-
-```markdown
-Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
-Update each guide's `index.md`, then run this repo's mdcp compile and check commands.
-Discover shards with host search (`rg`, IDE search). Validate cross-links with `mdcp check` (optional `mdcp refs list`). Do not edit generated compile output by hand.
-```
-
-**Fix validation failures:**
-
-```markdown
-Documentation check failed. Read the error output, fix only shard `.md` files and config if needed, then re-run until check passes.
-Use `mdcp check` (and optional `mdcp refs list`) to correct broken fragment links.
-```
-
-**Regenerate after TOC change:**
-
-```markdown
-I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using this repo's documented commands.
-```
-
-### Docs-first feature workflow
-
-Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — activate `/mdcp` and use the `feature-level` subagent ([feature-level.md](../../skills/mdcp/agents/feature-level.md)).
-
-#### Workflow best practices
-
-- **Branch first** — create a feature branch from updated `main` before shards, tests, or code (see [Agent work-item tracking](../../DEVELOPERS.md#agent-work-item-tracking))
-- **One issue per branch** — stay focused on a single feature, design, or doc scope; do not mix unrelated work in one PR
-- **Current behavior in docs** — shards describe the product as it works now; removed or breaking behavior belongs in the **changeset**, not `docs/features/` or `docs/client/`
-
-| Phase     | Where            | Holds                                                  |
-| --------- | ---------------- | ------------------------------------------------------ |
-| Document  | `docs/features/` | Capabilities, design, API surface, acceptance criteria |
-| Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
-| Implement | Code + tests     | TDD against the documented contract                    |
-
-For architecture-heavy work before coding (RFCs, ADRs, data models), use the `design-architecture` subagent ([design-architecture.md](../../skills/mdcp/agents/design-architecture.md)).
-
-#### Sharding keeps context lean
-
-- **Core workflow** — `/mdcp` plus repo script wiring
-- **On demand** — one subagent from `skills/mdcp/agents/` (or `.agents/skills/mdcp/agents/` after install); load only what the current task needs
-- **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
-
-Prefer named subagents under the parent skill over permanently importing rigid always-on rules into every repo.
-
-### Work item tracking
-
-Task-type subagents collect `WORK_ITEM` and `WORK_ITEM_LOOKUP` via **intake questions** before editing:
-
-- **`WORK_ITEM`** — ticket identifier or URL
-- **`WORK_ITEM_LOOKUP`** — where the agent loads scope and delivery conventions (do not hard-code a tracker in the subagent file)
-
-Point `WORK_ITEM_LOOKUP` at a shard under `docs/developer/` in your repo. The agent discovers GitHub MCP, `gh issue view`, Linear MCP, or other tools from that doc — not from a pasted template.
-
-This repository documents its stack in [Agent work-item tracking](../../DEVELOPERS.md#agent-work-item-tracking) — prefer that path when the agent asks for `WORK_ITEM_LOOKUP` while dogfooding mdcp.
-
-### Toolchain integration
-
-mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
-
-- **Cursor / Composer** — activate `/mdcp`, name the subagent id; answer intake questions in chat; optionally attach `agents/<id>.md`; run the repo's doc check before ending a turn
-- **Terminal agents** — load `SKILL.md` then the matching `agents/<id>.md`; or start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
-- **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
-- **Cross-links** — discover with host search; validate fragments with `mdcp check` (optional `mdcp refs list`)
-
-Example npm scripts:
-
-```json
-{
-  "scripts": {
-    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
-  }
-}
-```
-
-For npm script stubs only, see [Agent integration](#agent-integration).
-
-### Three-tier doc layout
-
-Split documentation into three guides:
-
-| Guide directory   | Audience                   | Typical content                                                    |
-| ----------------- | -------------------------- | ------------------------------------------------------------------ |
-| `docs/features/`  | Maintainers, coding agents | What the product does — capabilities, design, API surface          |
-| `docs/developer/` | Maintainers, contributors  | How to work on the repo — setup, layout, tests, releases           |
-| `docs/client/`    | End users                  | How to use the product; persona and scope in `about-this-guide.md` |
-
-Each guide directory needs:
-
-- `index.md` — human table of contents (links to shard files; compile order comes from link order here)
-- Topic shards — one file per section (for example `authentication.md`)
-- Optional `about-this-guide.md` — preamble shard (persona, scope)
-
-When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](../../docs/features/manifest-compile-order.md)).
-
-Never hand-edit generated compile output or `refs.json`.
-
-**Worked example:** this repository dogfoods under [`docs/features/`](../../docs/features), [`docs/developer/`](../../docs/developer), and [`docs/client-cli/`](./), wired by [`docs/mdcp.config.json`](../../docs/mdcp.config.json). Minimal fixture: [examples/sample-guides](../../examples/sample-guides).
-
-### Human review checklist
-
-When reviewing an agent's documentation PR:
-
-- Only shard `.md` files and config changed — not hand-edited generated compile output or `refs.json`
-- `index.md` link order matches intended compile order (use `compile.sectionsHeading` when the manifest has preamble example links)
-- Doc check passes locally and in CI (repo's documented commands)
-- Cross-links pass `mdcp check` (optional `mdcp refs list` to inspect slugs), not guessed anchors
-- Client guide opens with persona context in `about-this-guide.md`
-- Subagents ask intake questions for `WORK_ITEM` / `WORK_ITEM_LOOKUP` (and related fields) before editing — answers live in the chat transcript
-- One WORK_ITEM per PR — branch and scope match a single feature or design
-- Shards describe current behavior; breaking or removed behavior is in the changeset, not feature/client guides
-
-### See also
-
-- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
-- [Agent integration](#agent-integration) — npm scripts quick reference
-- [skills/mdcp/references/agents.md](../../skills/mdcp/references/agents.md) — invoke recipe and id table
-- [skills/mdcp/agents/](../../skills/mdcp/agents) — versioned subagent instruction files
-- [Project layout](#project-layout) — shard directory structure
-- [Cross-links and refs](#cross-links-and-refs) — validate fragments after compile
-- [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
+Slash `/mdcp` in an agent host loads the **skill**. The shell command `mdcp` runs **this CLI**. They are separate installs and separate docs.
 
 ## Install and quick start
 
-This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
+This package installs the **`mdcp` CLI** for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
-**Fastest path:** install the Agent Skill, activate `/mdcp`, name the `getting-started` subagent ([getting-started.md](../../skills/mdcp/agents/getting-started.md)). Answer the agent’s intake questions for `FEATURE` and `PERSONA`.
+This is **not** the Agent Skill. For skill install (`npx skills add`, `/mdcp help me get started`), see [root README](../../README.md) or [Agent Skill (related)](#agent-skill-related).
 
 ### Requirements
 
@@ -249,8 +63,6 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ### Quick start
 
-**Agent Skill (optional day zero)** — prefer installing the Agent Skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`). Subagents then live under `.agents/skills/mdcp/agents/` — upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents). Invoke with `/mdcp` then a subagent id — see [LLM collaboration](#llm-collaboration).
-
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
 2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](../../examples/sample-guides).
@@ -279,97 +91,9 @@ Global options (apply to every command):
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
 | `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |
 
-## Agent integration
+### Related: Agent Skill
 
-npm script stubs for wiring mdcp into any coding agent. For the portable Agent Skill install (parent + complementary skills), see [Agent Skill (consumer)](#agent-skill-consumer). For setup prompts, docs-first feature workflow, and task-type templates, see [LLM collaboration](#llm-collaboration).
-
-Add npm scripts in your consumer repo:
-
-```json
-{
-  "scripts": {
-    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
-    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
-    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
-  }
-}
-```
-
-```bash
-# Compact context for feature work
-mdcp export --llm --stdout --config docs/mdcp.config.json
-
-# Discover shards with host search (rg, IDE search), then validate links
-mdcp check --require-lint
-
-# Optional: inspect registry headings after compile or check
-mdcp refs list
-```
-
-### Related packages
-
-| Package                                                                                | Use                                                         |
-| -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| [`@bwilliamson/mdcp-core`](https://www.npmjs.com/package/@bwilliamson/mdcp-core)       | Programmatic compile, refs, and validation API              |
-| [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) | Starter markdownlint configs for shards and compiled output |
-
-### Further reading
-
-- [Agent Skill (consumer)](#agent-skill-consumer) — host-agnostic skill install
-- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
-- [LLM collaboration](#llm-collaboration) — spec-driven workflow, prompts, toolchain integration
-- [Project README](../../README.md) — concepts and design rationale
-- [Feature catalog](../../docs/features/feature-catalog.md) — full maintainer docs
-- [Sample guides](../../examples/sample-guides)
-
-### License
-
-MIT
-
-## Agent Skill (consumer)
-
-Install the MDCP **parent Agent Skill** when you want a documentation system coding agents will follow — sharded docs, compile/check discipline — without a host-specific IDE extension.
-
-This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplace, or any single product.
-
-### Install
-
-```bash
-npx skills add betsalel-williamson/mdcp --skill mdcp
-```
-
-That vendors the skill into `.agents/skills/`. Zero-install alternative: copy `skills/mdcp/` from the upstream repository into your project's `.agents/skills/mdcp/`. Prefer `.agents/skills/` over host-specific aliases.
-
-### Versioning and Upgrades
-
-Agent Skills use a **vendoring** strategy: skill files become part of your project's source code under `.agents/skills/`.
-
-1. The `npx skills add` command copies the skill into your `.agents/skills/` directory.
-2. You **commit** these files to your repository. Every developer and agent on your team then uses the same instructions, and skill changes are reviewable in pull requests.
-3. To **upgrade**, re-run `npx skills add`, review the `git diff`, and commit the changes.
-
-### Quality Assurance (QA) Principles
-
-When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
-
-- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
-- **Update as you go:** Continuously update documentation as work progresses.
-- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
-- **Break it down:** Organize information into the smallest possible pieces (shards).
-- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
-- **No temp info:** Do not record temporary project information, tickets, or incident logs in the durable documentation.
-- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
-
-### How this relates to CLI scripts
-
-Keep using npm scripts for compile and check — see [Agent integration](#agent-integration).
-
-Plain-language: **compile** builds compiled docs from shards; **check** validates the documentation tree; **refs** is the cross-link fragment registry. The skill’s `scripts/` are thin wrappers into `@bwilliamson/mdcp-cli` — they do not replace the CLI.
-
-### Next steps
-
-1. Install the parent skill.
-2. Add [Install and quick start](#install-and-quick-start) CLI wiring.
+Optional and **separate** from this package: install the parent skill so coding agents follow docs-as-code workflows, then run `/mdcp help me get started`. See [Agent Skill (related)](#agent-skill-related). Agents that use the skill still need this CLI (or equivalent scripts) for `mdcp compile` / `mdcp check`.
 
 ## Project layout
 
@@ -729,6 +453,107 @@ MDCP derives `#fragment` targets from **compiled** heading text using the same a
 
 `githubSlugify` and `buildSlugRegistry` in `@bwilliamson/mdcp-core` share this algorithm for link validation, `refs.json`, and compile-time slug maps. See [API — Refs and validation](../mdcp-core/README.md#heading-slugs-github-slugger).
 
+## Agent integration
+
+Wire **`@bwilliamson/mdcp-cli`** into any coding agent with npm scripts. This is CLI packaging — not the Agent Skill. For skill install, see [Agent Skill (related)](#agent-skill-related) or the [root README](../../README.md). For how skill subagents use these commands, see [LLM collaboration](#llm-collaboration).
+
+Add npm scripts in your consumer repo:
+
+```json
+{
+  "scripts": {
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
+  }
+}
+```
+
+```bash
+# Compact context for feature work
+mdcp export --llm --stdout --config docs/mdcp.config.json
+
+# Discover shards with host search (rg, IDE search), then validate links
+mdcp check --require-lint
+
+# Optional: inspect registry headings after compile or check
+mdcp refs list
+```
+
+### Related packages
+
+| Package                                                                                | Use                                                         |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [`@bwilliamson/mdcp-core`](https://www.npmjs.com/package/@bwilliamson/mdcp-core)       | Programmatic compile, refs, and validation API              |
+| [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) | Starter markdownlint configs for shards and compiled output |
+
+### Further reading
+
+- [Project README](../../README.md) — Agent Skill landing (separate from this CLI)
+- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which CLI commands address it
+- [LLM collaboration](#llm-collaboration) — skill + CLI workflow for agents
+- [Agent Skill (related)](#agent-skill-related) — optional skill install alongside this package
+- [Feature catalog](../../docs/features/feature-catalog.md) — full maintainer docs
+- [Sample guides](../../examples/sample-guides)
+
+### License
+
+MIT
+
+## Optional linters
+
+These commands use tools installed in **your** repo (not bundled with mdcp):
+
+| Command      | Peer tool                       | Purpose                                                                   |
+| ------------ | ------------------------------- | ------------------------------------------------------------------------- |
+| `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output                                           |
+| `mdcp prose` | `vale` (install separately)     | Prose style lint                                                          |
+| `mdcp links` | `markdown-link-check`           | Optional HTTP URL checks (peer; not built-in internal link validation)    |
+| `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no config paths) |
+
+`mdcp fix` does not bundle formatters. Install **Prettier** and **markdownlint-cli2** in your repo first (`node_modules/.bin` or PATH). Each step is skipped with an info message if the peer is missing.
+
+```bash
+mdcp lint --require-lint          # fail if markdownlint-cli2 is missing
+mdcp prose --require-vale         # fail if Vale is missing
+mdcp check --require-lint --require-vale   # CI gate with markdownlint + Vale
+mdcp check --skip-vale            # structural checks only
+```
+
+`mdcp check` runs **built-in** internal link validation by default (`lint.links.enabled`). Peer `markdown-link-check` runs only when **`lint.links.config`** is set and the peer is installed. `mdcp links` always skips quietly if the peer is missing.
+
+Install npm peers with:
+
+```bash
+npm install -D prettier markdownlint-cli2 @bwilliamson/mdcp-presets
+```
+
+Install **Vale** separately so `vale` is on your `PATH` — see [Vale installation](https://vale.sh/docs/vale-cli/installation/) (Homebrew, Chocolatey, Snap, or GitHub release). After adding a `.vale.ini`, run `vale sync` in that directory.
+
+Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.
+
+### In-scope guide fileset
+
+MDCP knows the **full fileset** it manages: registered guides in `compileOrder`, resolved via `guides[].path` or `{docsRoot}/{name}/`. Shard markdownlint and Vale prose **only touch documents in that scope** — never legacy flat `.md` files, unregistered sibling folders, or other markdown under `--docs-root` that mdcp does not compile.
+
+| Command                                        | Default scope                                   | Out of scope (skipped)                                  |
+| ---------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| Shard markdownlint (`mdcp lint`, `mdcp check`) | `compileOrder` guide directories                | Legacy flat docs, unrelated subdirs under `--docs-root` |
+| Vale prose (`mdcp prose`, `mdcp check`)        | Same guide directories                          | Same                                                    |
+| Xref lint (`mdcp check`)                       | Same guide directories                          | Same                                                    |
+| Compiled markdownlint                          | Monolith and publish outputs (`compiledConfig`) | Separate pass — not shard trees                         |
+
+Optional overrides **narrow** scope further; they never widen it beyond what you explicitly list:
+
+| Config field                    | Purpose                                                                               |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| `lint.markdownlint.shardsGlobs` | Shard markdownlint paths relative to `--docs-root` (default: compileOrder guide dirs) |
+| `vale.scanGlobs`                | Vale prose paths relative to `--docs-root` (default: same guide dirs)                 |
+
+The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (`!**/index.md`, `!guides.md`). **Scope always comes from the CLI** — not from preset globs.
+
+`mdcp fix` is out of band: it runs unscoped `prettier --write .` and `markdownlint-cli2 --fix` across the repo and is not part of mdcp's guide fileset gate.
+
 ## Consumer migration
 
 Add `source` to your config pointing at your existing monolith, then:
@@ -861,59 +686,268 @@ After setting up a consumer repo:
 3. **`mdcp check --require-vale`** — when Vale is configured
 4. **Hook output** — diagram tables inlined (`inlineInserts`), code evidence blocks resolved (`codeEvidence`), cross-guide links rewritten to monolith `#slug` targets (or left as shard `.md` paths for guides in `compile.crossGuideLinks.ignoreGuides`)
 
-## Optional linters
+## Why mdcp for coding agents
 
-These commands use tools installed in **your** repo (not bundled with mdcp):
+**MDCP** ([MarkDown Context Protocol](#mdcp)) splits, compiles, validates, and exports sharded Markdown documentation. Shards are the source of truth; compiled output is generated.
 
-| Command      | Peer tool                       | Purpose                                                                   |
-| ------------ | ------------------------------- | ------------------------------------------------------------------------- |
-| `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output                                           |
-| `mdcp prose` | `vale` (install separately)     | Prose style lint                                                          |
-| `mdcp links` | `markdown-link-check`           | Optional HTTP URL checks (peer; not built-in internal link validation)    |
-| `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no config paths) |
+### The pain
 
-`mdcp fix` does not bundle formatters. Install **Prettier** and **markdownlint-cli2** in your repo first (`node_modules/.bin` or PATH). Each step is skipped with an info message if the peer is missing.
+LLM pair-coding on a repo breaks down when documentation is a single monolith, unvalidated, and mixed up with implementation:
+
+| Pain                       | What goes wrong                 | Command                                                |
+| -------------------------- | ------------------------------- | ------------------------------------------------------ |
+| **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans           |
+| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp check` (optional `mdcp refs list` for slugs)     |
+| **Context overload**       | Monolith pasted each agent turn | Host search, then read one shard                       |
+| **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                              |
+| **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`        |
+| **Plan mixed with code**   | Stale prose drives wrong code   | Shards under `docs/features/`, `client/`, `developer/` |
+
+Documentation should carry **context and the high-level plan**; code carries **implementation detail**. mdcp enforces that split with a validation gate agents and CI can run the same way. For granular reads, follow the [usage model](../../docs/features/protocol/usage-model.md).
+
+### Typical agent loop
+
+Discover shards with host search (`rg`, IDE search) → edit shards → `mdcp compile` → `mdcp check` (optional `mdcp refs list` to inspect slugs) → `mdcp export --llm` when the next turn needs doc context.
+
+### Get started with this CLI
 
 ```bash
-mdcp lint --require-lint          # fail if markdownlint-cli2 is missing
-mdcp prose --require-vale         # fail if Vale is missing
-mdcp check --require-lint --require-vale   # CI gate with markdownlint + Vale
-mdcp check --skip-vale            # structural checks only
+npm install -D @bwilliamson/mdcp-cli
 ```
 
-`mdcp check` runs **built-in** internal link validation by default (`lint.links.enabled`). Peer `markdown-link-check` runs only when **`lint.links.config`** is set and the peer is installed. `mdcp links` always skips quietly if the peer is missing.
+Then wire `mdcp compile` / `mdcp check` — see [Install and quick start](#install-and-quick-start).
 
-Install npm peers with:
+For **Agent Skill** bootstrap (`/mdcp help me get started`), use the [root README](../../README.md) — that path is not this npm package. How agents call both surfaces: [LLM collaboration](#llm-collaboration).
+
+For command and capability depth, read the [feature catalog](../../docs/features/feature-catalog.md).
+
+## LLM collaboration
+
+How coding agents use **this CLI** together with the separate **Agent Skill**. For CLI pain points and commands, see [Why mdcp for coding agents](#why-mdcp-for-coding-agents).
+
+**Do not confuse:** slash `/mdcp` is the Agent Skill; the shell command `mdcp` is `@bwilliamson/mdcp-cli`. This page indexes skill subagents for consumers who already installed the skill — primary skill docs live in the [root README](../../README.md) and [Agent Skill (related)](#agent-skill-related).
+
+**Source of truth for subagent text:** [skills/mdcp/agents/](../../skills/mdcp/agents). After `npx skills add`, the same files land under `.agents/skills/mdcp/agents/`. Skill-side invoke recipe: [`skills/mdcp/references/agents.md`](../../skills/mdcp/references/agents.md).
+
+### How to call subagents
+
+Agent Skills discover only directories with `SKILL.md`. The portable slash entrypoint is **`/mdcp`** (the parent skill). Files under `agents/` are **resources** of that skill — not separate slash commands like `/mdcp:feature-level`.
+
+1. Activate `/mdcp` (hosts that support slash skills), or let the host auto-load from the skill description.
+2. State the task in the same turn — plain language or a subagent id. Bootstrap example:
+
+   ```text
+   /mdcp help me get started
+   ```
+
+3. The agent **reads** `.agents/skills/mdcp/agents/<id>.md` (after install) or `skills/mdcp/agents/<id>.md` (upstream) and follows it.
+4. The subagent **asks intake questions** for missing values (`WORK_ITEM`, `FEATURE` / `PERSONA`) before editing — answer in chat; do not pre-fill a template.
+
+**Fallback** (hosts without slash skills): attach or open the same `agents/<id>.md` path. Same content; not a different delivery model.
+
+**Optional:** hosts that can fork work (Cursor Task, Claude `context: fork`, and similar) may spawn an isolated agent with that markdown as the task prompt.
+
+### Subagents
+
+| Id                    | When to use                       | Path after install                                  |
+| --------------------- | --------------------------------- | --------------------------------------------------- |
+| `getting-started`     | Bootstrap MDCP in a consumer repo | `.agents/skills/mdcp/agents/getting-started.md`     |
+| `doc-only`            | Documentation-only work           | `.agents/skills/mdcp/agents/doc-only.md`            |
+| `design-architecture` | RFCs, ADRs, data models           | `.agents/skills/mdcp/agents/design-architecture.md` |
+| `feature-level`       | Feature work, docs-first then TDD | `.agents/skills/mdcp/agents/feature-level.md`       |
+| `ux`                  | UI flows and client-guide updates | `.agents/skills/mdcp/agents/ux.md`                  |
+
+Upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents). Each subagent opens with an **Intake (ask before editing)** section — the agent asks for missing parameters in chat and waits for answers rather than requiring a pre-filled template.
+
+### Bootstrap (getting-started)
+
+First-time setup for a consumer repo:
+
+```text
+/mdcp help me get started
+```
+
+That loads [getting-started.md](../../skills/mdcp/agents/getting-started.md). The subagent asks for `FEATURE` and `PERSONA` before installing or configuring.
+
+The subagent instructs the agent to inspect the repository and mdcp docs before installing or configuring. Best for **Learner** and **Author** archetypes — see [Personas and priority tiers](../../docs/features/personas-and-priority-tiers.md).
+
+### Follow-up turns
+
+Use these after the pipeline exists (inline here — not duplicated in `skills/mdcp/agents/`). Prefer activating `/mdcp` first so docs-as-code rules stay in context.
+
+**Add documentation for a new feature:**
+
+```markdown
+Add shards for feature "{{FEATURE}}" under `docs/features/`, update `docs/developer/` if maintainer workflows changed, and add an end-user section under `docs/client/`.
+Update each guide's `index.md`, then run this repo's mdcp compile and check commands.
+Discover shards with host search (`rg`, IDE search). Validate cross-links with `mdcp check` (optional `mdcp refs list`). Do not edit generated compile output by hand.
+```
+
+**Fix validation failures:**
+
+```markdown
+Documentation check failed. Read the error output, fix only shard `.md` files and config if needed, then re-run until check passes.
+Use `mdcp check` (and optional `mdcp refs list`) to correct broken fragment links.
+```
+
+**Regenerate after TOC change:**
+
+```markdown
+I updated `index.md` in guide `{{GUIDE_NAME}}`. Run mdcp compile and check using this repo's documented commands.
+```
+
+### Docs-first feature workflow
+
+Load scope from the tracker via `WORK_ITEM_LOOKUP` (GitHub MCP, `gh issue view`, Linear MCP, or your repo's documented integration). Then document before you implement — activate `/mdcp` and use the `feature-level` subagent ([feature-level.md](../../skills/mdcp/agents/feature-level.md)).
+
+#### Workflow best practices
+
+- **Branch first** — create a feature branch from updated `main` before shards, tests, or code (see [Agent work-item tracking](../../DEVELOPERS.md#agent-work-item-tracking))
+- **One issue per branch** — stay focused on a single feature, design, or doc scope; do not mix unrelated work in one PR
+- **Current behavior in docs** — shards describe the product as it works now; removed or breaking behavior belongs in the **changeset**, not `docs/features/` or `docs/client/`
+
+| Phase     | Where            | Holds                                                  |
+| --------- | ---------------- | ------------------------------------------------------ |
+| Document  | `docs/features/` | Capabilities, design, API surface, acceptance criteria |
+| Document  | `docs/client/`   | End-user value, experience, how to use the feature     |
+| Implement | Code + tests     | TDD against the documented contract                    |
+
+For architecture-heavy work before coding (RFCs, ADRs, data models), use the `design-architecture` subagent ([design-architecture.md](../../skills/mdcp/agents/design-architecture.md)).
+
+#### Sharding keeps context lean
+
+- **Core workflow** — `/mdcp` plus repo script wiring
+- **On demand** — one subagent from `skills/mdcp/agents/` (or `.agents/skills/mdcp/agents/` after install); load only what the current task needs
+- **Compiled context** — `mdcp export --llm` for token-stripped output scoped to registered guides
+
+Prefer named subagents under the parent skill over permanently importing rigid always-on rules into every repo.
+
+### Work item tracking
+
+Task-type subagents collect `WORK_ITEM` and `WORK_ITEM_LOOKUP` via **intake questions** before editing:
+
+- **`WORK_ITEM`** — ticket identifier or URL
+- **`WORK_ITEM_LOOKUP`** — where the agent loads scope and delivery conventions (do not hard-code a tracker in the subagent file)
+
+Point `WORK_ITEM_LOOKUP` at a shard under `docs/developer/` in your repo. The agent discovers GitHub MCP, `gh issue view`, Linear MCP, or other tools from that doc — not from a pasted template.
+
+This repository documents its stack in [Agent work-item tracking](../../DEVELOPERS.md#agent-work-item-tracking) — prefer that path when the agent asks for `WORK_ITEM_LOOKUP` while dogfooding mdcp.
+
+### Toolchain integration
+
+mdcp exposes a **tool-agnostic contract**: agents need shell access and the ability to edit `.md` files.
+
+- **Cursor / Composer** — `/mdcp help me get started` (or another plain-language / subagent turn); answer intake questions in chat; optionally attach `agents/<id>.md`; run the repo's doc check before ending a turn
+- **Terminal agents** — load `SKILL.md` then the matching `agents/<id>.md`; or start with `mdcp export --llm` output; edit shards only; verify with the repo's doc check
+- **CI / headless agents** — wire npm scripts; `mdcp check` exit code is the quality gate
+- **Cross-links** — discover with host search; validate fragments with `mdcp check` (optional `mdcp refs list`)
+
+Example npm scripts:
+
+```json
+{
+  "scripts": {
+    "docs:compile": "mdcp compile --config docs/mdcp.config.json --docs-root docs",
+    "docs:check": "mdcp check --config docs/mdcp.config.json --docs-root docs --require-lint",
+    "docs:context": "mdcp export --llm --stdout --config docs/mdcp.config.json --docs-root docs"
+  }
+}
+```
+
+For npm script stubs only, see [Agent integration](#agent-integration).
+
+### Three-tier doc layout
+
+Split documentation into three guides:
+
+| Guide directory   | Audience                   | Typical content                                                    |
+| ----------------- | -------------------------- | ------------------------------------------------------------------ |
+| `docs/features/`  | Maintainers, coding agents | What the product does — capabilities, design, API surface          |
+| `docs/developer/` | Maintainers, contributors  | How to work on the repo — setup, layout, tests, releases           |
+| `docs/client/`    | End users                  | How to use the product; persona and scope in `about-this-guide.md` |
+
+Each guide directory needs:
+
+- `index.md` — human table of contents (links to shard files; compile order comes from link order here)
+- Topic shards — one file per section (for example `authentication.md`)
+- Optional `about-this-guide.md` — preamble shard (persona, scope)
+
+When a manifest has preamble prose with example links (not section shards), set `compile.sectionsHeading` in config (see [Manifest compile order](../../docs/features/manifest-compile-order.md)).
+
+Never hand-edit generated compile output or `refs.json`.
+
+**Worked example:** this repository dogfoods under [`docs/features/`](../../docs/features), [`docs/developer/`](../../docs/developer), and [`docs/client-cli/`](./), wired by [`docs/mdcp.config.json`](../../docs/mdcp.config.json). Minimal fixture: [examples/sample-guides](../../examples/sample-guides).
+
+### Human review checklist
+
+When reviewing an agent's documentation PR:
+
+- Only shard `.md` files and config changed — not hand-edited generated compile output or `refs.json`
+- `index.md` link order matches intended compile order (use `compile.sectionsHeading` when the manifest has preamble example links)
+- Doc check passes locally and in CI (repo's documented commands)
+- Cross-links pass `mdcp check` (optional `mdcp refs list` to inspect slugs), not guessed anchors
+- Client guide opens with persona context in `about-this-guide.md`
+- Subagents ask intake questions for `WORK_ITEM` / `WORK_ITEM_LOOKUP` (and related fields) before editing — answers live in the chat transcript
+- One WORK_ITEM per PR — branch and scope match a single feature or design
+- Shards describe current behavior; breaking or removed behavior is in the changeset, not feature/client guides
+
+### See also
+
+- [Why mdcp for coding agents](#why-mdcp-for-coding-agents) — developer pain and which commands address it
+- [Agent integration](#agent-integration) — npm scripts quick reference
+- [skills/mdcp/references/agents.md](../../skills/mdcp/references/agents.md) — invoke recipe and id table
+- [skills/mdcp/agents/](../../skills/mdcp/agents) — versioned subagent instruction files
+- [Project layout](#project-layout) — shard directory structure
+- [Cross-links and refs](#cross-links-and-refs) — validate fragments after compile
+- [Optional linters](#optional-linters) — markdownlint, Vale, link check peers
+
+## Agent Skill (related)
+
+This section is about the **MDCP Agent Skill**, not `@bwilliamson/mdcp-cli`. The skill is a separate install (`npx skills add`) and a separate product surface from this CLI package. Prefer the [root README](../../README.md) as the skill-first landing; this page is a cross-link for CLI consumers.
+
+Install the **parent Agent Skill** when you want coding agents to follow docs-as-code discipline — sharded docs, compile/check habits — without a host-specific IDE extension. The skill still expects this CLI (or equivalent) for `mdcp compile` / `mdcp check`.
+
+This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplace, or any single product.
+
+### Install
 
 ```bash
-npm install -D prettier markdownlint-cli2 @bwilliamson/mdcp-presets
+npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-Install **Vale** separately so `vale` is on your `PATH` — see [Vale installation](https://vale.sh/docs/vale-cli/installation/) (Homebrew, Chocolatey, Snap, or GitHub release). After adding a `.vale.ini`, run `vale sync` in that directory.
+That vendors the skill into `.agents/skills/`. Zero-install alternative: copy `skills/mdcp/` from the upstream repository into your project's `.agents/skills/mdcp/`. Prefer `.agents/skills/` over host-specific aliases.
 
-Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.
+### Versioning and Upgrades
 
-### In-scope guide fileset
+Agent Skills use a **vendoring** strategy: skill files become part of your project's source code under `.agents/skills/`.
 
-MDCP knows the **full fileset** it manages: registered guides in `compileOrder`, resolved via `guides[].path` or `{docsRoot}/{name}/`. Shard markdownlint and Vale prose **only touch documents in that scope** — never legacy flat `.md` files, unregistered sibling folders, or other markdown under `--docs-root` that mdcp does not compile.
+1. The `npx skills add` command copies the skill into your `.agents/skills/` directory.
+2. You **commit** these files to your repository. Every developer and agent on your team then uses the same instructions, and skill changes are reviewable in pull requests.
+3. To **upgrade**, re-run `npx skills add`, review the `git diff`, and commit the changes.
 
-| Command                                        | Default scope                                   | Out of scope (skipped)                                  |
-| ---------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
-| Shard markdownlint (`mdcp lint`, `mdcp check`) | `compileOrder` guide directories                | Legacy flat docs, unrelated subdirs under `--docs-root` |
-| Vale prose (`mdcp prose`, `mdcp check`)        | Same guide directories                          | Same                                                    |
-| Xref lint (`mdcp check`)                       | Same guide directories                          | Same                                                    |
-| Compiled markdownlint                          | Monolith and publish outputs (`compiledConfig`) | Separate pass — not shard trees                         |
+### Quality Assurance (QA) Principles
 
-Optional overrides **narrow** scope further; they never widen it beyond what you explicitly list:
+When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
 
-| Config field                    | Purpose                                                                               |
-| ------------------------------- | ------------------------------------------------------------------------------------- |
-| `lint.markdownlint.shardsGlobs` | Shard markdownlint paths relative to `--docs-root` (default: compileOrder guide dirs) |
-| `vale.scanGlobs`                | Vale prose paths relative to `--docs-root` (default: same guide dirs)                 |
+- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
+- **Update as you go:** Continuously update documentation as work progresses.
+- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
+- **Break it down:** Organize information into the smallest possible pieces (shards).
+- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
+- **No temp info:** Do not record temporary project information, tickets, or incident logs in the durable documentation.
+- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
 
-The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (`!**/index.md`, `!guides.md`). **Scope always comes from the CLI** — not from preset globs.
+### How this relates to the CLI
 
-`mdcp fix` is out of band: it runs unscoped `prettier --write .` and `markdownlint-cli2 --fix` across the repo and is not part of mdcp's guide fileset gate.
+The skill does **not** ship the `mdcp` binary. Keep using this package (or [Agent integration](#agent-integration) scripts) for compile and check.
+
+Plain-language: **compile** builds compiled docs from shards; **check** validates the documentation tree; **refs** is the cross-link fragment registry. The skill’s `scripts/` are thin wrappers into `@bwilliamson/mdcp-cli` — they do not replace the CLI.
+
+### Next steps
+
+1. Install the parent skill (`npx skills add … --skill mdcp`).
+2. Run `/mdcp help me get started` and answer `FEATURE` / `PERSONA`.
+3. Ensure [Install and quick start](#install-and-quick-start) CLI wiring exists so agents can run `mdcp compile` / `mdcp check`.
 
 ## Glossary
 
@@ -946,14 +980,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 ### Adoption and messaging
 
 - [WIIFM](#wiifm)
-
-## MDCP
-
-**MarkDown Context Protocol** — a **documentation system** delivered as an [Agent Skill](#agent-skills) and lightweight toolchain. It helps teams who care about durable docs distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays reviewable in git, maintainable as ideas keep arriving, and readable one shard at a time by people and coding agents.
-
-MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
-
-The CLI (`compile`, `check`, [refs](#refs) registry maintenance, and `export --llm`) implements that shared context layer alongside the skill’s behavioral guardrails.
 
 ## heading slug
 
@@ -993,6 +1019,14 @@ Cross-links are why [refs](#refs) exist: after assemble, the visible heading tex
 Derived catalog of [heading slugs](#heading-slug) from compiled guide output, typically written as `refs.json` under `outputDir`. Parent concept: [refs](#refs).
 
 The registry is **generated state**, not authored shards. `mdcp compile` (and `mdcp refs gen`) rebuild it; `mdcp check` / `mdcp refs check` verify it still matches the latest compile. Path rules: [Refs registry path](../../docs/features/refs-registry-path.md).
+
+## MDCP
+
+**MarkDown Context Protocol** — a **documentation system** delivered as an [Agent Skill](#agent-skills) and lightweight toolchain. It helps teams who care about durable docs distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays reviewable in git, maintainable as ideas keep arriving, and readable one shard at a time by people and coding agents.
+
+MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
+
+The CLI (`compile`, `check`, [refs](#refs) registry maintenance, and `export --llm`) implements that shared context layer alongside the skill’s behavioral guardrails.
 
 ## domain glossary
 

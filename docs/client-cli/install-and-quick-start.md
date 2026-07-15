@@ -1,8 +1,8 @@
 # Install and quick start
 
-This package installs the `mdcp` command for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
+This package installs the **`mdcp` CLI** for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
-**Fastest path:** install the Agent Skill, activate `/mdcp`, name the `getting-started` subagent ([getting-started.md](../../skills/mdcp/agents/getting-started.md)). Answer the agent’s intake questions for `FEATURE` and `PERSONA`.
+This is **not** the Agent Skill. For skill install (`npx skills add`, `/mdcp help me get started`), see [root README](../../README.md) or [Agent Skill (related)](./agent-skill.md).
 
 ## Requirements
 
@@ -45,8 +45,6 @@ For prose lint (`mdcp prose`, `mdcp check --require-vale`), install [Vale](https
 
 ## Quick start
 
-**Agent Skill (optional day zero)** — prefer installing the Agent Skill (`npx skills add betsalel-williamson/mdcp --skill mdcp`). Subagents then live under `.agents/skills/mdcp/agents/` — upstream copies: [skills/mdcp/agents/](../../skills/mdcp/agents/). Invoke with `/mdcp` then a subagent id — see [LLM collaboration](./llm-collaboration.md).
-
 1. Copy a starter config from [examples/sample-guides/mdcp.config.json](../../examples/sample-guides/mdcp.config.json) into your docs directory as `mdcp.config.json`.
 
 2. Lay out shards under guide directories (each with `index.md` and chapter files). See [examples/sample-guides](../../examples/sample-guides/).
@@ -74,3 +72,7 @@ Global options (apply to every command):
 | --------------------- | ------------------ | -------------------------------------------------------------------------------- |
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
 | `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |
+
+## Related: Agent Skill
+
+Optional and **separate** from this package: install the parent skill so coding agents follow docs-as-code workflows, then run `/mdcp help me get started`. See [Agent Skill (related)](./agent-skill.md). Agents that use the skill still need this CLI (or equivalent scripts) for `mdcp compile` / `mdcp check`.

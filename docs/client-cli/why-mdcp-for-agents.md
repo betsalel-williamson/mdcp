@@ -21,8 +21,14 @@ Documentation should carry **context and the high-level plan**; code carries **i
 
 Discover shards with host search (`rg`, IDE search) → edit shards → `mdcp compile` → `mdcp check` (optional `mdcp refs list` to inspect slugs) → `mdcp export --llm` when the next turn needs doc context.
 
-## Get started
+## Get started with this CLI
 
-First-time setup in a consumer repo: activate `/mdcp`, name the `getting-started` subagent ([getting-started.md](../../skills/mdcp/agents/getting-started.md)). The agent asks for `FEATURE` and `PERSONA` before editing. Subagent catalog and workflow: [LLM collaboration](./llm-collaboration.md).
+```bash
+npm install -D @bwilliamson/mdcp-cli
+```
+
+Then wire `mdcp compile` / `mdcp check` — see [Install and quick start](./install-and-quick-start.md).
+
+For **Agent Skill** bootstrap (`/mdcp help me get started`), use the [root README](../../README.md) — that path is not this npm package. How agents call both surfaces: [LLM collaboration](./llm-collaboration.md).
 
 For command and capability depth, read the [feature catalog](../features/feature-catalog.md).

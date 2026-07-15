@@ -1,6 +1,6 @@
 # Agent integration
 
-npm script stubs for wiring mdcp into any coding agent. For the portable Agent Skill install (parent + complementary skills), see [Agent Skill (consumer)](./agent-skill.md). For setup prompts, docs-first feature workflow, and task-type templates, see [LLM collaboration](./llm-collaboration.md).
+Wire **`@bwilliamson/mdcp-cli`** into any coding agent with npm scripts. This is CLI packaging — not the Agent Skill. For skill install, see [Agent Skill (related)](./agent-skill.md) or the [root README](../../README.md). For how skill subagents use these commands, see [LLM collaboration](./llm-collaboration.md).
 
 Add npm scripts in your consumer repo:
 
@@ -34,10 +34,10 @@ mdcp refs list
 
 ## Further reading
 
-- [Agent Skill (consumer)](./agent-skill.md) — host-agnostic skill install
-- [Why mdcp for coding agents](./why-mdcp-for-agents.md) — developer pain and which commands address it
-- [LLM collaboration](./llm-collaboration.md) — spec-driven workflow, prompts, toolchain integration
-- [Project README](../../README.md) — concepts and design rationale
+- [Project README](../../README.md) — Agent Skill landing (separate from this CLI)
+- [Why mdcp for coding agents](./why-mdcp-for-agents.md) — developer pain and which CLI commands address it
+- [LLM collaboration](./llm-collaboration.md) — skill + CLI workflow for agents
+- [Agent Skill (related)](./agent-skill.md) — optional skill install alongside this package
 - [Feature catalog](../features/feature-catalog.md) — full maintainer docs
 - [Sample guides](../../examples/sample-guides/)
 

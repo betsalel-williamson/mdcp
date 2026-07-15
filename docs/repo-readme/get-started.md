@@ -12,4 +12,10 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 
 _(This copies the skill into `.agents/skills/mdcp/` in your repository. Commit it to git so every teammate and agent shares the same documentation discipline)._
 
-Once installed, agents proactively look up shard context, compile documentation, and validate references before writing code.
+Then start a bootstrap session:
+
+```text
+/mdcp help me get started
+```
+
+The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout, and validation. Once the pipeline exists, agents proactively look up shard context, compile documentation, and validate references before writing code.

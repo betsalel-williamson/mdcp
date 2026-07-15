@@ -10,9 +10,18 @@ Upstream source: `skills/mdcp/agents/`. After install: `.agents/skills/mdcp/agen
 
 ## How to call them
 
-1. Activate the parent skill: `/mdcp` (hosts that support slash skills), or let
-   the host auto-load from the skill description.
-2. Name the **subagent id** in the same turn (for example `feature-level`).
+1. Activate the parent skill with `/mdcp` (hosts that support slash skills), or
+   let the host auto-load from the skill description.
+2. State the task in the same turn using plain language (or the subagent id).
+   Example bootstrap:
+
+   ```text
+   /mdcp help me get started
+   ```
+
+   Other examples: `/mdcp feature-level`, `/mdcp doc-only` — or describe the work
+   (`help me document this feature`) so the agent opens `agents/<id>.md`.
+
 3. Read and follow `agents/<id>.md` relative to this skill directory (after
    install: `.agents/skills/mdcp/agents/<id>.md`).
 4. Answer the subagent’s **intake questions** in chat for any missing values
