@@ -56,4 +56,4 @@ WORK_ITEM=39
 WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md
 ```
 
-Prefer stating the shard path for `WORK_ITEM_LOOKUP` so the agent loads tracker conventions from this file. For subagent catalog and invoke recipe, read [LLM collaboration](../client-cli/llm-collaboration.md).
+Prefer stating the shard path for `WORK_ITEM_LOOKUP` so the agent loads tracker conventions from this file. For subagent catalog and invoke recipe, read [`skills/mdcp/references/agents.md`](../../skills/mdcp/references/agents.md).

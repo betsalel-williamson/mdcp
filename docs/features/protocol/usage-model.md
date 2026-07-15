@@ -47,4 +47,4 @@ Above plus `export --llm`, three-tier shards (`features` / `client` / `developer
 4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs list`)
 5. `mdcp export --llm` only when broader context is required
 
-Read [LLM collaboration](../../client-cli/llm-collaboration.md) for subagent catalog and workflow index.
+Read [`skills/mdcp/references/agents.md`](../../../skills/mdcp/references/agents.md) for subagent catalog and workflow index.
