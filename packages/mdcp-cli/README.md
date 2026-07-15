@@ -18,6 +18,8 @@ Slash `/mdcp` in an agent host loads the **skill**. The shell command `mdcp` run
 
 ## Install and quick start
 
+[![npm version](https://img.shields.io/npm/v/@bwilliamson/mdcp-cli.svg)](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
+
 This package installs the **`mdcp` CLI** for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
 This is **not** the Agent Skill. For skill install (`npx skills add`, `/mdcp help me get started`), see [root README](../../README.md) or [Agent Skill (related)](#agent-skill-related).
@@ -40,12 +42,6 @@ npm install -g @bwilliamson/mdcp-cli
 ```
 
 ### Stability
-
-**Open alpha (0.4.0).** MDCP is moving fast — this release is a working foundation for early adopters. Tooling and the draft protocol profile may change in 0.5+. Pin a specific version:
-
-```bash
-npm install -D @bwilliamson/mdcp-cli@0.5.0
-```
 
 **Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. CLI commands, flags, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read package changelogs before upgrading.
 
