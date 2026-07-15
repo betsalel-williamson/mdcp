@@ -41,6 +41,7 @@ function parseFrontmatter(raw) {
   const data = {};
   let currentKey = null;
   let folded = null;
+  let nestKey = null;
   for (const line of yaml.split('\n')) {
     if (folded !== null) {
       if (/^\s+\S/.test(line)) {
@@ -51,12 +52,26 @@ function parseFrontmatter(raw) {
       folded = null;
       currentKey = null;
     }
+    const nested = line.match(/^ {2}([A-Za-z0-9_-]+):\s*(.*)$/);
+    if (nestKey && nested) {
+      if (typeof data[nestKey] !== 'object' || data[nestKey] === null) {
+        data[nestKey] = {};
+      }
+      data[nestKey][nested[1]] = nested[2].replace(/^['"]|['"]$/g, '');
+      continue;
+    }
     const m = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
     if (!m) continue;
+    nestKey = null;
     const [, key, value] = m;
     if (value === '>' || value === '>-' || value === '|' || value === '|-') {
       currentKey = key;
       folded = '';
+      continue;
+    }
+    if (value === '') {
+      nestKey = key;
+      data[key] = {};
       continue;
     }
     data[key] = value.replace(/^['"]|['"]$/g, '');
@@ -100,6 +115,38 @@ function main() {
   const description = String(data.description || '');
   if (description.length > 0 && description.length <= 1024) pass('description-length');
   else fail('description-length', `description length ${description.length}`);
+
+  // agentskills.io optional fields — required for MDCP publishable skills
+  if (
+    String(data.license || '')
+      .toLowerCase()
+      .includes('mit')
+  )
+    pass('frontmatter-license');
+  else fail('frontmatter-license', `expected license MIT, got ${JSON.stringify(data.license)}`);
+
+  const compatibility = String(data.compatibility || '');
+  const compatOk =
+    /node\.?js?\s*24/i.test(compatibility) &&
+    /\bnpx\b/i.test(compatibility) &&
+    /mdcp-cli|cli/i.test(compatibility);
+  if (compatOk) pass('frontmatter-compatibility');
+  else {
+    fail(
+      'frontmatter-compatibility',
+      'compatibility must mention Node.js 24+, npx, and the CLI (mdcp-cli)',
+    );
+  }
+
+  const metadata = data.metadata && typeof data.metadata === 'object' ? data.metadata : {};
+  const version = String(metadata.version || '');
+  if (/^\d+\.\d+\.\d+/.test(version)) pass('frontmatter-metadata-version');
+  else {
+    fail(
+      'frontmatter-metadata-version',
+      `expected metadata.version semver, got ${JSON.stringify(metadata.version)}`,
+    );
+  }
 
   const keywords = readJson(descriptionKeywordsPath);
   const phrases = readJson(requiredPhrasesPath);
