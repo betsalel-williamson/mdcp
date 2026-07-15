@@ -94,4 +94,5 @@ output or `refs.json`.
 - Doc check passes locally and in CI
 - Cross-links pass `mdcp check` (optional `mdcp refs list`)
 - Subagents asked intake questions before editing
-- One `WORK_ITEM` per PR; shards describe current behavior
+- One `WORK_ITEM` per PR; shards describe **current** behavior only
+- Stale or superseded guidance removed from shards (history in git; consumer notice in the changeset)

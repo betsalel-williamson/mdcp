@@ -44,6 +44,10 @@
     {
       "id": "no-temp-info",
       "patterns": ["temp info", "migration backlog", "planning", "issue tracking"]
+    },
+    {
+      "id": "current-docs-only",
+      "patterns": ["Current docs only", "as it works now", "changeset", "Git history"]
     }
   ],
   "phraseScenarios": [
@@ -76,6 +80,11 @@
       "id": "remove-old-info",
       "prompt": "Remove old planning information from our docs, like the migration backlog",
       "mustMention": ["issue tracking", "planning", "temp info"]
+    },
+    {
+      "id": "current-docs-stale",
+      "prompt": "Behavior changed — should we keep the old docs section for history?",
+      "mustMention": ["Current docs only", "changeset", "Git history"]
     }
   ]
 }
