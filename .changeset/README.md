@@ -26,7 +26,7 @@ Full policy: [docs/developer/versioning-and-releases.md](../docs/developer/versi
 pnpm changeset:status
 ```
 
-Fails if you changed package code since `origin/main` without a changeset.
+Fails if you changed package code since the PR/upstream base (fallback: `origin/main`) without a changeset.
 
 ## Release
 

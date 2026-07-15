@@ -491,7 +491,7 @@ pnpm changeset          # interactive; commit the new .changeset/*.md file
 #### Verify locally (optional)
 
 ```bash
-pnpm changeset:status   # fails if package changes since origin/main lack a changeset
+pnpm changeset:status   # fails if package changes since the PR/upstream base lack a changeset
 ```
 
 #### Tag and publish (maintainers)
@@ -691,7 +691,7 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 | `index-protocol.md` | Example sub-index — protocol-related terms only                                          |
 | `index-format.md`   | Example sub-index — format and compile terms                                             |
 
-**Stitched into other guides:** link `../glossary/index.md` from each guide `index.md`. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
+**Stitched into other guides:** link `../glossary/index.md` from each guide that should publish the full glossary TOC (typically maintainer guides). Lean consumer READMEs may omit the TOC and link individual terms instead. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
 
 **Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.
 
