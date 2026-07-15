@@ -14,18 +14,11 @@ const PREPROCESSOR_SLUG = 'preprocessor--templating-out-of-scope';
 const PREPROCESSOR_SHARD = 'docs/features/design-constraints/preprocessor-templating.md';
 const GLOSSARY_MANIFEST = '../glossary/index.md';
 
-const GUIDE_INDEXES = [
-  'docs/features/index.md',
-  'docs/developer/index.md',
-  'docs/client-cli/index.md',
-  'docs/client-core/index.md',
-] as const;
+/** Guides that own the full glossary TOC (not lean npm package READMEs). */
+const GLOSSARY_TOC_GUIDE_INDEXES = ['docs/features/index.md', 'docs/developer/index.md'] as const;
 
-const COMPILED_GUIDES = [
-  'DEVELOPERS.md',
-  'packages/mdcp-cli/README.md',
-  'packages/mdcp-core/README.md',
-] as const;
+/** Compiled outputs expected to stitch the shared glossary. */
+const GLOSSARY_COMPILED_GUIDES = ['DEVELOPERS.md'] as const;
 
 describe('design scope documentation (#26)', () => {
   const designConstraintsIndex = readRepoDoc('docs/features/design-constraints/index.md');
@@ -79,16 +72,20 @@ describe('design scope documentation (#26)', () => {
     expect(gfmScopeShard).toContain('[GFM](../../glossary/gfm.md)');
   });
 
-  it('lists glossary in every guide manifest', () => {
-    for (const indexPath of GUIDE_INDEXES) {
+  it('lists glossary in maintainer guide manifests', () => {
+    for (const indexPath of GLOSSARY_TOC_GUIDE_INDEXES) {
       expect(readRepoDoc(indexPath)).toContain(GLOSSARY_MANIFEST);
     }
     expect(glossaryIndex).toContain('index-protocol.md');
     expect(glossaryIndex).toContain('index-format.md');
+    // Lean npm package guides may link individual terms transitively — they must
+    // not be required to dump the full glossary TOC into consumer READMEs.
+    expect(readRepoDoc('docs/client-cli/index.md')).not.toContain(GLOSSARY_MANIFEST);
+    expect(readRepoDoc('docs/client-core/index.md')).not.toContain(GLOSSARY_MANIFEST);
   });
 
-  it('stitches glossary into every compiled guide output', () => {
-    for (const outputPath of COMPILED_GUIDES) {
+  it('stitches glossary into maintainer compiled guide output', () => {
+    for (const outputPath of GLOSSARY_COMPILED_GUIDES) {
       const compiled = readRepoDoc(outputPath);
       expect(compiled).toContain('## GFM');
       expect(compiled).toContain('## Authored GFM');

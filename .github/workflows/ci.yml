@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    # Any target branch (stacked feature PRs, not only main).
+    # Changeset checks use github.event.pull_request.base.sha — never a hardcoded branch name.
 
 jobs:
   check:
@@ -61,7 +62,9 @@ jobs:
 
       - name: Require changeset when packages change
         run: |
+          # Compare against this PR's base commit (works for any target branch).
           BASE="${{ github.event.pull_request.base.sha }}"
+          echo "Changeset since PR base: $BASE (${{ github.event.pull_request.base.ref }})"
           set +e
           pnpm exec changeset status --since="$BASE"
           STATUS=$?

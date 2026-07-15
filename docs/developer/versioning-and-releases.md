@@ -127,7 +127,7 @@ pnpm changeset          # interactive; commit the new .changeset/*.md file
 ### Verify locally (optional)
 
 ```bash
-pnpm changeset:status   # fails if package changes since origin/main lack a changeset
+pnpm changeset:status   # fails if package changes since the PR/upstream base lack a changeset
 ```
 
 ### Tag and publish (maintainers)

@@ -36,7 +36,7 @@
     "presentation:verify": "pnpm run presentation:compile && slidev export presentations/la-devops-2026.md --format png --output .tmp/slides/",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run skill:lint && pnpm run skill:validate && pnpm run docs:check",
     "changeset": "changeset",
-    "changeset:status": "changeset status --since=origin/main",
+    "changeset:status": "node scripts/changeset-status.mjs",
     "release:tag": "node scripts/release-tag.mjs",
     "release:tag:push": "node scripts/release-tag.mjs --push",
     "prepare": "husky",
