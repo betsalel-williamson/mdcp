@@ -1,6 +1,6 @@
 # Agent Skill
 
-Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](../../skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary skills live under `skills/mdcp-arch-*`.
+Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](../../skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary archetype skills under `skills/mdcp-arch-*` are **WIP** — keep them out of consumer get-started docs until ready.
 
 The parent skill **succeeds** the agent-facing role of `mdcp.v*.llms.txt`.
 
@@ -18,7 +18,7 @@ When changing skill instructions:
 
 1. Edit `skills/mdcp/SKILL.md` (and `references/` as needed) — keep the activation body under 500 lines; put depth in `references/`.
 2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
-3. For archetypes, edit `skills/mdcp-arch-*` instead of growing the parent forever.
+3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs yet.
 4. Update [Agent Skill delivery](../features/agent-skill.md) when install or layout changes.
 5. Run `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
 
@@ -50,7 +50,7 @@ For qualitative description tuning and agent behavior checks, install Anthropic'
 
 ## Publishing the skill pack
 
-Ship `skills/mdcp/` (and complementary `skills/mdcp-arch-*` directories). Prefer:
+Ship `skills/mdcp/` as the consumer entrypoint. Complementary `skills/mdcp-arch-*` directories remain WIP — do not highlight them on get-started or skills.sh until ready. Prefer:
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp

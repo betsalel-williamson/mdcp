@@ -1,18 +1,13 @@
 # Agent Skill (consumer)
 
-Install the MDCP **parent Agent Skill** when you want a documentation system coding agents will follow — sharded docs, compile/check discipline — without a host-specific IDE extension. Complementary archetype skills install beside the parent for OSS libraries or product docs sites.
+Install the MDCP **parent Agent Skill** when you want a documentation system coding agents will follow — sharded docs, compile/check discipline — without a host-specific IDE extension.
 
 This path is **host-agnostic**. It does not depend on Cursor, VS Code Marketplace, or any single product.
 
 ## Install
 
 ```bash
-# Parent skill (primary agent entrypoint)
 npx skills add betsalel-williamson/mdcp --skill mdcp
-
-# Complementary skills (optional)
-npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
-npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
 ```
 
 That vendors the skill into `.agents/skills/`. Zero-install alternative: copy `skills/mdcp/` from the upstream repository into your project's `.agents/skills/mdcp/`. Prefer `.agents/skills/` over host-specific aliases.
@@ -45,5 +40,5 @@ Plain-language: **compile** builds compiled docs from shards; **check** validate
 
 ## Next steps
 
-1. Install the parent skill (and complementary skills you need).
+1. Install the parent skill.
 2. Add [Install and quick start](./install-and-quick-start.md) CLI wiring.

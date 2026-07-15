@@ -6,11 +6,6 @@
       "title": "Documentation system",
       "description": "Keep specs and product ideas in maintainable Markdown shards as your docs grow. Install this first.",
       "skills": ["mdcp"]
-    },
-    {
-      "title": "Documentation architectures",
-      "description": "Specialize the documentation system for OSS libraries or product docs sites.",
-      "skills": ["mdcp-arch-oss-library", "mdcp-arch-product-docs-site"]
     }
   ]
 }

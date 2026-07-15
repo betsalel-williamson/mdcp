@@ -15,18 +15,13 @@ Zero-install: copy `skills/mdcp/` from this repository into
 Prefer `.agents/skills/` as the portable install path. Some hosts also discover
 `.github/skills/` or `.claude/skills/`.
 
-## Complementary skills
+## After install
 
 The `mdcp` parent skill includes core subagents under
 `.agents/skills/mdcp/agents/` after install.
 
-Install archetype skills when you want the documentation system shaped for a
-common publishing surface:
-
-```bash
-npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
-npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
-```
+Optional archetype skills under `skills/mdcp-arch-*` are WIP and are not part of
+the consumer install path yet.
 
 ## CLI still required (build, validate, cross-link registry)
 

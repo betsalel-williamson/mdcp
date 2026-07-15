@@ -9,15 +9,15 @@ Compared with a custom IDE extension or a fetched llms-index plus extension pack
 - **Lower friction** — zero-install in the repo, or `npx skills add`
 - **Host interoperability** — Cursor, Copilot, Claude Code, VS Code, and CLI hosts
 - **Simpler maintenance** — markdown skill directories instead of host UI or dual index/pack formats
-- **Composition** — parent skill plus complementary skills instead of one monolithic pack
+- **Composition** — parent skill plus complementary skills instead of one monolithic pack (archetype skills are WIP)
 
 ## Parent skill and complementary skills
 
 **Upstream source** (this repository, publishable):
 
-- [`skills/mdcp/`](../../skills/mdcp/) — parent documentation system
-- [`skills/mdcp-arch-oss-library/`](../../skills/mdcp-arch-oss-library/) — OSS library documentation architecture
-- [`skills/mdcp-arch-product-docs-site/`](../../skills/mdcp-arch-product-docs-site/) — product docs site architecture
+- [`skills/mdcp/`](../../skills/mdcp/) — parent documentation system (supported consumer entrypoint)
+- [`skills/mdcp-arch-oss-library/`](../../skills/mdcp-arch-oss-library/) — OSS library documentation architecture (**WIP**, not ready for consumer install)
+- [`skills/mdcp-arch-product-docs-site/`](../../skills/mdcp-arch-product-docs-site/) — product docs site architecture (**WIP**, not ready for consumer install)
 
 **Consumer install target** after `npx skills add`: `.agents/skills/<name>/` (vendored into the consumer repo).
 
@@ -42,15 +42,10 @@ Unlike the old extension pack system—which explicitly pinned `protocol.ref: "v
 ## Install surfaces
 
 ```bash
-# Parent skill
 npx skills add betsalel-williamson/mdcp --skill mdcp
-
-# Complementary skills
-npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
-npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
 ```
 
-Zero-install: copy `skills/mdcp/` (and complementary skill directories) from this repository into the consumer's `.agents/skills/`.
+Zero-install: copy `skills/mdcp/` from this repository into the consumer's `.agents/skills/mdcp/`. Do not document complementary archetype install commands until those skills are ready for use.
 
 ## Quality Assurance (QA) Principles
 
@@ -67,7 +62,7 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 ## Acceptance criteria
 
 1. Parent skill is a valid Agent Skills package (`name: mdcp` matches folder under `skills/`).
-2. Install documents parent + complementary skills via `npx skills add`.
+2. Install documents the parent skill via `npx skills add` (complementary archetype skills stay unpublished in consumer docs until ready).
 3. Parent skill encodes bootstrap / smallest-context / hard rules formerly unique to the agent index.
 4. Skill is host-agnostic — no Marketplace-only required steps.
 5. [`skill content lint`](../glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.

@@ -85,7 +85,7 @@ Spell out domain terms on first use; link shared vocabulary from `docs/glossary/
 - Authoring or refactoring sharded markdown under a docs root
 - Bootstrapping MDCP agent guidance (install parent skill first)
 - Cross-links / refs while writing docs
-- Choosing complementary skills for prompts, archetypes, or format packs
+- Extending guidance via complementary skills or local `docs/extensions/` when needed
 
 ## Execution steps
 
@@ -144,10 +144,10 @@ To run prose linting (requires Vale):
 
 ### 5. Complementary skills
 
-Optional companions:
-
-- `mdcp-arch-oss-library`
-- `mdcp-arch-product-docs-site`
+Prefer this parent skill for day-to-day work. Optional archetype skills under
+`skills/mdcp-arch-*` are **WIP** and not ready for consumer install yet — do not
+treat them as supported entrypoints. For repo-specific packs, use
+`docs/extensions/` or complementary skills you maintain locally.
 
 ### 6. Subagents (Task Prompts)
 

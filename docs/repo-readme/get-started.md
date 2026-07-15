@@ -13,12 +13,3 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 _(This copies the skill into `.agents/skills/mdcp/` in your repository. Commit it to git so every teammate and agent shares the same documentation discipline)._
 
 Once installed, agents proactively look up shard context, compile documentation, and validate references before writing code.
-
-## Complementary Skills
-
-Shape the documentation system for your publishing surface:
-
-```bash
-npx skills add betsalel-williamson/mdcp --skill mdcp-arch-oss-library
-npx skills add betsalel-williamson/mdcp --skill mdcp-arch-product-docs-site
-```
