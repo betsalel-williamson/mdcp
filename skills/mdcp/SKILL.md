@@ -160,7 +160,6 @@ invoke recipe and catalog: [references/agents.md](references/agents.md).
 - `design-architecture` — high-level design and planning (RFCs, ADRs)
 - `feature-level` — implement and document features (docs-first, then TDD)
 - `ux` — user experience design and client-guide updates
-- `review` — review docs/code against MDCP conventions
 
 Hosts that can fork work (Task tool, `context: fork`, and similar) may run the
 chosen `agents/<id>.md` in an isolated agent; otherwise follow it in the main

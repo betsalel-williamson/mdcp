@@ -49,6 +49,6 @@ See `format-*` skills for the formatting extension slot and naming (e.g., `mdcp-
 ## Agent workflow
 
 1. Read the parent `mdcp` skill.
-2. Load task prompt with `WORK_ITEM` (via `mdcp` subagents).
+2. Load task prompt with `WORK_ITEM` via `mdcp` subagent intake questions.
 3. Edit `client/` and `features/` shards.
 4. Run `mdcp check` before PR; site CI runs after compile.
