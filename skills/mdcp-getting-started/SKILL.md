@@ -1,6 +1,9 @@
 ---
 name: mdcp-getting-started
-description: 'MDCP Helper: Set up a sharded documentation pipeline using MDCP for a new repository or feature.'
+description: >-
+  Use when bootstrapping MDCP in a greenfield or brownfield repository, first-time
+  setup of sharded docs, migrating legacy markdown into MDCP guides, or when the
+  user asks to get started with an MDCP documentation pipeline.
 license: MIT
 compatibility: >-
   Requires Node.js 24+ and the mdcp-cli installed globally or locally.
@@ -18,80 +21,84 @@ metadata:
 
 # Getting Started Helper
 
-> **PREREQUISITE:** This is a helper skill. Follow the `mdcp` parent skill
-> first — especially **Quality Assurance (QA) Principles** (small batches,
-> current docs only, no code in docs) and **What belongs where**. Ensure the
-> `mdcp` CLI is installed.
+> **PREREQUISITE:** Follow the `mdcp` parent skill first (QA Principles, What
+> belongs where). Ensure the `mdcp` CLI is installed.
 
-Set up a sharded documentation pipeline using MDCP for a new repository or feature.
+One-time MDCP setup and onboarding. Day-to-day work uses other helpers
+(`mdcp-doc-only`, `mdcp-feature-level`, …).
 
-**Typical invoke** (after the parent skill is installed):
-
-```text
-/mdcp-getting-started
-```
+**Invoke:** `/mdcp-getting-started`
 
 ## Role
 
-You are a Documentation Architect. Your job is to bootstrap a new repository with MDCP, setting up the configuration, layout, and initial shards.
+Documentation Architect: bootstrap config, guide layout, and initial shards.
+Adapt teaching depth to **EXPERIENCE**. Scope is documentation organization —
+small accurate shards, compile/check, maintainability with other agent systems.
+**Out of scope:** code TDD rituals, atomic commit grouping, and other local
+engineering process (use separate skills when coding).
 
 ## Intake (ask before editing)
 
-Before installing packages or writing shards, ask the user for any missing values. Wait for answers; do not invent them. Skip a question only when the user already provided that value in this conversation.
+Ask for missing values; wait; do not invent. Skip only if already provided.
 
-1. **FEATURE** — What feature or project name should the initial docs cover?
-2. **PERSONA** — Who is the primary audience for the client / end-user guide?
-
-## Inputs
-
-Collect these via intake (or from the conversation if already stated):
-
-- **FEATURE**: The feature or project name to document.
-- **PERSONA**: The target audience for the documentation.
+1. **FEATURE** — feature or project name for initial docs
+2. **PERSONA** — primary audience for the client / end-user guide
+3. **EXPERIENCE**
+   - **novice** — first skill / unsure about Markdown → tutorial shards + short
+     concept pauses
+   - **expert** — read the docs / automating → concise scaffold; no lectures
 
 ## Process
 
-### Step 1: Setup and Plan
+### 1. Inspect (greenfield vs brownfield)
 
-1. Inspect this repository — package manager, existing docs layout, and developer docs — before changing files.
-2. Do not assume a specific host, script runner, or optional linter; discover what the repo already uses.
-3. Outline install, config, guide layout, and validation steps from repo context and MDCP documentation, then execute.
+Discover package manager and existing docs before editing.
 
-### Step 2: Install Dependencies
+- **Greenfield** — no meaningful docs tree → scaffold cleanly.
+- **Brownfield** — legacy docs exist:
+  - Do **not** delete or overwrite legacy files.
+  - Scaffold the four-tier MDCP layout **alongside** them.
+  - Pull useful content into new shards.
+  - Mark each migrated legacy file **ready to archive after review** (banner).
+    Never auto-delete.
 
-1. Add `@bwilliamson/mdcp-cli` and `@bwilliamson/mdcp-presets` using this repo's package manager.
-2. Install optional peers only if needed:
-   - `markdownlint-cli2` — shard and compiled markdown lint (`mdcp lint`; `mdcp check --require-lint` in CI)
-   - `prettier` — repo formatting (`mdcp fix` runs `prettier --write .` when installed)
-   - `vale` — prose style lint (`mdcp prose`; `mdcp check --require-vale` in CI). Install on `PATH` separately per the official Vale CLI installation guide. Add `.vale.ini`, then run `vale sync`.
+### 2. Install
 
-### Step 3: Configuration
+Add `@bwilliamson/mdcp-cli` and `@bwilliamson/mdcp-presets` with this repo's
+package manager. Optional peers only if needed: `markdownlint-cli2`, `prettier`,
+`vale` (on `PATH`; `.vale.ini` + `vale sync`).
 
-1. Add `mdcp.config.json` under the docs root. Start from your repo's docs layout; use MDCP documentation for sample `mdcp.config.json`.
-2. Set `compileOrder`, guides, and lint paths for your layout.
+### 3. Config and scripts
 
-### Step 4: Scripts
+Add `mdcp.config.json` under the docs root (`compileOrder`, guides, lint paths).
+Wire `mdcp compile` / `mdcp check` into the script runner. CI with optional
+linters: `--require-lint` / `--require-vale`.
 
-1. Wire `mdcp compile` and `mdcp check` into this repo's script runner (discover naming from existing `package.json` or developer docs).
-2. When optional linters are installed, use `mdcp check --require-lint` and/or `--require-vale` for CI gates.
+### 4. Guide layout
 
-### Step 5: Guide Layout
+- `docs/glossary/` — one term per shard; index lists terms; link from guides
+- `docs/features/` — capabilities, design, contracts
+- `docs/developer/` — setup, layout, validation
+- `docs/client/` — end-user guide; `about-this-guide.md` states **PERSONA**
 
-Create the following layout under `docs/`:
+Each guide needs `index.md` + topic shards. Never hand-edit generated compile
+output or `refs.json`.
 
-- `docs/glossary/` — one term per shard; `index.md` lists sub-indexes and terms; link from each guide's `index.md`
-- `docs/features/` — product capabilities, design, and API surface
-- `docs/developer/` — repo setup, layout, tests, releases, and other maintainer workflows
-- `docs/client/` — end-user guide; open with `about-this-guide.md` stating `PERSONA` above.
+### 5. Experience-adaptive content
 
-Each guide must have an `index.md` and topic shards. Shards are the source of truth — do not hand-edit generated compile output or `refs.json`.
+| EXPERIENCE | Do                                                                                                   |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
+| **novice** | Tutorial shards (what a shard is, why compile/check); brief concept pauses; FEATURE/PERSONA starters |
+| **expert** | Minimal FEATURE starters only; no tutorial/onboarding lecture shards                                 |
 
-### Step 6: Glossary Seed
+Ask whether domain terms need glossary entries now; one `.md` per term + index.
 
-1. Before writing feature shards, ask whether any domain terms, acronyms, or easily confused words need shared definitions right away.
-2. Add one `.md` shard per term under `docs/glossary/` and list it from an index manifest so feature and client docs stay consistent.
+### 6. Validate
 
-### Step 7: Write and Validate
+`mdcp compile` then `mdcp check` until clean. After cross-links, re-check;
+fragments must match **compiled** output (`mdcp refs list` if needed).
 
-1. After shards exist, compile and run the full documentation check until xref, orphan, and lint errors are resolved (use this repo's documented commands).
-2. After inserting cross-links, run `mdcp check`. Fragments must match **compiled** output; inspect with `mdcp refs list` if needed.
+## After bootstrap
+
+Hand off to the matching helper for ongoing feature, docs-only, design, or UX
+work. This skill is setup only.
