@@ -7,7 +7,7 @@
   - [API — Config](./api-config.md)
   - [API — Compile](./api-compile.md)
   - [API — Refs and validation](./api-refs-validation.md)
-  - [API — Export, shard, and peers](./api-export-shard.md)
+  - [API — Shard and peers](./api-export-shard.md)
   - [Compile hooks — overview](./compile-hooks/index.md)
   - [codeEvidence](./compile-hooks/code-evidence.md)
   - [inlineInserts](./compile-hooks/inline-inserts.md)

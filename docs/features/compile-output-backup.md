@@ -1,6 +1,6 @@
 # Compile output backup
 
-Specification for opt-in backup of existing compile and export targets before overwrite. Tests in `packages/mdcp-core/test/compile-backup.test.ts` and `packages/mdcp-cli/test/cli.smoke.test.ts` map to the sections below (docs first, then TDD).
+Specification for opt-in backup of existing compile targets before overwrite. Tests in `packages/mdcp-core/test/compile-backup.test.ts` and `packages/mdcp-cli/test/cli.smoke.test.ts` map to the sections below (docs first, then TDD).
 
 ## Purpose
 

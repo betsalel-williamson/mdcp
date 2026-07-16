@@ -1,6 +1,6 @@
 # Personas and priority tiers
 
-mdcp splits, compiles, validates, and exports sharded Markdown for repos where **LLMs help write docs**, **humans review them**, and **compiled output serves feature work and end-user guides**.
+mdcp splits, compiles, and validates sharded Markdown for repos where **LLMs help write docs**, **humans review them**, and **compiled output serves feature work and end-user guides**.
 
 ## Adoption archetypes
 

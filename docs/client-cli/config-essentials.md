@@ -82,7 +82,7 @@ Delete `_build/` to clean all generated output. `.caches/` holds derived state (
 
 ### Opt-in output backup
 
-Default: compile and export **overwrite** existing files (git is the safety net). Enable backup when working outside version control:
+Default: compile commands **overwrite** existing files (git is the safety net). Enable backup when working outside version control:
 
 ```json
 {
