@@ -6,7 +6,7 @@
 
 ## Context
 
-Open-alpha mdcp exposed `mdcp refs lookup` (and `lookupHeadings`) as if refs were a **retrieval** API for finding documentation. That collided with how agents already work — host search (`rg`, IDE search) finds shards — and with the real job of the refs system: keep **compiled** heading slugs and cross-links coherent after stitch (`refs gen` / compile side effect, `refs-list`, `refs check` via `mdcp check`).
+Open-alpha mdcp exposed `mdcp refs lookup` (and `lookupHeadings`) as if refs were a **retrieval** API for finding documentation. That collided with how agents already work — host search (`rg`, IDE search) finds shards — and with the real job of the refs system: keep **compiled** heading slugs and cross-links coherent after stitch (`refs gen` / compile side effect, `refs list`, `refs check` via `mdcp check`).
 
 A lookup verb failed the [direct value bar](../design-constraints/direct-value-bar.md): it duplicated host search without a unique contract, and it encouraged WIIFM claims that MDCP “retrieves context” when discovery is not MDCP’s job.
 
@@ -15,7 +15,7 @@ A lookup verb failed the [direct value bar](../design-constraints/direct-value-b
 Remove `mdcp refs lookup` and the `lookupHeadings` export. Prefer:
 
 - Host search and one-shard reads for doc discovery
-- `mdcp check` (and optional `mdcp refs-list`) for cross-link / slug integrity against the [refs registry](../../glossary/refs-registry.md)
+- `mdcp check` (and optional `mdcp refs list`) for cross-link / slug integrity against the [refs registry](../../glossary/refs-registry.md)
 
 Consumer notice of the breaking API removal lives in the package [CHANGELOG](../../../packages/mdcp-cli/CHANGELOG.md) (0.5.0), not in feature-catalog shards.
 

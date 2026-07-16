@@ -150,7 +150,7 @@ P0+P1 shipped ([#64](https://github.com/betsalel-williamson/mdcp/issues/64)). P2
 Deferred — dogfood meets SLOs; revisit at 200-shard scale or if agent-loop latency becomes a blocker ([#67](https://github.com/betsalel-williamson/mdcp/issues/67)).
 
 - Optional `--guide` scope for compile/lint during authoring
-- Keep `refs.json` / `refs-list` cheap relative to full compile when agent loops grow
+- Keep `refs.json` / `refs list` cheap relative to full compile when agent loops grow
 
 ### P3 — Observability (deferred)
 

@@ -13,7 +13,7 @@ Wire **`@bwilliamson/mdcp-cli`** into CI or coding agents with npm scripts. This
 
 ```bash
 mdcp check --require-lint
-mdcp refs-list
+mdcp refs list
 ```
 
 ## Related packages

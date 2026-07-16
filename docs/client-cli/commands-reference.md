@@ -39,7 +39,7 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 | `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
 | `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
 | `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
-| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                        |
+| `mdcp refs list` | List heading slugs from `refs.json` as JSON                                                        |
 | `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
 | `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
 | `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
@@ -51,9 +51,9 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 | ----------------- | -------------------------------------------------------------------------- |
 | `mdcp refs gen`   | Generate `refs.json` from compiled output                                  |
 | `mdcp refs check` | Verify `refs.json` matches compiled output                                 |
-| `mdcp refs-list`  | List heading slugs from `refs.json` (run `mdcp check` or `refs gen` first) |
+| `mdcp refs list`  | List heading slugs from `refs.json` (run `mdcp check` or `refs gen` first) |
 
-Discover shards with host search (`rg`, IDE search). Validate fragment links with `mdcp check`; use `mdcp refs-list` when you need to inspect registry slugs.
+Discover shards with host search (`rg`, IDE search). Validate fragment links with `mdcp check`; use `mdcp refs list` when you need to inspect registry slugs.
 
 ## Agent context
 
