@@ -55,16 +55,42 @@ What compile / check / refs mean and CLI commands:
 
 ## Quality Assurance (QA) Principles
 
-When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
+When applying MDCP, act as a complementary partner to other skills and systems.
+These habits keep docs trustworthy while the product keeps changing:
 
-- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
-- **Update as you go:** Continuously update documentation as work progresses.
-- **Current docs only:** Shards must describe the product **as it works now**. When behavior or guidance changes, remove superseded or stale text from durable docs — do not leave “old way” sections for archaeology. Git history preserves prior wording; consumer notice of breaking or removed behavior belongs in the **changeset** (folded into package CHANGELOGs at release), not in feature/client/developer shards. Never link durable shards or ADRs to pending `.changeset/*.md` files — those notes are temporary.
-- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
-- **Break it down:** Organize information into the smallest possible pieces (shards).
-- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
-- **No temp info or backlogs:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools. Pending `.changeset/*.md` files are temporary release notes — write them for the release pipeline; do not link them from ADRs or other durable docs.
-- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
+- **Always reference doc shards:** Insert yourself into the process so the
+  current task points at the correct documentation shards before work spreads.
+- **Update as you go:** Continuously update documentation as work progresses so
+  shards and code do not drift apart mid-change.
+- **Small batches / one focused feature:** Prefer one shippable slice per branch
+  or session. Oversized requests produce tangled diffs and half-updated docs;
+  split the request (and the shards) before coding so each change stays
+  reviewable and documentation can stay current with it.
+- **Current docs only:** Shards must describe the product **as it works now**.
+  When behavior or guidance changes, remove superseded or stale text from
+  durable docs — do not leave “old way” sections for archaeology. Git history
+  preserves prior wording; consumer notice of breaking or removed behavior
+  belongs in the **changeset** (folded into package CHANGELOGs at release),
+  not in feature/client/developer shards. Never link durable shards or ADRs to
+  pending `.changeset/*.md` files — those notes are temporary.
+- **Capture ambiguity:** Identify ambiguous terms or language and write the
+  clarified details into specific shards.
+- **Break it down:** Organize information into the smallest useful pieces
+  (shards) so agents can load one shard at a time instead of drowning in
+  monoliths.
+- **No code in docs:** Put intent, contracts, and acceptance criteria in
+  shards — not implementation. Code samples and internals drift; the codebase
+  is the source of truth for how something is built. This matches
+  **What belongs where** below.
+- **No temp info or backlogs:** Do not record temporary project information,
+  tickets, incident logs, or migration backlogs and planning in the durable
+  documentation. That information belongs in issue tracking and project
+  planning tools. Pending `.changeset/*.md` files are temporary release notes —
+  write them for the release pipeline; do not link them from ADRs or other
+  durable docs.
+- **Record planning locations:** Record where planning documents and
+  architectural decisions live so agents can find them without stuffing plans
+  into durable product shards.
 
 ## What belongs where
 
