@@ -10,6 +10,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
   - [Glossary](../glossary/index.md)
   - [Personas and priority tiers](./personas-and-priority-tiers.md)
   - [Feature catalog](./feature-catalog.md)
+  - [Agent Skill](./agent-skill.md)
   - [Manifest compile order](./manifest-compile-order.md)
   - [Default compile hooks](./default-compile-hooks.md)
   - [Compile output backup](./compile-output-backup.md)

@@ -15,6 +15,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 ### Protocol terms
 
 - [Agent Skills](#agent-skills)
+- [Skill](#skill)
 - [MDCP](#mdcp)
 
 ### Skill verification
@@ -331,59 +332,7 @@ _Note: GitHub and GitHub Flavored Markdown are trademarks of GitHub, Inc. This p
 
 ## Agent Skill development
 
-MDCP ships as a portable **documentation system** Agent Skills pack so projects inherit docs-as-code guardrails without a host-specific IDE extension. The **parent skill** is the intended agent entrypoint for people who want maintainable sharded docs as ideas keep coming.
-
-### Why Agent Skills
-
-Agent Skills give:
-
-- **Lower friction** — zero-install in the repo, or `npx skills add`
-- **Host interoperability** — Cursor, Copilot, Claude Code, VS Code, and CLI hosts
-- **Simpler maintenance** — markdown skill directories agents load from the repo
-- **Composition** — parent skill plus complementary skills (archetype skills are WIP)
-- **Reviewable instructions** — vendored under `.agents/skills/` and committed with the project
-
-### Parent skill and complementary skills
-
-**Upstream source** (this repository, publishable):
-
-- [`skills/mdcp/`](skills/mdcp) — parent documentation system (supported consumer entrypoint)
-- [`skills/mdcp-arch-oss-library/`](skills/mdcp-arch-oss-library) — OSS library documentation architecture (**WIP**, not ready for consumer install)
-- [`skills/mdcp-arch-product-docs-site/`](skills/mdcp-arch-product-docs-site) — product docs site architecture (**WIP**, not ready for consumer install)
-
-**Consumer install target** after `npx skills add`: `.agents/skills/<name>/` (vendored into the consumer repo).
-
-### Format and location
-
-- **Format:** `SKILL.md` per the [Agent Skills](https://agentskills.io) open standard (progressive disclosure: lean activation body; depth in `references/` and `scripts/`).
-- **Upstream path:** [`skills/mdcp/SKILL.md`](skills/mdcp/SKILL.md).
-- **Install path:** `.agents/skills/mdcp/` (also discovered: `.github/skills/`, `.claude/skills/`). Prefer documenting `.agents/skills/` for consumers.
-- **Frontmatter:** `license`, `compatibility` (Node.js 18+ / `@bwilliamson/mdcp-cli`), and `metadata.version` (lockstep with npm/git tags). WIP complementary skills also set `metadata.internal: true` so they stay off default skills CLI discovery until ready.
-
-Skill `scripts/` are thin wrappers into the CLI — see [`skills/mdcp/references/cli-and-scripts.md`](skills/mdcp/references/cli-and-scripts.md) for what **compile** (build docs), **check** (validate the tree), and **refs** (cross-link registry) mean.
-
-### Versioning Strategy (Vendoring)
-
-Agent Skills use a **vendoring** approach: skill files live in the project and are versioned with Git.
-
-1. **Commit to Git:** When you run `npx skills add`, the skill's files are copied into your project's `.agents/skills/` directory and tracked in your own source control.
-2. **Docs-as-code Evolution:** The skill version is tied to the commit in your repository. Agent instruction changes are reviewable in Pull Requests alongside the code or configuration changes they support.
-3. **Upgrading:** To upgrade a skill, re-run `npx skills add` (or manually copy the updated folder), review the resulting `git diff`, and commit the changes.
-4. **Authoring/Maintainer Versioning:** Upstream skills live under `skills/` and evolve on `main`, tagged alongside npm package releases. `pnpm release:tag` sets `metadata.version` on every `skills/*/SKILL.md` to match the tag (preserves `metadata.internal`). Consumers can point `npx skills add` to specific tags if necessary.
-
-### Install surfaces
-
-```bash
-npx skills add betsalel-williamson/mdcp --skill mdcp
-```
-
-Then start bootstrap:
-
-```text
-/mdcp help me get started
-```
-
-Zero-install: copy `skills/mdcp/` from this repository into the consumer's `.agents/skills/mdcp/`. Do not document complementary archetype install commands until those skills are ready for use.
+Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary archetype skills under `skills/mdcp-arch-*` are **WIP**: they carry `metadata.internal: true` so the skills CLI hides them from default `--list` / public install prompts. Keep them out of consumer get-started docs and [`skills.sh.json`](skills.sh.json) until ready. Maintainers can surface them with `INSTALL_INTERNAL_SKILLS=1`.
 
 ### Local dogfood
 
@@ -404,28 +353,7 @@ When changing skill instructions:
 3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs yet.
 4. Run `pnpm skill:install` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
 
-### Quality Assurance (QA) Principles
-
-When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
-
-- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
-- **Update as you go:** Continuously update documentation as work progresses.
-- **Current docs only:** Shards must describe the product **as it works now**. When behavior or guidance changes, remove superseded or stale text from durable docs — do not leave “old way” sections for archaeology. Git history preserves prior wording; consumer notice of breaking or removed behavior belongs in the **changeset** (folded into package CHANGELOGs at release), not in feature/client/developer shards. Never link durable shards or ADRs to pending `.changeset/*.md` files — those notes are temporary.
-- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
-- **Break it down:** Organize information into the smallest possible pieces (shards).
-- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
-- **No temp info:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools. Pending `.changeset/*.md` files are temporary release notes — write them for the release pipeline; do not link them from ADRs or other durable docs.
-- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
-
-### Acceptance criteria
-
-1. Parent skill is a valid Agent Skills package (`name: mdcp` matches folder under `skills/`).
-2. Install documents the parent skill via `npx skills add` (complementary archetype skills stay unpublished in consumer docs until ready).
-3. Parent skill encodes bootstrap / smallest-context / hard rules for docs-as-code agents.
-4. Skill is host-agnostic — no Marketplace-only required steps.
-5. [`skill content lint`](docs/glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.
-
-### Content lint and spec validation (CI)
+### Verification
 
 | Command               | Purpose                                                                         |
 | --------------------- | ------------------------------------------------------------------------------- |
@@ -437,16 +365,27 @@ Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [
 
 ### Live skill evals (optional, local)
 
-For qualitative description tuning and agent behavior checks, use the vendored Anthropic [`skill-creator`](.agents/skills/skill-creator/SKILL.md) skill at `.agents/skills/skill-creator/` with fixtures under [`skills/mdcp/evals/`](skills/mdcp/evals/README.md). Refresh from upstream with `npx skills add anthropics/skills --skill skill-creator` when needed. That [live skill eval](docs/glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI. Workspace results: `.agents/skills/mdcp-workspace/`.
+For qualitative description tuning and agent behavior checks, use the vendored Anthropic [`skill-creator`](.agents/skills/skill-creator/SKILL.md) skill at `.agents/skills/skill-creator/` with fixtures under [`skills/mdcp/evals/`](skills/mdcp/evals/README.md). Refresh from upstream with `npx skills add anthropics/skills --skill skill-creator` when needed. That [live skill eval](docs/glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI. Workspace results: `skills/mdcp-workspace/`.
 
-### Ecosystem publication
+### Acceptance criteria
 
-Primary discovery: [skills.sh](https://skills.sh) via `npx skills`. There is no submit API — the [repo page](https://skills.sh/betsalel-williamson/mdcp) is indexed from anonymous install telemetry. Secondary registries later. Do not publish a VS Code Marketplace VSIX for this delivery path.
+1. Parent skill is a valid Agent Skills package (`name: mdcp` matches folder under `skills/`).
+2. Install documents the parent skill via `npx skills add` (complementary archetype skills stay unpublished in consumer docs until ready).
+3. Parent skill encodes bootstrap / smallest-context / hard rules for docs-as-code agents.
+4. Skill is host-agnostic — no Marketplace-only required steps.
+5. [`skill content lint`](docs/glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.
 
-Landing identity for skills.sh:
+### Publishing the skill pack
 
-- Root [README](../../README.md) includes the [install-count badge](https://www.skills.sh/docs#badge) (`https://skills.sh/b/betsalel-williamson/mdcp`) and `npx skills add` install commands.
-- Repo-root [`skills.sh.json`](skills.sh.json) groups the parent skill `mdcp` under **Documentation system** on the [skills.sh repo page](https://www.skills.sh/docs/customize). WIP `mdcp-arch-*` skills stay out of groupings until they drop `metadata.internal`.
+Ship `skills/mdcp/` as the consumer entrypoint. Complementary `skills/mdcp-arch-*` directories remain WIP (`metadata.internal: true`) — do not highlight them on get-started or skills.sh until ready. Prefer:
+
+```bash
+npx skills add betsalel-williamson/mdcp --skill mdcp
+```
+
+There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run the command above without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases).
+
+Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
 
 ## Versioning and releases
 
@@ -733,6 +672,14 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Upstream source in this monorepo is `skills/mdcp/`; consumers vendor via `npx skills add` into `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time — across Cursor, Copilot, Claude Code, and similar hosts.
 
 Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:lint`) plus agentskills.io validation (`pnpm skill:validate` / skills-ref) in CI; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
+
+## Skill
+
+An overloaded term that usually refers to an **Agent Skill** — a portable package of agent instructions (like `SKILL.md`) that hosts discover and load.
+
+When discussing MDCP, "skill" specifically refers to the MDCP documentation system guardrails shipped via the [Agent Skills](#agent-skills) protocol.
+
+Do not confuse "skill" with human abilities or general AI capabilities. In this repository, it is a technical artifact (a directory containing a `SKILL.md` file) that can be installed via `npx skills add` and loaded by hosts like Cursor, Copilot, or Claude Code.
 
 ## MDCP
 
