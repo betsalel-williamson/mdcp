@@ -87,7 +87,7 @@ _(Note: The MDCP engine itself is domain-agnostic. Non-code projects can define 
 - Shards under `docs/**/` are the source of truth.
 - Use `#` headings in shards; mdcp demotes them during compile.
 - After changing a guide's link order (e.g., in `index.md`), run `mdcp compile` — there is no separate manifest sync step.
-- After inserting `[text](#slug)` cross-links, run `mdcp check` so fragments match **compiled** slugs (use `mdcp refs list` if you need to inspect the registry).
+- After inserting `[text](#slug)` cross-links, run `mdcp check` so fragments match **compiled** slugs (use `mdcp refs-list` if you need to inspect the registry).
 
 ## When to use
 

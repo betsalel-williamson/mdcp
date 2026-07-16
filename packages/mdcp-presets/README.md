@@ -6,7 +6,7 @@ Install alongside `@bwilliamson/mdcp-cli` when you want `mdcp lint` or `mdcp che
 
 ## Requirements
 
-- Node.js **>= 24.0.0**
+- Node.js **>= 18.0.0**
 - `markdownlint-cli2` installed in your repo
 
 ## Install

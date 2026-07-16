@@ -27,7 +27,7 @@ Agent Skills give:
 - **Format:** `SKILL.md` per the [Agent Skills](https://agentskills.io) open standard (progressive disclosure: lean activation body; depth in `references/` and `scripts/`).
 - **Upstream path:** [`skills/mdcp/SKILL.md`](../../skills/mdcp/SKILL.md).
 - **Install path:** `.agents/skills/mdcp/` (also discovered: `.github/skills/`, `.claude/skills/`). Prefer documenting `.agents/skills/` for consumers.
-- **Frontmatter:** `license`, `compatibility` (Node.js 24+ / npx / `@bwilliamson/mdcp-cli`), and `metadata.version` (lockstep with npm/git tags). WIP complementary skills also set `metadata.internal: true` so they stay off default skills CLI discovery until ready.
+- **Frontmatter:** `license`, `compatibility` (Node.js 18+ / npx / `@bwilliamson/mdcp-cli`), and `metadata.version` (lockstep with npm/git tags). WIP complementary skills also set `metadata.internal: true` so they stay off default skills CLI discovery until ready.
 
 Skill `scripts/` are thin wrappers into the CLI — see [`skills/mdcp/references/cli-and-scripts.md`](../../skills/mdcp/references/cli-and-scripts.md) for what **compile** (build docs), **check** (validate the tree), and **refs** (cross-link registry) mean.
 

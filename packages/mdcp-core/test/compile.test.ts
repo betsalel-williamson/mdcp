@@ -420,24 +420,24 @@ describe('cli e2e', () => {
     expect(existsSync(join(FIXTURE, '_build', 'guides.md'))).toBe(true);
   });
 
-  it('mdcp refs lookup is removed (non-zero exit)', () => {
+  it('mdcp refs-lookup is removed (unrecognized command)', () => {
     expect(() =>
       execFileSync(
         'node',
-        [CLI, 'refs', 'lookup', 'admin', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
+        [CLI, 'refs-lookup', 'admin', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
         { encoding: 'utf-8', cwd: REPO_ROOT },
       ),
     ).toThrow();
   });
 
-  it('mdcp refs list still works after compile', () => {
+  it('mdcp refs-list still works after compile', () => {
     execFileSync('node', [CLI, 'compile', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE], {
       encoding: 'utf-8',
       cwd: REPO_ROOT,
     });
     const out = execFileSync(
       'node',
-      [CLI, 'refs', 'list', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
+      [CLI, 'refs-list', '--config', SAMPLE_CONFIG, '--docs-root', FIXTURE],
       { encoding: 'utf-8', cwd: REPO_ROOT },
     );
     const headings = JSON.parse(out);

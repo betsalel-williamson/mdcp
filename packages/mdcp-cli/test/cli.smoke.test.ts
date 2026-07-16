@@ -58,8 +58,16 @@ function writeInScopeLintFixture(docs: string, configExtra: Record<string, unkno
 
 describe('cli smoke', () => {
   it('prints version', () => {
-    const out = execFileSync('node', [CLI, '--version'], { encoding: 'utf-8' });
-    expect(out.trim()).toMatch(/^\d+\.\d+\.\d+/);
+    // cac exits 0 on --version but logs and terminates, so we can capture stdout via execFileSync
+    try {
+      execFileSync('node', [CLI, '--version'], { encoding: 'utf-8' });
+    } catch (e: unknown) {
+      if (e instanceof Error && 'stdout' in e && typeof e.stdout === 'string') {
+        expect(e.stdout).toMatch(/mdcp\/\d+\.\d+\.\d+/);
+      } else {
+        throw e;
+      }
+    }
   });
 
   it('compiles sample guides', () => {
@@ -139,7 +147,7 @@ describe('cli smoke', () => {
 
       const listed = execFileSync(
         'node',
-        [CLI, 'refs', 'list', '--config', 'mdcp.config.json', '--docs-root', docs],
+        [CLI, 'refs-list', '--config', 'mdcp.config.json', '--docs-root', docs],
         { encoding: 'utf-8', cwd: docs },
       );
       expect(listed).toContain('section-one');

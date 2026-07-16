@@ -26,7 +26,7 @@ This is **not** the Agent Skill. For skill install (`npx skills add`, `/mdcp hel
 
 ### Requirements
 
-- Node.js **>= 24.0.0**
+- Node.js **>= 18.0.0**
 
 ### Install
 
@@ -348,7 +348,7 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 | `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
 | `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
 | `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
-| `mdcp refs list` | List heading slugs from `refs.json` as JSON                                                        |
+| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                        |
 | `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
 | `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
 | `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
@@ -360,9 +360,9 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 | ----------------- | -------------------------------------------------------------------------- |
 | `mdcp refs gen`   | Generate `refs.json` from compiled output                                  |
 | `mdcp refs check` | Verify `refs.json` matches compiled output                                 |
-| `mdcp refs list`  | List heading slugs from `refs.json` (run `mdcp check` or `refs gen` first) |
+| `mdcp refs-list`  | List heading slugs from `refs.json` (run `mdcp check` or `refs gen` first) |
 
-Discover shards with host search (`rg`, IDE search). Validate fragment links with `mdcp check`; use `mdcp refs list` when you need to inspect registry slugs.
+Discover shards with host search (`rg`, IDE search). Validate fragment links with `mdcp check`; use `mdcp refs-list` when you need to inspect registry slugs.
 
 ### Agent context
 
@@ -380,7 +380,7 @@ Discover shards with host search, then read **one** file. Prefer that over pasti
 
 ### End-user value
 
-When you organize compiled outputs in subdirectories (`compile.outputFile: "compiled/guide-a.md"`), `mdcp compile` still keeps the refs registry at the documented cache path under `outputDir`. You can run `mdcp refs list` right after compile when writing cross-links — no manual move and no extra `mdcp refs gen` step.
+When you organize compiled outputs in subdirectories (`compile.outputFile: "compiled/guide-a.md"`), `mdcp compile` still keeps the refs registry at the documented cache path under `outputDir`. You can run `mdcp refs-list` right after compile when writing cross-links — no manual move and no extra `mdcp refs gen` step.
 
 ### Path layout
 
@@ -406,10 +406,10 @@ Example:
 ```bash
 mdcp compile --config docs/mdcp.config.json --docs-root docs
 mdcp check --config docs/mdcp.config.json --docs-root docs
-mdcp refs list --config docs/mdcp.config.json --docs-root docs
+mdcp refs-list --config docs/mdcp.config.json --docs-root docs
 ```
 
-Discover shards with host search (`rg`, IDE search). `mdcp check` validates cross-link fragments against compiled slugs; `mdcp refs list` reads the registry file that `compile` just wrote.
+Discover shards with host search (`rg`, IDE search). `mdcp check` validates cross-link fragments against compiled slugs; `mdcp refs-list` reads the registry file that `compile` just wrote.
 
 ## Cross-links and refs
 
@@ -418,10 +418,10 @@ When writing `` `[link text](#anchor)` `` in a shard, the fragment must match th
 ```bash
 mdcp compile --config docs/mdcp.config.json --docs-root docs
 mdcp check --config docs/mdcp.config.json --docs-root docs
-mdcp refs list
+mdcp refs-list
 ```
 
-`mdcp check` fails on dead `#` fragments and bad paths. `mdcp refs list` shows registry entries from the [refs registry](#refs-registry).
+`mdcp check` fails on dead `#` fragments and bad paths. `mdcp refs-list` shows registry entries from the [refs registry](#refs-registry).
 
 ### Heading slugs (GitHub rules)
 
@@ -534,7 +534,7 @@ CLI config path rules remain in [Config essentials](#config-essentials).
 1. Add `mdcp.config.json` to your docs shard directory
 2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](#--config-vs---docs-root))
 3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
-4. Discover shards with host search; validate cross-link slugs with `mdcp check` (optional `mdcp refs list`; prefer GitHub auto-slugs over ``)
+4. Discover shards with host search; validate cross-link slugs with `mdcp check` (optional `mdcp refs-list`; prefer GitHub auto-slugs over ``)
 5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
 
 Upgrade notes from earlier MDCP releases are in package **CHANGELOGs** (and GitHub Releases), not in the feature catalog.
@@ -555,12 +555,12 @@ Which **CLI commands** address common docs failures when agents edit the repo:
 | Pain                       | What goes wrong                 | Command                                            |
 | -------------------------- | ------------------------------- | -------------------------------------------------- |
 | **Monolithic guides**      | Merge conflicts, stale TOC      | `mdcp compile`; `mdcp check` catches orphans       |
-| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp check` (optional `mdcp refs list` for slugs) |
+| **Broken cross-links**     | Agents guess `#anchor` slugs    | `mdcp check` (optional `mdcp refs-list` for slugs) |
 | **Context overload**       | Monolith pasted each agent turn | Host search, then read one shard                   |
 | **Docs drift**             | Shards and output diverge       | `mdcp check` before merge                          |
 | **Custom compile scripts** | Bash/Python glue nobody owns    | `compile`, `check`, `@bwilliamson/mdcp-presets`    |
 
-Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs list` → read one shard when the next turn needs doc context.
+Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs-list` → read one shard when the next turn needs doc context.
 
 Install and flags: [Install and quick start](#install-and-quick-start). Agent **behavior** (when to edit docs, subagents) is the [Agent Skill](../../README.md), not this package.
 
@@ -579,7 +579,7 @@ Wire **`@bwilliamson/mdcp-cli`** into CI or coding agents with npm scripts. This
 
 ```bash
 mdcp check --require-lint
-mdcp refs list
+mdcp refs-list
 ```
 
 ### Related packages
@@ -640,10 +640,10 @@ The problem refs solve is structural, not retrieval: shards merge, heading level
 | **refs registry**  | Derived catalog (`refs.json`) of compiled heading entries                         |
 | **ref** (informal) | One heading entry or one link target under that system                            |
 | **generate refs**  | Rebuild the registry from compiled output (`mdcp refs gen` / compile side effect) |
-| **list refs**      | Print registry headings (`mdcp refs list`)                                        |
+| **list refs**      | Print registry headings (`mdcp refs-list`)                                        |
 | **check refs**     | Confirm registry matches compiled headings (`mdcp refs check` / via `mdcp check`) |
 
-Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs list`**. Refs are not a retrieval API — see [ADR 0002](../../docs/features/adr/0002-remove-refs-lookup.md).
+Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs-list`**. Refs are not a retrieval API — see [ADR 0002](../../docs/features/adr/0002-remove-refs-lookup.md).
 
 Not the same as ordinary “search the docs.” Refs are about **correct anchors and paths after compile**.
 

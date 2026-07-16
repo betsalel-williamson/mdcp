@@ -24,7 +24,7 @@
     "mdcp"
   ],
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=18.0.0"
   },
   "publishConfig": {
     "access": "public",
@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@bwilliamson/mdcp-core": "workspace:*",
+    "cac": "^7.0.0",
     "commander": "^15.0.0"
   },
   "devDependencies": {
