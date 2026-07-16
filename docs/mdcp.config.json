@@ -23,7 +23,6 @@
       "compile": {
         "scopeRoot": "glossary",
         "outputFile": "../../DEVELOPERS.md",
-        "includeBanner": false,
         "crossGuideLinks": {
           "ignoreGuides": ["features"]
         }
@@ -34,7 +33,6 @@
       "compile": {
         "scopeRoot": "glossary",
         "outputFile": "../../packages/mdcp-cli/README.md",
-        "includeBanner": false,
         "crossGuideLinks": {
           "ignoreGuides": ["features"]
         }
@@ -45,7 +43,6 @@
       "compile": {
         "scopeRoot": "glossary",
         "outputFile": "../../packages/mdcp-core/README.md",
-        "includeBanner": false,
         "crossGuideLinks": {
           "ignoreGuides": ["features"]
         }
@@ -55,7 +52,6 @@
       "name": "repo-readme",
       "compile": {
         "outputFile": "../../README.md",
-        "includeBanner": false,
         "crossGuideLinks": {
           "ignoreGuides": ["features", "client-cli", "developer"]
         }
@@ -65,7 +61,6 @@
       "name": "presentation-la-devops",
       "compile": {
         "outputFile": "../../presentations/la-devops-2026.md",
-        "includeBanner": false,
         "crossGuideLinks": {
           "ignoreGuides": ["features", "client-cli", "developer", "repo-readme", "client-core"]
         }
