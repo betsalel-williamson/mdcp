@@ -28,7 +28,7 @@ coverage/
 .agents/skills/mdcp-arch-oss-library/
 .agents/skills/mdcp-arch-product-docs-site/
 .agents/skills/*-workspace/
-.agents/skills/skill-creator/
+# skill-creator is vendored (committed) for the local live-eval loop — do not gitignore
 skills-lock.json
 
 # VS Code (keep shared workspace config)

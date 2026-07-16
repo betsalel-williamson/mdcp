@@ -30,6 +30,45 @@
       "prompt": "Remove old planning information from our docs, like the migration backlog",
       "expected_output": "The agent removes the old information, acknowledging it belongs in an issue tracker and not in durable documentation shards.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "We need to ship three things this week: (1) OAuth login for the API, (2) a redesigned settings UX for end users, and (3) developer docs for three new CLI commands. Using MDCP, start the work — update docs and plan implementation.",
+      "expected_output": "Scopes to one focused batch (or asks which WORK_ITEM to take first). Names a single matching helper skill from the Mermaid routing map. Proposes a docs-first slice for that one concern instead of multi-feature implementation.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Clean up docs/features/notifications.md in the hygiene fixture. It still has a migration backlog and pasted implementation code. Make the shard durable and current per MDCP QA principles.",
+      "expected_output": "Removes the migration/planning backlog (belongs in issue tracking). Strips implementation code from the shard. Leaves present-tense current behavior / intent only. Does not link durable docs to pending .changeset files.",
+      "files": [
+        "evals/files/hygiene/docs/features/notifications.md",
+        "evals/files/hygiene/docs/features/index.md"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Improve the onboarding checklist so new users understand how to get value from the product. Using the routing fixture, update the right MDCP guides and say which helper skill should own this WORK_ITEM.",
+      "expected_output": "Routes to mdcp-ux per the helper Mermaid map. Primary edits under docs/client/ with outcome/usage focus. Avoids dumping maintainer architecture into client guides and avoids implementation code in shards.",
+      "files": [
+        "evals/files/routing/mdcp.config.json",
+        "evals/files/routing/docs/client/index.md",
+        "evals/files/routing/docs/client/onboarding.md",
+        "evals/files/routing/docs/features/index.md",
+        "evals/files/routing/docs/features/compile.md"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "We need an ADR for splitting the compile pipeline into stages. Using the routing fixture, document the architecture decision in the right place; do not implement code yet.",
+      "expected_output": "Routes to mdcp-design-architecture. Edits docs/features/ (design/ADR intent) only. No application source or tests; no large implementation code dumps in the design shard.",
+      "files": [
+        "evals/files/routing/mdcp.config.json",
+        "evals/files/routing/docs/client/index.md",
+        "evals/files/routing/docs/client/onboarding.md",
+        "evals/files/routing/docs/features/index.md",
+        "evals/files/routing/docs/features/compile.md"
+      ]
     }
   ]
 }

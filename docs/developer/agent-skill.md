@@ -47,7 +47,7 @@ Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [
 
 ## Optional local improve loop
 
-For qualitative description tuning and agent behavior checks, install Anthropic's `skill-creator` locally (`npx skills add anthropics/skills --skill skill-creator`) and use fixtures under `skills/mdcp/evals/`. That [live skill eval](../glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
+For qualitative description tuning and agent behavior checks, use the vendored Anthropic [`skill-creator`](../../.agents/skills/skill-creator/SKILL.md) skill at `.agents/skills/skill-creator/` with fixtures under [`skills/mdcp/evals/`](../../skills/mdcp/evals/README.md). Refresh from upstream with `npx skills add anthropics/skills --skill skill-creator` when needed. That [live skill eval](../glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
 
 ## Publishing the skill pack
 

@@ -84,7 +84,7 @@ Both run in GitHub Actions. Neither is a [live skill eval](../glossary/live-skil
 
 ## Live skill evals (optional, local)
 
-Optional skill-creator agent runs and description trigger optimization use fixtures under `skills/mdcp/evals/`. Never required in CI.
+Optional [skill-creator](../../.agents/skills/skill-creator/SKILL.md) agent runs (vendored at `.agents/skills/skill-creator/`) and description trigger optimization use fixtures under `skills/mdcp/evals/`. Workspace results: `.agents/skills/mdcp-workspace/`. Never required in CI.
 
 ## Ecosystem publication
 

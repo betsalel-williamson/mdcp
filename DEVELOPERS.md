@@ -169,7 +169,7 @@ mdcp/
 │   ├── mdcp-arch-oss-library/
 │   └── mdcp-arch-product-docs-site/
 ├── skills.sh.json          # skills.sh repo page groupings
-├── .agents/skills/         # Local dogfood installs + workspaces (gitignored publishable copies)
+├── .agents/skills/         # Dogfood installs (mdcp* gitignored) + vendored skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
@@ -378,7 +378,7 @@ Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [
 
 ### Optional local improve loop
 
-For qualitative description tuning and agent behavior checks, install Anthropic's `skill-creator` locally (`npx skills add anthropics/skills --skill skill-creator`) and use fixtures under `skills/mdcp/evals/`. That [live skill eval](docs/glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
+For qualitative description tuning and agent behavior checks, use the vendored Anthropic [`skill-creator`](.agents/skills/skill-creator/SKILL.md) skill at `.agents/skills/skill-creator/` with fixtures under [`skills/mdcp/evals/`](skills/mdcp/evals/README.md). Refresh from upstream with `npx skills add anthropics/skills --skill skill-creator` when needed. That [live skill eval](docs/glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
 
 ### Publishing the skill pack
 
@@ -694,7 +694,7 @@ Companion gate: `pnpm skill:validate` runs [skills-ref](https://agentskills.io/s
 
 ## live skill eval
 
-Optional local skill-creator workflow: run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `skills/mdcp/evals/`. Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
+Optional local [skill-creator](.agents/skills/skill-creator/SKILL.md) workflow (vendored at `.agents/skills/skill-creator/`): run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `skills/mdcp/evals/`; run outputs go under `.agents/skills/mdcp-workspace/` (gitignored). Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
 
 ## GFM
 
