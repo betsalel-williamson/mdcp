@@ -4,7 +4,7 @@
 
 The **command-line interface** for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
 
-Install this package when you need the `mdcp` binary: **compile** shards into guides, **check** the docs tree, manage **refs**, and optionally **lint** / **prose** / **export**.
+Install this package when you need the `mdcp` binary: **compile** shards into guides, **check** the docs tree, manage **refs**, and optionally **lint** / **prose**.
 
 ### Not the Agent Skill
 
@@ -214,7 +214,7 @@ Delete `_build/` to clean all generated output. `.caches/` holds derived state (
 
 #### Opt-in output backup
 
-Default: compile and export **overwrite** existing files (git is the safety net). Enable backup when working outside version control:
+Default: compile commands **overwrite** existing files (git is the safety net). Enable backup when working outside version control:
 
 ```json
 {

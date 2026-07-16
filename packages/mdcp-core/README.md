@@ -4,7 +4,7 @@
 
 The **programmatic core library** for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
 
-Use this package when you need compile, validation, refs, and export APIs in scripts, CI, editors, or other tools **without** shelling out to the CLI.
+Use this package when you need compile, validation, and refs APIs in scripts, CI, editors, or other tools **without** shelling out to the CLI.
 
 ### Not the CLI or the Agent Skill
 
@@ -18,7 +18,7 @@ Use this package when you need compile, validation, refs, and export APIs in scr
 
 [![npm version](https://img.shields.io/npm/v/@bwilliamson/mdcp-core.svg)](https://www.npmjs.com/package/@bwilliamson/mdcp-core)
 
-Core library for **mdcp** — compile sharded Markdown guides, build section link registries, validate structure, and export LLM-friendly output.
+Core library for **mdcp** — compile sharded Markdown guides, build section link registries, and validate structure.
 
 Use this package when you need mdcp behavior in scripts, CI pipelines, editors, or other tools without shelling out to the CLI. For the Agent Skill (host instructions), see [root README](../../README.md) — that is a separate install.
 
@@ -152,7 +152,7 @@ See [Cross-guide link rewriting](#cross-guide-link-rewriting) and [ignoreGuides]
 
 `compileGuides` returns monolith text only — guides with `compile.outputFile` are excluded. `writeCompiledGuides` writes both the monolith and any publish targets.
 
-`writeOutputFile` writes compile or export targets. Default: overwrite. When `backup.enabled` is true, moves an existing file to `{outputDir}/{backupDir}/{docsRoot-relative-key}{ext}` before writing. Pass `backup` on `CompileOptions` or resolve via `resolveBackupOptions(config, cliOverrides)`.
+`writeOutputFile` writes compile targets. Default: overwrite. When `backup.enabled` is true, moves an existing file to `{outputDir}/{backupDir}/{docsRoot-relative-key}{ext}` before writing. Pass `backup` on `CompileOptions` or resolve via `resolveBackupOptions(config, cliOverrides)`.
 
 When `compile.title` is set, `assembleGuide` injects a `##` heading followed by a blank line before the first section. See [API — Config](#api--config) for per-guide compile fields and top-level `backup` config.
 
