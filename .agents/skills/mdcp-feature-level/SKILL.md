@@ -17,7 +17,10 @@ metadata:
 
 # Feature-Level Helper
 
-> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
+> **PREREQUISITE:** This is a helper skill. Follow the `mdcp` parent skill
+> first — especially **Quality Assurance (QA) Principles** (small batches,
+> current docs only, no code in docs) and **What belongs where**. Ensure the
+> `mdcp` CLI is installed.
 
 Act as an expert Software Engineer to implement and document new features using MDCP shards.
 
@@ -60,7 +63,7 @@ Collect these via intake (or from the conversation if already stated):
 
 ### Step 3: Docs First
 
-1. Add or update shards under `docs/features/` (capabilities, design, API surface, acceptance criteria) and `docs/client/` (end-user value and how to use the feature).
+1. Add or update shards under `docs/features/` (capabilities, design, contracts, and acceptance criteria — not implementation code) and `docs/client/` (end-user value and how to use the feature).
 2. Update each guide's `index.md`.
 3. Validate cross-links with `mdcp check`.
 
