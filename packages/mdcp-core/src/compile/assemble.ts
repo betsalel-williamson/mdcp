@@ -1,5 +1,5 @@
 import { readFileSync, existsSync } from 'node:fs';
-import { join, resolve, basename } from 'node:path';
+import { join, resolve, basename, dirname, relative } from 'node:path';
 import { demoteHeadings, stripAboutThisGuideHeading, extractGuideH1 } from './headings.js';
 import { stripExplicitAnchorMarkers } from './anchors.js';
 import { extractFirstHeading, stripFirstHeadingLine, formatCompileTitle } from './compile-title.js';
@@ -76,6 +76,7 @@ export interface AssembleGuideOptions {
   shardCache?: ShardCache;
   slugByPath?: Map<string, string>;
   linkedFiles?: string[];
+  sourceTags?: boolean;
 }
 
 export function assembleGuide(guideDir: string, options: AssembleGuideOptions = {}): string {
@@ -166,6 +167,11 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
         currentOutputFile: options.publishOutputFile,
         linkIndex: options.linkIndex,
       });
+    }
+
+    if (options.sourceTags !== false && options.outputFile) {
+      const relPath = relative(dirname(options.outputFile), filePath);
+      body = `<!-- mdcp-shard: start ${relPath} -->\n${body}\n<!-- mdcp-shard: end ${relPath} -->`;
     }
 
     parts.push(body + '\n\n');
@@ -312,9 +318,10 @@ export function compileGuideResultsWithContext(
       shardCache,
       slugByPath,
       linkedFiles,
+      sourceTags: options.config?.sourceTags ?? true,
     });
 
-    const includeBanner = compile?.includeBanner ?? false;
+    const includeBanner = compile?.includeBanner ?? true;
 
     return {
       name,
