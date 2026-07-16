@@ -2,7 +2,7 @@
 
 The **programmatic core library** for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
 
-Use this package when you need compile, validation, refs, and export APIs in scripts, CI, editors, or other tools **without** shelling out to the CLI.
+Use this package when you need compile, validation, and refs APIs in scripts, CI, editors, or other tools **without** shelling out to the CLI.
 
 ## Not the CLI or the Agent Skill
 

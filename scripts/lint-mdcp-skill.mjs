@@ -126,15 +126,12 @@ function main() {
   else fail('frontmatter-license', `expected license MIT, got ${JSON.stringify(data.license)}`);
 
   const compatibility = String(data.compatibility || '');
-  const compatOk =
-    /node\.?js?\s*24/i.test(compatibility) &&
-    /\bnpx\b/i.test(compatibility) &&
-    /mdcp-cli|cli/i.test(compatibility);
+  const compatOk = /node\.?js?\s*18/i.test(compatibility) && /mdcp-cli|cli/i.test(compatibility);
   if (compatOk) pass('frontmatter-compatibility');
   else {
     fail(
       'frontmatter-compatibility',
-      'compatibility must mention Node.js 24+, npx, and the CLI (mdcp-cli)',
+      'compatibility must mention Node.js 18+ and the CLI (mdcp-cli)',
     );
   }
 

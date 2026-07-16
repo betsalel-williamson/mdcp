@@ -9,7 +9,7 @@ description: >-
   publishing documentation to the web.
 license: MIT
 compatibility: >-
-  Requires Node.js 24+ and npx for @bwilliamson/mdcp-cli (docs compile,
+  Requires Node.js 18+ for @bwilliamson/mdcp-cli (docs compile,
   validate, and cross-link registry commands). Skill scripts are thin
   wrappers; they do not replace the CLI. Install the mdcp parent skill first.
 metadata:

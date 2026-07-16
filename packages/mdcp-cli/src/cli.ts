@@ -499,7 +499,23 @@ cli
   );
 
 try {
+  // Backwards compatibility for `refs <subcommand>` -> `refs-<subcommand>`
+  // This is needed because cac does not support spaces in command names like `refs gen`
+  // so we register them as `refs-gen` etc, and map `refs gen` to `refs-gen`.
+  if (process.argv[2] === 'refs' && process.argv[3] && !process.argv[3].startsWith('-')) {
+    process.argv.splice(2, 2, `refs-${process.argv[3]}`);
+  }
+
   cli.parse();
+
+  if (cli.options.help || cli.options.version) {
+    process.exit(0);
+  }
+
+  if (cli.args.length > 0 && !cli.matchedCommand) {
+    console.error(`Invalid command: ${cli.args.join(' ')}`);
+    process.exit(1);
+  }
   if (!cli.matchedCommand) {
     cli.outputHelp();
     process.exit(1);

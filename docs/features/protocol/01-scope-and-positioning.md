@@ -20,7 +20,7 @@ MDCP is an **offline document context protocol** — not a wire protocol like [M
 3. **Complementary** — an optional MCP adapter (V2) exposes _already-compiled_ MDCP outputs; it sits on top of MDCP, not instead of it.
 
 ```text
-  [Authoring]  MDCP: shards → compile → check → export
+  [Authoring]  MDCP: shards → compile → check
        ↓
   [Delivery]   Agent Skills pack, MCP server, file read, stdout
        ↓
