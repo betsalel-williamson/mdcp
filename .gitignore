@@ -28,7 +28,11 @@ coverage/
 .agents/skills/mdcp-arch-oss-library/
 .agents/skills/mdcp-arch-product-docs-site/
 .agents/skills/*-workspace/
-.agents/skills/skill-creator/
+skills/*-workspace/
+# skill-creator is vendored (committed) for the local live-eval loop — do not gitignore
+# but ignore its python cache artifacts
+.agents/skills/skill-creator/**/__pycache__/
+.agents/skills/skill-creator/**/*.pyc
 skills-lock.json
 
 # VS Code (keep shared workspace config)

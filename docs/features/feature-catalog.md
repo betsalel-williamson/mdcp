@@ -16,9 +16,9 @@ Guides compile to per-guide files under `outputDir` by default (`{name}.md`, or 
 
 Heading-slug **registry** for validation after compile — see [Refs registry path](./refs-registry-path.md). Discover shards with host search (`rg`); confirm `#` cross-links with `mdcp check`.
 
-## Agent Skill delivery
+## Agent Skill
 
-Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill delivery](./agent-skill.md).
+Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill](./agent-skill.md).
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp

@@ -7,6 +7,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 ## Protocol terms
 
 - [Agent Skills](./agent-skills.md)
+- [Skill](./skill.md)
 - [MDCP](./mdcp.md)
 
 ## Skill verification

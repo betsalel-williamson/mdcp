@@ -102,7 +102,7 @@ The default MDCP structure acts as the "batteries-included" **Code Repository Ar
 | ----------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
 | `docs/features/`  | How the plumbing works — capabilities, design, contracts, acceptance criteria  | Step-by-step implementation, duplicated API surface from code |
 | `docs/client/`    | How a specific persona finds value using the software — outcomes, flows, usage | Internal architecture, maintainer-only workflows              |
-| `docs/developer/` | How to work on the repo — setup, layout, validation, delivery                  | Product narrative or end-user tutorials                       |
+| `docs/developer/` | How to work on the repo — setup, layout, validation, skill development         | Product narrative or end-user tutorials                       |
 | `docs/glossary/`  | Shared terms and disambiguation                                                | General code snippets                                         |
 
 _(Note: The MDCP engine itself is domain-agnostic. Non-code projects can define entirely different guide tiers/archetypes while still using the same compile and validation checks.)_

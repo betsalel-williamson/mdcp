@@ -10,7 +10,7 @@ mdcp/
 │   ├── mdcp-arch-oss-library/
 │   └── mdcp-arch-product-docs-site/
 ├── skills.sh.json          # skills.sh repo page groupings
-├── .agents/skills/         # Local dogfood installs + workspaces (gitignored publishable copies)
+├── .agents/skills/         # Dogfood installs (mdcp* gitignored) + vendored skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
