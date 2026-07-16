@@ -197,6 +197,7 @@ MDCP supports a team of one **or** the entire software value chain:
 <!-- mdcp-shard: end ../docs/presentation-la-devops/02b-personas.md -->
 
 <!-- mdcp-shard: start ../docs/presentation-la-devops/02c-value-chain.md -->
+
 <style scoped>
 .columns {
   display: grid;
