@@ -4,7 +4,7 @@ Command and capability reference. For the end-to-end mental model (shards, monol
 
 ## Compile (P0.1)
 
-Stitch shard directories into canonical monoliths or publish outputs. Demotes headings, strips `about-this-guide` preamble, optional per-guide titles and publish paths.
+Stitch shard directories into canonical monoliths or publish outputs. Demotes headings, strips `about-this-guide` preamble, optional per-guide titles and publish paths. Injects source tags and a default warning banner. See [Source tags and default banner](./source-tags-and-banner.md).
 
 ```bash
 mdcp compile --config mdcp.config.json --docs-root .
