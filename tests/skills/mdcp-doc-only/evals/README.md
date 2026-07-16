@@ -17,6 +17,16 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md).
 2. **Temptation to code** — fix stale client docs while refusing a bait bugfix/unit test
 3. **Stale cleanup** — remove migration backlog / superseded workflow from durable shards
 
+## Discrimination notes (iteration-1)
+
+| Eval                 | With skill | Without skill | Notes                                                      |
+| -------------------- | ---------- | ------------- | ---------------------------------------------------------- |
+| 1 Author/refactor    | Pass       | Partial       | Baseline often embeds implementation APIs in shards        |
+| 2 Temptation to code | Pass       | Fail          | Primary discriminator — baseline edits `src/` + adds tests |
+| 3 Stale cleanup      | Pass       | Pass          | Weak alone; still required for acceptance coverage         |
+
+Live runs are local-only (not a CI gate). Workspace artifacts stay under `.agents/skills/mdcp-doc-only-workspace/` (gitignored).
+
 ## Run path (skill-creator)
 
 1. Ensure `.agents/skills/skill-creator/` is present (vendored in this repo).
