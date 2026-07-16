@@ -1,5 +1,7 @@
 # @bwilliamson/mdcp-cli
 
+<!-- mdcp-shard: start ../../docs/client-cli/about.md -->
+
 ## About @bwilliamson/mdcp-cli
 
 The **command-line interface** for the [MarkDown Context Protocol (MDCP)](https://github.com/betsalel-williamson/mdcp).
@@ -15,6 +17,9 @@ This npm package is **not** the MDCP Agent Skill.
 - **Agent Skill** — host instructions (`SKILL.md`, subagents): [root README](../../README.md) / `npx skills add … --skill mdcp`
 
 Slash `/mdcp` in an agent host loads the **skill**. The shell command `mdcp` runs **this CLI**. They are separate installs and separate docs.
+<!-- mdcp-shard: end ../../docs/client-cli/about.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/install-and-quick-start.md -->
 
 ## Install and quick start
 
@@ -87,6 +92,10 @@ Global options (apply to every command):
 | `-c, --config <path>` | `mdcp.config.json` | Config file path, resolved from the **invocation directory** (not `--docs-root`) |
 | `--docs-root <path>`  | current directory  | Docs root — one subdirectory per guide shard tree                                |
 
+<!-- mdcp-shard: end ../../docs/client-cli/install-and-quick-start.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/project-layout.md -->
+
 ## Project layout
 
 ### One subdirectory = one guide
@@ -129,6 +138,9 @@ docs/
 Publish outside `_build` (npm READMEs, repo-root docs) via `compile.outputFile` paths relative to `outputDir` (for example `../../packages/mdcp-cli/README.md`).
 
 When a manifest has preamble prose with example links, set `compile.sectionsHeading`. See [Manifest compile order](../../docs/features/manifest-compile-order.md).
+<!-- mdcp-shard: end ../../docs/client-cli/project-layout.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/config-essentials.md -->
 
 ## Config essentials
 
@@ -267,6 +279,8 @@ Defaults: `outputDir` `_build`, per-guide outputs `overview.md` and `admin-guide
 | `outputDir`          | Generated output root (relative to `--docs-root`)                    |
 | `outputFile`         | Optional stitched monolith (relative to `outputDir`)                 |
 | `refs.registryFile`  | Cross-link lookup table (default `.caches/refs.json`)                |
+| `sourceTags`         | Wrap shards in HTML comments with relative paths (default `true`)    |
+| `banner`             | Global banner prepended to outputs (has default warning text)        |
 | `compile.outputFile` | Override per-guide output path (relative to `outputDir` or absolute) |
 
 #### Default per-guide outputs
@@ -306,6 +320,9 @@ When a manifest has preamble prose with example inline links before an ordered `
 | `refs.slugAlgorithm` | Informational only — only `github` is implemented |
 
 Full schema and examples: [mdcp.config.json in sample-guides](../../examples/sample-guides/mdcp.config.json).
+<!-- mdcp-shard: end ../../docs/client-cli/config-essentials.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/commands-reference.md -->
 
 ## Commands reference
 
@@ -375,6 +392,9 @@ mdcp refs list
 ```
 
 Discover shards with host search, then read **one** file. Prefer that over pasting a full compiled monolith.
+<!-- mdcp-shard: end ../../docs/client-cli/commands-reference.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/compile-refs-registry.md -->
 
 ## Compile and the refs registry
 
@@ -410,6 +430,9 @@ mdcp refs-list --config docs/mdcp.config.json --docs-root docs
 ```
 
 Discover shards with host search (`rg`, IDE search). `mdcp check` validates cross-link fragments against compiled slugs; `mdcp refs-list` reads the registry file that `compile` just wrote.
+<!-- mdcp-shard: end ../../docs/client-cli/compile-refs-registry.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/cross-links-and-refs.md -->
 
 ## Cross-links and refs
 
@@ -432,6 +455,9 @@ mdcp refs-list
 3. Prefer GitHub auto-slugs over explicit `` overrides.
 
 Slug algorithm, examples, and programmatic APIs: [Core — heading slugs](../mdcp-core/README.md#heading-slugs-github-slugger).
+<!-- mdcp-shard: end ../../docs/client-cli/cross-links-and-refs.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/optional-linters.md -->
 
 ## Optional linters
 
@@ -486,6 +512,9 @@ Optional overrides **narrow** scope further; they never widen it beyond what you
 The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (`!**/index.md`, `!guides.md`). **Scope always comes from the CLI** — not from preset globs.
 
 `mdcp fix` is out of band: it runs unscoped `prettier --write .` and `markdownlint-cli2 --fix` across the repo and is not part of mdcp's guide fileset gate.
+<!-- mdcp-shard: end ../../docs/client-cli/optional-linters.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/consumer-migration.md -->
 
 ## Consumer migration
 
@@ -548,6 +577,10 @@ After setting up a consumer repo:
 3. **`mdcp check --require-vale`** — when Vale is configured
 4. **Hook output** — diagram tables inlined (`inlineInserts`), code evidence blocks resolved (`codeEvidence`), cross-guide links rewritten to monolith `#slug` targets (or left as shard `.md` paths for guides in `compile.crossGuideLinks.ignoreGuides`)
 
+<!-- mdcp-shard: end ../../docs/client-cli/consumer-migration.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/why-mdcp-for-agents.md -->
+
 ## Why mdcp for coding agents
 
 Which **CLI commands** address common docs failures when agents edit the repo:
@@ -563,6 +596,9 @@ Which **CLI commands** address common docs failures when agents edit the repo:
 Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs-list` → read one shard when the next turn needs doc context.
 
 Install and flags: [Install and quick start](#install-and-quick-start). Agent **behavior** (when to edit docs, subagents) is the [Agent Skill](../../README.md), not this package.
+<!-- mdcp-shard: end ../../docs/client-cli/why-mdcp-for-agents.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/agent-integration.md -->
 
 ## Agent integration
 
@@ -600,6 +636,9 @@ mdcp refs-list
 ### License
 
 MIT
+<!-- mdcp-shard: end ../../docs/client-cli/agent-integration.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/llm-collaboration.md -->
 
 ## LLM collaboration
 
@@ -609,6 +648,9 @@ Agent workflow (subagents, intake, docs-first turns) lives in the **Agent Skill*
 - Helper skills catalog and invoke recipes: [`docs/skills.md`](../../docs/skills.md)
 
 This CLI package covers shell commands only. Wire scripts with [Agent integration](#agent-integration); install with [Install and quick start](#install-and-quick-start).
+<!-- mdcp-shard: end ../../docs/client-cli/llm-collaboration.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/agent-skill.md -->
 
 ## Agent Skill (related)
 
@@ -619,12 +661,18 @@ The **MDCP Agent Skill** is a separate install from `@bwilliamson/mdcp-cli`.
 - Then: `/mdcp help me get started`
 
 The skill does **not** ship the `mdcp` binary. Keep this package (or [Agent integration](#agent-integration) scripts) for `mdcp compile` / `mdcp check`.
+<!-- mdcp-shard: end ../../docs/client-cli/agent-skill.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/heading-slug.md -->
 
 ## heading slug
 
 GitHub-style fragment id for a heading in **compiled** Markdown (the part after `#` in `[label](#slug)`). Parent concept: [refs](#refs).
 
 MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Duplicate titles in one document get `-1`, `-2` suffixes. Authors should not invent fragments from shard-only titles; [cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
+<!-- mdcp-shard: end ../../docs/glossary/heading-slug.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/refs.md -->
 
 ## refs
 
@@ -646,15 +694,22 @@ The problem refs solve is structural, not retrieval: shards merge, heading level
 Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs-list`**. Refs are not a retrieval API — see [ADR 0002](../../docs/features/adr/0002-remove-refs-lookup.md).
 
 Not the same as ordinary “search the docs.” Refs are about **correct anchors and paths after compile**.
+<!-- mdcp-shard: end ../../docs/glossary/refs.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/cross-link.md -->
 
 ## cross-link
 
 A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
 
 Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](../../docs/features/link-validation.md).
+<!-- mdcp-shard: end ../../docs/glossary/cross-link.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/refs-registry.md -->
 
 ## refs registry
 
 Derived catalog of [heading slugs](#heading-slug) from compiled guide output, typically written as `refs.json` under `outputDir`. Parent concept: [refs](#refs).
 
 The registry is **generated state**, not authored shards. `mdcp compile` (and `mdcp refs gen`) rebuild it; `mdcp check` / `mdcp refs check` verify it still matches the latest compile. Path rules: [Refs registry path](../../docs/features/refs-registry-path.md).
+<!-- mdcp-shard: end ../../docs/glossary/refs-registry.md -->

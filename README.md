@@ -1,5 +1,7 @@
 # MDCP — documentation system Agent Skill
 
+<!-- mdcp-shard: start docs/repo-readme/what-this-tool-is.md -->
+
 ## What this tool is
 
 [![skills.sh](https://skills.sh/b/betsalel-williamson/mdcp)](https://skills.sh/betsalel-williamson/mdcp)
@@ -7,6 +9,9 @@
 **mdcp** is a **documentation system** delivered as an [Agent Skill](https://agentskills.io) plus a small compile/check toolchain. It is for people who know good docs compound — and that unvalidated monolith READMEs get expensive as product ideas keep arriving.
 
 Instead of dumping every mind map, architecture note, and spec into one file that overwhelms both humans and LLM context windows, MDCP keeps that intent in small, validated Markdown **shards** (for example `docs/features/my-feature.md`). Agents learn to read **one shard at a time**, update docs before coding, and run checks in CI — so documentation stays findable and trustworthy as the system grows. Discover and install via [skills.sh](https://skills.sh/betsalel-williamson/mdcp).
+<!-- mdcp-shard: end docs/repo-readme/what-this-tool-is.md -->
+
+<!-- mdcp-shard: start docs/repo-readme/get-started.md -->
 
 ## Get started
 
@@ -29,6 +34,9 @@ Then start a bootstrap session:
 ```
 
 The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout, and validation. Once the pipeline exists, agents proactively look up shard context, compile documentation, and validate references before writing code.
+<!-- mdcp-shard: end docs/repo-readme/get-started.md -->
+
+<!-- mdcp-shard: start docs/repo-readme/about.md -->
 
 ## Why use MDCP?
 
@@ -39,6 +47,10 @@ The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout
 - **Validation gate:** `mdcp check` keeps cross-links and refs trustworthy in CI when the docs system grows.
 - **Portable skill:** Works in Cursor, GitHub Copilot, Claude Code, and other hosts that support [Agent Skills](https://agentskills.io).
 
+<!-- mdcp-shard: end docs/repo-readme/about.md -->
+
+<!-- mdcp-shard: start docs/repo-readme/the-toolchain.md -->
+
 ## The Toolchain
 
 MDCP has **three separate surfaces**. Each has its own docs — do not treat them as one install or one README.
@@ -48,6 +60,9 @@ MDCP has **three separate surfaces**. Each has its own docs — do not treat the
 - **Core** — `npm i @bwilliamson/mdcp-core`. Programmatic API only. Docs: [`@bwilliamson/mdcp-core`](./packages/mdcp-core/README.md).
 
 The skill tells agents _when_ and _how_ to use documentation; the CLI and core **execute** compile and validation. Agents still need `@bwilliamson/mdcp-cli` (or equivalent scripts) in the repo for those commands to run.
+<!-- mdcp-shard: end docs/repo-readme/the-toolchain.md -->
+
+<!-- mdcp-shard: start docs/repo-readme/learn-more.md -->
 
 ## Learn More
 
@@ -56,6 +71,10 @@ The skill tells agents _when_ and _how_ to use documentation; the CLI and core *
 - [Agent Skill delivery](docs/features/agent-skill.md)
 - [CLI consumer guide](docs/client-cli/index.md) — `@bwilliamson/mdcp-cli` (not the skill)
 - [Core API guide](docs/client-core/index.md) — `@bwilliamson/mdcp-core`
+
+<!-- mdcp-shard: end docs/repo-readme/learn-more.md -->
+
+<!-- mdcp-shard: start docs/repo-readme/this-repository.md -->
 
 ## This repository
 
@@ -83,3 +102,4 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 ### License
 
 MIT
+<!-- mdcp-shard: end docs/repo-readme/this-repository.md -->

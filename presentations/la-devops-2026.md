@@ -1,4 +1,7 @@
+<!-- mdcp-shard: start ../docs/presentation-la-devops/00-intro.md -->
+
 ---
+
 theme: default
 ---
 
@@ -48,6 +51,10 @@ Tonight, we'll look at an **Agent Skill** that makes this work pay off permanent
 **Writing docs _once_ that serve both your team and your AI agents** — by putting small, durable shards where long-term system value lives.
 
 ---
+
+<!-- mdcp-shard: end ../docs/presentation-la-devops/00-intro.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/01-problem-and-pain.md -->
 
 ### The Problem: $2.4T Cost of Software Failures
 
@@ -101,6 +108,10 @@ We have known documentation is the problem for decades, yet we rarely fix it. Wh
 
 ---
 
+<!-- mdcp-shard: end ../docs/presentation-la-devops/01-problem-and-pain.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/01b-terminology.md -->
+
 ### Shared Language / Terminology
 
 Before we dive in, a few terms we'll use throughout:
@@ -111,6 +122,10 @@ Before we dive in, a few terms we'll use throughout:
 - **PRD:** Product Requirements Document.
 
 ---
+
+<!-- mdcp-shard: end ../docs/presentation-la-devops/01b-terminology.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/02-alternate-vision.md -->
 
 ### The Alternate Vision: MDCP
 
@@ -159,6 +174,10 @@ Works for a **team of one** or a full product, engineering, and marketing org �
 
 ---
 
+<!-- mdcp-shard: end ../docs/presentation-la-devops/02-alternate-vision.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/02b-personas.md -->
+
 ### Who is MDCP For? (The Personas)
 
 MDCP supports a team of one **or** the entire software value chain:
@@ -173,6 +192,9 @@ MDCP supports a team of one **or** the entire software value chain:
 
 ---
 
+<!-- mdcp-shard: end ../docs/presentation-la-devops/02b-personas.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/02c-value-chain.md -->
 <style scoped>
 .columns {
   display: grid;
@@ -321,6 +343,10 @@ To understand where to pull MDCP in, we must be clear on its boundaries.
 
 ---
 
+<!-- mdcp-shard: end ../docs/presentation-la-devops/02c-value-chain.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/02d-dora-capabilities.md -->
+
 ### MDCP & The DORA AI Capabilities Model
 
 The [DORA AI Capabilities Model](https://dora.dev/ai/) demonstrates that AI adoption alone isn't enough.
@@ -346,6 +372,10 @@ MDCP directly enables these critical multipliers.
 
 ---
 
+<!-- mdcp-shard: end ../docs/presentation-la-devops/02d-dora-capabilities.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/03-policies-to-achieve-vision.md -->
+
 ### Policies to Achieve the Vision
 
 The bottleneck is no longer code syntax. It's our ability to accurately architect systems.
@@ -368,6 +398,10 @@ Your docs must capture:
 - **Extensible doc skill:** MDCP is the foundational “go-to” documentation skill. Teams can extend it locally (e.g., `docs/extensions/`) to integrate custom workflows and proprietary systems.
 
 ---
+
+<!-- mdcp-shard: end ../docs/presentation-la-devops/03-policies-to-achieve-vision.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/04-plan-to-enact.md -->
 
 ### Plan to Enact: Phased Delivery
 
@@ -413,6 +447,10 @@ This isn't a magic bullet that instantly understands your legacy codebase. It's 
 
 ---
 
+<!-- mdcp-shard: end ../docs/presentation-la-devops/04-plan-to-enact.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/05-call-to-action.md -->
+
 ### Call to Action
 
 Let’s ensure the future of agentic coding isn’t just generated faster—it’s designed with intent.
@@ -434,6 +472,10 @@ Let’s ensure the future of agentic coding isn’t just generated faster—it�
 _Appendix slides follow for common objections during Q&A._
 
 ---
+
+<!-- mdcp-shard: end ../docs/presentation-la-devops/05-call-to-action.md -->
+
+<!-- mdcp-shard: start ../docs/presentation-la-devops/04b-faq.md -->
 
 ### Appendix: FAQ — What MDCP is NOT
 
@@ -480,3 +522,5 @@ Common objections for Q&A — skip during the main talk:
 - It makes documentation the _blueprint_ for LLM code generation, rather than an afterthought — when someone uses the skill productively.
 
 ---
+
+<!-- mdcp-shard: end ../docs/presentation-la-devops/04b-faq.md -->
