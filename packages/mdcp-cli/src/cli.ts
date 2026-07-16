@@ -507,6 +507,11 @@ try {
   }
 
   cli.parse();
+
+  if (cli.options.help || cli.options.version) {
+    process.exit(0);
+  }
+
   if (cli.args.length > 0 && !cli.matchedCommand) {
     console.error(`Invalid command: ${cli.args.join(' ')}`);
     process.exit(1);
