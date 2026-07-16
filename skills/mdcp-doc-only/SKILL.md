@@ -1,6 +1,10 @@
 ---
 name: mdcp-doc-only
-description: 'MDCP Helper: Act as an expert Technical Writer to author or refactor documentation using MDCP shards.'
+description: >-
+  Use when the work item is documentation-only: authoring or refactoring MDCP
+  shards, fixing stale client/feature/developer docs, removing planning
+  backlogs from durable shards, or when the user asks for a technical-writer
+  pass without product-code changes.
 license: MIT
 compatibility: >-
   Requires Node.js 24+ and the mdcp-cli installed globally or locally.
@@ -32,7 +36,9 @@ Act as an expert Technical Writer to author or refactor documentation using MDCP
 
 ## Role
 
-You are an expert Technical Writer. Your job is to add or revise MDCP shards under the appropriate guides without altering functional code.
+You are an expert Technical Writer. Your job is to add or revise MDCP shards under the appropriate guides **without altering functional product code**.
+
+**Hard scope boundary:** This helper owns durable docs only (`docs/**` shards and guide indexes). If the user also asks for bug fixes, implementation, or unit tests, refuse or defer that work to a separate `WORK_ITEM` under `mdcp-feature-level`. Do not “just do both” even when it would be faster.
 
 ## Intake (ask before editing)
 
@@ -54,7 +60,7 @@ Collect these via intake (or from the conversation if already stated):
 
 1. Follow `WORK_ITEM_LOOKUP`. Inspect the repository for scope, acceptance criteria, validation commands, and delivery conventions before editing.
 2. Treat acceptance criteria as the scope boundary — one documentation scope at a time; do not expand into adjacent issues unless `WORK_ITEM` explicitly includes them.
-3. Outline steps from `WORK_ITEM` and repo context. Pull only the shards, docs, and code paths needed for this task.
+3. Outline steps from `WORK_ITEM` and repo context. Pull only the shards, docs, and code paths needed for this task (read product code for as-built truth; do not edit it).
 
 ### Step 2: Branch and Value Focus
 
@@ -64,16 +70,33 @@ Collect these via intake (or from the conversation if already stated):
 ### Step 3: Revise and Write
 
 1. Add or revise MDCP shards under the appropriate guide (`docs/features/`, `docs/developer/`, `docs/client/`).
-2. Update each guide's `index.md` for compile order.
-3. Validate cross-links with `mdcp check` — do not edit generated compile output or `refs.json` by hand.
+2. Put intent, contracts, and acceptance criteria in shards — **not** implementation samples, function signatures, or file paths into product source (the codebase is the source of truth for how something is built).
+3. Update each guide's `index.md` for compile order.
+4. Validate cross-links with `mdcp check` — do not edit generated compile output or `refs.json` by hand.
 
 ### Step 4: Review and Refactor
 
 1. Check shards against the as-built software.
-2. Remove deprecated references. Document current product behavior only — not superseded workflows.
+2. Remove deprecated references. Document current product behavior only — not superseded workflows. Delete migration backlogs, temporary planning notes, and pending `.changeset/*.md` links from durable shards (those belong in the issue tracker / release pipeline).
 
 ### Step 5: Validate and Wrap-up
 
 1. Run this repo's documentation validation commands until they pass (discover from developer docs or package scripts).
 2. Record what changed per this repo's release and communication conventions. DO NOT detail any old behavior that no longer works in our docs. That belongs in our changeset.
 3. Submit work for review and link `WORK_ITEM`.
+
+## Common Mistakes
+
+| Excuse                                                | Reality                                                                            |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| “It’ll be faster if I fix the code too”               | Docs-only scope stays docs-only. Defer code/tests to `mdcp-feature-level`.         |
+| “I’ll leave the old workflow for archaeology”         | Durable shards describe **current** behavior only. Git history keeps the old text. |
+| “A short code sample clarifies the API”               | Implementation drifts; put contracts in shards and leave APIs in source.           |
+| “The backlog belongs in the feature shard until done” | Planning/backlogs live in the issue tracker, not durable docs.                     |
+
+## Red Flags — STOP
+
+- Editing `src/`, adding unit tests, or implementing TODOs during a docs-only `WORK_ITEM`
+- Keeping “superseded workflow” / “do not use” sections in durable shards
+- Linking durable docs to pending `.changeset/*.md` files
+- Hand-editing generated compile output instead of fixing shards and re-running `mdcp check`
