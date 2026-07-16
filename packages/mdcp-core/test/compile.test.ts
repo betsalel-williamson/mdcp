@@ -92,6 +92,36 @@ describe('compileGuides', () => {
     });
   });
 
+  it('injects source tags around sections by default when outputFile is provided', () => {
+    withTmpDir('mdcp-source-tags-', (work) => {
+      writeFileSync(join(work, 'index.md'), '# Example\n\n- [Section](section.md)\n');
+      writeFileSync(join(work, 'section.md'), '# Section\n\nContent.\n');
+
+      const out = assembleGuide(work, {
+        manifest: 'index.md',
+        outputFile: join(work, 'out', 'guide.md'),
+      });
+
+      expect(out).toContain('<!-- mdcp-shard: start ../section.md -->');
+      expect(out).toContain('<!-- mdcp-shard: end ../section.md -->');
+    });
+  });
+
+  it('omits source tags when sourceTags is false', () => {
+    withTmpDir('mdcp-no-source-tags-', (work) => {
+      writeFileSync(join(work, 'index.md'), '# Example\n\n- [Section](section.md)\n');
+      writeFileSync(join(work, 'section.md'), '# Section\n\nContent.\n');
+
+      const out = assembleGuide(work, {
+        manifest: 'index.md',
+        outputFile: join(work, 'out', 'guide.md'),
+        sourceTags: false,
+      });
+
+      expect(out).not.toContain('<!-- mdcp-shard: start');
+    });
+  });
+
   it('writes monolith and publish outputs in mixed mode', () => {
     withTmpDir('mdcp-mixed-', (work) => {
       const monolithDir = join(work, 'main');
