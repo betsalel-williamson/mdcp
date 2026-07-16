@@ -19,6 +19,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
 - [Architecture decision records](./adr/index.md)
   - [ADR 0001 — Remove `mdcp export` profiles](./adr/0001-remove-export-profiles.md)
   - [ADR 0002 — Remove `mdcp refs lookup`](./adr/0002-remove-refs-lookup.md)
+  - [ADR 0003 — Do not adopt OKF](./adr/0003-do-not-adopt-okf.md)
 - [Design constraints](./design-constraints/index.md)
   - [Protocol](./protocol/00-vision-and-roadmap.md)
 
@@ -31,3 +32,4 @@ Product documentation for **what mdcp is designed to do** — the problems it so
     - [MDCP 1.0 spec (draft)](./protocol/mdcp-1.0-spec.md)
     - [Agent task subagents](./protocol/agent-task-prompts.md)
     - [Extensions and archetypes](./protocol/extensions-and-archetypes.md)
+    - [Format specification](./protocol/format-specification.md)
