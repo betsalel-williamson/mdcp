@@ -2,7 +2,7 @@
 
 Fixtures and prompts for the optional [skill-creator](../../../.agents/skills/skill-creator/SKILL.md) loop against the getting-started helper. Not a CI gate.
 
-Parent suite: [`skills/mdcp/evals/`](../../mdcp/evals/README.md).
+Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md).
 
 ## Layout
 
@@ -11,12 +11,14 @@ Parent suite: [`skills/mdcp/evals/`](../../mdcp/evals/README.md).
 | `evals.json`             | Prompts, `expected_output`, and named `assertions` for bootstrap checks |
 | `files/greenfield-npm/`  | Empty npm project (no docs root) — evals 1 and 3                        |
 | `files/greenfield-pnpm/` | Empty pnpm project (no docs root) — eval 2                              |
+| `files/brownfield/`      | Legacy monolith docs, no MDCP layout — eval 4                           |
 
 ## What the suite covers
 
-1. **Greenfield npm bootstrap** — docs root, `mdcp.config.json`, four-tier guides, persona, compile/check
-2. **pnpm discovery** — prefer the fixture’s package manager, same success path
-3. **Intake skip + glossary seed** — FEATURE/PERSONA already given; add a glossary term; validate
+1. **Expert greenfield (npm)** — concise bootstrap; no tutorial shards; compile/check
+2. **Novice greenfield (pnpm)** — tutorial shards + concept explanations; prefer pnpm
+3. **Intake skip + glossary seed** — FEATURE/PERSONA/EXPERIENCE already given; glossary term; validate
+4. **Brownfield** — preserve legacy files, migrate into shards, mark ready to archive after review
 
 ## Run path (skill-creator)
 
@@ -29,12 +31,13 @@ Parent suite: [`skills/mdcp/evals/`](../../mdcp/evals/README.md).
 ```text
 .agents/skills/mdcp-getting-started-workspace/
   iteration-1/
-    eval-1-greenfield-npm/
+    eval-1-expert-greenfield-npm/
       eval_metadata.json
       with_skill/outputs/
       without_skill/outputs/
-    eval-2-greenfield-pnpm/
+    eval-2-novice-greenfield-pnpm/
     eval-3-intake-glossary/
+    eval-4-brownfield/
     benchmark.json
 ```
 
