@@ -18,7 +18,7 @@ Heading-slug **registry** for validation after compile — see [Refs registry pa
 
 ## Agent Skill delivery
 
-Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill delivery](./agent-skill.md).
+Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill delivery](../developer/agent-skill.md).
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp
