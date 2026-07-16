@@ -273,7 +273,7 @@ Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`
 pnpm skill:install
 ```
 
-That copies `skills/mdcp/` into `.agents/skills/mdcp/` (gitignored). Manual invoke: `/mdcp`. See [Agent Skill](#agent-skill-delivery).
+That copies `skills/mdcp/` into `.agents/skills/mdcp/` (gitignored). Manual invoke: `/mdcp`. See [Agent Skill](#agent-skill-development).
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](./packages/mdcp-core/README.md#publish-relative-link-rewriting).
 
@@ -329,7 +329,7 @@ To help avoid formatting errors and enforce consistent style, we recommend using
 
 _Note: GitHub and GitHub Flavored Markdown are trademarks of GitHub, Inc. This project is not affiliated with, sponsored by, or endorsed by GitHub, Inc._
 
-## Agent Skill delivery
+## Agent Skill development
 
 MDCP ships as a portable **documentation system** Agent Skills pack so projects inherit docs-as-code guardrails without a host-specific IDE extension. The **parent skill** is the intended agent entrypoint for people who want maintainable sharded docs as ideas keep coming.
 
@@ -469,7 +469,7 @@ There is **no calendar cadence**. Releases are **event-driven**:
 3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
 4. CI publishes to npm when the **`v*`** tag lands on GitHub.
 
-**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). See [Agent Skill](#agent-skill-delivery).
+**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). See [Agent Skill](#agent-skill-development).
 
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
@@ -589,7 +589,7 @@ Security fixes target the **latest minor** on npm. See [SECURITY.md](SECURITY.md
 ### Related docs
 
 - [Publishing](#publishing) — first publish, Trusted Publishing, npm commands
-- [Agent Skill](#agent-skill-delivery) — skill pack, WIP `internal` flag, skills.sh
+- [Agent Skill](#agent-skill-development) — skill pack, WIP `internal` flag, skills.sh
 - [.changeset/README.md](.changeset/README.md) — quick changeset reference
 
 ## Publishing

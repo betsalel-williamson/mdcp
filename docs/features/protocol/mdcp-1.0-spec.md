@@ -6,7 +6,7 @@ Normative specification for the MarkDown Context Protocol. Parent: [GitHub #48](
 
 ## 1. Introduction
 
-MDCP defines **offline document context preparation**: shard layout, compile semantics, validation pipeline, and Agent Skill delivery. It does **not** define wire transport (see [Scope and positioning](./01-scope-and-positioning.md)).
+MDCP defines **offline document context preparation**: shard layout, compile semantics, validation pipeline, and Agent Skill development. It does **not** define wire transport (see [Scope and positioning](./01-scope-and-positioning.md)).
 
 Conformance keywords: **MUST**, **SHOULD**, **MAY** (RFC 2119 sense).
 

@@ -1,4 +1,4 @@
-# Agent Skill delivery
+# Agent Skill development
 
 MDCP ships as a portable **documentation system** Agent Skills pack so projects inherit docs-as-code guardrails without a host-specific IDE extension. The **parent skill** is the intended agent entrypoint for people who want maintainable sharded docs as ideas keep coming.
 

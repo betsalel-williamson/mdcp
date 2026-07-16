@@ -22,7 +22,7 @@ While simple GFM is our base, our documentation ecosystem includes specific feat
 
 - Manifest compile ordering.
 - Link validation.
-- Agent Skill delivery.
+- Agent Skill development.
 
 These features build upon the GFM base but do not fundamentally alter the underlying markdown format.
 
