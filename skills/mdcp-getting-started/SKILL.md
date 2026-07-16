@@ -18,7 +18,10 @@ metadata:
 
 # Getting Started Helper
 
-> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
+> **PREREQUISITE:** This is a helper skill. Follow the `mdcp` parent skill
+> first — especially **Quality Assurance (QA) Principles** (small batches,
+> current docs only, no code in docs) and **What belongs where**. Ensure the
+> `mdcp` CLI is installed.
 
 Set up a sharded documentation pipeline using MDCP for a new repository or feature.
 
@@ -91,4 +94,4 @@ Each guide must have an `index.md` and topic shards. Shards are the source of tr
 ### Step 7: Write and Validate
 
 1. After shards exist, compile and run the full documentation check until xref, orphan, and lint errors are resolved (use this repo's documented commands).
-2. After inserting cross-links, run `mdcp check`. Fragments must match **compiled** output; inspect with `mdcp refs-list` if needed.
+2. After inserting cross-links, run `mdcp check`. Fragments must match **compiled** output; inspect with `mdcp refs list` if needed.
