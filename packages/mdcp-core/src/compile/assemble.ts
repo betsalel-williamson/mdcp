@@ -171,7 +171,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
 
     if (options.sourceTags !== false && options.outputFile) {
       const relPath = relative(dirname(options.outputFile), filePath);
-      body = `<!-- mdcp-shard: start ${relPath} -->\n\n${body}\n<!-- mdcp-shard: end ${relPath} -->`;
+      body = `<!-- mdcp-shard: start ${relPath} -->\n\n${body}\n\n<!-- mdcp-shard: end ${relPath} -->`;
     }
 
     parts.push(body + '\n\n');
@@ -318,7 +318,7 @@ export function compileGuideResultsWithContext(
       shardCache,
       slugByPath,
       linkedFiles,
-      sourceTags: options.config?.sourceTags ?? true,
+      sourceTags: compile?.sourceTags ?? options.config?.sourceTags ?? true,
     });
 
     const includeBanner = compile?.includeBanner ?? true;
