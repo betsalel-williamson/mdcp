@@ -18,7 +18,10 @@ metadata:
 
 # Getting Started Helper
 
-> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
+> **PREREQUISITE:** This is a helper skill. Follow the `mdcp` parent skill
+> first — especially **Quality Assurance (QA) Principles** (small batches,
+> current docs only, no code in docs) and **What belongs where**. Ensure the
+> `mdcp` CLI is installed.
 
 Set up a sharded documentation pipeline using MDCP for a new repository or feature.
 
