@@ -62,8 +62,12 @@ describe('cli smoke', () => {
     try {
       execFileSync('node', [CLI, '--version'], { encoding: 'utf-8' });
     } catch (e: unknown) {
-      if (e instanceof Error && 'stdout' in e && typeof e.stdout === 'string') {
-        expect(e.stdout).toMatch(/mdcp\/\d+\.\d+\.\d+/);
+      if (
+        e instanceof Error &&
+        'stdout' in e &&
+        typeof (e as { stdout?: unknown }).stdout === 'string'
+      ) {
+        expect((e as { stdout: string }).stdout).toMatch(/mdcp\/\d+\.\d+\.\d+/);
       } else {
         throw e;
       }
@@ -147,7 +151,7 @@ describe('cli smoke', () => {
 
       const listed = execFileSync(
         'node',
-        [CLI, 'refs-list', '--config', 'mdcp.config.json', '--docs-root', docs],
+        [CLI, 'refs', 'list', '--config', 'mdcp.config.json', '--docs-root', docs],
         { encoding: 'utf-8', cwd: docs },
       );
       expect(listed).toContain('section-one');
