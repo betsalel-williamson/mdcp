@@ -104,6 +104,11 @@ describe('compileGuides', () => {
 
       expect(out).toContain('<!-- mdcp-shard: start ../section.md -->');
       expect(out).toContain('<!-- mdcp-shard: end ../section.md -->');
+
+      // Regression test: ensure formatting matches Prettier expectations (no trailing blank line before end tag)
+      expect(out).toMatch(
+        /<!-- mdcp-shard: start \.\.\/section\.md -->\n\n## Section\n\nContent\.\n<!-- mdcp-shard: end \.\.\/section\.md -->/,
+      );
     });
   });
 
