@@ -1,0 +1,102 @@
+{
+  "skill_name": "mdcp-getting-started",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up MDCP documentation in this brand-new Node project. FEATURE is \"inventory-sync\". PERSONA is \"ops engineers who configure sync jobs\". Install what you need, create the docs root and mdcp.config.json, scaffold the standard guide layout, seed a minimal glossary and starter shards, wire package scripts, then run mdcp compile and mdcp check until both succeed. Do not invent other feature names or personas.",
+      "expected_output": "Greenfield bootstrap: deps + mdcp.config.json under docs/, four-tier guides (glossary/features/developer/client) with index.md shards, client about-this-guide naming the ops persona, package scripts for compile/check, and successful mdcp compile + mdcp check.",
+      "files": [
+        "evals/files/greenfield-npm/package.json",
+        "evals/files/greenfield-npm/README.md"
+      ],
+      "assertions": [
+        {
+          "name": "creates_mdcp_config",
+          "description": "Creates docs/mdcp.config.json (or docs-root config) with compileOrder covering the guides"
+        },
+        {
+          "name": "creates_four_tier_layout",
+          "description": "Creates docs/glossary/, docs/features/, docs/developer/, and docs/client/ with index.md each"
+        },
+        {
+          "name": "client_about_persona",
+          "description": "Client guide includes about-this-guide.md stating the ops-engineers persona"
+        },
+        {
+          "name": "honors_feature_name",
+          "description": "Uses FEATURE inventory-sync in starter shards without inventing another name"
+        },
+        {
+          "name": "wires_scripts",
+          "description": "Wires package scripts (or documented commands) for mdcp compile and mdcp check"
+        },
+        {
+          "name": "compile_check_succeed",
+          "description": "mdcp compile and mdcp check both exit successfully"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Bootstrap MDCP in this empty pnpm repo for FEATURE \"billing-webhooks\" and PERSONA \"finance admins reviewing webhook deliveries\". Prefer the repo's package manager. Create docs layout and config for glossary, features, developer, and client guides; add enough shards that compile produces output; run mdcp compile and mdcp check and fix any failures.",
+      "expected_output": "pnpm-aware install of @bwilliamson/mdcp-cli (and presets if used), docs/ tree with compileOrder covering the four guides, client guide opens with about-this-guide.md for finance admins, compile and check exit 0.",
+      "files": [
+        "evals/files/greenfield-pnpm/package.json",
+        "evals/files/greenfield-pnpm/README.md"
+      ],
+      "assertions": [
+        {
+          "name": "uses_pnpm",
+          "description": "Uses pnpm for dependency install (discovers packageManager / lockfile style)"
+        },
+        {
+          "name": "installs_mdcp_cli",
+          "description": "Adds @bwilliamson/mdcp-cli (locally or globally) so mdcp commands run"
+        },
+        {
+          "name": "creates_four_tier_layout",
+          "description": "Creates glossary, features, developer, and client guide dirs with index.md"
+        },
+        {
+          "name": "client_about_persona",
+          "description": "Client about-this-guide.md states the finance-admins persona"
+        },
+        {
+          "name": "compile_check_succeed",
+          "description": "mdcp compile and mdcp check both exit successfully"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I already decided FEATURE=\"notifications\" and PERSONA=\"product managers\". Use /mdcp-getting-started (or the mdcp-getting-started skill) to bootstrap sharded docs here. After the layout exists, add one glossary term shard for \"shard\", link guides from glossary/index.md, then validate with mdcp compile and mdcp check.",
+      "expected_output": "Intake values honored without re-asking; glossary term shard present and indexed; full guide layout; compile/check green; shards treated as source of truth (no hand-edits to generated compile output or refs.json).",
+      "files": [
+        "evals/files/greenfield-npm/package.json",
+        "evals/files/greenfield-npm/README.md"
+      ],
+      "assertions": [
+        {
+          "name": "skips_intake_when_provided",
+          "description": "Does not re-ask FEATURE/PERSONA when both are already provided"
+        },
+        {
+          "name": "creates_four_tier_layout",
+          "description": "Creates the standard four-tier docs guide layout"
+        },
+        {
+          "name": "glossary_term_shard",
+          "description": "Adds a glossary term shard for \"shard\" and lists it from glossary/index.md"
+        },
+        {
+          "name": "no_hand_edit_generated",
+          "description": "Does not treat generated compile output or refs.json as the source of truth"
+        },
+        {
+          "name": "compile_check_succeed",
+          "description": "mdcp compile and mdcp check both exit successfully"
+        }
+      ]
+    }
+  ]
+}
