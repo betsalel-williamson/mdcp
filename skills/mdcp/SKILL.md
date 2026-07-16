@@ -154,6 +154,25 @@ Task-type instructions live in independent helper skills. Once the MDCP CLI is i
 | `mdcp-feature-level`       | Implement and document features (docs-first, then TDD) |
 | `mdcp-ux`                  | User experience design and client-guide updates        |
 
+**Helper routing (task → skill → artifacts):** Pick **one** helper for the current `WORK_ITEM` (one focused batch per branch). Edit only the artifact paths that helper owns; keep shards current; put no implementation code in durable docs; run `mdcp check` before trusting compiled output.
+
+```mermaid
+flowchart TB
+  Q{What kind of work?}
+
+  Q -->|Bootstrap MDCP in a repo| GS[mdcp-getting-started]
+  Q -->|Docs / technical writing only| DO[mdcp-doc-only]
+  Q -->|ADR / RFC / high-level design| DA[mdcp-design-architecture]
+  Q -->|Feature: docs-first then TDD| FL[mdcp-feature-level]
+  Q -->|UX / end-user experience| UX[mdcp-ux]
+
+  GS --> GSa["docs/features/, docs/client/, docs/developer/, docs/glossary/<br/>+ mdcp.config.json + skill install"]
+  DO --> DOa["docs/features/, docs/client/, docs/developer/<br/>(no product code unless WORK_ITEM says so)"]
+  DA --> DAa["docs/features/ (incl. protocol / ADRs)<br/>design shards only"]
+  FL --> FLa["docs/features/, docs/client/<br/>then source + tests"]
+  UX --> UXa["docs/client/<br/>then UI as needed"]
+```
+
 Bootstrap example:
 
 ```text
