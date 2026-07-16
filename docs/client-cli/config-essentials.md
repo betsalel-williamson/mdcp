@@ -138,6 +138,7 @@ Defaults: `outputDir` `_build`, per-guide outputs `overview.md` and `admin-guide
 | `sourceTags`         | Wrap shards in HTML comments with relative paths (default `true`)    |
 | `banner`             | Global banner prepended to outputs (has default warning text)        |
 | `compile.outputFile` | Override per-guide output path (relative to `outputDir` or absolute) |
+| `compile.sourceTags` | Per-guide override of the global `sourceTags` setting                |
 
 ### Default per-guide outputs
 

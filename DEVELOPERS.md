@@ -9,6 +9,7 @@
 This guide covers local setup, package development, sharded documentation in `docs/`, changesets, and npm releases. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](docs/features/feature-catalog.md).
 
 Contributors are expected to follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+
 <!-- mdcp-shard: end docs/developer/about-this-guide.md -->
 
 <!-- mdcp-shard: start docs/glossary/index.md -->
@@ -101,6 +102,7 @@ Pre-commit runs in two phases:
 | Root config (`package.json`, lockfile, eslint/tsconfig) | repo-wide typecheck + `format:check`                     |
 
 CI runs the full gate: `pnpm run check`.
+
 <!-- mdcp-shard: end docs/developer/local-setup.md -->
 
 <!-- mdcp-shard: start docs/developer/agent-work-item-tracking.md -->
@@ -171,6 +173,7 @@ WORK_ITEM_LOOKUP=GitHub
 ```
 
 `WORK_ITEM` may be an issue number, URL, or a short name/description the agent can resolve. `WORK_ITEM_LOOKUP` may be this shard path or a plain location (e.g. GitHub) that points the agent at the tracker conventions here. For the helper skills catalog and invoke recipes, read [`docs/skills.md`](docs/skills.md).
+
 <!-- mdcp-shard: end docs/developer/agent-work-item-tracking.md -->
 
 <!-- mdcp-shard: start docs/developer/repository-layout.md -->
@@ -210,6 +213,7 @@ mdcp/
 All three npm packages share one version (fixed versioning via Changesets). Each ships `dist/` and a generated or hand-authored `README.md` in its tarball.
 
 `mdcp-presets` README is hand-authored for now. Root `README.md`, CLI, and core READMEs are **compiled** from `docs/repo-readme/`, `docs/client-cli/`, and `docs/client-core/` shards.
+
 <!-- mdcp-shard: end docs/developer/repository-layout.md -->
 
 <!-- mdcp-shard: start docs/developer/packages-and-tests.md -->
@@ -264,6 +268,7 @@ CI runs the same core gates as `pnpm run check` (typecheck, lint, format, build,
 - `pnpm run prepare:docs` — `verify:peers` + `vale:sync` before `docs:check`
 
 Pull requests also run the **changeset** job when package sources change.
+
 <!-- mdcp-shard: end docs/developer/packages-and-tests.md -->
 
 <!-- mdcp-shard: start docs/developer/docs-dogfooding.md -->
@@ -324,6 +329,7 @@ Prefer host search then read one shard under `docs/`. Compiled monoliths under `
 - **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
+
 <!-- mdcp-shard: end docs/developer/docs-dogfooding.md -->
 
 <!-- mdcp-shard: start docs/developer/markdown-formatting.md -->
@@ -355,6 +361,7 @@ To help avoid formatting errors and enforce consistent style, we recommend using
 ---
 
 _Note: GitHub and GitHub Flavored Markdown are trademarks of GitHub, Inc. This project is not affiliated with, sponsored by, or endorsed by GitHub, Inc._
+
 <!-- mdcp-shard: end docs/developer/markdown-formatting.md -->
 
 <!-- mdcp-shard: start docs/developer/agent-skill.md -->
@@ -421,6 +428,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run the command above without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases).
 
 Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
+
 <!-- mdcp-shard: end docs/developer/agent-skill.md -->
 
 <!-- mdcp-shard: start docs/developer/versioning-and-releases.md -->
@@ -686,6 +694,7 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+
 <!-- mdcp-shard: end docs/developer/publishing.md -->
 
 <!-- mdcp-shard: start docs/glossary/domain-glossary.md -->
@@ -711,6 +720,7 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 **Stitched into other guides:** link `../glossary/index.md` from each guide that should publish the full glossary TOC (typically maintainer guides). Lean consumer READMEs may omit the TOC and link individual terms instead. Set `compile.scopeRoot` to `glossary` on those guides so transitive `.md` links from the glossary tree pull term shards into compile output without listing every term in the parent manifest.
 
 **Standalone glossary output:** add `glossary` to `compileOrder` with `compile.outputFile` and optionally `compile.manifest: index-protocol.md` (or another sub-index) when you want a separate compiled glossary per group.
+
 <!-- mdcp-shard: end docs/glossary/domain-glossary.md -->
 
 <!-- mdcp-shard: start docs/glossary/agent-skills.md -->
@@ -720,6 +730,7 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Upstream source in this monorepo is `skills/mdcp/`; consumers vendor via `npx skills add` into `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time — across Cursor, Copilot, Claude Code, and similar hosts.
 
 Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:lint`) plus agentskills.io validation (`pnpm skill:validate` / skills-ref) in CI; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
+
 <!-- mdcp-shard: end docs/glossary/agent-skills.md -->
 
 <!-- mdcp-shard: start docs/glossary/mdcp.md -->
@@ -731,6 +742,7 @@ Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:li
 MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
 
 The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements that shared context layer alongside the skill’s behavioral guardrails.
+
 <!-- mdcp-shard: end docs/glossary/mdcp.md -->
 
 <!-- mdcp-shard: start docs/glossary/skill-content-lint.md -->
@@ -740,6 +752,7 @@ The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements 
 CI/static check that required or forbidden language still appears in the parent `SKILL.md` (plus frontmatter and line-budget rules). Run with `pnpm skill:lint` against `skills/mdcp/SKILL.md`; fixtures live under `scripts/mdcp-skill-content-lint/` (repo CI assets — not part of the portable skill pack). This is substring analysis of Markdown on disk — **not** a [live skill eval](#live-skill-eval), and it does not run agents or measure triggering.
 
 Companion gate: `pnpm skill:validate` runs [skills-ref](https://agentskills.io/specification) on each publishable skill under `skills/`.
+
 <!-- mdcp-shard: end docs/glossary/skill-content-lint.md -->
 
 <!-- mdcp-shard: start docs/glossary/live-skill-eval.md -->
@@ -747,6 +760,7 @@ Companion gate: `pnpm skill:validate` runs [skills-ref](https://agentskills.io/s
 ## live skill eval
 
 Optional local skill-creator workflow: run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `skills/mdcp/evals/`. Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint), which only checks that phrases exist in `SKILL.md`.
+
 <!-- mdcp-shard: end docs/glossary/live-skill-eval.md -->
 
 <!-- mdcp-shard: start docs/glossary/gfm.md -->
@@ -754,6 +768,7 @@ Optional local skill-creator workflow: run agents with the skill, grade outputs,
 ## GFM
 
 **GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+
 <!-- mdcp-shard: end docs/glossary/gfm.md -->
 
 <!-- mdcp-shard: start docs/glossary/authored-gfm.md -->
@@ -761,6 +776,7 @@ Optional local skill-creator workflow: run agents with the skill, grade outputs,
 ## Authored GFM
 
 Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; read [Preprocessor / templating (out of scope)](docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
+
 <!-- mdcp-shard: end docs/glossary/authored-gfm.md -->
 
 <!-- mdcp-shard: start docs/glossary/ignore-guides.md -->
@@ -768,6 +784,7 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 ## ignoreGuides
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](./packages/mdcp-core/README.md#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](./packages/mdcp-core/README.md#cross-guide-link-rewriting).
+
 <!-- mdcp-shard: end docs/glossary/ignore-guides.md -->
 
 <!-- mdcp-shard: start docs/glossary/refs.md -->
@@ -792,6 +809,7 @@ The problem refs solve is structural, not retrieval: shards merge, heading level
 Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs-list`**. Refs are not a retrieval API — see [ADR 0002](docs/features/adr/0002-remove-refs-lookup.md).
 
 Not the same as ordinary “search the docs.” Refs are about **correct anchors and paths after compile**.
+
 <!-- mdcp-shard: end docs/glossary/refs.md -->
 
 <!-- mdcp-shard: start docs/glossary/refs-registry.md -->
@@ -801,6 +819,7 @@ Not the same as ordinary “search the docs.” Refs are about **correct anchors
 Derived catalog of [heading slugs](#heading-slug) from compiled guide output, typically written as `refs.json` under `outputDir`. Parent concept: [refs](#refs).
 
 The registry is **generated state**, not authored shards. `mdcp compile` (and `mdcp refs gen`) rebuild it; `mdcp check` / `mdcp refs check` verify it still matches the latest compile. Path rules: [Refs registry path](docs/features/refs-registry-path.md).
+
 <!-- mdcp-shard: end docs/glossary/refs-registry.md -->
 
 <!-- mdcp-shard: start docs/glossary/heading-slug.md -->
@@ -810,6 +829,7 @@ The registry is **generated state**, not authored shards. `mdcp compile` (and `m
 GitHub-style fragment id for a heading in **compiled** Markdown (the part after `#` in `[label](#slug)`). Parent concept: [refs](#refs).
 
 MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Duplicate titles in one document get `-1`, `-2` suffixes. Authors should not invent fragments from shard-only titles; [cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
+
 <!-- mdcp-shard: end docs/glossary/heading-slug.md -->
 
 <!-- mdcp-shard: start docs/glossary/cross-link.md -->
@@ -819,6 +839,7 @@ MDCP computes slugs from final heading text after guides are stitched and demote
 A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
 
 Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](docs/features/link-validation.md).
+
 <!-- mdcp-shard: end docs/glossary/cross-link.md -->
 
 <!-- mdcp-shard: start docs/glossary/wiifm.md -->
@@ -826,4 +847,5 @@ Cross-links are why [refs](#refs) exist: after assemble, the visible heading tex
 ## WIIFM
 
 **What's In It For Me** — reader-first benefit before mechanics or toolchain detail. On mdcp landing pages, each [adoption archetype](docs/features/personas-and-priority-tiers.md#adoption-archetypes) gets one WIIFM line; copy must follow [Benefit claims and evidence](docs/features/protocol/benefit-claims-and-evidence.md) tiers (Tier A/B on README, never unmeasured Tier C claims).
+
 <!-- mdcp-shard: end docs/glossary/wiifm.md -->

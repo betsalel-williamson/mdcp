@@ -17,6 +17,7 @@ Use this package when you need compile, validation, and refs APIs in scripts, CI
 - **Agent Skill** — host instructions for docs-as-code agents: [root README](../../README.md) / `npx skills add … --skill mdcp`
 
 `@bwilliamson/mdcp-cli` depends on this package. Install `@bwilliamson/mdcp-core` directly only when you need the programmatic API. Agent Skill install does **not** replace this library.
+
 <!-- mdcp-shard: end ../../docs/client-core/about.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/overview.md -->
@@ -44,6 +45,7 @@ The CLI (`@bwilliamson/mdcp-cli`) depends on this package. Install `@bwilliamson
 ### Stability
 
 **Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read package changelogs before upgrading.
+
 <!-- mdcp-shard: end ../../docs/client-core/overview.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/quick-example.md -->
@@ -78,6 +80,7 @@ checkRefsRegistry(compiled, refsPath);
 ```
 
 Use `writeCompiledGuides` when you need to write the monolith and per-guide publish outputs to disk.
+
 <!-- mdcp-shard: end ../../docs/client-core/quick-example.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/api-config.md -->
@@ -118,7 +121,7 @@ Consumer path table: [Config essentials — path layout](../mdcp-cli/README.md#p
 
 `compile.outputFile` overrides a guide's output path (relative to `outputDir` or absolute). Guides with an explicit `compile.outputFile` are excluded from an optional monolith.
 
-`compile.includeBanner` controls whether the global banner is prepended (defaults to `true` for all outputs).
+`compile.includeBanner` controls whether the global banner is prepended (defaults to `true` for all outputs). `compile.sourceTags` overrides the top-level `sourceTags` setting per guide (for example, set `false` on a Slidev deck whose leading frontmatter must stay at the top of the file).
 
 #### Publish outputs and link paths
 
@@ -148,6 +151,7 @@ Assembly-time cross-guide link options on the **compiling** guide (not a compile
 - **`ignoreGuides`** — `string[]` of guide names whose cross-guide shard links keep source `.md` paths instead of rewriting to monolith `#slug` targets
 
 See [Cross-guide link rewriting](#cross-guide-link-rewriting) and [ignoreGuides](#ignoreguides).
+
 <!-- mdcp-shard: end ../../docs/client-core/api-config.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/api-compile.md -->
@@ -173,6 +177,7 @@ See [Cross-guide link rewriting](#cross-guide-link-rewriting) and [ignoreGuides]
 When `compile.title` is set, `assembleGuide` injects a `##` heading followed by a blank line before the first section. See [API — Config](#api--config) for per-guide compile fields and top-level `backup` config.
 
 Full spec: [Compile output backup](../../docs/features/compile-output-backup.md).
+
 <!-- mdcp-shard: end ../../docs/client-core/api-compile.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/api-refs-validation.md -->
@@ -265,6 +270,7 @@ There is no token-strip LLM export API. Prefer the Agent Skill and one-shard rea
 | `findPeerBinary`, `runPeer` | Locate and run host-repo linters (`markdownlint-cli2`, `vale`, …) |
 
 Peer linters are not bundled. Detection order: `node_modules/.bin` → PATH → skip with info.
+
 <!-- mdcp-shard: end ../../docs/client-core/api-export-shard.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/compile-hooks/index.md -->
@@ -367,6 +373,7 @@ For manifest compile order and `compile.sectionsHeading`, see [Manifest compile 
 - **Publish-relative rewrite** _(assembly)_ — per shard before stitch when `compile.outputFile` is set. [Publish-relative links](#publish-relative-link-rewriting): resolve shard links to absolute paths, emit paths relative to the publish file.
 
 `stripAnchors` is also controlled by `compile.stripAnchors` (default `true`) after assembly.
+
 <!-- mdcp-shard: end ../../docs/client-core/compile-hooks/index.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/compile-hooks/code-evidence.md -->
@@ -651,6 +658,7 @@ Catalog link `` `[Component map](../figures/component-map.md)` `` compiles to a 
 ```
 
 Catalog link `` `[Walkthrough](../media/walkthrough.md)` `` compiles to `#### Media 1. Walkthrough` followed by the video embed.
+
 <!-- mdcp-shard: end ../../docs/client-core/compile-hooks/inline-inserts.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/compile-hooks/cross-guide-links.md -->
@@ -821,6 +829,7 @@ See [FIND-004](architecture-review.md#find-004) and [Deployment](../technical/de
 ```
 
 Review targets use the compiled monolith; ignored guides keep shard paths. Tests in `packages/mdcp-core/test/cross-guide-links.test.ts` cover index entries, per-link routing, `ignoreGuides`, and end-to-end compile.
+
 <!-- mdcp-shard: end ../../docs/client-core/compile-hooks/cross-guide-links.md -->
 
 <!-- mdcp-shard: start ../../docs/client-core/compile-hooks/publish-relative-links.md -->
@@ -968,6 +977,7 @@ The [Agent Skill](../../README.md) is a separate install (`npx skills add`) — 
 ### License
 
 MIT
+
 <!-- mdcp-shard: end ../../docs/client-core/related-packages.md -->
 
 <!-- mdcp-shard: start ../../docs/glossary/ignore-guides.md -->
@@ -975,4 +985,5 @@ MIT
 ## ignoreGuides
 
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](#cross-guide-link-rewriting).
+
 <!-- mdcp-shard: end ../../docs/glossary/ignore-guides.md -->

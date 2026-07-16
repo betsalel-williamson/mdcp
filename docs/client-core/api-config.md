@@ -34,7 +34,7 @@ Consumer path table: [Config essentials — path layout](../client-cli/config-es
 
 `compile.outputFile` overrides a guide's output path (relative to `outputDir` or absolute). Guides with an explicit `compile.outputFile` are excluded from an optional monolith.
 
-`compile.includeBanner` controls whether the global banner is prepended (defaults to `true` for all outputs).
+`compile.includeBanner` controls whether the global banner is prepended (defaults to `true` for all outputs). `compile.sourceTags` overrides the top-level `sourceTags` setting per guide (for example, set `false` on a Slidev deck whose leading frontmatter must stay at the top of the file).
 
 ### Publish outputs and link paths
 

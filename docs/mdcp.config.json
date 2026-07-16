@@ -61,6 +61,8 @@
       "name": "presentation-la-devops",
       "compile": {
         "outputFile": "../../presentations/la-devops-2026.md",
+        "includeBanner": false,
+        "sourceTags": false,
         "crossGuideLinks": {
           "ignoreGuides": ["features", "client-cli", "developer", "repo-readme", "client-core"]
         }
