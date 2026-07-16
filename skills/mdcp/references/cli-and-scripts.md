@@ -8,7 +8,7 @@ MDCP relies on the `@bwilliamson/mdcp-cli` package to perform documentation oper
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `mdcp compile` | **Build the docs.** Merge Markdown shards into compiled guide outputs (for example under `docs/_build/`) using `mdcp.config.json` and `compileOrder`. Shards are the source of truth; compiled files are generated. |
 | `mdcp check`   | **Validate the documentation tree.** Run structural checks (cross-links, orphans, and optional lint/prose gates) so shards and compiled output stay trustworthy. Prefer this before trusting compiled docs.         |
-| `mdcp refs`    | **Cross-link registry tools** (`refs list`, `refs gen`, …). Inspect or regenerate the fragment/slug registry (for example `refs.json`) so `#` links match **compiled** headings, not hand-guessed shard titles.     |
+| `mdcp refs`    | **Cross-link registry tools** (`refs-list`, `refs gen`, …). Inspect or regenerate the fragment/slug registry (for example `refs.json`) so `#` links match **compiled** headings, not hand-guessed shard titles.     |
 
 ## Why an installed CLI instead of self-contained skill engines
 

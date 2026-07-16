@@ -40,7 +40,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ### Requirements
 
-- Node.js **>= 24.0.0** (see `engines` in root [`package.json`](package.json); [`.nvmrc`](.nvmrc) pins major version `24` for `nvm use`)
+- Node.js **>= 18.0.0** (see `engines` in root [`package.json`](package.json); [`.nvmrc`](.nvmrc) pins major version `18` for `nvm use`)
 - [pnpm](https://pnpm.io/) 9.x (see `packageManager` in root [`package.json`](package.json))
 - [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH` for prose lint (`pnpm docs:check` uses `--require-vale`). macOS: `brew install vale`; Linux: `snap install vale` or a [GitHub release](https://github.com/vale-cli/vale/releases) tarball. CI pins **3.15.1**.
 
@@ -694,10 +694,10 @@ The problem refs solve is structural, not retrieval: shards merge, heading level
 | **refs registry**  | Derived catalog (`refs.json`) of compiled heading entries                         |
 | **ref** (informal) | One heading entry or one link target under that system                            |
 | **generate refs**  | Rebuild the registry from compiled output (`mdcp refs gen` / compile side effect) |
-| **list refs**      | Print registry headings (`mdcp refs list`)                                        |
+| **list refs**      | Print registry headings (`mdcp refs-list`)                                        |
 | **check refs**     | Confirm registry matches compiled headings (`mdcp refs check` / via `mdcp check`) |
 
-Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs list`**. Refs are not a retrieval API — see [ADR 0002](docs/features/adr/0002-remove-refs-lookup.md).
+Doc discovery uses host search (`rg`, IDE search, or a future MCP index). Cross-link correctness uses **`mdcp check`** and optionally **`mdcp refs-list`**. Refs are not a retrieval API — see [ADR 0002](docs/features/adr/0002-remove-refs-lookup.md).
 
 Not the same as ordinary “search the docs.” Refs are about **correct anchors and paths after compile**.
 

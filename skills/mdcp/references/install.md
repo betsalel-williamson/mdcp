@@ -53,7 +53,7 @@ This provides the `mdcp` commands for:
 ```bash
 mdcp compile --config <config> --docs-root <docs-root>
 mdcp check --config <config> --docs-root <docs-root>
-mdcp refs list --config <config> --docs-root <docs-root>
+mdcp refs-list --config <config> --docs-root <docs-root>
 ```
 
 Details: `cli-and-scripts.md` in this folder (linked from `SKILL.md`).

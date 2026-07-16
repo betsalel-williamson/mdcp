@@ -24,7 +24,7 @@ Use this package when you need mdcp behavior in scripts, CI pipelines, editors, 
 
 ### Requirements
 
-- Node.js **>= 24.0.0**
+- Node.js **>= 18.0.0**
 
 ### Install
 

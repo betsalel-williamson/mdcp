@@ -91,4 +91,4 @@ Each guide must have an `index.md` and topic shards. Shards are the source of tr
 ### Step 7: Write and Validate
 
 1. After shards exist, compile and run the full documentation check until xref, orphan, and lint errors are resolved (use this repo's documented commands).
-2. After inserting cross-links, run `mdcp check`. Fragments must match **compiled** output; inspect with `mdcp refs-list` if needed.
+2. After inserting cross-links, run `mdcp check`. Fragments must match **compiled** output; inspect with `mdcp refs list` if needed.

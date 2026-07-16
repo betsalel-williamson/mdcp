@@ -44,6 +44,6 @@ Above plus three-tier shards (`features` / `client` / `developer`), helper skill
 1. Activate the parent Agent Skill (`/mdcp`) when available
 2. Load a helper skill; complete intake for `WORK_ITEM` — see [Agent helper skills](./agent-task-prompts.md)
 3. Discover the shard with host tools (`rg`, IDE search, guide `index.md`) and **read one shard**
-4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs list`)
+4. Rely on `mdcp check` for broken `#` cross-links (optionally inspect `mdcp refs-list`)
 
 Read [`docs/skills.md`](../../../docs/skills.md) for the helper skills catalog and workflow index.

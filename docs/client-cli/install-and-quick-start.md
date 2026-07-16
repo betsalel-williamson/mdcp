@@ -8,7 +8,7 @@ This is **not** the Agent Skill. For skill install (`npx skills add`, `/mdcp hel
 
 ## Requirements
 
-- Node.js **>= 24.0.0**
+- Node.js **>= 18.0.0**
 
 ## Install
 

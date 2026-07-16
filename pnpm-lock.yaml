@@ -53,6 +53,9 @@ importers:
       '@bwilliamson/mdcp-core':
         specifier: workspace:*
         version: link:../mdcp-core
+      cac:
+        specifier: ^7.0.0
+        version: 7.0.0
       commander:
         specifier: ^15.0.0
         version: 15.0.0
