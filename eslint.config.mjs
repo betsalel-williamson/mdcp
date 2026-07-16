@@ -5,7 +5,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ['**/dist/**', '**/node_modules/**', 'legacy/**'],
+    ignores: ['**/dist/**', '**/node_modules/**', 'legacy/**', '.agents/**'],
   },
   {
     files: ['packages/**/*.ts'],

@@ -33,4 +33,4 @@ Fixtures and prompts for the optional [skill-creator](../../../.agents/skills/sk
 
 5. Draft objectively verifiable `expectations` while runs progress; grade; aggregate; open the viewer (`eval-viewer/generate_review.py`, use `--static` when headless).
 
-Child-skill suites (`mdcp-getting-started`, helpers) are separate issues — do not expand them here.
+Child-skill suite for bootstrap: [`tests/skills/mdcp-getting-started/evals/`](../../mdcp-getting-started/evals/README.md). Other helpers remain separate issues.
