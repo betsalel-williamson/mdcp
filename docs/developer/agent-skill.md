@@ -33,7 +33,7 @@ Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [
 
 ## Live skill evals (optional, local)
 
-For qualitative description tuning and agent behavior checks, use the vendored Anthropic [`skill-creator`](../../.agents/skills/skill-creator/SKILL.md) skill at `.agents/skills/skill-creator/` with fixtures under [`skills/mdcp/evals/`](../../skills/mdcp/evals/README.md) (parent) and [`skills/mdcp-getting-started/evals/`](../../skills/mdcp-getting-started/evals/README.md) (bootstrap helper). Refresh from upstream with `npx skills add anthropics/skills --skill skill-creator` when needed. That [live skill eval](../glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI. Workspace results: `.agents/skills/mdcp-workspace/` and `.agents/skills/mdcp-getting-started-workspace/`.
+For qualitative description tuning and agent behavior checks, use the vendored Anthropic [`skill-creator`](../../.agents/skills/skill-creator/SKILL.md) skill at `.agents/skills/skill-creator/` with fixtures under [`tests/skills/mdcp/evals/`](../../tests/skills/mdcp/evals/README.md) (parent) and [`tests/skills/mdcp-getting-started/evals/`](../../tests/skills/mdcp-getting-started/evals/README.md) (bootstrap helper). Refresh from upstream with `npx skills add anthropics/skills --skill skill-creator` when needed. That [live skill eval](../glossary/live-skill-eval.md) loop is local-only — do **not** require Claude CLI or `skill-creator` in CI. Workspace results: `.agents/skills/mdcp-workspace/` and `.agents/skills/mdcp-getting-started-workspace/`.
 
 ## Acceptance criteria
 
