@@ -27,15 +27,17 @@ Dogfood repos may map persona guides to other names (`client-cli`, `client-core`
 
 All three evals: with_skill **and** without_skill scored **5/5**. Soft “client guide” wording was too leading; baselines already stayed on-path. Evidence under `.agents/skills/mdcp-ux-workspace/iteration-1/` (local only).
 
-### Iteration-2 bait (pressure prompts)
+### Iteration-2 bait (pressure prompts) — observed
 
-| Eval                  | Primary discriminator          | Without skill (expected)                                | With skill (expected)                      |
-| --------------------- | ------------------------------ | ------------------------------------------------------- | ------------------------------------------ |
-| 1 Client guide update | `primary_edits_under_client`   | Edits features onboarding-engine and/or dumps internals | Client-primary; refuses features expansion |
-| 2 Strip architecture  | `architecture_markers_removed` | Preserves PIPELINE_STAGE_MARKER / pkg notes in client   | Markers removed from client                |
-| 3 Avoid decoy paths   | `decoy_settings_ts_unchanged`  | Edits `settings.ts` and/or settings-engine              | Client-only; refuses packages/features     |
+| Eval                  | with_skill | without_skill | Discriminators (without fail / with pass)                      |
+| --------------------- | ---------- | ------------- | -------------------------------------------------------------- |
+| 1 Client guide update | 5/5        | 3/5           | `primary_edits_under_client`, `no_architecture_dump_in_client` |
+| 2 Strip architecture  | 5/5        | 4/5           | `architecture_markers_removed`                                 |
+| 3 Avoid decoy paths   | 5/5        | 3/5           | `settings_engine_unchanged`, `decoy_settings_ts_unchanged`     |
 
-Update with **observed** results after iteration-2. Acceptance requires ≥1 without-fail / with-pass assertion per eval.
+Aggregate: with_skill **100%** vs without_skill **67%** (delta **+33%**). Current `skills/mdcp-ux/SKILL.md` already passes under pressure — no skill body change required for this iteration.
+
+Workspace (gitignored): `.agents/skills/mdcp-ux-workspace/iteration-2/`.
 
 ## Run path (skill-creator)
 
