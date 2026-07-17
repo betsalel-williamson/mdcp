@@ -19,7 +19,7 @@ Required fields for work-item-driven helpers:
 | `WORK_ITEM`        | Enough to resolve the task — tracker id, URL, or short issue name/description             | What issue, ticket URL, or task should this session cover?                                |
 | `WORK_ITEM_LOOKUP` | Where to load scope and delivery conventions — shard path or plain location (e.g. GitHub) | Where should you load scope and delivery conventions? (Prefer a `docs/developer/` shard.) |
 
-Bootstrap (`mdcp-getting-started`) **MUST** ask for `FEATURE`, `PERSONA`, and `EXPERIENCE` (novice vs expert onboarding depth) instead of `WORK_ITEM`.
+Bootstrap (`mdcp-getting-started`) **MUST** ask for `FEATURE`, `PERSONA`, and `EXPERIENCE` (novice vs expert onboarding depth) instead of `WORK_ITEM`. After a successful bootstrap, it **MUST** offer an optional **first-feature tutorial** (`RUN_FIRST_FEATURE_TUTORIAL`, default yes for novice) and, when accepted, resolve **EXAMPLE_MODE** (recommended `hello-greeting` or bring-your-own) before walking design → feature → UX → doc-only. Detail: [Getting-started helper](./skills/mdcp-getting-started.md).
 
 Agents **MUST** load the issue (or equivalent) before editing shards or code. One `WORK_ITEM` per branch.
 
@@ -29,17 +29,17 @@ Coding and multi-concern plans **MUST** include an **[Atomic commit groups](../.
 
 Why: reviewable diffs, one concern per commit, and it matches small batches (parent [QA Principles](../agent-skill.md#quality-assurance-qa-principles)).
 
-Day-to-day helpers that produce a plan (`mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`) **MUST** require this section in Step 1. Bootstrap (`mdcp-getting-started`) stays out of scope for commit grouping; hand off to a day-to-day helper for delivery plans.
+Day-to-day helpers that produce a plan (`mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`) **MUST** require this section in Step 1. Bootstrap scaffold (`mdcp-getting-started` steps 1–6) stays out of scope for commit grouping; when the optional first-feature tutorial runs, each phase follows the matching day-to-day helper (including commit groups).
 
 ## Standard helper skills
 
-| Helper Skill                                                               | Role                        | Primary guides                       |
-| -------------------------------------------------------------------------- | --------------------------- | ------------------------------------ |
-| [mdcp-getting-started](../../skills/mdcp-getting-started/SKILL.md)         | Bootstrap pipeline          | all tiers                            |
-| [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)             | Feature engineering         | `features/`, `client/`, code + tests |
-| [mdcp-doc-only](../../skills/mdcp-doc-only/SKILL.md)                       | Technical writing           | `features/`, `client/`, `developer/` |
-| [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | Architecture as MDCP shards | `features/protocol/`, `features/`    |
-| [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | User-centric journeys       | `client/`, glossary                  |
+| Helper Skill                                                               | Role                               | Primary guides                       |
+| -------------------------------------------------------------------------- | ---------------------------------- | ------------------------------------ |
+| [mdcp-getting-started](../../skills/mdcp-getting-started/SKILL.md)         | Bootstrap + first-feature tutorial | all tiers                            |
+| [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)             | Feature engineering                | `features/`, `client/`, code + tests |
+| [mdcp-doc-only](../../skills/mdcp-doc-only/SKILL.md)                       | Technical writing                  | `features/`, `client/`, `developer/` |
+| [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | Architecture as MDCP shards        | `features/protocol/`, `features/`    |
+| [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | User-centric journeys              | `client/`, glossary                  |
 
 Goals and hard boundaries for each helper (what it is / is not):
 
