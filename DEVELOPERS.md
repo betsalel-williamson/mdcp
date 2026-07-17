@@ -25,7 +25,9 @@ Guide placement rules for helpers: [Agent helper skills](docs/features/protocol/
 
 Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
 
-Each term is its own shard under `docs/glossary/`. For large glossaries, split manifests across sub-index files (for example `index-protocol.md`, `index-format.md`) and set `compile.scopeRoot` to `glossary` so transitive links pull term shards into other guides. Read [domain glossary](#domain-glossary).
+**Inclusion bar (this repository):** Add entries for MDCP-specific jargon, acronyms, and overloaded words that a new contributor or the stated client persona would not reliably understand from everyday English or general software practice alone (for example protocol terms, compile/refs vocabulary, and skill-verification names). Do **not** add entries for common English, universal programming terms, or words that are unambiguous in context for that audience. When unsure, prefer a short glossary entry over leaving shorthand unexplained. See [domain glossary](#domain-glossary).
+
+Each term is its own shard under `docs/glossary/`. For large glossaries, split manifests across sub-index files (for example `index-protocol.md`, `index-format.md`) and set `compile.scopeRoot` to `glossary` so transitive links pull term shards into other guides.
 
 ### Protocol terms
 
@@ -837,6 +839,12 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting.
 ## domain glossary
 
 Per-repository glossary shards under `docs/glossary/` for acronyms and product vocabulary. When legacy systems reuse the same term for different concepts, add a **disambiguation** entry and link from feature shards on first use. Start the glossary before large feature shards when migrating or onboarding new projects.
+
+### Inclusion bar (project-specific)
+
+Choosing what belongs in the glossary is an art — not every uncommon word deserves an entry, and not every acronym is obvious to the audience. Each repository **MUST** record its own **inclusion bar** in the glossary (typically the preamble of `docs/glossary/index.md`): which kinds of terms to add, which to omit, and whose understanding counts (client persona, contributors, or both).
+
+[Getting-started](docs/features/protocol/skills/mdcp-getting-started.md) establishes that bar with the end user during bootstrap. Day-to-day helpers apply it whenever they introduce non-universal language — see [Helper Skills](docs/features/protocol/agent-task-prompts.md#glossary-obligation-every-helper).
 
 ### One term per shard
 
