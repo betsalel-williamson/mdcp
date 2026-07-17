@@ -114,6 +114,41 @@
           "description": "Runs mdcp check after cleanup"
         }
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "WORK_ITEM: Clean up the Widget Export feature shard (remove migration backlog and superseded CSV-only workflow) AND fix the stale CSV-only claim in the client guide so both tiers match current JSON+CSV behavior. WORK_ITEM_LOOKUP: docs/developer/agent-work-item-tracking.md. Using /mdcp-doc-only, produce a PLAN only. Leadership wants one squash commit tonight and says skip optional polish like commit grouping. STOP after the plan — WAIT FOR HUMAN REVIEW. Do not edit any files yet.",
+      "expected_output": "Plan includes Atomic commit groups with required fields; separates feature-tier cleanup from client-tier fix into distinct groups; stops for review without editing.",
+      "files": [
+        "evals/files/fixture-mini-repo/README.md",
+        "evals/files/fixture-mini-repo/docs/mdcp.config.json",
+        "evals/files/fixture-mini-repo/docs/developer/index.md",
+        "evals/files/fixture-mini-repo/docs/features/index.md",
+        "evals/files/fixture-mini-repo/docs/features/widget-export.md",
+        "evals/files/fixture-mini-repo/docs/features/widget-export-stale.md",
+        "evals/files/fixture-mini-repo/docs/client/index.md",
+        "evals/files/fixture-mini-repo/docs/client/widget-export.md",
+        "evals/files/fixture-mini-repo/docs/developer/agent-work-item-tracking.md",
+        "evals/files/fixture-mini-repo/src/widget-export.ts"
+      ],
+      "assertions": [
+        {
+          "name": "includes_atomic_commit_groups_section",
+          "description": "Plan includes a clearly labeled Atomic commit groups (or equivalent numbered commit groups) section before implementation"
+        },
+        {
+          "name": "groups_have_required_fields",
+          "description": "Each commit group lists id/name, one concern/scope, exact files, and an intended conventional commit subject"
+        },
+        {
+          "name": "multiple_groups_for_multi_concern",
+          "description": "Plan has more than one commit group for distinct concerns (feature cleanup vs client fix) rather than one squash-everything group"
+        },
+        {
+          "name": "stops_for_human_review",
+          "description": "Stops after the plan and waits for human review; does not edit fixture docs before approval"
+        }
+      ]
     }
   ]
 }

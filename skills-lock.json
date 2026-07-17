@@ -2,34 +2,34 @@
   "version": 1,
   "skills": {
     "mdcp": {
-      "source": "./mdcp",
+      "source": "/Users/saul/Repos/mdcp",
       "sourceType": "local",
-      "computedHash": "6ca52724af0e9f8fb3a40ffce9302027c8bc6eb34a58922d2aced4c7d3b33f12"
+      "computedHash": "3a93255d239d3e0f5055c3511860ea556f0f16c2b7c5f4eab3ff2451c7d30c07"
     },
     "mdcp-design-architecture": {
-      "source": "./mdcp",
+      "source": "/Users/saul/Repos/mdcp",
       "sourceType": "local",
-      "computedHash": "eadd8054c07dd67d877503eb17f4412f3e793edb1480cbe3cf7804c54d84b472"
+      "computedHash": "8295ac07d4601a4292253569892adbbf82221d5e0fbfcee232658e451129c1df"
     },
     "mdcp-doc-only": {
-      "source": "./mdcp",
+      "source": "/Users/saul/Repos/mdcp",
       "sourceType": "local",
-      "computedHash": "b7690f86a91c8fb9485396c01cdb61c6bf9c70961ef1713bb41ff3139772c604"
+      "computedHash": "1f0ad48957b99c836d77185fe8b04a3fb746758078360c406abfbd4b2e25d2ca"
     },
     "mdcp-feature-level": {
-      "source": "./mdcp",
+      "source": "/Users/saul/Repos/mdcp",
       "sourceType": "local",
-      "computedHash": "87153a5b4f343deb44189e1069acb6e718ab0dddf2ca00a333e88ecadf3153b0"
+      "computedHash": "69ec5b42243bd4694c50c8e0a890759ceb69fb19dfdb44f3b4abb3b18e1e1abf"
     },
     "mdcp-getting-started": {
-      "source": "./mdcp",
+      "source": "/Users/saul/Repos/mdcp",
       "sourceType": "local",
       "computedHash": "993ec8ed7766af9b404794e859320cc2b9cd3403ceea16be89dd71499242bd70"
     },
     "mdcp-ux": {
-      "source": "./mdcp",
+      "source": "/Users/saul/Repos/mdcp",
       "sourceType": "local",
-      "computedHash": "66a1f8e4b436e0b7386b9be20048df161ca89199f7a974ddd95b8f32bc9912fd"
+      "computedHash": "3b417736c5f627f72bd2373c82658e9767e09f3283c645b518fa440eed6d20d1"
     },
     "skill-creator": {
       "source": "anthropics/skills",

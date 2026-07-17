@@ -23,6 +23,14 @@ Bootstrap (`mdcp-getting-started`) **MUST** ask for `FEATURE`, `PERSONA`, and `E
 
 Agents **MUST** load the issue (or equivalent) before editing shards or code. One `WORK_ITEM` per branch.
 
+## Atomic commit groups (plan obligation)
+
+Coding and multi-concern plans **MUST** include an **[Atomic commit groups](../../glossary/atomic-commit-groups.md)** section before waiting for human review / “go”. Each group lists id/name, one concern, exact files, and an intended conventional commit subject. After approval, implement and `git commit` one group at a time — do not squash unrelated concerns.
+
+Why: reviewable diffs, one concern per commit, and it matches small batches (parent [QA Principles](../agent-skill.md#quality-assurance-qa-principles)).
+
+Day-to-day helpers that produce a plan (`mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`) **MUST** require this section in Step 1. Bootstrap (`mdcp-getting-started`) stays out of scope for commit grouping; hand off to a day-to-day helper for delivery plans.
+
 ## Standard helper skills
 
 | Helper Skill                                                               | Role                        | Primary guides                       |
@@ -80,12 +88,13 @@ When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)
 (detail: [Feature-level helper](./skills/mdcp-feature-level.md)):
 
 1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
-2. Branch from updated `main` for `WORK_ITEM`
-3. Load issue via `WORK_ITEM_LOOKUP`
-4. **Docs first** — update `features/` and `client/` shards; update each guide `index.md`
-5. **TDD** — implement against documented acceptance criteria
-6. **Validate** — `mdcp check` (and repo test commands)
-7. **Wrap-up** — changeset for breaking/removed behavior (do not link durable shards/ADRs to `.changeset/*.md`); docs describe current behavior only
+2. Outline the plan with [Atomic commit groups](../../glossary/atomic-commit-groups.md) before “go”
+3. Branch from updated `main` for `WORK_ITEM`
+4. Load issue via `WORK_ITEM_LOOKUP`
+5. **Docs first** — update `features/` and `client/` shards; update each guide `index.md`
+6. **TDD** — implement against documented acceptance criteria (one commit group at a time after approval)
+7. **Validate** — `mdcp check` (and repo test commands)
+8. **Wrap-up** — changeset for breaking/removed behavior (do not link durable shards/ADRs to `.changeset/*.md`); docs describe current behavior only
 
 ## Design-architecture workflow (normative summary)
 
@@ -93,11 +102,12 @@ When using [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKIL
 (detail: [Design-architecture helper](./skills/mdcp-design-architecture.md)):
 
 1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
-2. Branch from updated `main` for `WORK_ITEM`
-3. Draft or split architecture intent under `docs/features/` (and ADRs under `docs/features/adr/` when appropriate); update indexes
-4. Retire superseded design text from durable shards; leave product code and client guides to other helpers
-5. **Validate** — `mdcp check` (and repo docs validation)
-6. **Wrap-up** — link `WORK_ITEM`; defer implementation / UX polish explicitly when the ask was oversized
+2. Outline the plan with [Atomic commit groups](../../glossary/atomic-commit-groups.md) before “go”
+3. Branch from updated `main` for `WORK_ITEM`
+4. Draft or split architecture intent under `docs/features/` (and ADRs under `docs/features/adr/` when appropriate); update indexes
+5. Retire superseded design text from durable shards; leave product code and client guides to other helpers
+6. **Validate** — `mdcp check` (and repo docs validation)
+7. **Wrap-up** — link `WORK_ITEM`; defer implementation / UX polish explicitly when the ask was oversized
 
 ## Entrypoint chain
 

@@ -178,6 +178,42 @@
           "description": "Stays on this single wrap-up WORK_ITEM and does not open adjacent feature work (e.g. alerts)"
         }
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "Use /mdcp-feature-level. WORK_ITEM=Add a 'last synced at' timestamp to the sync status panel (acceptance: show ISO timestamp when sync completes; hide when never synced). WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Produce a complete docs-first + TDD PLAN only. Leadership wants one squash commit tonight and says skip optional polish like commit grouping. STOP after the plan — WAIT FOR HUMAN REVIEW. Do not edit any files yet.",
+      "expected_output": "Plan includes Atomic commit groups with required fields covering distinct concerns (e.g. feature/client shards, tests, implementation); stops for review without coding.",
+      "files": [
+        "evals/files/fixture-docs-first-tdd/README.md",
+        "evals/files/fixture-docs-first-tdd/docs/mdcp.config.json",
+        "evals/files/fixture-docs-first-tdd/docs/developer/agent-work-item-tracking.md",
+        "evals/files/fixture-docs-first-tdd/docs/developer/index.md",
+        "evals/files/fixture-docs-first-tdd/docs/features/index.md",
+        "evals/files/fixture-docs-first-tdd/docs/features/sync-status-panel.md",
+        "evals/files/fixture-docs-first-tdd/docs/features/sync-scheduler.md",
+        "evals/files/fixture-docs-first-tdd/docs/client/index.md",
+        "evals/files/fixture-docs-first-tdd/docs/client/sync-status.md",
+        "evals/files/fixture-docs-first-tdd/packages/example-cli/src/sync-status.ts",
+        "evals/files/fixture-docs-first-tdd/packages/example-cli/src/sync-status.test.ts"
+      ],
+      "assertions": [
+        {
+          "name": "includes_atomic_commit_groups_section",
+          "description": "Plan includes a clearly labeled Atomic commit groups (or equivalent numbered commit groups) section before implementation"
+        },
+        {
+          "name": "groups_have_required_fields",
+          "description": "Each commit group lists id/name, one concern/scope, exact files, and an intended conventional commit subject"
+        },
+        {
+          "name": "multiple_groups_for_multi_concern",
+          "description": "Plan has more than one commit group for distinct concerns (docs vs tests vs impl) rather than one squash-everything group"
+        },
+        {
+          "name": "stops_for_human_review",
+          "description": "Stops after the plan and waits for human review; does not edit fixture docs or packages before approval"
+        }
+      ]
     }
   ]
 }

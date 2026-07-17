@@ -14,6 +14,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ## Skill verification
 
+- [Atomic commit groups](./atomic-commit-groups.md)
 - [live skill eval](./live-skill-eval.md)
 
 ## Format and compile terms
