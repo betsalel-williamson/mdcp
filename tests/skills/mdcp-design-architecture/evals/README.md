@@ -19,11 +19,11 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Product 
 
 ## Discrimination notes (iteration-1)
 
-| Eval                        | With skill | Without skill | Notes                              |
-| --------------------------- | ---------- | ------------- | ---------------------------------- |
-| 1 ADR draft                 | Pending    | Pending       | Fill after first with/without runs |
-| 2 Architecture shard update | Pending    | Pending       | Fill after first with/without runs |
-| 3 Design-only scope         | Pending    | Pending       | Primary discriminator expected     |
+| Eval                        | With skill | Without skill | Notes                                                             |
+| --------------------------- | ---------- | ------------- | ----------------------------------------------------------------- |
+| 1 ADR draft                 | Pass       | Pass          | Weak alone — baseline often drafts ADRs correctly                 |
+| 2 Architecture shard update | Pass       | Partial       | Baseline may retain residual `cache-v1` wording after cleanup     |
+| 3 Design-only scope         | Pass       | Fail          | Primary discriminator — baseline implements packages/, tests, CLI |
 
 Live runs are local-only (not a CI gate). Workspace artifacts stay under `.agents/skills/mdcp-design-architecture-workspace/` (gitignored).
 
