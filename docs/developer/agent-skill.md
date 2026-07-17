@@ -74,7 +74,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 
 Complementary `skills/mdcp-arch-*` packs remain WIP (`metadata.internal: true`) — keep them off consumer get-started copy **and** out of [`skills.sh.json`](../../skills.sh.json) until ready to release. Maintainers can install them with `INSTALL_INTERNAL_SKILLS=1`.
 
-There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](./versioning-and-releases.md).
+There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](./versioning-and-releases.md). Do not hand-edit those versions in feature PRs; add a changeset when `skills/` changes so release notes capture the work.
 
 Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
 
