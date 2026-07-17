@@ -21,21 +21,24 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Maintain
 
 Focus is **MDCP documentation-system** behavior (small shards, links, indexes, no drive-by product code) — not grading systems-design brilliance. A separate design-thinking skill is out of scope; prompts only check that this helper advises pairing when deep critique is requested.
 
-## Discrimination notes
+## Discrimination notes (iteration-2)
 
-| Eval                        | Expected discriminator                                              |
-| --------------------------- | ------------------------------------------------------------------- |
-| 1 Greenfield shard capture  | Baseline leaves a monolith / skips indexes; with-skill shards+links |
-| 2 Brownfield monolith split | Baseline edits the monolith in place; with-skill splits + retires   |
-| 3 Design-only scope         | Baseline implements packages/tests/CLI; with-skill stays on docs    |
+| Eval                        | With skill | Without skill | Notes                                                                  |
+| --------------------------- | ---------- | ------------- | ---------------------------------------------------------------------- |
+| 1 Greenfield shard capture  | Pass       | Fail          | Baseline wrote one mega-file with TypeScript sketches and no ADR index |
+| 2 Brownfield monolith split | Pass       | Fail          | Baseline edited `ARCHITECTURE.md` in place and preserved stale backlog |
+| 3 Design-only scope         | Pass       | Fail          | Baseline implemented packages, CLI, client docs, and tests             |
 
-Update this table after each local skill-creator iteration with with/without pass rates.
+Aggregate (iteration-2): with-skill **100%** vs without-skill **15%** (delta
+**+0.85**). The current skill snapshot already passed the hardened pressure
+scenarios, so no `SKILL.md` behavior change was required for this iteration.
+Reviewer artifact: `.agents/skills/mdcp-design-architecture-workspace/iteration-2/review.html`.
 
 ## Run path (skill-creator)
 
 1. Ensure `.agents/skills/skill-creator/` is present (vendored in this repo).
 2. Load subject skill from `skills/mdcp-design-architecture/` (parent `mdcp` may also be available as prerequisite context).
-3. **RED before skill edits:** snapshot the current skill, run **without_skill** (and/or `old_skill`) baselines on new prompts first; only then tighten `SKILL.md`.
+3. **RED before skill edits:** snapshot the current skill, run **without_skill** (and/or `old_skill`) baselines on new prompts first; only tighten `SKILL.md` when the current skill fails a pressure scenario.
 4. Copy the listed `files` into an isolated working tree per run (do not edit this monorepo’s real `docs/`).
 5. Follow skill-creator: spawn **with_skill** and baseline together.
 6. Write results under `.agents/skills/mdcp-design-architecture-workspace/iteration-N/` (gitignored via `*-workspace/`).
