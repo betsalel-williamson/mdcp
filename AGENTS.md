@@ -11,8 +11,11 @@ scripts — use those rather than duplicating them here.
 
 ### Environment already provisioned (do not re-run in normal sessions)
 
-- Node deps: `pnpm install` runs automatically on VM startup (the update
-  script). Package manager is pinned via `packageManager` in `package.json`.
+- The startup update command lives in `.cursor/environment.json` (`install`):
+  it runs `git fetch --all --prune --tags` (non-fatal, refreshes remote-tracking
+  branches) then `pnpm install`. That committed file is the source of truth and
+  takes precedence over any dashboard-saved environment. Package manager is
+  pinned via `packageManager` in `package.json`.
 - **Vale** (prose linter) is a **peer binary**, not an npm dependency. Version
   **3.15.1** is installed at `/usr/local/bin/vale` and persists in the VM
   snapshot. `pnpm run docs:check` / `pnpm run check` invoke Vale with
