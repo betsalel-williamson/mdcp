@@ -464,7 +464,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 
 Complementary `skills/mdcp-arch-*` packs remain WIP (`metadata.internal: true`) — keep them off consumer get-started copy **and** out of [`skills.sh.json`](skills.sh.json) until ready to release. Maintainers can install them with `INSTALL_INTERNAL_SKILLS=1`.
 
-There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases).
+There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases). Do not hand-edit those versions in feature PRs; add a changeset when `skills/` changes so release notes capture the work.
 
 Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
 
@@ -624,7 +624,7 @@ There is **no calendar cadence**. Releases are **event-driven**:
 3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
 4. CI publishes to npm when the **`v*`** tag lands on GitHub.
 
-**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). See [Agent Skill](#agent-skill-development).
+**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). Feature PRs that change `skills/` must add a changeset and must **not** hand-bump those versions. See [Agent Skill](#agent-skill-development).
 
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
@@ -674,14 +674,17 @@ Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR
 - `packages/mdcp-cli/src/**`
 - `packages/mdcp-presets/*.jsonc`
 - Published package `package.json` metadata consumers depend on
+- **`skills/**`** — consumer-facing Agent Skill packs (helpers, parent skill, install/guidance that ships via `npx skills add`)
+
+**Do not hand-edit** `skills/*/SKILL.md` `metadata.version` in feature PRs. `pnpm release:tag` sets every skill’s `metadata.version` in lockstep with the npm/git tag. Describe skill work in a changeset (usually against `@bwilliamson/mdcp-cli`) so the note lands in the package CHANGELOG at release.
 
 **Skip a changeset** for:
 
-- Root `README.md`, `docs/`, `examples/` only
-- CI, Husky, or dev tooling that does not ship in npm tarballs
+- Root `README.md`, `docs/`, `examples/` only (when the PR does **not** change `skills/` or published package sources)
+- CI, Husky, or other tooling that does not change skill packs or npm package behavior
 - Typo fixes in package READMEs with no behavior change (maintainer discretion)
 
-CI on pull requests runs `pnpm changeset:status` to catch missing changesets when package code changed.
+CI on pull requests runs `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed.
 
 ### Dependabot
 
