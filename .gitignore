@@ -20,7 +20,8 @@ coverage/
 *.tsbuildinfo
 
 # Local IDE / indexing
-.cursor/
+.cursor/*
+!.cursor/environment.json
 .cursorindexingignore
 
 # Agent Skills — local installs / workspaces (publishable source lives in skills/)
