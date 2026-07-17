@@ -4,32 +4,32 @@
     "mdcp": {
       "source": "./mdcp",
       "sourceType": "local",
-      "computedHash": "a05503c6d7e4bca47ff46466405d69e4ac3dec4dc143cc4304ebbd01966de854"
+      "computedHash": "6ca52724af0e9f8fb3a40ffce9302027c8bc6eb34a58922d2aced4c7d3b33f12"
     },
     "mdcp-design-architecture": {
       "source": "./mdcp",
       "sourceType": "local",
-      "computedHash": "c4529bc021d18b5d331d714d6a9bcc8e4b96115a60d370fac0d2b9202626dd28"
+      "computedHash": "eadd8054c07dd67d877503eb17f4412f3e793edb1480cbe3cf7804c54d84b472"
     },
     "mdcp-doc-only": {
       "source": "./mdcp",
       "sourceType": "local",
-      "computedHash": "ed6e05fb9857a72ebe4a4825f4f9df1e5e4ef7a082a4ab827a57d27e417f6a6e"
+      "computedHash": "b7690f86a91c8fb9485396c01cdb61c6bf9c70961ef1713bb41ff3139772c604"
     },
     "mdcp-feature-level": {
       "source": "./mdcp",
       "sourceType": "local",
-      "computedHash": "8e36e3abc2b3e2827bd1d2433aeb134c4f560f48dac9f26cffcf1aa22d4a4d7b"
+      "computedHash": "87153a5b4f343deb44189e1069acb6e718ab0dddf2ca00a333e88ecadf3153b0"
     },
     "mdcp-getting-started": {
       "source": "./mdcp",
       "sourceType": "local",
-      "computedHash": "536191e9d2d3b006435c562038b0395a50939aa644fb269d0ab816aa5c1aea5b"
+      "computedHash": "993ec8ed7766af9b404794e859320cc2b9cd3403ceea16be89dd71499242bd70"
     },
     "mdcp-ux": {
       "source": "./mdcp",
       "sourceType": "local",
-      "computedHash": "1d1a214cdd4108f930bf245d2e1500190bac82da4f7feee03ba52e4029e1144d"
+      "computedHash": "66a1f8e4b436e0b7386b9be20048df161ca89199f7a974ddd95b8f32bc9912fd"
     },
     "skill-creator": {
       "source": "anthropics/skills",
