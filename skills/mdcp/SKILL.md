@@ -98,12 +98,14 @@ Documentation is a **first-class artifact** alongside code. We use a **spec-driv
 
 The default MDCP structure acts as the "batteries-included" **Code Repository Archetype**. This fundamental four-tier taxonomy enforces strict boundaries to prevent the docs system from falling apart as it scales:
 
-| Guide             | Holds                                                                          | Does not hold                                                 |
-| ----------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| `docs/features/`  | How the plumbing works — capabilities, design, contracts, acceptance criteria  | Step-by-step implementation, duplicated API surface from code |
-| `docs/client/`    | How a specific persona finds value using the software — outcomes, flows, usage | Internal architecture, maintainer-only workflows              |
-| `docs/developer/` | How to work on the repo — setup, layout, validation, skill development         | Product narrative or end-user tutorials                       |
-| `docs/glossary/`  | Shared terms and disambiguation                                                | General code snippets                                         |
+| Guide             | Holds                                                                                    | Does not hold                                                                 |
+| ----------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `docs/features/`  | How the plumbing works — capabilities, design, contracts, acceptance criteria            | Maintainer runbooks, live eval suites, contributor setup, impl walkthroughs   |
+| `docs/client/`    | How a specific persona finds value using the software — outcomes, flows, usage           | Internal architecture, skill-authoring, live evals, maintainer-only workflows |
+| `docs/developer/` | How to work on the repo — setup, layout, validation, skill development, live skill evals | Product capability narrative or end-user tutorials                            |
+| `docs/glossary/`  | Shared terms and disambiguation                                                          | General code snippets                                                         |
+
+**Placement test:** If only contributors to this repo need the shard, put it in `docs/developer/`. If consumers of the product need it, use `docs/features/` or `docs/client/`. The same topic may span tiers (for example Agent Skill product delivery vs maintainer live evals).
 
 _(Note: The MDCP engine itself is domain-agnostic. Non-code projects can define entirely different guide tiers/archetypes while still using the same compile and validation checks.)_
 

@@ -2,7 +2,7 @@
 
 Fixtures and prompts for the optional [skill-creator](../../../../.agents/skills/skill-creator/SKILL.md) loop against the systems-architecture helper. Not a CI gate.
 
-Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Product index: [`docs/features/live-skill-evals.md`](../../../../docs/features/live-skill-evals.md).
+Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Maintainer index: [`docs/developer/live-skill-evals.md`](../../../../docs/developer/live-skill-evals.md).
 
 ## Layout
 

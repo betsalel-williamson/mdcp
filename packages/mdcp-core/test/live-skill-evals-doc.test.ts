@@ -22,7 +22,7 @@ type EvalCase = {
 };
 type EvalsJson = { skill_name: string; evals: EvalCase[] };
 
-const FEATURE_SHARD = 'docs/features/live-skill-evals.md';
+const DEVELOPER_SHARD = 'docs/developer/live-skill-evals.md';
 const DESIGN_EVALS = 'tests/skills/mdcp-design-architecture/evals/evals.json';
 const DESIGN_FIXTURE = 'tests/skills/mdcp-design-architecture/evals/files/design-fixture';
 
@@ -37,31 +37,40 @@ const REQUIRED_FIXTURE_FILES = [
 ] as const;
 
 describe('live skill evals documentation and suite contract (#126)', () => {
-  it('ships a dedicated live-skill-evals feature shard linked from catalog indexes', () => {
-    expect(existsSync(repoPath(FEATURE_SHARD))).toBe(true);
-    const featureShard = readRepo(FEATURE_SHARD);
-    expect(featureShard).toMatch(/^# Live skill evals/m);
-    expect(featureShard).toContain('tests/skills/');
-    expect(featureShard).toContain('mdcp-design-architecture');
-    expect(featureShard).toContain('skill-creator');
-    expect(featureShard).toContain('Never a CI gate');
+  it('ships a dedicated live-skill-evals developer shard linked from developer indexes', () => {
+    expect(existsSync(repoPath(DEVELOPER_SHARD))).toBe(true);
+    const shard = readRepo(DEVELOPER_SHARD);
+    expect(shard).toMatch(/^# Live skill evals/m);
+    expect(shard).toContain('tests/skills/');
+    expect(shard).toContain('mdcp-design-architecture');
+    expect(shard).toContain('skill-creator');
+    expect(shard).toContain('Never a CI gate');
+    expect(shard).toContain('maintainer');
 
-    expect(readRepo('docs/features/index.md')).toContain('./live-skill-evals.md');
-    expect(readRepo('docs/features/feature-catalog.md')).toContain('./live-skill-evals.md');
+    expect(readRepo('docs/developer/index.md')).toContain('./live-skill-evals.md');
+    expect(existsSync(repoPath('docs/features/live-skill-evals.md'))).toBe(false);
   });
 
-  it('keeps developer and glossary live-eval docs as pointers to the feature shard', () => {
+  it('keeps feature and glossary live-eval docs as pointers to the developer shard', () => {
     const developer = readRepo('docs/developer/agent-skill.md');
-    expect(developer).toContain('../features/live-skill-evals.md');
+    expect(developer).toContain('./live-skill-evals.md');
     expect(developer).not.toContain('tests/skills/mdcp-getting-started/evals/');
 
     const glossary = readRepo('docs/glossary/live-skill-eval.md');
-    expect(glossary).toContain('../features/live-skill-evals.md');
+    expect(glossary).toContain('../developer/live-skill-evals.md');
     expect(glossary).not.toContain('tests/skills/mdcp/evals/');
+
+    expect(readRepo('docs/features/feature-catalog.md')).toContain(
+      '../developer/live-skill-evals.md',
+    );
+    expect(readRepo('docs/features/agent-skill.md')).toContain('../developer/live-skill-evals.md');
   });
 
-  it('points Agent Skill product docs at live-skill-evals for qualitative checks', () => {
-    expect(readRepo('docs/features/agent-skill.md')).toContain('./live-skill-evals.md');
+  it('documents three-tier placement so maintainer evals stay out of features/', () => {
+    const placement = readRepo('docs/features/protocol/agent-task-prompts.md');
+    expect(placement).toContain('Placement test');
+    expect(placement).toContain('live skill evals');
+    expect(placement).toContain('Keep out');
   });
 
   it('defines the mdcp-design-architecture eval suite with named assertions and fixtures', () => {

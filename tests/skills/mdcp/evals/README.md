@@ -33,4 +33,4 @@ Fixtures and prompts for the optional [skill-creator](../../../.agents/skills/sk
 
 5. Draft objectively verifiable `expectations` while runs progress; grade; aggregate; open the viewer (`eval-viewer/generate_review.py`, use `--static` when headless).
 
-Child suites: [`mdcp-getting-started`](../../mdcp-getting-started/evals/README.md), [`mdcp-doc-only`](../../mdcp-doc-only/evals/README.md), [`mdcp-design-architecture`](../../mdcp-design-architecture/evals/README.md). Product index: [`docs/features/live-skill-evals.md`](../../../../docs/features/live-skill-evals.md).
+Child suites: [`mdcp-getting-started`](../../mdcp-getting-started/evals/README.md), [`mdcp-doc-only`](../../mdcp-doc-only/evals/README.md), [`mdcp-design-architecture`](../../mdcp-design-architecture/evals/README.md). Maintainer index: [`docs/developer/live-skill-evals.md`](../../../../docs/developer/live-skill-evals.md).

@@ -14,14 +14,14 @@ Conformance keywords: **MUST**, **SHOULD**, **MAY** (RFC 2119 sense).
 
 Conforming repositories **SHOULD** organize shards into guides listed in `compileOrder`. This default structure—often referred to as the **Code Repository Archetype**—is the "batteries-included" layout for software engineering projects:
 
-| Guide tier | Typical path | Holds                                        |
-| ---------- | ------------ | -------------------------------------------- |
-| Features   | `features/`  | Capabilities, design, acceptance criteria    |
-| Client     | `client/`    | End-user value and usage                     |
-| Developer  | `developer/` | Repo workflow, tracker integration, releases |
-| Glossary   | `glossary/`  | Shared terms and disambiguation              |
+| Guide tier | Typical path | Holds                                                                       | Keep out                                              |
+| ---------- | ------------ | --------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Features   | `features/`  | Product capabilities, design/ADRs, contracts, acceptance criteria           | Maintainer runbooks, CI/eval loops, contributor setup |
+| Client     | `client/`    | Consumer value and usage of the shipped tool                                | Internal contributor process, skill-authoring evals   |
+| Developer  | `developer/` | Repo workflow, tracker integration, releases, skill development, live evals | Product capability specs or end-user tutorials        |
+| Glossary   | `glossary/`  | Shared terms and disambiguation                                             | General code snippets                                 |
 
-This four-tier taxonomy is fundamental to preventing the system from falling apart as it scales. It enforces strict boundaries that keep developer workflows out of client usage and separate high-level feature specs from low-level code.
+This four-tier taxonomy is fundamental to preventing the system from falling apart as it scales. It enforces strict boundaries that keep developer workflows out of client usage and separate high-level feature specs from low-level code. **Placement test:** if only contributors to the docs repo need the shard, put it in `developer/`; if consumers of the product need it, use `features/` or `client/`.
 
 Each guide **MUST** have a manifest (`index.md` or `shards.md`) defining compile order.
 

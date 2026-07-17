@@ -33,15 +33,19 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 | [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | ADRs, RFCs          | `features/protocol/`, `features/`    |
 | [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | End-user experience | `client/`                            |
 
-Index: [skills.md](../../docs/skills.md). Some helpers also have optional [live skill eval](../live-skill-evals.md) suites under `tests/skills/`.
+Index: [skills.md](../../docs/skills.md). Some helpers also have optional [live skill eval](../../developer/live-skill-evals.md) suites under `tests/skills/`.
 
 ## Three-tier authoring obligations
 
-| Guide             | Holds                                                  | Helpers that write here                      |
-| ----------------- | ------------------------------------------------------ | -------------------------------------------- |
-| `docs/features/`  | Capabilities, design, API surface, acceptance criteria | feature-level, doc-only, design-architecture |
-| `docs/client/`    | End-user value, how to use the feature                 | feature-level, doc-only, ux                  |
-| `docs/developer/` | Repo workflow, tracker integration, releases           | doc-only, getting-started                    |
+Place each shard by **audience and job**, not by topic keyword. The same subject (for example Agent Skills) can span tiers: product delivery in `features/`, consumer install in `client/`, maintainer evals in `developer/`.
+
+| Guide             | Holds (put here)                                                                                    | Keep out                                                        | Helpers that write here                      |
+| ----------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------- |
+| `docs/features/`  | What the product does — capabilities, design/ADRs, contracts, acceptance criteria                   | Maintainer runbooks, CI/eval loops, contributor setup           | feature-level, doc-only, design-architecture |
+| `docs/client/`    | How consumers use it — end-user value, install/config/usage for the shipped tool                    | Internal contributor process, skill-authoring, live eval suites | feature-level, doc-only, ux                  |
+| `docs/developer/` | How to work on this repo — setup, layout, validation, releases, skill development, live skill evals | Product capability specs or consumer tutorials                  | doc-only, getting-started                    |
+
+**Placement test:** If removing the shard would confuse a **consumer** of the tool, it is features or client. If only **contributors** to this monorepo need it, it is developer.
 
 Shared terms: `docs/glossary/` — all helpers that introduce vocabulary.
 

@@ -33,7 +33,7 @@ Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [
 
 ## Live skill evals (optional, local)
 
-Qualitative with/without-skill grading is documented in [Live skill evals](../features/live-skill-evals.md) (suite inventory, layout contract, tooling). The glossary term is [live skill eval](../glossary/live-skill-eval.md). That loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
+Qualitative with/without-skill grading is documented in [Live skill evals](./live-skill-evals.md) (suite inventory, layout contract, tooling). The glossary term is [live skill eval](../glossary/live-skill-eval.md). That loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
 
 ## Acceptance criteria
 

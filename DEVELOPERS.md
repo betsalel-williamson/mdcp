@@ -2,9 +2,16 @@
 
 **Audience:** contributors and maintainers working on the mdcp monorepo.
 
-This guide covers local setup, package development, sharded documentation in `docs/`, changesets, npm releases, and **Agent Skill authoring**. For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](docs/features/feature-catalog.md).
+This is the **developer** guide (`docs/developer/`): how to work on this repository — local setup, package development, sharded documentation in `docs/`, changesets, npm releases, and **Agent Skill authoring** (including [live skill evals](#live-skill-evals)).
+
+**Belongs here:** contributor workflow, validation gates, skill development, optional local eval loops.  
+**Does not belong here:** product capability specs or consumer tutorials (those are [Feature Catalog](docs/features/feature-catalog.md) / client guides).
+
+For what mdcp **does** as a tool (commands, design, consumer migration), read the [Feature Catalog](docs/features/feature-catalog.md).
 
 Contributors are expected to follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+
+Guide placement rules for helpers: [Agent helper skills](docs/features/protocol/agent-task-prompts.md#three-tier-authoring-obligations).
 
 ## Glossary
 
@@ -365,7 +372,7 @@ Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [
 
 ### Live skill evals (optional, local)
 
-Qualitative with/without-skill grading is documented in [Live skill evals](docs/features/live-skill-evals.md) (suite inventory, layout contract, tooling). The glossary term is [live skill eval](docs/glossary/live-skill-eval.md). That loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
+Qualitative with/without-skill grading is documented in [Live skill evals](#live-skill-evals) (suite inventory, layout contract, tooling). The glossary term is [live skill eval](docs/glossary/live-skill-eval.md). That loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
 
 ### Acceptance criteria
 
@@ -386,6 +393,77 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run the command above without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases).
 
 Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
+
+## Live skill evals
+
+Optional local workflow that runs an agent **with** and **without** a subject
+Agent Skill, grades behavior against named assertions, and reviews results in a
+viewer. Maintainers use it to tune skill instructions and prove helper scope
+(for example design-only vs product code).
+
+This is **maintainer workflow**, not a product capability — it belongs in the
+Developer Guide. Product Agent Skill delivery stays in
+[Agent Skill](docs/features/agent-skill.md).
+
+### What it is not
+
+- **Never a CI gate.** Do not require Claude CLI, skill-creator, or live agent
+  runs in GitHub Actions.
+- **Not skill content lint.** [`pnpm skill:lint`](docs/glossary/skill-content-lint.md)
+  only checks phrases and frontmatter on disk; it does not spawn agents.
+
+Contrast: [skill content lint](docs/glossary/skill-content-lint.md) and
+`pnpm skill:validate` ([skills-ref](https://agentskills.io/specification)) remain
+the CI/static skill gates. See [Agent Skill development](#agent-skill-development).
+
+### Tooling
+
+- **skill-creator** — vendored at
+  [`.agents/skills/skill-creator/`](.agents/skills/skill-creator/SKILL.md);
+  evaluate loop (prompts → with/without skill → grade → aggregate)
+- **`pnpm skill:evals:view`** — open the eval viewer helper script
+- **`.agents/skills/*-workspace/`** — per-iteration run outputs (gitignored via
+  `*-workspace/`)
+
+Refresh skill-creator from upstream when needed:
+
+```bash
+npx skills add anthropics/skills --skill skill-creator
+```
+
+### Suite inventory
+
+Live eval fixtures live under `tests/skills/<skill>/evals/` so publishable packs
+under `skills/` stay eval-free (`npx skills` / `pnpm skill:validate` only touch
+`skills/`).
+
+- [mdcp](tests/skills/mdcp/evals/README.md) — subject `mdcp`; workspace
+  `.agents/skills/mdcp-workspace/`
+- [mdcp-getting-started](tests/skills/mdcp-getting-started/evals/README.md) —
+  subject `mdcp-getting-started`; workspace
+  `.agents/skills/mdcp-getting-started-workspace/`
+- [mdcp-doc-only](tests/skills/mdcp-doc-only/evals/README.md) — subject
+  `mdcp-doc-only`; workspace `.agents/skills/mdcp-doc-only-workspace/`
+- [mdcp-design-architecture](tests/skills/mdcp-design-architecture/evals/README.md) —
+  subject `mdcp-design-architecture`; workspace
+  `.agents/skills/mdcp-design-architecture-workspace/`
+
+Each suite README holds operational run steps and discrimination notes. This
+shard is the maintainer index.
+
+### Layout contract
+
+Shared shape for helper suites:
+
+| Path                  | Purpose                                                                 |
+| --------------------- | ----------------------------------------------------------------------- |
+| `evals/evals.json`    | `skill_name`, prompts, `expected_output`, `files[]`, named `assertions` |
+| `evals/files/`        | Isolated fixture trees for run workspaces (not real monorepo `docs/`)   |
+| `evals/triggers.json` | Optional description-trigger tuning (parent suite)                      |
+| `evals/README.md`     | How to run and grade that suite                                         |
+
+Helper intake and write obligations stay in
+[Agent helper skills](docs/features/protocol/agent-task-prompts.md).
 
 ## Versioning and releases
 
@@ -697,7 +775,7 @@ Companion gate: `pnpm skill:validate` runs [skills-ref](https://agentskills.io/s
 
 ## live skill eval
 
-Optional local with/without-skill agent grading via vendored [skill-creator](.agents/skills/skill-creator/SKILL.md). Product home: [Live skill evals](docs/features/live-skill-evals.md). Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint).
+Optional local with/without-skill agent grading via vendored [skill-creator](.agents/skills/skill-creator/SKILL.md). Maintainer home: [Live skill evals](#live-skill-evals). Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint).
 
 ## GFM
 
