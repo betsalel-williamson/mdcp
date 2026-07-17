@@ -67,7 +67,7 @@ Collect these via intake (or from the conversation if already stated):
 
 ### Step 2: Branch and Value Focus
 
-1. Explicitly define the **end-user value** this change brings — what outcome the user must achieve, and which friction (extra steps, unclear decisions, dead ends) this work removes. Do not start from UI chrome alone.
+1. Explicitly define the **end-user value** this change brings — what outcome the user must achieve, and which friction (extra steps, unclear decisions, dead ends) this work removes. Start from the user’s steps to get there, not from how screens or controls look.
 2. Create a feature branch for this `WORK_ITEM` from updated `main` before client shards, UI code, or tests. One branch per issue — do not mix unrelated UX work.
 
 ### Step 3: Design workflows (docs first)
