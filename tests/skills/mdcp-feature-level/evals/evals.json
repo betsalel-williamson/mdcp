@@ -1,0 +1,75 @@
+{
+  "skill_name": "mdcp-feature-level",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "WORK_ITEM=Add documentation for live skill evals — how maintainers run the optional skill-creator loop to grade helper skills before release. This accompanies our skills feature (see docs/features/skills.md). WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Using /mdcp-feature-level, follow the skill's docs-first process and add the documentation. Keep the docs tree consistent.",
+      "expected_output": "Agent applies an audience placement test before writing: live skill evals are maintainer-only workflow with no end-user surface, so the shard lands under docs/developer/ (index updated). It does NOT create docs/features/live-skill-evals.md (or similar) just because Step 3 mentions features/ or because the topic sits next to the shipped skills feature, and it does NOT invent a docs/client/ shard.",
+      "files": [
+        "evals/files/feature-fixture/README.md",
+        "evals/files/feature-fixture/docs/mdcp.config.json",
+        "evals/files/feature-fixture/docs/developer/agent-work-item-tracking.md",
+        "evals/files/feature-fixture/docs/developer/index.md",
+        "evals/files/feature-fixture/docs/developer/local-tooling.md",
+        "evals/files/feature-fixture/docs/features/index.md",
+        "evals/files/feature-fixture/docs/features/skills.md",
+        "evals/files/feature-fixture/docs/client/index.md"
+      ],
+      "assertions": [
+        {
+          "name": "lands_in_developer_tier",
+          "description": "Creates or updates a shard under docs/developer/ for the live skill-eval runbook and links it from docs/developer/index.md"
+        },
+        {
+          "name": "no_features_tier_runbook",
+          "description": "Does NOT create a docs/features/ shard for the live skill-eval runbook (e.g. docs/features/live-skill-evals.md) — that is the exact wrong-tier failure under test"
+        },
+        {
+          "name": "no_client_tier_shard",
+          "description": "Does NOT create a docs/client/ shard for a maintainer-only workflow with no end-user surface"
+        },
+        {
+          "name": "states_placement_rationale",
+          "description": "States an explicit audience placement decision (maintainer-only → developer/) rather than blindly following a features/+client/ docs-first step"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "WORK_ITEM=Add a --format=csv option to `example-cli export` so people can open reports in a spreadsheet. WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Using /mdcp-feature-level, ship the feature docs-first, then implement it. Keep the docs tree consistent.",
+      "expected_output": "Agent treats this as a user-facing capability: updates a maintainer capability/contract shard in docs/features/ AND an end-user usage shard in docs/client/ (with both index.md updates), then implements the option in packages/. It does NOT bury a user-facing capability in docs/developer/.",
+      "files": [
+        "evals/files/feature-fixture/README.md",
+        "evals/files/feature-fixture/docs/mdcp.config.json",
+        "evals/files/feature-fixture/docs/developer/agent-work-item-tracking.md",
+        "evals/files/feature-fixture/docs/features/index.md",
+        "evals/files/feature-fixture/docs/features/export-command.md",
+        "evals/files/feature-fixture/docs/client/index.md",
+        "evals/files/feature-fixture/docs/client/export-report.md",
+        "evals/files/feature-fixture/packages/example-cli/src/index.ts"
+      ],
+      "assertions": [
+        {
+          "name": "backfills_features_tier",
+          "description": "Updates or adds a docs/features/ shard describing the --format=csv capability/contract"
+        },
+        {
+          "name": "backfills_client_tier",
+          "description": "Updates or adds a docs/client/ shard describing the end-user value and usage of --format=csv (client tier is not left stale)"
+        },
+        {
+          "name": "updates_touched_indexes",
+          "description": "Updates docs/features/index.md and docs/client/index.md when shards are added"
+        },
+        {
+          "name": "not_buried_in_developer",
+          "description": "Does NOT place this user-facing capability only under docs/developer/"
+        },
+        {
+          "name": "implements_option",
+          "description": "Implements the --format=csv option in packages/example-cli"
+        }
+      ]
+    }
+  ]
+}

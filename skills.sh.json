@@ -4,8 +4,15 @@
   "groupings": [
     {
       "title": "Documentation system",
-      "description": "Keep specs and product ideas in maintainable Markdown shards as your docs grow. Install this first.",
-      "skills": ["mdcp"]
+      "description": "MDCP parent skill plus helpers for getting started, docs-only, design, feature delivery, and UX.",
+      "skills": [
+        "mdcp",
+        "mdcp-getting-started",
+        "mdcp-doc-only",
+        "mdcp-design-architecture",
+        "mdcp-feature-level",
+        "mdcp-ux"
+      ]
     }
   ]
 }

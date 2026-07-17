@@ -10,5 +10,6 @@
   - [Docs dogfooding](./docs-dogfooding.md)
   - [Markdown formatting](./markdown-formatting.md)
   - [Agent Skill](./agent-skill.md)
+  - [Live skill evals](./live-skill-evals.md)
   - [Versioning and releases](./versioning-and-releases.md)
   - [Publishing](./publishing.md)

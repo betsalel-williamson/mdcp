@@ -87,12 +87,12 @@ Collect these via intake (or from the conversation if already stated):
 
 ## Common Mistakes
 
-| Excuse | Reality |
-| ------ | ------- |
-| “It’ll be faster if I fix the code too” | Docs-only scope stays docs-only. Defer code/tests to `mdcp-feature-level`. |
-| “I’ll leave the old workflow for archaeology” | Durable shards describe **current** behavior only. Git history keeps the old text. |
-| “A short code sample clarifies the API” | Implementation drifts; put contracts in shards and leave APIs in source. |
-| “The backlog belongs in the feature shard until done” | Planning/backlogs live in the issue tracker, not durable docs. |
+| Excuse                                                | Reality                                                                            |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| “It’ll be faster if I fix the code too”               | Docs-only scope stays docs-only. Defer code/tests to `mdcp-feature-level`.         |
+| “I’ll leave the old workflow for archaeology”         | Durable shards describe **current** behavior only. Git history keeps the old text. |
+| “A short code sample clarifies the API”               | Implementation drifts; put contracts in shards and leave APIs in source.           |
+| “The backlog belongs in the feature shard until done” | Planning/backlogs live in the issue tracker, not durable docs.                     |
 
 ## Red Flags — STOP
 
