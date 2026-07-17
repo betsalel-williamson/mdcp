@@ -33,8 +33,13 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 | [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | Architecture as MDCP shards | `features/protocol/`, `features/`    |
 | [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | End-user experience         | `client/`                            |
 
-Goals and hard boundaries for the design helper (what it is / is not):
-[Design-architecture helper](./skills/mdcp-design-architecture.md).
+Goals and hard boundaries for each helper (what it is / is not):
+
+- [Getting-started helper](./skills/mdcp-getting-started.md)
+- [Feature-level helper](./skills/mdcp-feature-level.md)
+- [Doc-only helper](./skills/mdcp-doc-only.md)
+- [Design-architecture helper](./skills/mdcp-design-architecture.md)
+- [UX helper](./skills/mdcp-ux.md)
 
 Index: [skills.md](../../docs/skills.md). Some helpers also have optional [live skill eval](../../developer/live-skill-evals.md) suites under `tests/skills/`.
 
@@ -54,7 +59,8 @@ Shared terms: `docs/glossary/` — all helpers that introduce vocabulary.
 
 ## Feature-level workflow (normative summary)
 
-When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md):
+When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)
+(detail: [Feature-level helper](./skills/mdcp-feature-level.md)):
 
 1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
 2. Branch from updated `main` for `WORK_ITEM`

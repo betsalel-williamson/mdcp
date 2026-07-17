@@ -21,8 +21,12 @@ Heading-slug **registry** for validation after compile — see [Refs registry pa
 Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill](./agent-skill.md).
 
 Helper skills extend the parent for specific authoring jobs — catalog and intake:
-[Helper Skills](./protocol/agent-task-prompts.md). Architecture-as-shards boundary:
-[Design-architecture helper](./protocol/skills/mdcp-design-architecture.md).
+[Helper Skills](./protocol/agent-task-prompts.md). Hardened is/isn’t boundaries:
+[Getting-started](./protocol/skills/mdcp-getting-started.md),
+[Feature-level](./protocol/skills/mdcp-feature-level.md),
+[Doc-only](./protocol/skills/mdcp-doc-only.md),
+[Design-architecture](./protocol/skills/mdcp-design-architecture.md),
+[UX](./protocol/skills/mdcp-ux.md).
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp
