@@ -47,6 +47,14 @@
     {
       "id": "current-docs-only",
       "patterns": ["Current docs only", "as it works now", "changeset", "Git history"]
+    },
+    {
+      "id": "small-batches",
+      "patterns": ["Small batches", "one focused feature", "split the request"]
+    },
+    {
+      "id": "no-code-in-docs",
+      "patterns": ["No code in docs", "intent", "contracts", "implementation"]
     }
   ],
   "phraseScenarios": [
@@ -84,6 +92,16 @@
       "id": "current-docs-stale",
       "prompt": "Behavior changed — should we keep the old docs section for history?",
       "mustMention": ["Current docs only", "changeset", "Git history"]
+    },
+    {
+      "id": "small-batches-scope",
+      "prompt": "User asked for five unrelated features in one branch — how should we scope the work?",
+      "mustMention": ["Small batches", "one focused feature", "split the request"]
+    },
+    {
+      "id": "no-code-in-shards",
+      "prompt": "Should we paste the implementation into the feature shard?",
+      "mustMention": ["No code in docs", "intent", "contracts"]
     }
   ]
 }

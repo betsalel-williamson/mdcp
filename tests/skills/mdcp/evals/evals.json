@@ -1,0 +1,192 @@
+{
+  "skill_name": "mdcp",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Bootstrap MDCP agent guidance in a new repo",
+      "expected_output": "Creates a docs root, mdcp.config.json, and runs compile and check successfully.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "creates_mdcp_config",
+          "description": "Creates mdcp.config.json"
+        },
+        {
+          "name": "creates_docs_root",
+          "description": "Creates docs root directory"
+        },
+        {
+          "name": "runs_compile",
+          "description": "Runs mdcp compile command"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Compile and validate docs after editing shards",
+      "expected_output": "Runs the compile and check commands using the MDCP CLI wrapper script.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "runs_compile",
+          "description": "Runs mdcp compile command"
+        },
+        {
+          "name": "runs_check",
+          "description": "Runs mdcp check command"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Find a heading link while writing docs",
+      "expected_output": "Validates cross-links with mdcp check (compiled slug integrity).",
+      "files": [],
+      "assertions": [
+        {
+          "name": "validates_links",
+          "description": "Validates cross-links using mdcp check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Load documentation context for the agent",
+      "expected_output": "Uses host search to find a specific shard, then reads only that shard rather than a monolith.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "searches_shards",
+          "description": "Searches for specific shards"
+        },
+        {
+          "name": "reads_specific_shard",
+          "description": "Reads only the specific shard rather than a monolith"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Remove old planning information from our docs, like the migration backlog",
+      "expected_output": "The agent removes the old information, acknowledging it belongs in an issue tracker and not in durable documentation shards.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "removes_backlog",
+          "description": "Removes migration backlog"
+        },
+        {
+          "name": "acknowledges_issue_tracker",
+          "description": "Acknowledges that planning info belongs in issue tracker"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "We need to ship three things this week: (1) OAuth login for the API, (2) a redesigned settings UX for end users, and (3) developer docs for three new CLI commands. Using MDCP, start the work \u2014 update docs and plan implementation.",
+      "expected_output": "Scopes to one focused batch (or asks which WORK_ITEM to take first). Names a single matching helper skill from the Mermaid routing map. Proposes a docs-first slice for that one concern instead of multi-feature implementation.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "scopes_to_one_batch",
+          "description": "Scopes to one focused batch or asks which to take first"
+        },
+        {
+          "name": "names_helper_skill",
+          "description": "Names a single matching helper skill from the Mermaid routing map"
+        },
+        {
+          "name": "proposes_docs_first",
+          "description": "Proposes a docs-first slice instead of multi-feature implementation"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Clean up docs/features/notifications.md in the hygiene fixture. It still has a migration backlog and pasted implementation code. Make the shard durable and current per MDCP QA principles.",
+      "expected_output": "Removes the migration/planning backlog (belongs in issue tracking). Strips implementation code from the shard. Leaves present-tense current behavior / intent only. Does not link durable docs to pending .changeset files.",
+      "files": [
+        "evals/files/hygiene/docs/features/notifications.md",
+        "evals/files/hygiene/docs/features/index.md"
+      ],
+      "assertions": [
+        {
+          "name": "removes_backlog",
+          "description": "Removes the migration/planning backlog"
+        },
+        {
+          "name": "strips_code",
+          "description": "Strips implementation code from the shard"
+        },
+        {
+          "name": "leaves_current_behavior",
+          "description": "Leaves present-tense current behavior/intent only"
+        },
+        {
+          "name": "no_changeset_links",
+          "description": "Does not link durable docs to pending .changeset files"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Improve the onboarding checklist so new users understand how to get value from the product. Using the routing fixture, update the right MDCP guides and say which helper skill should own this WORK_ITEM.",
+      "expected_output": "Routes to mdcp-ux per the helper Mermaid map. Primary edits under docs/client/ with outcome/usage focus. Avoids dumping maintainer architecture into client guides and avoids implementation code in shards.",
+      "files": [
+        "evals/files/routing/mdcp.config.json",
+        "evals/files/routing/docs/client/index.md",
+        "evals/files/routing/docs/client/onboarding.md",
+        "evals/files/routing/docs/features/index.md",
+        "evals/files/routing/docs/features/compile.md"
+      ],
+      "assertions": [
+        {
+          "name": "routes_to_ux",
+          "description": "Routes to mdcp-ux per the helper Mermaid map"
+        },
+        {
+          "name": "edits_client_docs",
+          "description": "Primary edits under docs/client/ with outcome/usage focus"
+        },
+        {
+          "name": "no_architecture_in_client",
+          "description": "Avoids dumping maintainer architecture into client guides"
+        },
+        {
+          "name": "no_code_in_shards",
+          "description": "Avoids implementation code in shards"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "We need an ADR for splitting the compile pipeline into stages. Using the routing fixture, document the architecture decision in the right place; do not implement code yet.",
+      "expected_output": "Routes to mdcp-design-architecture. Edits docs/features/ (design/ADR intent) only. No application source or tests; no large implementation code dumps in the design shard.",
+      "files": [
+        "evals/files/routing/mdcp.config.json",
+        "evals/files/routing/docs/client/index.md",
+        "evals/files/routing/docs/client/onboarding.md",
+        "evals/files/routing/docs/features/index.md",
+        "evals/files/routing/docs/features/compile.md"
+      ],
+      "assertions": [
+        {
+          "name": "routes_to_design",
+          "description": "Routes to mdcp-design-architecture"
+        },
+        {
+          "name": "edits_features_only",
+          "description": "Edits docs/features/ (design/ADR intent) only"
+        },
+        {
+          "name": "no_source_code",
+          "description": "No application source or tests implemented"
+        },
+        {
+          "name": "no_code_dumps",
+          "description": "No large implementation code dumps in the design shard"
+        }
+      ]
+    }
+  ]
+}

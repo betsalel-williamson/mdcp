@@ -17,7 +17,10 @@ metadata:
 
 # UX Helper
 
-> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
+> **PREREQUISITE:** This is a helper skill. Follow the `mdcp` parent skill
+> first — especially **Quality Assurance (QA) Principles** (small batches,
+> current docs only, no code in docs) and **What belongs where**. Ensure the
+> `mdcp` CLI is installed.
 
 Act as an expert UX Designer and Frontend Engineer to design and implement user experiences using MDCP shards.
 

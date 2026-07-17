@@ -1,4 +1,4 @@
-# Agent Skill delivery
+# Agent Skill
 
 MDCP ships as a portable **documentation system** Agent Skills pack so projects inherit docs-as-code guardrails without a host-specific IDE extension. The **parent skill** is the intended agent entrypoint for people who want maintainable sharded docs as ideas keep coming.
 
@@ -66,25 +66,6 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 - **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
 - **No temp info:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools. Pending `.changeset/*.md` files are temporary release notes — write them for the release pipeline; do not link them from ADRs or other durable docs.
 - **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
-
-## Acceptance criteria
-
-1. Parent skill is a valid Agent Skills package (`name: mdcp` matches folder under `skills/`).
-2. Install documents the parent skill via `npx skills add` (complementary archetype skills stay unpublished in consumer docs until ready).
-3. Parent skill encodes bootstrap / smallest-context / hard rules for docs-as-code agents.
-4. Skill is host-agnostic — no Marketplace-only required steps.
-5. [`skill content lint`](../glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.
-
-## Content lint and spec validation (CI)
-
-- `pnpm skill:lint` — MDCP-specific static analysis of the parent `SKILL.md` (required/forbidden phrases, frontmatter, line budget). Fixtures live under `scripts/mdcp-skill-content-lint/` (monorepo CI only; not shipped with the skill).
-- `pnpm skill:validate` — `skills-ref validate` on each publishable skill under `skills/` (agentskills.io frontmatter and naming).
-
-Both run in GitHub Actions. Neither is a [live skill eval](../glossary/live-skill-eval.md).
-
-## Live skill evals (optional, local)
-
-Optional skill-creator agent runs and description trigger optimization use fixtures under `skills/mdcp/evals/`. Never required in CI.
 
 ## Ecosystem publication
 
