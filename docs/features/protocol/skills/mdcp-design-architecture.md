@@ -40,7 +40,7 @@ Intake is the same as other work-item helpers: `WORK_ITEM` and
   as shards.
 - **Implementing CLI flags, packages, or unit tests** — use
   [mdcp-feature-level](./mdcp-feature-level.md).
-- **End-user / client guide polish** — use [mdcp-ux](./mdcp-ux.md).
+- **End-user / client journey and workflow design** — use [mdcp-ux](./mdcp-ux.md).
 - **Docs-only cleanup with no architecture change** — use
   [mdcp-doc-only](./mdcp-doc-only.md).
 - **Bootstrapping MDCP in an empty or legacy repo** — use

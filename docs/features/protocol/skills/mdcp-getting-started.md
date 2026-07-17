@@ -40,7 +40,7 @@ docs until review instead of destructive overwrite.
   [mdcp-doc-only](./mdcp-doc-only.md).
 - **Architecture-as-shards / ADR drafting** — use
   [mdcp-design-architecture](./mdcp-design-architecture.md).
-- **End-user / client guide UX polish** — use [mdcp-ux](./mdcp-ux.md).
+- **End-user / client journey and workflow design** — use [mdcp-ux](./mdcp-ux.md).
 - **Code TDD rituals, atomic commit grouping, or local engineering process** —
   out of scope; use separate coding skills when implementing product code.
 

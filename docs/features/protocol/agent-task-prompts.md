@@ -31,7 +31,7 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 | [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)             | Feature engineering         | `features/`, `client/`, code + tests |
 | [mdcp-doc-only](../../skills/mdcp-doc-only/SKILL.md)                       | Technical writing           | `features/`, `client/`, `developer/` |
 | [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | Architecture as MDCP shards | `features/protocol/`, `features/`    |
-| [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | End-user experience         | `client/`                            |
+| [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | User-centric journeys       | `client/`, glossary                  |
 
 Goals and hard boundaries for each helper (what it is / is not):
 

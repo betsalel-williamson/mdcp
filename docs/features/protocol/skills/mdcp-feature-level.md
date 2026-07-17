@@ -40,7 +40,7 @@ Intake is the same as other work-item helpers: `WORK_ITEM` and
   [mdcp-doc-only](./mdcp-doc-only.md) when the ask is shards-only.
 - **Architecture intent / ADR drafting without implementation** — use
   [mdcp-design-architecture](./mdcp-design-architecture.md).
-- **Primary client-guide UX / UI flow work** — use [mdcp-ux](./mdcp-ux.md).
+- **Primary client-guide UX / journey design** — use [mdcp-ux](./mdcp-ux.md).
 - **Bootstrapping MDCP in an empty or legacy repo** — use
   [mdcp-getting-started](./mdcp-getting-started.md).
 - **Expanding beyond the loaded `WORK_ITEM`** — stay on acceptance criteria

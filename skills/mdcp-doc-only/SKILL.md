@@ -71,8 +71,9 @@ Collect these via intake (or from the conversation if already stated):
 
 1. Add or revise MDCP shards under the appropriate guide (`docs/features/`, `docs/developer/`, `docs/client/`).
 2. Put intent, contracts, and acceptance criteria in shards — **not** implementation samples, function signatures, or file paths into product source (the codebase is the source of truth for how something is built).
-3. Update each guide's `index.md` for compile order.
-4. Validate cross-links with `mdcp check` — do not edit generated compile output or `refs.json` by hand.
+3. **Glossary for jargon** — for every new or undefined jargon term or acronym in the shards you touch, add or update a `docs/glossary/` entry (one term per shard), link it from the guides that use it, and update `docs/glossary/index.md`. Do not leave unexplained shorthand in durable docs.
+4. Update each guide's `index.md` for compile order.
+5. Validate cross-links with `mdcp check` — do not edit generated compile output or `refs.json` by hand.
 
 ### Step 4: Review and Refactor
 
@@ -93,6 +94,7 @@ Collect these via intake (or from the conversation if already stated):
 | “I’ll leave the old workflow for archaeology”         | Durable shards describe **current** behavior only. Git history keeps the old text. |
 | “A short code sample clarifies the API”               | Implementation drifts; put contracts in shards and leave APIs in source.           |
 | “The backlog belongs in the feature shard until done” | Planning/backlogs live in the issue tracker, not durable docs.                     |
+| “Everyone knows what that acronym means”              | Define jargon and acronyms in `docs/glossary/` and link from the guides.           |
 
 ## Red Flags — STOP
 
@@ -100,3 +102,4 @@ Collect these via intake (or from the conversation if already stated):
 - Keeping “superseded workflow” / “do not use” sections in durable shards
 - Linking durable docs to pending `.changeset/*.md` files
 - Hand-editing generated compile output instead of fixing shards and re-running `mdcp check`
+- Shipping durable shards that introduce jargon or acronyms without glossary entries

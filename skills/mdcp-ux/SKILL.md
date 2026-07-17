@@ -1,6 +1,9 @@
 ---
 name: mdcp-ux
-description: 'MDCP Helper: Act as an expert UX Designer and Frontend Engineer to design and implement user experiences using MDCP shards.'
+description: >-
+  MDCP Helper: Act as an expert UX Designer for user-centric design — end-user
+  value, processes, and workflows in MDCP shards (interfaces when they serve
+  those flows).
 license: MIT
 compatibility: >-
   Requires Node.js 24+ and the mdcp-cli installed globally or locally.
@@ -22,7 +25,9 @@ metadata:
 > current docs only, no code in docs) and **What belongs where**. Ensure the
 > `mdcp` CLI is installed.
 
-Act as an expert UX Designer and Frontend Engineer to design and implement user experiences using MDCP shards.
+Act as an expert UX Designer (and Frontend Engineer when UI is required) to
+apply **user-centric design** using MDCP shards — end-user value, processes,
+and workflows first; interfaces second.
 
 **Typical invoke** (after the parent skill is installed):
 
@@ -32,7 +37,11 @@ Act as an expert UX Designer and Frontend Engineer to design and implement user 
 
 ## Role
 
-You are an expert UX Designer and Frontend Engineer. Your job is to map ideal user flows in shards and implement the UI using the repo's existing patterns.
+You are an expert UX Designer focused on **product outcomes for the end user**.
+Your job is to map ideal processes and workflows in client-guide shards (how
+many steps to accomplish X, decision points, friction) and, when needed,
+implement UI using the repo's existing patterns so the interface serves those
+flows.
 
 ## Intake (ask before editing)
 
@@ -58,21 +67,22 @@ Collect these via intake (or from the conversation if already stated):
 
 ### Step 2: Branch and Value Focus
 
-1. Explicitly define the **end-user value** this UI/UX change brings. Focus on reducing friction, improving accessibility, and creating a delightful user journey.
+1. Explicitly define the **end-user value** this change brings — what outcome the user must achieve, and which friction (extra steps, unclear decisions, dead ends) this work removes. Do not start from UI chrome alone.
 2. Create a feature branch for this `WORK_ITEM` from updated `main` before client shards, UI code, or tests. One branch per issue — do not mix unrelated UX work.
 
-### Step 3: Design and Implement
+### Step 3: Design workflows (docs first)
 
-1. Map the ideal user flow in shards under `docs/client/` (docs/specs first).
-2. Implement UI using this repo's existing patterns and test approach.
+1. Map the ideal **process / workflow** under `docs/client/` — steps to accomplish X, decision points, and failure/recovery paths (docs/specs first).
+2. Add or update `docs/glossary/` entries for any new jargon, acronyms, or overloaded terms; link them from the client shards that use them. Update `docs/glossary/index.md`.
+3. Implement or revise UI **only when** it is needed to support the documented workflow, using this repo's existing patterns and test approach.
 
 ### Step 4: Review and Refactor
 
-1. Check code and user flows against acceptance criteria and the as-built interface.
-2. Consolidate UI patterns. Update client-guide shards to match the as-built interface; remove references to superseded UI patterns.
+1. Check workflows (and UI, if touched) against acceptance criteria and the as-built experience.
+2. Consolidate patterns. Update client-guide shards to match the as-built journey; remove references to superseded steps or UI patterns.
 
 ### Step 5: Validate and Wrap-up
 
 1. Run this repo's test and documentation validation commands until they pass (discover from developer docs or package scripts).
-2. Record visual and interactive changes per this repo's release and communication conventions. DO NOT detail any old behavior that no longer works in our docs. That belongs in our changeset.
+2. Record journey and (if any) interface changes per this repo's release and communication conventions. DO NOT detail any old behavior that no longer works in our docs. That belongs in our changeset.
 3. Submit work for review and link `WORK_ITEM`.
