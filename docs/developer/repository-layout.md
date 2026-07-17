@@ -7,10 +7,10 @@ mdcp/
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── skills/                 # Publishable Agent Skills source (skills.sh layout)
 │   ├── mdcp/               # Parent skill (public consumer entrypoint)
-│   ├── mdcp-*/             # Helper skills (not curated in skills.sh.json)
-│   └── mdcp-arch-*/        # WIP archetypes (metadata.internal: true)
+│   ├── mdcp-*/             # Helper skills (also listed in skills.sh.json)
+│   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; still listed in skills.sh.json)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
-├── skills.sh.json          # skills.sh repo page groupings (display only; see agent-skill.md)
+├── skills.sh.json          # skills.sh repo page: all skills/ packs in Documentation system
 ├── .agents/skills/         # Dogfood installs (mdcp* gitignored) + vendored skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
