@@ -44,8 +44,9 @@ docs until review instead of destructive overwrite. The project’s glossary
 - **Architecture-as-shards / ADR drafting** — use
   [mdcp-design-architecture](./mdcp-design-architecture.md).
 - **End-user / client journey and workflow design** — use [mdcp-ux](./mdcp-ux.md).
-- **Code TDD rituals, atomic commit grouping, or local engineering process** —
-  out of scope; use separate coding skills when implementing product code.
+- **Code TDD rituals, [Atomic commit groups](../../../glossary/atomic-commit-groups.md), or local engineering process during bootstrap** —
+  out of scope for this helper’s bootstrap session; day-to-day helpers inherit
+  parent QA (including commit groups) when they produce delivery plans.
 - **Inventing the inclusion bar without the end user** — the bar is project
   judgment recorded with the people who own the docs, not a one-size-fits-all list.
 

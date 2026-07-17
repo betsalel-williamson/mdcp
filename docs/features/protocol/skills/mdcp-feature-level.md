@@ -21,9 +21,12 @@ of drifting in chat-only designs.
 
 ## What this helper is for
 
+See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the plan-field contract.
+
 | Obligation            | As-built expectation                                                                                        |
 | --------------------- | ----------------------------------------------------------------------------------------------------------- |
 | Work-item intake      | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                      |
+| Atomic commit groups  | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval          |
 | One focused branch    | Branch from updated `main` for a single issue; do not mix unrelated features                                |
 | Place by audience     | User-facing work → `docs/features/` + `docs/client/`; maintainer-only → `docs/developer/` only              |
 | Docs first            | Update guide shards and indexes before product code; put contracts in shards, not implementation dumps      |

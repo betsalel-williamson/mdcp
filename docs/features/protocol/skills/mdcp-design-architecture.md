@@ -21,9 +21,12 @@ instead of living only in chat or a thousand-line wiki page.
 
 ## What this helper is for
 
+See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the plan-field contract.
+
 | Obligation                  | As-built expectation                                                                                    |
 | --------------------------- | ------------------------------------------------------------------------------------------------------- |
 | Capture architecture intent | Draft system diagrams, API/data contracts, and boundaries as shards under `docs/features/`              |
+| Atomic commit groups        | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval      |
 | Land durable decisions      | Record accepted choices as ADRs under `docs/features/adr/` when the repo uses that layout               |
 | Keep docs sharded           | Prefer **one primary concern per shard**; update feature/ADR `index.md` so new shards are discoverable  |
 | Brownfield hygiene          | Split or retire legacy architecture monoliths; remove superseded planning from durable design shards    |
