@@ -14,7 +14,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ## Skill verification
 
-- [skill content lint](./skill-content-lint.md)
 - [live skill eval](./live-skill-eval.md)
 
 ## Format and compile terms

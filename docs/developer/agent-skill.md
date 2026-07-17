@@ -40,17 +40,16 @@ When changing skill instructions:
 1. Edit `skills/mdcp/SKILL.md` (and `references/` as needed) — keep the activation body under 500 lines; put depth in `references/`.
 2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
 3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs or `skills.sh.json` yet.
-4. Run `pnpm skill:update` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
+4. Run `pnpm skill:update` after skill edits so local agents pick up changes, then `pnpm skill:validate` and `pnpm docs:check`.
 
 ## Verification
 
 | Command               | Purpose                                                                                   |
 | --------------------- | ----------------------------------------------------------------------------------------- |
-| `pnpm skill:lint`     | MDCP content lint on parent `SKILL.md` (phrases, frontmatter, line budget)                |
 | `pnpm skill:validate` | [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
 | `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                |
 
-Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [live skill eval](../glossary/live-skill-eval.md).
+`pnpm skill:validate` runs in local `pnpm check` and GitHub Actions CI. It is not a [live skill eval](../glossary/live-skill-eval.md).
 
 ## Live skill evals (optional, local)
 
@@ -62,7 +61,7 @@ Qualitative with/without-skill grading is documented in [Live skill evals](./liv
 2. Install documents the parent skill via `npx skills add` (complementary archetype skills stay unpublished in consumer docs until ready).
 3. Parent skill encodes bootstrap / smallest-context / hard rules for docs-as-code agents.
 4. Skill is host-agnostic — no Marketplace-only required steps.
-5. [`skill content lint`](../glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.
+5. `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) passes locally and in CI for changes under `skills/`.
 6. [`skills.sh.json`](../../skills.sh.json) lists the parent and release-ready helpers in the **Documentation system** group — not WIP `mdcp-arch-*` packs.
 
 ## Publishing the skill pack
@@ -104,7 +103,7 @@ cached, so updates can lag.
 skills/                     publishable Agent Skill packs (source of truth)
 skills.sh.json              display groupings for the skills.sh repo page
 tests/skills/*/evals/       optional live eval fixtures (not on skills.sh)
-pnpm skill:lint|validate    CI/static gates on skills/ (not on skills.sh.json)
+pnpm skill:validate         CI/static gate on skills/ (not on skills.sh.json)
 ```
 
 Current policy:
