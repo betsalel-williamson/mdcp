@@ -33,7 +33,7 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 | [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | ADRs, RFCs          | `features/protocol/`, `features/`    |
 | [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | End-user experience | `client/`                            |
 
-Index: [skills.md](../../docs/skills.md).
+Index: [skills.md](../../docs/skills.md). Some helpers also have optional [live skill eval](../live-skill-evals.md) suites under `tests/skills/`.
 
 ## Three-tier authoring obligations
 

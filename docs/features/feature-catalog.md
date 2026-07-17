@@ -24,6 +24,8 @@ Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdc
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
+Optional local with/without-skill grading for helpers lives under `tests/skills/*/evals/` — see [Live skill evals](./live-skill-evals.md). Not a CI gate.
+
 ## Check gate (P0.4)
 
 Structural validation: orphans → compile → refs → **links** → xrefs; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md). Latency targets for large shard sets: [Performance goals and review](./protocol/performance.md).

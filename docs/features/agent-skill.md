@@ -54,6 +54,8 @@ Then start bootstrap:
 
 Zero-install: copy `skills/mdcp/` from this repository into the consumer's `.agents/skills/mdcp/`. Do not document complementary archetype install commands until those skills are ready for use.
 
+Qualitative checks of skill behavior (with vs without the skill) use [Live skill evals](./live-skill-evals.md). Static gates remain `pnpm skill:lint` and `pnpm skill:validate`.
+
 ## Quality Assurance (QA) Principles
 
 When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
