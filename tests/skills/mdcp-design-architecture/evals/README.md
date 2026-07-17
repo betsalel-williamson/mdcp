@@ -22,10 +22,10 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Product 
 | Eval                        | With skill | Without skill | Notes                                                             |
 | --------------------------- | ---------- | ------------- | ----------------------------------------------------------------- |
 | 1 ADR draft                 | Pass       | Pass          | Weak alone — baseline often drafts ADRs correctly                 |
-| 2 Architecture shard update | Pass       | Partial       | Baseline may retain residual `cache-v1` wording after cleanup     |
+| 2 Architecture shard update | Pass       | Pass          | Weak alone — baseline can rewrite intent-level arch shards        |
 | 3 Design-only scope         | Pass       | Fail          | Primary discriminator — baseline implements packages/, tests, CLI |
 
-Live runs are local-only (not a CI gate). Workspace artifacts stay under `.agents/skills/mdcp-design-architecture-workspace/` (gitignored).
+Aggregate (iteration-1): with-skill **100%** vs without-skill **80%** (delta **+0.20**). Live runs are local-only (not a CI gate). Workspace artifacts stay under `.agents/skills/mdcp-design-architecture-workspace/` (gitignored).
 
 ## Run path (skill-creator)
 
