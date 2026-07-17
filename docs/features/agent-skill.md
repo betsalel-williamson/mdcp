@@ -54,7 +54,7 @@ Then start bootstrap:
 
 Zero-install: copy `skills/mdcp/` from this repository into the consumer's `.agents/skills/mdcp/`. Do not document complementary archetype install commands until those skills are ready for use.
 
-Qualitative checks of skill behavior (with vs without the skill) are maintainer workflow — see [Live skill evals](../developer/live-skill-evals.md). Static gates remain `pnpm skill:lint` and `pnpm skill:validate`.
+Qualitative checks of skill behavior (with vs without the skill) are maintainer workflow — see [Live skill evals](../developer/live-skill-evals.md). The static CI gate is `pnpm skill:validate`.
 
 ## Quality Assurance (QA) Principles
 

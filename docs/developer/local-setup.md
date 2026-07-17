@@ -27,7 +27,7 @@ If you use coding agents with helper skills ([helper skills](../../docs/skills.m
 | `pnpm run typecheck`     | TypeScript across packages                                                                                                           |
 | `pnpm run lint`          | ESLint on TypeScript sources                                                                                                         |
 | `pnpm run format:check`  | Prettier check                                                                                                                       |
-| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check                                                                       |
+| `pnpm run check`         | Full gate including skill:validate and docs:check                                                                                    |
 | `pnpm skill:update`      | Refresh vendor-managed dogfood installs under `.agents/skills/` from `skills/` (alias: `skill:install`; do not hand-edit `.agents/`) |
 | `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs)                                                             |
 | `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                                                                                        |

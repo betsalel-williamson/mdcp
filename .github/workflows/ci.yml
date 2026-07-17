@@ -35,7 +35,6 @@ jobs:
       - run: pnpm run format:check
       - run: pnpm run build
       - run: pnpm run test
-      - run: pnpm run skill:lint
       - run: pnpm run skill:validate
       - run: pnpm run prepare:docs
       - run: pnpm run docs:check

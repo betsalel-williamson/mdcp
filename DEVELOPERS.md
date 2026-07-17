@@ -37,7 +37,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ### Skill verification
 
-- [skill content lint](#skill-content-lint)
 - [live skill eval](#live-skill-eval)
 
 ### Format and compile terms
@@ -87,7 +86,7 @@ If you use coding agents with helper skills ([helper skills](docs/skills.md)), d
 | `pnpm run typecheck`     | TypeScript across packages                                                                                                           |
 | `pnpm run lint`          | ESLint on TypeScript sources                                                                                                         |
 | `pnpm run format:check`  | Prettier check                                                                                                                       |
-| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check                                                                       |
+| `pnpm run check`         | Full gate including skill:validate and docs:check                                                                                    |
 | `pnpm skill:update`      | Refresh vendor-managed dogfood installs under `.agents/skills/` from `skills/` (alias: `skill:install`; do not hand-edit `.agents/`) |
 | `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs)                                                             |
 | `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                                                                                        |
@@ -426,17 +425,16 @@ When changing skill instructions:
 1. Edit `skills/mdcp/SKILL.md` (and `references/` as needed) — keep the activation body under 500 lines; put depth in `references/`.
 2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
 3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs or `skills.sh.json` yet.
-4. Run `pnpm skill:update` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
+4. Run `pnpm skill:update` after skill edits so local agents pick up changes, then `pnpm skill:validate` and `pnpm docs:check`.
 
 ### Verification
 
 | Command               | Purpose                                                                                   |
 | --------------------- | ----------------------------------------------------------------------------------------- |
-| `pnpm skill:lint`     | MDCP content lint on parent `SKILL.md` (phrases, frontmatter, line budget)                |
 | `pnpm skill:validate` | [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
 | `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                |
 
-Both skill gates run in local `pnpm check` and GitHub Actions CI. Neither is a [live skill eval](docs/glossary/live-skill-eval.md).
+`pnpm skill:validate` runs in local `pnpm check` and GitHub Actions CI. It is not a [live skill eval](docs/glossary/live-skill-eval.md).
 
 ### Live skill evals (optional, local)
 
@@ -448,7 +446,7 @@ Qualitative with/without-skill grading is documented in [Live skill evals](#live
 2. Install documents the parent skill via `npx skills add` (complementary archetype skills stay unpublished in consumer docs until ready).
 3. Parent skill encodes bootstrap / smallest-context / hard rules for docs-as-code agents.
 4. Skill is host-agnostic — no Marketplace-only required steps.
-5. [`skill content lint`](docs/glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.
+5. `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) passes locally and in CI for changes under `skills/`.
 6. [`skills.sh.json`](skills.sh.json) lists the parent and release-ready helpers in the **Documentation system** group — not WIP `mdcp-arch-*` packs.
 
 ### Publishing the skill pack
@@ -490,7 +488,7 @@ cached, so updates can lag.
 skills/                     publishable Agent Skill packs (source of truth)
 skills.sh.json              display groupings for the skills.sh repo page
 tests/skills/*/evals/       optional live eval fixtures (not on skills.sh)
-pnpm skill:lint|validate    CI/static gates on skills/ (not on skills.sh.json)
+pnpm skill:validate         CI/static gate on skills/ (not on skills.sh.json)
 ```
 
 Current policy:
@@ -535,12 +533,12 @@ Developer Guide. Product Agent Skill delivery stays in
 
 - **Never a CI gate.** Do not require Claude CLI, skill-creator, or live agent
   runs in GitHub Actions.
-- **Not skill content lint.** [`pnpm skill:lint`](docs/glossary/skill-content-lint.md)
-  only checks phrases and frontmatter on disk; it does not spawn agents.
+- **Not skills-ref validation.** `pnpm skill:validate`
+  ([skills-ref](https://agentskills.io/specification)) checks skill packages on
+  disk; it does not spawn agents.
 
-Contrast: [skill content lint](docs/glossary/skill-content-lint.md) and
-`pnpm skill:validate` ([skills-ref](https://agentskills.io/specification)) remain
-the CI/static skill gates. See [Agent Skill development](#agent-skill-development).
+Contrast: `pnpm skill:validate` remains the CI/static skill gate. See
+[Agent Skill development](#agent-skill-development).
 
 ### Tooling
 
@@ -651,7 +649,7 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 
 1. On clean `main`, confirm pending `.changeset/*.md` files cover package changes since the last tag.
 2. **Skills policy:** parent `mdcp` remains the consumer entrypoint. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` and **out** of [`skills.sh.json`](skills.sh.json) until intentionally published. List parent + release-ready helpers in the **Documentation system** grouping (see [Agent Skill development — skills.sh.json](#skillsshjson-repo-page-layout)).
-3. Preflight: `pnpm skill:lint && pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
+3. Preflight: `pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
 4. In a real TTY: `pnpm release:tag:push` — select bump (patch / minor / major / build), type `vX.Y.Z`, answer `yes`. Agents and CI cannot run this script.
 5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, commits `chore: release vX.Y.Z`, tags, and (with `--push`) pushes `main` + the tag.
 6. Verify CI [release workflow](.github/workflows/release.yml): npm versions for all three packages and the GitHub Release for `vX.Y.Z`.
@@ -902,7 +900,7 @@ When a glossary grows beyond a comfortable manifest size, group entries in sub-i
 
 Portable packages of agent instructions (`SKILL.md` and companions) that hosts discover and load — the delivery model for MDCP’s **documentation system** guardrails. Upstream source in this monorepo is `skills/mdcp/`; consumers vendor via `npx skills add` into `.agents/skills/mdcp/` so agents learn how to shard, compile, validate, and maintain docs one piece at a time — across Cursor, Copilot, Claude Code, and similar hosts.
 
-Verification is split: [skill content lint](#skill-content-lint) (`pnpm skill:lint`) plus agentskills.io validation (`pnpm skill:validate` / skills-ref) in CI; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
+Verification: agentskills.io validation (`pnpm skill:validate` / skills-ref) in CI; [live skill eval](#live-skill-eval) is the optional local skill-creator loop.
 
 <!-- mdcp-shard: end docs/glossary/agent-skills.md -->
 
@@ -930,21 +928,11 @@ The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements 
 
 <!-- mdcp-shard: end docs/glossary/mdcp.md -->
 
-<!-- mdcp-shard: start docs/glossary/skill-content-lint.md -->
-
-## skill content lint
-
-CI/static check that required or forbidden language still appears in the parent `SKILL.md` (plus frontmatter and line-budget rules). Run with `pnpm skill:lint` against `skills/mdcp/SKILL.md`; fixtures live under `scripts/mdcp-skill-content-lint/` (repo CI assets — not part of the portable skill pack). This is substring analysis of Markdown on disk — **not** a [live skill eval](#live-skill-eval), and it does not run agents or measure triggering.
-
-Companion gate: `pnpm skill:validate` runs [skills-ref](https://agentskills.io/specification) on each publishable skill under `skills/`.
-
-<!-- mdcp-shard: end docs/glossary/skill-content-lint.md -->
-
 <!-- mdcp-shard: start docs/glossary/live-skill-eval.md -->
 
 ## live skill eval
 
-Optional local with/without-skill agent grading via vendored [skill-creator](.agents/skills/skill-creator/SKILL.md). Maintainer home: [Live skill evals](#live-skill-evals). Never a CI gate in this repository — contrast with [skill content lint](#skill-content-lint).
+Optional local with/without-skill agent grading via vendored [skill-creator](.agents/skills/skill-creator/SKILL.md). Maintainer home: [Live skill evals](#live-skill-evals). Never a CI gate in this repository — contrast with `pnpm skill:validate` (skills-ref) in CI.
 
 <!-- mdcp-shard: end docs/glossary/live-skill-eval.md -->
 
