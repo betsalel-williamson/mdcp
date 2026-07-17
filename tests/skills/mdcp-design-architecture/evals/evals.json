@@ -3,28 +3,27 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "WORK_ITEM=Draft ADR 0004 rejecting a hosted 'context dump' export API for agents (prefer skill + one-shard reads). WORK_ITEM_LOOKUP=evals/files/design-fixture/docs/developer/agent-work-item-tracking.md. Using /mdcp-design-architecture, record the decision as a durable ADR under docs/features/adr/, update the ADR index, and keep the feature catalog describing current behavior only. Do not implement CLI or package code.",
-      "expected_output": "Creates or updates an ADR under docs/features/adr/ (Context / Decision / Consequences), links it from the ADR index, does not add product/package implementation, and does not dump large code samples into the ADR.",
+      "prompt": "WORK_ITEM=Capture architecture for a proposed 'compile cache' boundary in this greenfield docs tree: components, data flow, and acceptance-level contracts as MDCP shards. Also record an ADR rejecting a hosted 'context dump' export API (prefer skill + one-shard reads). WORK_ITEM_LOOKUP=evals/files/greenfield-design/docs/developer/agent-work-item-tracking.md. Using /mdcp-design-architecture, create small focused shards under docs/features/ (and docs/features/adr/ for the decision), update the feature and ADR indexes with links, and keep product code untouched. Do not invent a deep multi-option design critique — if deeper design thinking is needed, say so and recommend pairing with a separate design-thinking skill, then still land the sharded MDCP record for the agreed intent. Do not implement CLI or package code.",
+      "expected_output": "Creates multiple focused architecture/ADR shards under docs/features/ (not one mega-file), updates indexes with links, leaves packages/ unchanged, avoids large impl dumps, and mentions pairing/deferral when deep design critique is out of scope for this helper.",
       "files": [
-        "evals/files/design-fixture/README.md",
-        "evals/files/design-fixture/docs/features/adr/index.md",
-        "evals/files/design-fixture/docs/features/adr/0001-example.md",
-        "evals/files/design-fixture/docs/features/index.md",
-        "evals/files/design-fixture/docs/developer/agent-work-item-tracking.md",
-        "evals/files/design-fixture/packages/example-cli/src/index.ts"
+        "evals/files/greenfield-design/README.md",
+        "evals/files/greenfield-design/docs/developer/agent-work-item-tracking.md",
+        "evals/files/greenfield-design/docs/features/index.md",
+        "evals/files/greenfield-design/docs/features/adr/index.md",
+        "evals/files/greenfield-design/packages/example-cli/src/index.ts"
       ],
       "assertions": [
         {
-          "name": "creates_adr_markdown",
-          "description": "Edited or created a Markdown ADR under docs/features/adr/ (not only chat text)"
+          "name": "creates_multiple_focused_shards",
+          "description": "Creates at least two Markdown shards under docs/features/ (and/or docs/features/adr/) rather than one oversized monolith file"
         },
         {
-          "name": "updates_adr_index",
-          "description": "Updated docs/features/adr/index.md to list the new ADR"
+          "name": "updates_feature_or_adr_indexes",
+          "description": "Updates docs/features/index.md and/or docs/features/adr/index.md so new shards are listed and discoverable"
         },
         {
-          "name": "adr_has_context_decision_consequences",
-          "description": "ADR includes Context, Decision, and Consequences (or equivalent sections)"
+          "name": "records_adr_decision",
+          "description": "Records the context-dump rejection (or equivalent) as an ADR under docs/features/adr/ with Context/Decision/Consequences or equivalent sections"
         },
         {
           "name": "no_product_code_edits",
@@ -32,41 +31,54 @@
         },
         {
           "name": "no_large_impl_dumps",
-          "description": "ADR body has no large fenced implementation snippets (no multi-function TypeScript/JavaScript dumps); at most short CLI command examples if needed"
+          "description": "Architecture/ADR shards have no large fenced implementation snippets (no multi-function TypeScript/JavaScript dumps); at most short CLI command examples if needed"
+        },
+        {
+          "name": "advises_design_thinking_pairing",
+          "description": "When deep design critique is in play, states that deeper design thinking belongs with a separate design-thinking skill or human review — while still producing MDCP shards for the agreed intent"
         }
       ]
     },
     {
       "id": 2,
-      "prompt": "WORK_ITEM=Update the architecture notes for a proposed 'compile cache' boundary: document components, data flow, and acceptance-level contracts. WORK_ITEM_LOOKUP=evals/files/design-fixture/docs/developer/agent-work-item-tracking.md. Using /mdcp-design-architecture, revise the existing architecture shard under docs/features/ (and protocol notes if needed) so intent and boundaries are clear. Retire any superseded design bullets in that shard. Do not write tests or implementation.",
-      "expected_output": "Updates docs/features/ architecture / protocol shards with system intent (diagrams, contracts, data model at design level), removes superseded design text from durable shards, and leaves package code untouched.",
+      "prompt": "WORK_ITEM=Break the legacy docs/ARCHITECTURE.md monolith into MDCP architecture shards: one concern per shard, related via indexes and links, promote the durable decision into an ADR, and retire superseded planning/backlog text from durable docs. WORK_ITEM_LOOKUP=evals/files/brownfield-monolith/docs/developer/agent-work-item-tracking.md. Using /mdcp-design-architecture, migrate content into docs/features/ (and docs/features/adr/), update indexes, mark or retire the monolith / stale archaeology bullets, and do not implement packages/ or author docs/client/ guides as primary work.",
+      "expected_output": "Splits the monolith into multiple docs/features/ shards plus an ADR, updates indexes, removes or retires superseded backlog/archaeology from durable design docs, leaves packages/ untouched, and does not treat client-guide authorship as in-scope primary work.",
       "files": [
-        "evals/files/design-fixture/README.md",
-        "evals/files/design-fixture/docs/features/compile-cache-architecture.md",
-        "evals/files/design-fixture/docs/features/index.md",
-        "evals/files/design-fixture/docs/developer/agent-work-item-tracking.md",
-        "evals/files/design-fixture/packages/example-cli/src/index.ts"
+        "evals/files/brownfield-monolith/README.md",
+        "evals/files/brownfield-monolith/docs/ARCHITECTURE.md",
+        "evals/files/brownfield-monolith/docs/developer/agent-work-item-tracking.md",
+        "evals/files/brownfield-monolith/docs/features/index.md",
+        "evals/files/brownfield-monolith/docs/features/adr/index.md",
+        "evals/files/brownfield-monolith/packages/example-cli/src/index.ts"
       ],
       "assertions": [
         {
-          "name": "updates_architecture_shard",
-          "description": "Modified a shard under docs/features/ describing architecture (components, flow, or contracts)"
+          "name": "splits_monolith_into_shards",
+          "description": "Creates at least two focused shards under docs/features/ (and/or docs/features/adr/) migrated from the legacy ARCHITECTURE.md monolith"
         },
         {
-          "name": "intent_level_design",
-          "description": "Design is intent-level (what/why/boundaries), not a step-by-step implementation guide with large code"
+          "name": "updates_indexes_with_links",
+          "description": "Updates docs/features/index.md and docs/features/adr/index.md so the new shards/ADR are listed"
         },
         {
-          "name": "removes_superseded_design",
-          "description": "Superseded 'old approach' planning bullets in the fixture shard are removed or replaced with as-intended design"
+          "name": "promotes_decision_to_adr",
+          "description": "Promotes the durable 'reject context dump API' decision into docs/features/adr/ (not left only inside the monolith)"
+        },
+        {
+          "name": "retires_superseded_planning",
+          "description": "Removes or clearly retires superseded migration-backlog / archaeology / pending-changeset links from durable architecture docs (tracker owns backlog)"
+        },
+        {
+          "name": "monolith_retired_or_marked",
+          "description": "Does not leave docs/ARCHITECTURE.md as the sole living architecture record — content is migrated and the monolith is archived, stubbed, or clearly marked superseded"
         },
         {
           "name": "no_product_code_edits",
-          "description": "No package/product code changes"
+          "description": "No package/product code changes under packages/"
         },
         {
-          "name": "mentions_system_value",
-          "description": "Mentions or implies end-user / system value of the architectural boundary"
+          "name": "defers_client_guide",
+          "description": "Does not treat docs/client/ end-user guide authorship as in-scope primary work for this helper"
         }
       ]
     },
