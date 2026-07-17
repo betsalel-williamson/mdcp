@@ -183,7 +183,7 @@ Task-type instructions live in independent helper skills. Once the MDCP CLI is i
 
 | Helper Skill               | Description                                            |
 | -------------------------- | ------------------------------------------------------ |
-| `mdcp-getting-started`     | Bootstrap MDCP in a new repository                     |
+| `mdcp-getting-started`     | Bootstrap MDCP + optional first-feature tutorial       |
 | `mdcp-doc-only`            | Documentation-only work                                |
 | `mdcp-design-architecture` | High-level design and planning (RFCs, ADRs)            |
 | `mdcp-feature-level`       | Implement and document features (docs-first, then TDD) |
