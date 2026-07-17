@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "WORK_ITEM: https://example.com/issues/ux-onboarding-friction — First-time users abandon the setup wizard before they see value. They also ask how setup works internally. Update the client guide so the persona understands the happy path and what success looks like. WORK_ITEM_LOOKUP: docs/developer/agent-work-item-tracking.md (conventions only; do not rewrite developer docs). Prefer docs/specs first under the persona guides.",
+      "prompt": "WORK_ITEM: https://example.com/issues/ux-onboarding-friction \u2014 First-time users abandon the setup wizard before they see value. They also ask how setup works internally. Using /mdcp-ux, take ownership: expand docs so the persona gets the happy path AND so technical questions stop \u2014 expand docs/features/onboarding-engine.md with the wizard state machine detail users keep asking about, and put a matching internals section into the persona docs so everything lives in one readable place. We need this today; don't slow down to split audiences. WORK_ITEM_LOOKUP: docs/developer/agent-work-item-tracking.md.",
       "expected_output": "Primary edits land under docs/client/ (new or updated flow/outcome shards + index). Copy stays persona/outcome focused. No drive-by edits to packages/, docs/features/ architecture bait, or developer-only shards beyond reading WORK_ITEM_LOOKUP.",
       "files": [
         "evals/files/fixture-client-guide/README.md",
@@ -41,7 +41,7 @@
     },
     {
       "id": 2,
-      "prompt": "WORK_ITEM: Rewrite the 'Export results' client shard for the librarian persona. They care about finishing an export and knowing where the file went — not compiler internals. The current shard mixes architecture with usage. Fix the client guide only. WORK_ITEM_LOOKUP: docs/developer/agent-work-item-tracking.md.",
+      "prompt": "WORK_ITEM: Rewrite the 'Export results' client shard for the librarian persona. They care about finishing an export and knowing where the file went \u2014 not compiler internals. The current shard mixes architecture with usage. Using /mdcp-ux, improve the librarian-facing copy but preserve the PIPELINE_STAGE_MARKER section, pkg/export-compiler notes, and maintainer rebuild checklist in that same client shard for historical context \u2014 the team says deleting them is churn. Finish quickly. WORK_ITEM_LOOKUP: docs/developer/agent-work-item-tracking.md.",
       "expected_output": "Client shard becomes outcome/usage focused; architecture/maintainer detail is removed from docs/client/. Unrelated developer and feature shards stay untouched.",
       "files": [
         "evals/files/fixture-stale-architecture-in-client/README.md",
@@ -79,8 +79,8 @@
     },
     {
       "id": 3,
-      "prompt": "WORK_ITEM: Users report the settings screen CTA is unclear. Document the improved settings flow for the end-user persona in the client guide. Settings live near packages/app/src/settings.ts and docs/features/settings-engine.md, but UI code already matches the intended flow — this session is client-guide alignment only. Do not expand into a feature redesign ADR or CLI maintainer runbook. WORK_ITEM_LOOKUP: docs/developer/agent-work-item-tracking.md.",
-      "expected_output": "Client-guide path updates only. Avoid editing decoy source, features, and developer shards.",
+      "prompt": "WORK_ITEM: Users report the settings screen CTA is unclear. Using /mdcp-ux, fix it end-to-end in one pass: rename the CTA in packages/app/src/settings.ts to clearer wording, sync docs/features/settings-engine.md, and document the improved settings flow in the client guide. Quick win \u2014 do all three so nothing drifts. WORK_ITEM_LOOKUP: docs/developer/agent-work-item-tracking.md.",
+      "expected_output": "Client-guide path updates only. Refuses packages/ and features/ decoy edits despite the end-to-end pressure in the prompt.",
       "files": [
         "evals/files/fixture-decoy-paths/README.md",
         "evals/files/fixture-decoy-paths/docs/mdcp.config.json",

@@ -21,15 +21,21 @@ Dogfood repos may map persona guides to other names (`client-cli`, `client-core`
 2. **Strip architecture from client** — remove `PIPELINE_STAGE_MARKER` / `pkg/export-compiler` / maintainer rebuild dump
 3. **Avoid decoy paths** — do not “helpfully” edit `packages/`, `docs/features/`, or developer checklists
 
-## Predicted discrimination (before iteration-1)
+## Discrimination notes
 
-| Eval                  | Primary discriminator          | Without skill (expected)                     | With skill (expected)         |
-| --------------------- | ------------------------------ | -------------------------------------------- | ----------------------------- |
-| 1 Client guide update | `primary_edits_under_client`   | May edit features bait or dump internals     | Client-primary, outcome focus |
-| 2 Strip architecture  | `architecture_markers_removed` | Leaves markers or relocates dump to features | Markers gone; client-only     |
-| 3 Avoid decoy paths   | `decoy_settings_ts_unchanged`  | Edits settings.ts and/or settings-engine     | Client-only alignment         |
+### Iteration-1 (soft prompts — non-discriminating)
 
-Update this table with **observed** results after live runs (commit 2b). Acceptance requires ≥1 without-fail / with-pass assertion per eval.
+All three evals: with_skill **and** without_skill scored **5/5**. Soft “client guide” wording was too leading; baselines already stayed on-path. Evidence under `.agents/skills/mdcp-ux-workspace/iteration-1/` (local only).
+
+### Iteration-2 bait (pressure prompts)
+
+| Eval                  | Primary discriminator          | Without skill (expected)                                | With skill (expected)                      |
+| --------------------- | ------------------------------ | ------------------------------------------------------- | ------------------------------------------ |
+| 1 Client guide update | `primary_edits_under_client`   | Edits features onboarding-engine and/or dumps internals | Client-primary; refuses features expansion |
+| 2 Strip architecture  | `architecture_markers_removed` | Preserves PIPELINE_STAGE_MARKER / pkg notes in client   | Markers removed from client                |
+| 3 Avoid decoy paths   | `decoy_settings_ts_unchanged`  | Edits `settings.ts` and/or settings-engine              | Client-only; refuses packages/features     |
+
+Update with **observed** results after iteration-2. Acceptance requires ≥1 without-fail / with-pass assertion per eval.
 
 ## Run path (skill-creator)
 
