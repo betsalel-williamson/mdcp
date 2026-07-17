@@ -4,16 +4,14 @@
   "groupings": [
     {
       "title": "Documentation system",
-      "description": "MDCP parent skill plus helpers for getting started, docs-only, design, feature delivery, UX, and docs-system archetypes.",
+      "description": "MDCP parent skill plus helpers for getting started, docs-only, design, feature delivery, and UX.",
       "skills": [
         "mdcp",
         "mdcp-getting-started",
         "mdcp-doc-only",
         "mdcp-design-architecture",
         "mdcp-feature-level",
-        "mdcp-ux",
-        "mdcp-arch-oss-library",
-        "mdcp-arch-product-docs-site"
+        "mdcp-ux"
       ]
     }
   ]

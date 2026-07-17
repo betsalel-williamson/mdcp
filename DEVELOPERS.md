@@ -174,10 +174,10 @@ mdcp/
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── skills/                 # Publishable Agent Skills source (skills.sh layout)
 │   ├── mdcp/               # Parent skill (public consumer entrypoint)
-│   ├── mdcp-*/             # Helper skills (also listed in skills.sh.json)
-│   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; still listed in skills.sh.json)
+│   ├── mdcp-*/             # Helper skills (listed in skills.sh.json when release-ready)
+│   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; not in skills.sh.json)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
-├── skills.sh.json          # skills.sh repo page: all skills/ packs in Documentation system
+├── skills.sh.json          # skills.sh repo page: release-ready packs in Documentation system
 ├── .agents/skills/         # Dogfood installs (mdcp* gitignored) + vendored skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
@@ -340,7 +340,7 @@ _Note: GitHub and GitHub Flavored Markdown are trademarks of GitHub, Inc. This p
 
 ## Agent Skill development
 
-Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary helper and archetype skills under `skills/mdcp-*` ship in the same pack; list them all in [`skills.sh.json`](skills.sh.json) under **Documentation system**. Archetype skills (`skills/mdcp-arch-*`) still carry `metadata.internal: true` so the skills CLI hides them from default `--list` / public install prompts until ready — maintainers can surface them with `INSTALL_INTERNAL_SKILLS=1`.
+Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Skill. Upstream source of truth is [`skills/mdcp/SKILL.md`](skills/mdcp/SKILL.md). After install (or local dogfood), agents load it from `.agents/skills/mdcp/`. Complementary helper skills under `skills/mdcp-*` (except WIP archetypes) ship in the same pack and are listed in [`skills.sh.json`](skills.sh.json) under **Documentation system**. Archetype skills (`skills/mdcp-arch-*`) are **not ready to release**: they carry `metadata.internal: true` and stay **out** of `skills.sh.json` until intentionally published. Maintainers can surface them locally with `INSTALL_INTERNAL_SKILLS=1`.
 
 ### Local dogfood
 
@@ -358,7 +358,7 @@ When changing skill instructions:
 
 1. Edit `skills/mdcp/SKILL.md` (and `references/` as needed) — keep the activation body under 500 lines; put depth in `references/`.
 2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
-3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs yet.
+3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs or `skills.sh.json` yet.
 4. Run `pnpm skill:install` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
 
 ### Verification
@@ -382,7 +382,7 @@ Qualitative with/without-skill grading is documented in [Live skill evals](#live
 3. Parent skill encodes bootstrap / smallest-context / hard rules for docs-as-code agents.
 4. Skill is host-agnostic — no Marketplace-only required steps.
 5. [`skill content lint`](docs/glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.
-6. [`skills.sh.json`](skills.sh.json) lists every pack under `skills/` in the **Documentation system** group.
+6. [`skills.sh.json`](skills.sh.json) lists the parent and release-ready helpers in the **Documentation system** group — not WIP `mdcp-arch-*` packs.
 
 ### Publishing the skill pack
 
@@ -392,7 +392,7 @@ Ship `skills/mdcp/` as the consumer entrypoint; helper skills install from the s
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-Complementary `skills/mdcp-arch-*` packs remain WIP for **CLI defaults** (`metadata.internal: true`) — they stay off consumer get-started copy until ready, but they **are** listed in [`skills.sh.json`](skills.sh.json) so the repo page shows the full Documentation system group. Maintainers can install them with `INSTALL_INTERNAL_SKILLS=1`.
+Complementary `skills/mdcp-arch-*` packs remain WIP (`metadata.internal: true`) — keep them off consumer get-started copy **and** out of [`skills.sh.json`](skills.sh.json) until ready to release. Maintainers can install them with `INSTALL_INTERNAL_SKILLS=1`.
 
 There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases).
 
@@ -428,17 +428,16 @@ pnpm skill:lint|validate    CI/static gates on skills/ (not on skills.sh.json)
 
 Current policy:
 
-1. **Group every pack under `skills/`** — the **Documentation system** grouping
-   lists parent `mdcp`, all helpers (`mdcp-getting-started`, `mdcp-doc-only`,
-   `mdcp-design-architecture`, `mdcp-feature-level`, `mdcp-ux`), and both
-   `mdcp-arch-*` archetypes. Keep parent first; order the rest for scanability.
-2. **`metadata.internal` is separate from page groupings** — archetype skills
-   stay hidden from default CLI `--list` / public prompts until the flag drops,
-   even while listed in `skills.sh.json`. Maintainers use
-   `INSTALL_INTERNAL_SKILLS=1` to install them. Consumer get-started still
-   highlights the parent install command.
-3. **When adding a skill under `skills/`** — add its `name:` to the
-   Documentation system `skills` array in the same PR.
+1. **Group release-ready packs** — the **Documentation system** grouping lists
+   parent `mdcp` and helpers (`mdcp-getting-started`, `mdcp-doc-only`,
+   `mdcp-design-architecture`, `mdcp-feature-level`, `mdcp-ux`). Keep parent
+   first; order the rest for scanability.
+2. **Omit WIP archetypes** — `skills/mdcp-arch-*` keep `metadata.internal:
+true` and stay **out** of `skills.sh.json` until intentionally published.
+   Maintainers use `INSTALL_INTERNAL_SKILLS=1` to install them locally.
+3. **When adding a release-ready skill under `skills/`** — add its `name:` to
+   the Documentation system `skills` array in the same PR. Do not add packs
+   that still carry `metadata.internal: true`.
 4. **Live evals are separate** — suite inventory and skill-creator loops live
    under [Live skill evals](#live-skill-evals). They never belong in
    `skills.sh.json`.
@@ -574,7 +573,7 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump. Gr
 Use this for every cut. Do not accumulate one-off milestone checklists in this shard.
 
 1. On clean `main`, confirm pending `.changeset/*.md` files cover package changes since the last tag.
-2. **Skills policy:** parent `mdcp` remains the consumer entrypoint. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` until intentionally published for CLI defaults. List **every** pack under `skills/` in [`skills.sh.json`](skills.sh.json) **Documentation system** groupings (see [Agent Skill development — skills.sh.json](#skillsshjson-repo-page-layout)).
+2. **Skills policy:** parent `mdcp` remains the consumer entrypoint. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` and **out** of [`skills.sh.json`](skills.sh.json) until intentionally published. List parent + release-ready helpers in the **Documentation system** grouping (see [Agent Skill development — skills.sh.json](#skillsshjson-repo-page-layout)).
 3. Preflight: `pnpm skill:lint && pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
 4. In a real TTY: `pnpm release:tag:push` — select bump (patch / minor / major / build), type `vX.Y.Z`, answer `yes`. Agents and CI cannot run this script.
 5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, commits `chore: release vX.Y.Z`, tags, and (with `--push`) pushes `main` + the tag.
