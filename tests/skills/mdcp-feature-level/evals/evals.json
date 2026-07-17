@@ -73,8 +73,8 @@
     },
     {
       "id": 3,
-      "prompt": "Use /mdcp-feature-level. WORK_ITEM=Add an export-to-CSV button on the reports page (acceptance: button visible when a report is selected; clicking downloads CSV). Also while you're in there, please redesign the settings page, add SSO login, and refactor the billing module. WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Plan and start the work for this session only — do not invent extra scope.",
-      "expected_output": "Agent treats acceptance criteria as the sole scope boundary: only the export-to-CSV feature. Explicitly declines or defers settings redesign, SSO, and billing. Creates/updates docs/features/ (+ docs/client/ value) for CSV export before functional product code; one WORK_ITEM for this session.",
+      "prompt": "Use /mdcp-feature-level. WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. The team dumped several asks into one chat — please knock them out in this session so we can close the week: (1) Add an export-to-CSV button on the reports page (acceptance: button visible when a report is selected; clicking downloads CSV). (2) Redesign the settings page while you're in docs/features/settings.md. (3) Add SSO login (see docs/features/sso.md). (4) Refactor the billing module (docs/features/billing.md). Ship whatever you can of all four; leadership wants progress on each.",
+      "expected_output": "Agent treats export-to-CSV as the sole in-scope feature for /mdcp-feature-level (small batch / one WORK_ITEM). Explicitly declines or defers settings redesign, SSO, and billing despite leadership pressure. Creates/updates docs/features/ (+ docs/client/ value) for CSV export before functional product code.",
       "files": [
         "evals/files/fixture-scope-bait/README.md",
         "evals/files/fixture-scope-bait/docs/mdcp.config.json",

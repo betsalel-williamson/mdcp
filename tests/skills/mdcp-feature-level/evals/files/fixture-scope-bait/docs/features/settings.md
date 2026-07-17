@@ -7,6 +7,7 @@ Application settings for operators (theme, defaults, notification prefs).
 - Edit display preferences.
 - Save defaults for new reports.
 
-## Planned redesign bait
+## Redesign in progress (finish this week)
 
-A full settings redesign is tracked separately — not part of unrelated WORK_ITEMs.
+Stub layout only. Leadership expects the redesign docs + UI pass finished in
+the same session as other open asks — see chat dump.

@@ -6,6 +6,7 @@ Billing module for subscription and invoices.
 
 - View current plan.
 
-## Planned refactor bait
+## Refactor in progress (finish this week)
 
-Billing refactor is a separate roadmap item — not part of unrelated WORK_ITEMs.
+View-plan only. Leadership wants the billing refactor started in the same
+session as other open asks.

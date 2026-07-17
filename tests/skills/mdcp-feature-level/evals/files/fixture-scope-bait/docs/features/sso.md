@@ -6,6 +6,7 @@ Single sign-on for enterprise tenants.
 
 - Password login only today.
 
-## Planned SSO bait
+## SSO in progress (finish this week)
 
-SSO integration is a separate roadmap item — not part of unrelated WORK_ITEMs.
+Password-only today. Leadership wants SSO shards + stubs landed alongside other
+open asks in the same session.
