@@ -27,11 +27,12 @@ npx skills add anthropics/skills --skill skill-creator
 
 Live eval fixtures live under `tests/skills/<skill>/evals/` so publishable packs under `skills/` stay eval-free (`npx skills` / `pnpm skill:validate` only touch `skills/`).
 
-| Suite path                                                                                            | Subject skill          | Workspace (gitignored)                           |
-| ----------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------ |
-| [`tests/skills/mdcp/evals/`](../../tests/skills/mdcp/evals/README.md)                                 | `mdcp` (parent)        | `.agents/skills/mdcp-workspace/`                 |
-| [`tests/skills/mdcp-getting-started/evals/`](../../tests/skills/mdcp-getting-started/evals/README.md) | `mdcp-getting-started` | `.agents/skills/mdcp-getting-started-workspace/` |
-| [`tests/skills/mdcp-doc-only/evals/`](../../tests/skills/mdcp-doc-only/evals/README.md)               | `mdcp-doc-only`        | `.agents/skills/mdcp-doc-only-workspace/`        |
+| Suite path                                                                                                    | Subject skill              | Workspace (gitignored)                               |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------------------- |
+| [`tests/skills/mdcp/evals/`](../../tests/skills/mdcp/evals/README.md)                                         | `mdcp` (parent)            | `.agents/skills/mdcp-workspace/`                     |
+| [`tests/skills/mdcp-getting-started/evals/`](../../tests/skills/mdcp-getting-started/evals/README.md)         | `mdcp-getting-started`     | `.agents/skills/mdcp-getting-started-workspace/`     |
+| [`tests/skills/mdcp-doc-only/evals/`](../../tests/skills/mdcp-doc-only/evals/README.md)                       | `mdcp-doc-only`            | `.agents/skills/mdcp-doc-only-workspace/`            |
+| [`tests/skills/mdcp-design-architecture/evals/`](../../tests/skills/mdcp-design-architecture/evals/README.md) | `mdcp-design-architecture` | `.agents/skills/mdcp-design-architecture-workspace/` |
 
 Each suite README holds operational run steps and discrimination notes. This shard is the product index.
 
