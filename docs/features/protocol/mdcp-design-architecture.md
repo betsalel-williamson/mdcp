@@ -1,0 +1,68 @@
+# Design-architecture helper
+
+Product capability: the **`mdcp-design-architecture`** helper skill records
+architecture and design decisions as **MDCP shards** so agents and humans can
+load one concern at a time instead of growing a single architecture monolith.
+
+Invoke (after the parent skill is installed):
+
+```text
+/mdcp-design-architecture
+```
+
+Upstream pack: [`skills/mdcp-design-architecture/`](../../../skills/mdcp-design-architecture/SKILL.md).
+Shared helper contract (intake, guide placement): [Helper Skills](./agent-task-prompts.md).
+
+## End-user value
+
+Contributors find the right design note (components, contracts, ADR) in one
+shard read. Architecture intent stays linked through feature and ADR indexes
+instead of living only in chat or a thousand-line wiki page.
+
+## What this helper is for
+
+| Obligation                  | As-built expectation                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Capture architecture intent | Draft system diagrams, API/data contracts, and boundaries as shards under `docs/features/`              |
+| Land durable decisions      | Record accepted choices as ADRs under `docs/features/adr/` when the repo uses that layout               |
+| Keep docs sharded           | Prefer **one primary concern per shard**; update feature/ADR `index.md` so new shards are discoverable  |
+| Brownfield hygiene          | Split or retire legacy architecture monoliths; remove superseded planning from durable design shards    |
+| Stay design-doc scoped      | No product/CLI/TypeScript implementation, no unit tests as delivery, no primary `docs/client/` work     |
+| Parent QA                   | Current intended architecture only; no large implementation dumps; run repo `mdcp check` / docs scripts |
+
+Intake is the same as other work-item helpers: `WORK_ITEM` and
+`WORK_ITEM_LOOKUP` before branching or editing.
+
+## What this helper is not
+
+- **Deep design critique / multi-option trade-off workshops** — pair with a
+  separate design-thinking skill or human review, then record the agreed intent
+  as shards.
+- **Implementing CLI flags, packages, or unit tests** — use
+  [mdcp-feature-level](../../../skills/mdcp-feature-level/SKILL.md).
+- **End-user / client guide polish** — use
+  [mdcp-ux](../../../skills/mdcp-ux/SKILL.md).
+- **Docs-only cleanup with no architecture change** — use
+  [mdcp-doc-only](../../../skills/mdcp-doc-only/SKILL.md).
+- **Bootstrapping MDCP in an empty or legacy repo** — use
+  [mdcp-getting-started](../../../skills/mdcp-getting-started/SKILL.md).
+- **Grading “good systems design” brilliance** — out of scope; this helper owns
+  **MDCP documentation-system** behavior (sharding, indexes, design-doc scope).
+
+When the user asks for end-to-end delivery (design + client guide + code +
+tests) in one session, this helper **MUST** stay on design shards (or ask to
+narrow scope) and state next steps for the other helpers.
+
+## Acceptance (as-built)
+
+A successful design-architecture session typically:
+
+1. Creates or updates focused Markdown under `docs/features/` and/or `docs/features/adr/`
+2. Updates the relevant guide indexes so shards link together
+3. Leaves `packages/` / product `src/` unchanged
+4. Avoids multi-function implementation dumps in durable shards
+5. When deep design critique is requested, advises pairing and still lands the agreed intent as shards
+
+Optional local with/without-skill grading for this helper:
+[mdcp-design-architecture live evals](../../../tests/skills/mdcp-design-architecture/evals/README.md)
+(maintainer workflow — not a CI gate). See [Live skill evals](../../developer/live-skill-evals.md).
