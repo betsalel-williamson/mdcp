@@ -573,6 +573,8 @@ under `skills/` stay eval-free (`npx skills` / `pnpm skill:validate` only touch
 - [mdcp-feature-level](tests/skills/mdcp-feature-level/evals/README.md) —
   subject `mdcp-feature-level`; workspace
   `.agents/skills/mdcp-feature-level-workspace/`
+- [mdcp-ux](tests/skills/mdcp-ux/evals/README.md) — subject `mdcp-ux`;
+  workspace `.agents/skills/mdcp-ux-workspace/`
 
 Each suite README holds operational run steps and discrimination notes. This
 shard is the maintainer index.

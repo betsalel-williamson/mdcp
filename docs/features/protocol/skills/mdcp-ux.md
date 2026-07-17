@@ -70,6 +70,7 @@ A successful UX session typically:
 5. Passes repo tests and docs validation
 6. Links `WORK_ITEM` in review
 
-This helper does not yet ship a dedicated live-eval suite under `tests/skills/`.
+Live evals (optional, not a CI gate):
+[mdcp-ux live evals](../../../../tests/skills/mdcp-ux/evals/README.md).
 See [Live skill evals](../../../developer/live-skill-evals.md) for maintainer
 eval conventions.
