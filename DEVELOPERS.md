@@ -80,17 +80,17 @@ If you use coding agents with helper skills ([helper skills](docs/skills.md)), d
 
 ### Daily commands
 
-| Command                  | Purpose                                                                  |
-| ------------------------ | ------------------------------------------------------------------------ |
-| `pnpm build`             | Build all packages (`mdcp-core`, `mdcp-cli`)                             |
-| `pnpm test`              | Run `vitest` in `mdcp-core`                                              |
-| `pnpm run typecheck`     | TypeScript across packages                                               |
-| `pnpm run lint`          | ESLint on TypeScript sources                                             |
-| `pnpm run format:check`  | Prettier check                                                           |
-| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check           |
-| `pnpm skill:install`     | Dogfood-install parent skill from `skills/mdcp/` into `.agents/skills/`  |
-| `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs) |
-| `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                            |
+| Command                  | Purpose                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `pnpm build`             | Build all packages (`mdcp-core`, `mdcp-cli`)                                                                 |
+| `pnpm test`              | Run `vitest` in `mdcp-core`                                                                                  |
+| `pnpm run typecheck`     | TypeScript across packages                                                                                   |
+| `pnpm run lint`          | ESLint on TypeScript sources                                                                                 |
+| `pnpm run format:check`  | Prettier check                                                                                               |
+| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check                                               |
+| `pnpm skill:install`     | Refresh vendor-managed dogfood installs under `.agents/skills/` from `skills/` (do not hand-edit `.agents/`) |
+| `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs)                                     |
+| `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                                                                |
 
 Optional locally: `brew install gitleaks` (CI always scans).
 
@@ -201,7 +201,7 @@ mdcp/
 │   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; not in skills.sh.json)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
 ├── skills.sh.json          # skills.sh repo page: release-ready packs in Documentation system
-├── .agents/skills/         # Dogfood installs (mdcp* gitignored) + vendored skill-creator (committed)
+├── .agents/skills/         # Vendor-managed dogfood installs (refresh via pnpm skill:install; do not hand-edit) + skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
@@ -307,13 +307,16 @@ Publish landing style for root README: [Personas and priority tiers](docs/featur
 
 #### Agent Skill dogfood
 
-Agent guidance for this repo is the parent **Agent Skill** under [`skills/mdcp/`](skills/mdcp). After editing skill files, refresh the local install:
+Agent guidance for this repo lives under [`skills/`](skills) (source of
+truth). After editing skill files, refresh the vendor-managed dogfood installs:
 
 ```bash
 pnpm skill:install
 ```
 
-That copies `skills/mdcp/` into `.agents/skills/mdcp/` (gitignored). Manual invoke: `/mdcp`. See [Agent Skill](#agent-skill-development).
+Do **not** hand-edit `.agents/skills/` — see
+[Agent Skill development](#do-not-hand-edit-agentsskills).
+Manual invoke: `/mdcp`.
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](./packages/mdcp-core/README.md#publish-relative-link-rewriting).
 
@@ -389,9 +392,28 @@ Author under `skills/`. Then install into this repo for agents:
 pnpm skill:install
 ```
 
-That runs `npx skills add . --skill mdcp` and copies the parent skill into `.agents/skills/mdcp/`.
+That runs `npx skills add .` and refreshes dogfood installs under `.agents/skills/`
+from the publishable packs in `skills/` (see `skills-lock.json`).
 
-Installed copies under `.agents/skills/mdcp*` are gitignored so they do not duplicate upstream source. Manual invoke (hosts that support slash skills): `/mdcp`. First-time consumer bootstrap: `/mdcp help me get started`.
+#### Do not hand-edit `.agents/skills/`
+
+Copies under `.agents/skills/` are **vendor-managed** installs (local dogfood /
+agent load path). They are **not** the source of truth.
+
+| Do                                                                | Do **not**                                                        |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Edit publishable packs under `skills/<name>/`                     | Hand-edit `.agents/skills/<name>/` to “fix” or tweak guidance     |
+| Run `pnpm skill:install` after skill edits so agents pick them up | Commit one-off edits that only exist under `.agents/`             |
+| Propose lasting skill changes as PRs against `skills/`            | Treat `.agents/skills/mdcp*` as durable docs or authoring surface |
+
+Parent and archetype dogfood trees (`.agents/skills/mdcp/`,
+`.agents/skills/mdcp-arch-*`) are gitignored. Helper installs may still appear
+in git when the install tool records them — refresh those with
+`pnpm skill:install` rather than editing files in place. Eval workspaces under
+`.agents/skills/*-workspace/` stay gitignored; see [Live skill evals](#live-skill-evals).
+
+Manual invoke (hosts that support slash skills): `/mdcp`. First-time consumer
+bootstrap: `/mdcp help me get started`.
 
 When changing skill instructions:
 
