@@ -4,11 +4,13 @@ Zero-friction MDCP delivery for AI agents uses the portable **parent** Agent Ski
 
 ## Local dogfood
 
-Author under `skills/`. Then install into this repo for agents:
+Author under `skills/`. Then refresh vendor-managed installs for agents:
 
 ```bash
-pnpm skill:install
+pnpm skill:update
 ```
+
+(`pnpm skill:install` is the same task — an alias kept for older docs and habits.)
 
 That runs `npx skills add .` and refreshes dogfood installs under `.agents/skills/`
 from the publishable packs in `skills/` (see `skills-lock.json`).
@@ -18,16 +20,16 @@ from the publishable packs in `skills/` (see `skills-lock.json`).
 Copies under `.agents/skills/` are **vendor-managed** installs (local dogfood /
 agent load path). They are **not** the source of truth.
 
-| Do                                                                | Do **not**                                                        |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Edit publishable packs under `skills/<name>/`                     | Hand-edit `.agents/skills/<name>/` to “fix” or tweak guidance     |
-| Run `pnpm skill:install` after skill edits so agents pick them up | Commit one-off edits that only exist under `.agents/`             |
-| Propose lasting skill changes as PRs against `skills/`            | Treat `.agents/skills/mdcp*` as durable docs or authoring surface |
+| Do                                                               | Do **not**                                                        |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Edit publishable packs under `skills/<name>/`                    | Hand-edit `.agents/skills/<name>/` to “fix” or tweak guidance     |
+| Run `pnpm skill:update` after skill edits so agents pick them up | Commit one-off edits that only exist under `.agents/`             |
+| Propose lasting skill changes as PRs against `skills/`           | Treat `.agents/skills/mdcp*` as durable docs or authoring surface |
 
 Parent and archetype dogfood trees (`.agents/skills/mdcp/`,
 `.agents/skills/mdcp-arch-*`) are gitignored. Helper installs may still appear
 in git when the install tool records them — refresh those with
-`pnpm skill:install` rather than editing files in place. Eval workspaces under
+`pnpm skill:update` rather than editing files in place. Eval workspaces under
 `.agents/skills/*-workspace/` stay gitignored; see [Live skill evals](./live-skill-evals.md).
 
 Manual invoke (hosts that support slash skills): `/mdcp`. First-time consumer
@@ -38,7 +40,7 @@ When changing skill instructions:
 1. Edit `skills/mdcp/SKILL.md` (and `references/` as needed) — keep the activation body under 500 lines; put depth in `references/`.
 2. Do **not** invent new protocol in the skill — CLI and schemas stay in packages.
 3. For archetypes (WIP), edit `skills/mdcp-arch-*` instead of growing the parent forever — do not highlight them in consumer install docs or `skills.sh.json` yet.
-4. Run `pnpm skill:install` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
+4. Run `pnpm skill:update` after skill edits so local agents pick up changes, then `pnpm skill:lint`, `pnpm skill:validate`, and `pnpm docs:check`.
 
 ## Verification
 

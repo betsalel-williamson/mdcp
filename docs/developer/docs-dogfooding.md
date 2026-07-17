@@ -25,11 +25,12 @@ Agent guidance for this repo lives under [`skills/`](../../skills/) (source of
 truth). After editing skill files, refresh the vendor-managed dogfood installs:
 
 ```bash
-pnpm skill:install
+pnpm skill:update
 ```
 
 Do **not** hand-edit `.agents/skills/` — see
 [Agent Skill development](./agent-skill.md#do-not-hand-edit-agentsskills).
+(`pnpm skill:install` is an alias of `skill:update`.)
 Manual invoke: `/mdcp`.
 
 Shard `../` links in publish guides (`developer`, `client-cli`, `client-core`) rebase automatically at compile — resolve from each shard file to an absolute path, then emit a path relative to the publish output. No per-guide path-prefix config. See [Publish-relative link rewriting](../client-core/compile-hooks/publish-relative-links.md).
