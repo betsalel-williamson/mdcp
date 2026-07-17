@@ -13,38 +13,31 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Maintain
 
 ## What the suite covers
 
-1. **Placement by audience** — a maintainer-only skill-eval runbook must land in
-   `docs/developer/`, NOT be co-located in `docs/features/` next to the shipped
-   `skills` capability, and NOT get a `docs/client/` shard.
+1. **Wrong-tier placement (live skill evals)** — documenting the maintainer
+   skill-creator runbook must land in `docs/developer/`, **not**
+   `docs/features/live-skill-evals.md` (and not invent a `docs/client/` shard),
+   even when the topic accompanies `docs/features/skills.md`.
 2. **User-facing backfill** — a `--format=csv` option must backfill BOTH
    `docs/features/` and `docs/client/` (with index updates), not be buried in
    `docs/developer/`.
 
-## Regression under test
+## Red → green (eval 1)
 
-The failures this suite guards against, both observed while authoring the real
-live-skill-evals docs:
+This suite demos the real failure from the live session: a maintainer-only
+**live skill evals** runbook was added under `docs/features/` because the helper
+skill's Step 3 always said "update `docs/features/` and `docs/client/`".
 
-- **Wrong-tier placement** — a maintainer-only workflow shard landing in
-  `docs/features/` (product-capability tier) instead of `docs/developer/`.
-- **Under-backfill** — shipping a user-facing feature but leaving the
-  `docs/client/` tier (and its `index.md`) stale.
+| Arm                 | Skill                          | Outcome                                                                                       |
+| ------------------- | ------------------------------ | --------------------------------------------------------------------------------------------- |
+| `iteration-4-red`   | `0.5.0` (unconditional Step 3) | **FAIL** — created `docs/features/live-skill-evals.md` + `docs/client/live-skill-evals.md`    |
+| `iteration-5-green` | `0.5.1` (audience placement)   | **PASS** — created `docs/developer/live-skill-evals.md` only; no features/ or client/ runbook |
 
-## Discrimination notes (iterations 1–3)
+Fix in `skills/mdcp-feature-level/SKILL.md`: Step 3 is now **Docs First — place by
+audience**, with an explicit maintainer-only → `developer/` row and a placement
+test that forbids co-locating live skill-eval runbooks beside product `skills`
+shards.
 
-Honest negative result: across three iterations the failure **did not
-reproduce**. Both `with_skill` and fully naive `without_skill` baselines
-consistently placed the maintainer runbook in `docs/developer/` and dual-tier
-backfilled the user-facing feature — even after adding a same-subject
-`docs/features/skills.md` to create genuine pull toward co-location.
-
-Conclusion: the wrong-tier placement in the original session was a one-off
-execution lapse, not a systematic skill deficiency this suite can surface with
-current models. The suite is retained as a **regression guard**, not a
-red-to-green demonstration. If a future model regresses on tier placement, these
-assertions will catch it. The durable remedy for the ambiguity is the sharpened
-three-tier placement guidance (audience + "keep out" + placement test) in the
-parent `mdcp` skill and protocol shards.
+Workspace grading (gitignored): `.agents/skills/mdcp-feature-level-workspace/`.
 
 ## Run path (skill-creator)
 

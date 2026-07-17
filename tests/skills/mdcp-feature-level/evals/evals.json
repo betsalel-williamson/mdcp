@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "WORK_ITEM=We ship a `skills` feature (see docs/features/skills.md). Document the local skill-eval runbook that goes with it: how a maintainer runs the optional skill-creator loop to grade those skills before release. WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Using /mdcp-feature-level, add the documentation in the correct tier for its audience and keep the docs tree consistent.",
-      "expected_output": "Agent distinguishes the shipped `skills` product capability (docs/features/skills.md, user-facing) from the maintainer-only *eval runbook* (how maintainers grade skills, no end-user surface). It places the runbook under docs/developer/ (updating docs/developer/index.md), and does NOT co-locate it in docs/features/ next to skills.md just because the subject is related, nor add a docs/client/ shard.",
+      "prompt": "WORK_ITEM=Add documentation for live skill evals — how maintainers run the optional skill-creator loop to grade helper skills before release. This accompanies our skills feature (see docs/features/skills.md). WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Using /mdcp-feature-level, follow the skill's docs-first process and add the documentation. Keep the docs tree consistent.",
+      "expected_output": "Agent applies an audience placement test before writing: live skill evals are maintainer-only workflow with no end-user surface, so the shard lands under docs/developer/ (index updated). It does NOT create docs/features/live-skill-evals.md (or similar) just because Step 3 mentions features/ or because the topic sits next to the shipped skills feature, and it does NOT invent a docs/client/ shard.",
       "files": [
         "evals/files/feature-fixture/README.md",
         "evals/files/feature-fixture/docs/mdcp.config.json",
@@ -18,19 +18,19 @@
       "assertions": [
         {
           "name": "lands_in_developer_tier",
-          "description": "Adds or updates a shard under docs/developer/ describing the maintainer runbook and links it from docs/developer/index.md"
+          "description": "Creates or updates a shard under docs/developer/ for the live skill-eval runbook and links it from docs/developer/index.md"
         },
         {
-          "name": "no_features_tier_shard",
-          "description": "Does NOT create or expand a docs/features/ shard (e.g. next to skills.md) for this maintainer-only runbook; features/ is for shipped product capabilities, not maintainer grading workflow"
+          "name": "no_features_tier_runbook",
+          "description": "Does NOT create a docs/features/ shard for the live skill-eval runbook (e.g. docs/features/live-skill-evals.md) — that is the exact wrong-tier failure under test"
         },
         {
           "name": "no_client_tier_shard",
-          "description": "Does NOT create a docs/client/ shard, since the workflow has no end-user surface"
+          "description": "Does NOT create a docs/client/ shard for a maintainer-only workflow with no end-user surface"
         },
         {
           "name": "states_placement_rationale",
-          "description": "Explains the tier choice by audience (maintainer-only → developer/), showing an explicit placement decision rather than defaulting to features/"
+          "description": "States an explicit audience placement decision (maintainer-only → developer/) rather than blindly following a features/+client/ docs-first step"
         }
       ]
     },
