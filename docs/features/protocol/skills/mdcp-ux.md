@@ -13,7 +13,7 @@ Invoke (after the parent skill is installed):
 ```
 
 Upstream pack: [`skills/mdcp-ux/`](../../../../skills/mdcp-ux/SKILL.md).
-Shared helper contract (intake, guide placement): [Helper Skills](../agent-task-prompts.md).
+Shared helper contract (intake, guide placement, glossary): [Helper Skills](../agent-task-prompts.md).
 
 ## End-user value
 
@@ -30,7 +30,7 @@ product development stays anchored on what the end user must accomplish.
 | User-centric value first    | State the end-user outcome and friction to remove before designing steps or UI                                   |
 | Map processes and workflows | Document the ideal journey under `docs/client/` — steps to accomplish X, decision points, failure/recovery paths |
 | Interface when it serves UX | Implement or revise UI only as needed to support the documented workflow, using this repo’s existing patterns    |
-| Glossary for shared terms   | Define new jargon, acronyms, and overloaded terms in `docs/glossary/` and link them from client shards           |
+| Glossary hygiene            | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                         |
 | Align as-built docs         | Update client-guide shards to match the shipped experience; remove superseded journey or UI references           |
 | Validate and wrap-up        | Run repo tests + docs validation; release notes per repo conventions; link `WORK_ITEM`                           |
 
@@ -64,7 +64,7 @@ A successful UX session typically:
 
 1. Creates or updates focused shards under `docs/client/` that describe the
    end-user outcome and step-by-step workflow
-2. Adds or updates glossary entries for any new jargon or acronyms introduced
+2. Applies glossary hygiene for any non-universal language introduced (per inclusion bar)
 3. Implements or adjusts UI only when needed to support those flows (repo patterns)
 4. Leaves client docs describing the as-built experience only
 5. Passes repo tests and docs validation

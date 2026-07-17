@@ -11,7 +11,7 @@ Invoke (after the parent skill is installed):
 ```
 
 Upstream pack: [`skills/mdcp-doc-only/`](../../../../skills/mdcp-doc-only/SKILL.md).
-Shared helper contract (intake, guide placement): [Helper Skills](../agent-task-prompts.md).
+Shared helper contract (intake, guide placement, glossary): [Helper Skills](../agent-task-prompts.md).
 
 ## End-user value
 
@@ -21,15 +21,15 @@ durable docs so search stays trustworthy.
 
 ## What this helper is for
 
-| Obligation             | As-built expectation                                                                                                               |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Work-item intake       | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                                             |
-| Docs-only branch       | One documentation scope per branch; revise `docs/features/`, `docs/client/`, and/or `docs/developer/`                              |
-| Contracts not samples  | Put intent, contracts, and acceptance in shards — not implementation dumps or product source paths                                 |
-| Glossary for jargon    | Define every new or undefined jargon term and acronym in `docs/glossary/` (one term per shard); link from the guides that use them |
-| Indexes and validation | Update guide `index.md` files; run `mdcp check` (do not hand-edit compile output or `refs.json`)                                   |
-| Current docs only      | Remove superseded workflows, planning backlogs, and pending `.changeset/*.md` links from durable shards                            |
-| Hard scope boundary    | No `src/` edits, unit tests, or “just fix the code too” — defer code work to feature-level                                         |
+| Obligation             | As-built expectation                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- |
+| Work-item intake       | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                  |
+| Docs-only branch       | One documentation scope per branch; revise `docs/features/`, `docs/client/`, and/or `docs/developer/`   |
+| Contracts not samples  | Put intent, contracts, and acceptance in shards — not implementation dumps or product source paths      |
+| Glossary hygiene       | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                |
+| Indexes and validation | Update guide `index.md` files; run `mdcp check` (do not hand-edit compile output or `refs.json`)        |
+| Current docs only      | Remove superseded workflows, planning backlogs, and pending `.changeset/*.md` links from durable shards |
+| Hard scope boundary    | No `src/` edits, unit tests, or “just fix the code too” — defer code work to feature-level              |
 
 Intake is the same as other work-item helpers: `WORK_ITEM` and
 `WORK_ITEM_LOOKUP` before branching or editing.
@@ -45,8 +45,9 @@ Intake is the same as other work-item helpers: `WORK_ITEM` and
   [mdcp-getting-started](./mdcp-getting-started.md).
 - **Keeping “old way” sections for archaeology** — Git history preserves prior
   wording; consumer notice of removed behavior belongs in the changeset pipeline.
-- **Leaving jargon or acronyms undefined** — undefined terms belong in
-  `docs/glossary/`, not as unexplained shorthand in durable shards.
+- **Leaving jargon or acronyms undefined against the inclusion bar** — if the
+  project’s glossary bar says the term belongs, define it in `docs/glossary/`
+  rather than unexplained shorthand in durable shards.
 
 When the user also asks for bug fixes or implementation in the same session,
 this helper **MUST** refuse or defer that work to a separate `WORK_ITEM` under
@@ -57,7 +58,7 @@ feature-level.
 A successful doc-only session typically:
 
 1. Creates or updates focused Markdown under the appropriate guides
-2. Adds or updates glossary entries for jargon and acronyms introduced or left undefined
+2. Applies glossary hygiene for jargon and acronyms introduced or left undefined (per inclusion bar)
 3. Updates guide indexes so shards are discoverable
 4. Leaves `packages/` / product `src/` unchanged
 5. Describes current product behavior only

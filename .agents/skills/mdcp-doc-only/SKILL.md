@@ -71,7 +71,7 @@ Collect these via intake (or from the conversation if already stated):
 
 1. Add or revise MDCP shards under the appropriate guide (`docs/features/`, `docs/developer/`, `docs/client/`).
 2. Put intent, contracts, and acceptance criteria in shards — **not** implementation samples, function signatures, or file paths into product source (the codebase is the source of truth for how something is built).
-3. **Glossary for jargon** — for every new or undefined jargon term or acronym in the shards you touch, add or update a `docs/glossary/` entry (one term per shard), link it from the guides that use it, and update `docs/glossary/index.md`. Do not leave unexplained shorthand in durable docs.
+3. **Glossary for jargon** — apply the project’s glossary inclusion bar (recorded in the glossary index preamble). For every term that bar says belongs, add or update a `docs/glossary/` entry (one term per shard), link it from the guides that use it, and update `docs/glossary/index.md`. Do not leave unexplained shorthand that fails the bar.
 4. Update each guide's `index.md` for compile order.
 5. Validate cross-links with `mdcp check` — do not edit generated compile output or `refs.json` by hand.
 
@@ -88,13 +88,13 @@ Collect these via intake (or from the conversation if already stated):
 
 ## Common Mistakes
 
-| Excuse                                                | Reality                                                                            |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| “It’ll be faster if I fix the code too”               | Docs-only scope stays docs-only. Defer code/tests to `mdcp-feature-level`.         |
-| “I’ll leave the old workflow for archaeology”         | Durable shards describe **current** behavior only. Git history keeps the old text. |
-| “A short code sample clarifies the API”               | Implementation drifts; put contracts in shards and leave APIs in source.           |
-| “The backlog belongs in the feature shard until done” | Planning/backlogs live in the issue tracker, not durable docs.                     |
-| “Everyone knows what that acronym means”              | Define jargon and acronyms in `docs/glossary/` and link from the guides.           |
+| Excuse                                                | Reality                                                                                                 |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| “It’ll be faster if I fix the code too”               | Docs-only scope stays docs-only. Defer code/tests to `mdcp-feature-level`.                              |
+| “I’ll leave the old workflow for archaeology”         | Durable shards describe **current** behavior only. Git history keeps the old text.                      |
+| “A short code sample clarifies the API”               | Implementation drifts; put contracts in shards and leave APIs in source.                                |
+| “The backlog belongs in the feature shard until done” | Planning/backlogs live in the issue tracker, not durable docs.                                          |
+| “Everyone knows what that acronym means”              | Apply the project inclusion bar; define terms that belong in `docs/glossary/` and link from the guides. |
 
 ## Red Flags — STOP
 

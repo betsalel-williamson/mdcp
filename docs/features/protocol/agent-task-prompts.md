@@ -55,7 +55,24 @@ Place each shard by **audience and job**, not by topic keyword. The same subject
 
 **Placement test:** If removing the shard would confuse a **consumer** of the tool, it is features or client. If only **contributors** to this monorepo need it, it is developer.
 
-Shared terms: `docs/glossary/` — all helpers that introduce vocabulary.
+## Glossary obligation (every helper)
+
+Every helper skill **MUST** treat glossary hygiene as part of its session — not
+an optional afterthought for doc-only or UX alone.
+
+- **Non-universal language** — If a shard introduces jargon, acronyms, or
+  overloaded terms that are not universally understood by the guide’s audience,
+  define them under `docs/glossary/` (one term per shard) and link from first use.
+- **Project inclusion bar** — What does / does not belong in the glossary is a
+  judgment call. The **project’s** bar is recorded in the glossary itself
+  (typically the `docs/glossary/index.md` preamble). Helpers **MUST** follow
+  that bar; when none exists yet, [getting-started](./skills/mdcp-getting-started.md)
+  establishes it with the end user.
+- **Not a dump of everyday words** — Do not glossary terms that are already
+  unambiguous for the stated audience; prefer a short entry over unexplained
+  shorthand when the bar is unclear.
+
+Shared layout and term mechanics: [domain glossary](../../glossary/domain-glossary.md).
 
 ## Feature-level workflow (normative summary)
 

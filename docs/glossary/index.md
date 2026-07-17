@@ -2,7 +2,9 @@
 
 Shared acronyms and terms for all mdcp docs. Spell out on first use in a shard and link the short form here.
 
-Each term is its own shard under `docs/glossary/`. For large glossaries, split manifests across sub-index files (for example `index-protocol.md`, `index-format.md`) and set `compile.scopeRoot` to `glossary` so transitive links pull term shards into other guides. Read [domain glossary](./domain-glossary.md).
+**Inclusion bar (this repository):** Add entries for MDCP-specific jargon, acronyms, and overloaded words that a new contributor or the stated client persona would not reliably understand from everyday English or general software practice alone (for example protocol terms, compile/refs vocabulary, and skill-verification names). Do **not** add entries for common English, universal programming terms, or words that are unambiguous in context for that audience. When unsure, prefer a short glossary entry over leaving shorthand unexplained. See [domain glossary](./domain-glossary.md).
+
+Each term is its own shard under `docs/glossary/`. For large glossaries, split manifests across sub-index files (for example `index-protocol.md`, `index-format.md`) and set `compile.scopeRoot` to `glossary` so transitive links pull term shards into other guides.
 
 ## Protocol terms
 

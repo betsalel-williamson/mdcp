@@ -73,7 +73,7 @@ Collect these via intake (or from the conversation if already stated):
 ### Step 3: Design workflows (docs first)
 
 1. Map the ideal **process / workflow** under `docs/client/` — steps to accomplish X, decision points, and failure/recovery paths (docs/specs first).
-2. Add or update `docs/glossary/` entries for any new jargon, acronyms, or overloaded terms; link them from the client shards that use them. Update `docs/glossary/index.md`.
+2. Add or update `docs/glossary/` entries for any non-universal jargon per the project’s inclusion bar (glossary index preamble); link them from the client shards that use them. Update `docs/glossary/index.md`.
 3. Implement or revise UI **only when** it is needed to support the documented workflow, using this repo's existing patterns and test approach.
 
 ### Step 4: Review and Refactor

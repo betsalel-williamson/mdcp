@@ -77,7 +77,9 @@ Then write only the tiers that apply:
 
 1. **User-facing feature:** add or update `docs/features/` (capabilities, design, contracts — not implementation code) **and** `docs/client/` (end-user value and usage). Update both guide `index.md` files.
 2. **Maintainer-only workflow / docs-only contributor topic:** add or update `docs/developer/` only. Update `docs/developer/index.md`. Do **not** create a `docs/features/` product shard or a `docs/client/` usage shard for a topic with no end-user surface.
-3. Validate cross-links with `mdcp check`.
+3. Put intent, contracts, and acceptance criteria in shards — **not** implementation samples.
+4. **Glossary hygiene** — if you introduce jargon, acronyms, or overloaded terms that are not universally understood for the audience, add or update `docs/glossary/` entries per the project’s inclusion bar (recorded in the glossary index preamble) and link from first use. Update `docs/glossary/index.md`.
+5. Validate cross-links with `mdcp check`.
 
 ### Step 4: Test-Driven Development (TDD)
 

@@ -65,6 +65,7 @@ Collect these via intake (or from the conversation if already stated):
 
 1. Draft the architecture (system diagrams, API contracts, data models) as shards under `docs/features/`. Focus on how the design enables the desired end-user experience.
 2. Check the proposed architecture for bottlenecks and fit with the as-built system.
+3. **Glossary hygiene** — if design shards introduce non-universal jargon, add or update `docs/glossary/` entries per the project’s inclusion bar and link from first use.
 
 ### Step 4: Refactor and Validate
 

@@ -11,7 +11,7 @@ Invoke (after the parent skill is installed):
 ```
 
 Upstream pack: [`skills/mdcp-feature-level/`](../../../../skills/mdcp-feature-level/SKILL.md).
-Shared helper contract (intake, guide placement): [Helper Skills](../agent-task-prompts.md).
+Shared helper contract (intake, guide placement, glossary): [Helper Skills](../agent-task-prompts.md).
 
 ## End-user value
 
@@ -27,6 +27,7 @@ of drifting in chat-only designs.
 | One focused branch    | Branch from updated `main` for a single issue; do not mix unrelated features                                |
 | Place by audience     | User-facing work → `docs/features/` + `docs/client/`; maintainer-only → `docs/developer/` only              |
 | Docs first            | Update guide shards and indexes before product code; put contracts in shards, not implementation dumps      |
+| Glossary hygiene      | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                    |
 | TDD when code changes | Write failing tests first where the repo uses tests, then implement, then refactor; skip TDD when docs-only |
 | Current docs only     | Align shards to as-built behavior; no superseded-workflow archaeology in durable docs                       |
 | Validate and wrap-up  | Run repo tests + `mdcp check`; changeset/release notes per repo conventions; link `WORK_ITEM`               |
@@ -54,10 +55,11 @@ defer or narrow to the matching helper rather than inventing end-to-end delivery
 A successful feature-level session typically:
 
 1. Updates the correct guide tiers for the audience (features+client or developer)
-2. Implements against documented acceptance when product code changes (TDD where applicable)
-3. Leaves durable shards describing current behavior only
-4. Passes repo tests and docs validation
-5. Links `WORK_ITEM` in review; adds a changeset when published package behavior changes
+2. Applies glossary hygiene for any non-universal language introduced (per inclusion bar)
+3. Implements against documented acceptance when product code changes (TDD where applicable)
+4. Leaves durable shards describing current behavior only
+5. Passes repo tests and docs validation
+6. Links `WORK_ITEM` in review; adds a changeset when published package behavior changes
 
 Optional local with/without-skill grading for this helper:
 [mdcp-feature-level live evals](../../../../tests/skills/mdcp-feature-level/evals/README.md)
