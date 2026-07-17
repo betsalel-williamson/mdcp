@@ -34,7 +34,7 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 | [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | End-user experience         | `client/`                            |
 
 Goals and hard boundaries for the design helper (what it is / is not):
-[Design-architecture helper](./mdcp-design-architecture.md).
+[Design-architecture helper](./skills/mdcp-design-architecture.md).
 
 Index: [skills.md](../../docs/skills.md). Some helpers also have optional [live skill eval](../../developer/live-skill-evals.md) suites under `tests/skills/`.
 
@@ -67,7 +67,7 @@ When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md):
 ## Design-architecture workflow (normative summary)
 
 When using [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md)
-(detail: [Design-architecture helper](./mdcp-design-architecture.md)):
+(detail: [Design-architecture helper](./skills/mdcp-design-architecture.md)):
 
 1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
 2. Branch from updated `main` for `WORK_ITEM`

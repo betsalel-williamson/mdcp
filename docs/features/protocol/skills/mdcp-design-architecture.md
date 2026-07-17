@@ -10,8 +10,8 @@ Invoke (after the parent skill is installed):
 /mdcp-design-architecture
 ```
 
-Upstream pack: [`skills/mdcp-design-architecture/`](../../../skills/mdcp-design-architecture/SKILL.md).
-Shared helper contract (intake, guide placement): [Helper Skills](./agent-task-prompts.md).
+Upstream pack: [`skills/mdcp-design-architecture/`](../../../../skills/mdcp-design-architecture/SKILL.md).
+Shared helper contract (intake, guide placement): [Helper Skills](../agent-task-prompts.md).
 
 ## End-user value
 
@@ -39,13 +39,13 @@ Intake is the same as other work-item helpers: `WORK_ITEM` and
   separate design-thinking skill or human review, then record the agreed intent
   as shards.
 - **Implementing CLI flags, packages, or unit tests** — use
-  [mdcp-feature-level](../../../skills/mdcp-feature-level/SKILL.md).
+  [mdcp-feature-level](../../../../skills/mdcp-feature-level/SKILL.md).
 - **End-user / client guide polish** — use
-  [mdcp-ux](../../../skills/mdcp-ux/SKILL.md).
+  [mdcp-ux](../../../../skills/mdcp-ux/SKILL.md).
 - **Docs-only cleanup with no architecture change** — use
-  [mdcp-doc-only](../../../skills/mdcp-doc-only/SKILL.md).
+  [mdcp-doc-only](../../../../skills/mdcp-doc-only/SKILL.md).
 - **Bootstrapping MDCP in an empty or legacy repo** — use
-  [mdcp-getting-started](../../../skills/mdcp-getting-started/SKILL.md).
+  [mdcp-getting-started](../../../../skills/mdcp-getting-started/SKILL.md).
 - **Grading “good systems design” brilliance** — out of scope; this helper owns
   **MDCP documentation-system** behavior (sharding, indexes, design-doc scope).
 
@@ -64,5 +64,5 @@ A successful design-architecture session typically:
 5. When deep design critique is requested, advises pairing and still lands the agreed intent as shards
 
 Optional local with/without-skill grading for this helper:
-[mdcp-design-architecture live evals](../../../tests/skills/mdcp-design-architecture/evals/README.md)
-(maintainer workflow — not a CI gate). See [Live skill evals](../../developer/live-skill-evals.md).
+[mdcp-design-architecture live evals](../../../../tests/skills/mdcp-design-architecture/evals/README.md)
+(maintainer workflow — not a CI gate). See [Live skill evals](../../../developer/live-skill-evals.md).

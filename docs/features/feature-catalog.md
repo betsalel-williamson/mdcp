@@ -22,7 +22,7 @@ Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdc
 
 Helper skills extend the parent for specific authoring jobs — catalog and intake:
 [Helper Skills](./protocol/agent-task-prompts.md). Architecture-as-shards boundary:
-[Design-architecture helper](./protocol/mdcp-design-architecture.md).
+[Design-architecture helper](./protocol/skills/mdcp-design-architecture.md).
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp

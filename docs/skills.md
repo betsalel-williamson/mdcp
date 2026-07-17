@@ -12,13 +12,13 @@ The MDCP documentation system is a human/machine interface tool. To make it easy
 
 Specialized workflows that build on the parent skill. Use these to trigger specific types of work.
 
-| Skill                                                                   | Description                                                                                                                                                                  |
-| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [mdcp-getting-started](../skills/mdcp-getting-started/SKILL.md)         | Bootstrap MDCP in a new repository.                                                                                                                                          |
-| [mdcp-doc-only](../skills/mdcp-doc-only/SKILL.md)                       | Documentation-only work. Act as a Technical Writer.                                                                                                                          |
-| [mdcp-design-architecture](../skills/mdcp-design-architecture/SKILL.md) | Record architecture as MDCP shards (RFCs/ADRs); not deep design critique or product code. See [Design-architecture helper](./features/protocol/mdcp-design-architecture.md). |
-| [mdcp-feature-level](../skills/mdcp-feature-level/SKILL.md)             | Implement and document features (docs-first, then TDD). Act as a Software Engineer.                                                                                          |
-| [mdcp-ux](../skills/mdcp-ux/SKILL.md)                                   | User experience design and client-guide updates. Act as a UX Designer.                                                                                                       |
+| Skill                                                                   | Description                                                                                                                                                                         |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [mdcp-getting-started](../skills/mdcp-getting-started/SKILL.md)         | Bootstrap MDCP in a new repository.                                                                                                                                                 |
+| [mdcp-doc-only](../skills/mdcp-doc-only/SKILL.md)                       | Documentation-only work. Act as a Technical Writer.                                                                                                                                 |
+| [mdcp-design-architecture](../skills/mdcp-design-architecture/SKILL.md) | Record architecture as MDCP shards (RFCs/ADRs); not deep design critique or product code. See [Design-architecture helper](./features/protocol/skills/mdcp-design-architecture.md). |
+| [mdcp-feature-level](../skills/mdcp-feature-level/SKILL.md)             | Implement and document features (docs-first, then TDD). Act as a Software Engineer.                                                                                                 |
+| [mdcp-ux](../skills/mdcp-ux/SKILL.md)                                   | User experience design and client-guide updates. Act as a UX Designer.                                                                                                              |
 
 ## Architecture Extensions
 

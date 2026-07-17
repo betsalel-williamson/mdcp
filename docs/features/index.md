@@ -32,6 +32,6 @@ Product documentation for **what mdcp is designed to do** — the problems it so
     - [Performance goals and review](./protocol/performance.md)
     - [MDCP 1.0 spec (draft)](./protocol/mdcp-1.0-spec.md)
     - [Agent task subagents](./protocol/agent-task-prompts.md)
-    - [Design-architecture helper](./protocol/mdcp-design-architecture.md)
+    - [Design-architecture helper](./protocol/skills/mdcp-design-architecture.md)
     - [Extensions and archetypes](./protocol/extensions-and-archetypes.md)
     - [Format specification](./protocol/format-specification.md)
