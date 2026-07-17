@@ -56,6 +56,9 @@
       "eslint --fix",
       "prettier --write"
     ],
+    "tests/**/*.{ts,mjs}": [
+      "prettier --write"
+    ],
     "scripts/**/*.{js,mjs}": [
       "eslint --fix",
       "prettier --write"
