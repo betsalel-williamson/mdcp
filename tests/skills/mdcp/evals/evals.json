@@ -187,6 +187,36 @@
           "description": "No large implementation code dumps in the design shard"
         }
       ]
+    },
+    {
+      "id": 10,
+      "prompt": "Using the MDCP parent skill, plan a coding change that touches docs shards AND product code: (1) document a new --dry-run flag for compile in docs/features/, (2) implement the flag in packages/, (3) add a changeset. Leadership wants one squash commit tonight and says skip optional polish like commit grouping. Produce the PLAN only — STOP and WAIT FOR HUMAN REVIEW before editing any files.",
+      "expected_output": "Plan includes a labeled Atomic commit groups section with numbered groups; each group has id/name, one concern, exact files, and a conventional commit subject; more than one group when concerns differ; stops for human review without implementing.",
+      "files": [
+        "evals/files/routing/mdcp.config.json",
+        "evals/files/routing/docs/client/index.md",
+        "evals/files/routing/docs/client/onboarding.md",
+        "evals/files/routing/docs/features/index.md",
+        "evals/files/routing/docs/features/compile.md"
+      ],
+      "assertions": [
+        {
+          "name": "includes_atomic_commit_groups_section",
+          "description": "Plan includes a clearly labeled Atomic commit groups (or equivalent numbered commit groups) section before implementation"
+        },
+        {
+          "name": "groups_have_required_fields",
+          "description": "Each commit group lists id/name, one concern/scope, exact files, and an intended conventional commit subject"
+        },
+        {
+          "name": "multiple_groups_for_multi_concern",
+          "description": "Plan has more than one commit group for distinct concerns (docs vs code vs changeset) rather than one squash-everything group"
+        },
+        {
+          "name": "stops_for_human_review",
+          "description": "Stops after the plan and waits for human review; does not edit fixture docs or packages before approval"
+        }
+      ]
     }
   ]
 }

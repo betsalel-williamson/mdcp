@@ -31,6 +31,8 @@ Fixtures and prompts for the optional [skill-creator](../../../.agents/skills/sk
     benchmark.json
 ```
 
-5. Draft objectively verifiable `expectations` while runs progress; grade; aggregate; open the viewer (`eval-viewer/generate_review.py`, use `--static` when headless).
+5. Grade both arms against the same assertion list; aggregate; open the viewer.
+6. Eval 10 (`eval-10-atomic-commit-groups`) uses **with_skill** vs **old_skill**
+   (snapshot of `skills/mdcp` from `main` before Atomic commit groups QA).
 
 Child suites: [`mdcp-getting-started`](../../mdcp-getting-started/evals/README.md), [`mdcp-doc-only`](../../mdcp-doc-only/evals/README.md), [`mdcp-design-architecture`](../../mdcp-design-architecture/evals/README.md), [`mdcp-feature-level`](../../mdcp-feature-level/evals/README.md), [`mdcp-ux`](../../mdcp-ux/evals/README.md). Maintainer index: [`docs/developer/live-skill-evals.md`](../../../../docs/developer/live-skill-evals.md).

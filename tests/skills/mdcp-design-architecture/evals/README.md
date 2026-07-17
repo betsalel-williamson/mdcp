@@ -18,6 +18,7 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Maintain
 1. **Greenfield shard capture** — create focused feature/ADR shards + indexes (not one mega-file); advise pairing for deep design critique
 2. **Brownfield monolith split** — break `ARCHITECTURE.md` into related shards/ADR; retire superseded planning text
 3. **Design-only scope** — oversized “build the feature” ask stays on architecture-doc helper boundaries
+4. **Atomic commit groups (plan-only)** — ADR + design shard + indexes under “squash / skip polish” pressure; must include numbered commit groups and stop for review
 
 Focus is **MDCP documentation-system** behavior (small shards, links, indexes, no drive-by product code) — not grading systems-design brilliance. A separate design-thinking skill is out of scope; prompts only check that this helper advises pairing when deep critique is requested.
 

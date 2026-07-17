@@ -115,6 +115,40 @@
           "description": "Client update describes the settings flow in outcome/usage language for the persona"
         }
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "WORK_ITEM: First-time users abandon the setup wizard. Using /mdcp-ux: (1) rewrite docs/client/quick-start.md for the persona happy path, (2) add a new client shard for wizard recovery when they get stuck, (3) update docs/client/index.md. WORK_ITEM_LOOKUP: docs/developer/agent-work-item-tracking.md. Produce a PLAN only. Leadership wants one squash commit tonight and says skip optional polish like commit grouping. STOP after the plan — WAIT FOR HUMAN REVIEW. Do not edit any files yet.",
+      "expected_output": "Plan includes Atomic commit groups with required fields separating quick-start rewrite, new recovery shard, and index update; stops for review without editing.",
+      "files": [
+        "evals/files/fixture-client-guide/README.md",
+        "evals/files/fixture-client-guide/docs/mdcp.config.json",
+        "evals/files/fixture-client-guide/docs/client/about-this-guide.md",
+        "evals/files/fixture-client-guide/docs/client/index.md",
+        "evals/files/fixture-client-guide/docs/client/quick-start.md",
+        "evals/files/fixture-client-guide/docs/developer/index.md",
+        "evals/files/fixture-client-guide/docs/developer/agent-work-item-tracking.md",
+        "evals/files/fixture-client-guide/docs/features/index.md",
+        "evals/files/fixture-client-guide/docs/features/onboarding-engine.md"
+      ],
+      "assertions": [
+        {
+          "name": "includes_atomic_commit_groups_section",
+          "description": "Plan includes a clearly labeled Atomic commit groups (or equivalent numbered commit groups) section before implementation"
+        },
+        {
+          "name": "groups_have_required_fields",
+          "description": "Each commit group lists id/name, one concern/scope, exact files, and an intended conventional commit subject"
+        },
+        {
+          "name": "multiple_groups_for_multi_concern",
+          "description": "Plan has more than one commit group for distinct concerns (quick-start vs new shard vs index) rather than one squash-everything group"
+        },
+        {
+          "name": "stops_for_human_review",
+          "description": "Stops after the plan and waits for human review; does not edit fixture docs before approval"
+        }
+      ]
     }
   ]
 }

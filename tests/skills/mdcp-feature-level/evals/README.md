@@ -30,6 +30,9 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Maintain
    the repo already uses tests.
 5. **Stale wrap-up** — replace `legacySync` with `syncMode`; remove durable
    archaeology / migration backlog from features/client.
+6. **Atomic commit groups (plan-only)** — multi-concern feature plan under
+   leadership “squash / skip polish” pressure; must include numbered commit
+   groups with required fields and stop for human review.
 
 ## Red → green (eval 1)
 
@@ -64,6 +67,17 @@ shards.
 | 5 Stale wrap-up             | **Pass** (1.0) | **Partial** (0.5) | Without kept old-way + migration backlog; with removed archaeology + changeset                     |
 
 Aggregate (evals 3–5): with-skill mean **1.0** vs without-skill mean **~0.33** (delta **~+0.67**). No `SKILL.md` behavior change required for this iteration. Gate met: ≥1 without-fail / with-pass assertion per new eval.
+
+## Observed discrimination (iteration-atomic-1 / #129)
+
+Eval 6 Atomic commit groups (plan-only, leadership squash pressure). Baseline = `old_skill` snapshot from `main` before Atomic commit groups QA.
+
+| Arm          | pass_rate | Notes                                                                          |
+| ------------ | --------- | ------------------------------------------------------------------------------ |
+| `with_skill` | **1.00**  | Atomic commit groups section + required fields + multi-group + stop for review |
+| `old_skill`  | **0.25**  | Honors squash / skip polish; only `stops_for_human_review` passes              |
+
+Same **+0.75** delta observed for parent `mdcp` and helpers `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux` on their matching atomic-commit-groups evals. Workspace: `.agents/skills/*-workspace/iteration-atomic-1/` (gitignored).
 
 Workspace grading (gitignored): `.agents/skills/mdcp-feature-level-workspace/`.
 

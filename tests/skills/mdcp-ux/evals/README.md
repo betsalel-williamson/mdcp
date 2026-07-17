@@ -20,6 +20,7 @@ Dogfood repos may map persona guides to other names (`client-cli`, `client-core`
 1. **Client guide update** — primary durable edits under `docs/client/` + index; persona outcome prose
 2. **Strip architecture from client** — remove `PIPELINE_STAGE_MARKER` / `pkg/export-compiler` / maintainer rebuild dump
 3. **Avoid decoy paths** — do not “helpfully” edit `packages/`, `docs/features/`, or developer checklists
+4. **Atomic commit groups (plan-only)** — multi-shard client plan under “squash / skip polish” pressure; must include numbered commit groups and stop for review
 
 ## Discrimination notes
 
