@@ -22,7 +22,7 @@ The core packages are:
 
 ## Dependencies
 
-- Node.js **24+**
+- Node.js **18+**
 - `npm install -g @bwilliamson/mdcp-cli` or `npm install -D @bwilliamson/mdcp-cli`
 - Optional: Vale on `PATH` for prose (`mdcp prose` / `mdcp check --require-vale`)
 
