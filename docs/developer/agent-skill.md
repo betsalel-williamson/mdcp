@@ -10,9 +10,28 @@ Author under `skills/`. Then install into this repo for agents:
 pnpm skill:install
 ```
 
-That runs `npx skills add . --skill mdcp` and copies the parent skill into `.agents/skills/mdcp/`.
+That runs `npx skills add .` and refreshes dogfood installs under `.agents/skills/`
+from the publishable packs in `skills/` (see `skills-lock.json`).
 
-Installed copies under `.agents/skills/mdcp*` are gitignored so they do not duplicate upstream source. Manual invoke (hosts that support slash skills): `/mdcp`. First-time consumer bootstrap: `/mdcp help me get started`.
+### Do not hand-edit `.agents/skills/`
+
+Copies under `.agents/skills/` are **vendor-managed** installs (local dogfood /
+agent load path). They are **not** the source of truth.
+
+| Do                                                                | Do **not**                                                        |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Edit publishable packs under `skills/<name>/`                     | Hand-edit `.agents/skills/<name>/` to “fix” or tweak guidance     |
+| Run `pnpm skill:install` after skill edits so agents pick them up | Commit one-off edits that only exist under `.agents/`             |
+| Propose lasting skill changes as PRs against `skills/`            | Treat `.agents/skills/mdcp*` as durable docs or authoring surface |
+
+Parent and archetype dogfood trees (`.agents/skills/mdcp/`,
+`.agents/skills/mdcp-arch-*`) are gitignored. Helper installs may still appear
+in git when the install tool records them — refresh those with
+`pnpm skill:install` rather than editing files in place. Eval workspaces under
+`.agents/skills/*-workspace/` stay gitignored; see [Live skill evals](./live-skill-evals.md).
+
+Manual invoke (hosts that support slash skills): `/mdcp`. First-time consumer
+bootstrap: `/mdcp help me get started`.
 
 When changing skill instructions:
 

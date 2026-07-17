@@ -20,17 +20,17 @@ If you use coding agents with helper skills ([helper skills](../../docs/skills.m
 
 ## Daily commands
 
-| Command                  | Purpose                                                                  |
-| ------------------------ | ------------------------------------------------------------------------ |
-| `pnpm build`             | Build all packages (`mdcp-core`, `mdcp-cli`)                             |
-| `pnpm test`              | Run `vitest` in `mdcp-core`                                              |
-| `pnpm run typecheck`     | TypeScript across packages                                               |
-| `pnpm run lint`          | ESLint on TypeScript sources                                             |
-| `pnpm run format:check`  | Prettier check                                                           |
-| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check           |
-| `pnpm skill:install`     | Dogfood-install parent skill from `skills/mdcp/` into `.agents/skills/`  |
-| `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs) |
-| `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                            |
+| Command                  | Purpose                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `pnpm build`             | Build all packages (`mdcp-core`, `mdcp-cli`)                                                                 |
+| `pnpm test`              | Run `vitest` in `mdcp-core`                                                                                  |
+| `pnpm run typecheck`     | TypeScript across packages                                                                                   |
+| `pnpm run lint`          | ESLint on TypeScript sources                                                                                 |
+| `pnpm run format:check`  | Prettier check                                                                                               |
+| `pnpm run check`         | Full gate including skill:lint, skill:validate, and docs:check                                               |
+| `pnpm skill:install`     | Refresh vendor-managed dogfood installs under `.agents/skills/` from `skills/` (do not hand-edit `.agents/`) |
+| `pnpm docs:compile:repo` | Regenerate compiled docs (`guides.md`, `DEVELOPERS.md`, package READMEs)                                     |
+| `pnpm docs:check`        | Validate repo docs + `examples/sample-guides`                                                                |
 
 Optional locally: `brew install gitleaks` (CI always scans).
 
