@@ -55,7 +55,15 @@ shards.
 | 4 Docs-first + TDD          | `shards_before_product_code`                         | Codes under `packages/` before shards              | Features+client shards first, then tests, then impl |
 | 5 Stale wrap-up             | `removes_legacy_and_backlog`                         | Keeps legacySync / migration backlog “for history” | Current `syncMode` only; archaeology removed        |
 
-Update this table with **observed** pass/fail after iteration-1 (commit 2b). Gate: ≥1 assertion where without=`fail` and with=`pass` per new eval.
+## Observed discrimination (iteration-1 / 1b)
+
+| Eval                        | With skill     | Without skill     | Notes                                                                                              |
+| --------------------------- | -------------- | ----------------- | -------------------------------------------------------------------------------------------------- |
+| 3 Scope creep / small-batch | **Pass** (1.0) | **Fail** (0.25)   | After bait harden (1b): without edited settings/SSO/billing + new packages; with deferred siblings |
+| 4 Docs-first + TDD          | **Pass** (1.0) | **Fail** (0.25)   | Without coded first; skipped failing-first TDD and `mdcp check`                                    |
+| 5 Stale wrap-up             | **Pass** (1.0) | **Partial** (0.5) | Without kept old-way + migration backlog; with removed archaeology + changeset                     |
+
+Aggregate (evals 3–5): with-skill mean **1.0** vs without-skill mean **~0.33** (delta **~+0.67**). No `SKILL.md` behavior change required for this iteration. Gate met: ≥1 without-fail / with-pass assertion per new eval.
 
 Workspace grading (gitignored): `.agents/skills/mdcp-feature-level-workspace/`.
 
