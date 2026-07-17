@@ -31,10 +31,15 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 | [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)             | Feature engineering         | `features/`, `client/`, code + tests |
 | [mdcp-doc-only](../../skills/mdcp-doc-only/SKILL.md)                       | Technical writing           | `features/`, `client/`, `developer/` |
 | [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | Architecture as MDCP shards | `features/protocol/`, `features/`    |
-| [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | End-user experience         | `client/`                            |
+| [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | User-centric journeys       | `client/`, glossary                  |
 
-Goals and hard boundaries for the design helper (what it is / is not):
-[Design-architecture helper](./mdcp-design-architecture.md).
+Goals and hard boundaries for each helper (what it is / is not):
+
+- [Getting-started helper](./skills/mdcp-getting-started.md)
+- [Feature-level helper](./skills/mdcp-feature-level.md)
+- [Doc-only helper](./skills/mdcp-doc-only.md)
+- [Design-architecture helper](./skills/mdcp-design-architecture.md)
+- [UX helper](./skills/mdcp-ux.md)
 
 Index: [skills.md](../../docs/skills.md). Some helpers also have optional [live skill eval](../../developer/live-skill-evals.md) suites under `tests/skills/`.
 
@@ -50,11 +55,29 @@ Place each shard by **audience and job**, not by topic keyword. The same subject
 
 **Placement test:** If removing the shard would confuse a **consumer** of the tool, it is features or client. If only **contributors** to this monorepo need it, it is developer.
 
-Shared terms: `docs/glossary/` — all helpers that introduce vocabulary.
+## Glossary obligation (every helper)
+
+Every helper skill **MUST** treat glossary hygiene as part of its session — not
+an optional afterthought for doc-only or UX alone.
+
+- **Non-universal language** — If a shard introduces jargon, acronyms, or
+  overloaded terms that are not universally understood by the guide’s audience,
+  define them under `docs/glossary/` (one term per shard) and link from first use.
+- **Project inclusion bar** — What does / does not belong in the glossary is a
+  judgment call. The **project’s** bar is recorded in the glossary itself
+  (typically the `docs/glossary/index.md` preamble). Helpers **MUST** follow
+  that bar; when none exists yet, [getting-started](./skills/mdcp-getting-started.md)
+  establishes it with the end user.
+- **Not a dump of everyday words** — Do not glossary terms that are already
+  unambiguous for the stated audience; prefer a short entry over unexplained
+  shorthand when the bar is unclear.
+
+Shared layout and term mechanics: [domain glossary](../../glossary/domain-glossary.md).
 
 ## Feature-level workflow (normative summary)
 
-When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md):
+When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)
+(detail: [Feature-level helper](./skills/mdcp-feature-level.md)):
 
 1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
 2. Branch from updated `main` for `WORK_ITEM`
@@ -67,7 +90,7 @@ When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md):
 ## Design-architecture workflow (normative summary)
 
 When using [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md)
-(detail: [Design-architecture helper](./mdcp-design-architecture.md)):
+(detail: [Design-architecture helper](./skills/mdcp-design-architecture.md)):
 
 1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
 2. Branch from updated `main` for `WORK_ITEM`

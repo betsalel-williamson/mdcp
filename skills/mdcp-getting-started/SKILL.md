@@ -84,6 +84,12 @@ linters: `--require-lint` / `--require-vale`.
 Each guide needs `index.md` + topic shards. Never hand-edit generated compile
 output or `refs.json`.
 
+**Glossary inclusion bar:** With the end user, record in the glossary (typically
+the `docs/glossary/index.md` preamble) which terms do / do not belong for this
+project — whose understanding counts (PERSONA and/or contributors), examples of
+in/out terms, and the preference when unsure (short entry vs omit). This is a
+project judgment call, not a universal list. Day-to-day helpers must follow it.
+
 ### 5. Experience-adaptive content
 
 | EXPERIENCE | Do                                                                                                   |
@@ -91,7 +97,7 @@ output or `refs.json`.
 | **novice** | Tutorial shards (what a shard is, why compile/check); brief concept pauses; FEATURE/PERSONA starters |
 | **expert** | Minimal FEATURE starters only; no tutorial/onboarding lecture shards                                 |
 
-Ask whether domain terms need glossary entries now; one `.md` per term + index.
+Seed domain terms that meet the inclusion bar; one `.md` per term + index.
 
 ### 6. Validate
 

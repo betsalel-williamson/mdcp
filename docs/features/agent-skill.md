@@ -9,7 +9,7 @@ Agent Skills give:
 - **Lower friction** — zero-install in the repo, or `npx skills add`
 - **Host interoperability** — Cursor, Copilot, Claude Code, VS Code, and CLI hosts
 - **Simpler maintenance** — markdown skill directories agents load from the repo
-- **Composition** — parent skill plus complementary helpers (catalog: [Helper Skills](./protocol/agent-task-prompts.md); architecture-as-shards: [Design-architecture helper](./protocol/mdcp-design-architecture.md); archetype skills are WIP)
+- **Composition** — parent skill plus complementary helpers (catalog: [Helper Skills](./protocol/agent-task-prompts.md); hardened boundaries: [helper skill shards](./protocol/skills/mdcp-getting-started.md); archetype skills are WIP)
 - **Reviewable instructions** — vendored under `.agents/skills/` and committed with the project
 
 ## Parent skill and complementary skills
