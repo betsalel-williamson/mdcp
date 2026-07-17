@@ -92,5 +92,5 @@ Then write only the tiers that apply:
 ### Step 6: Validate and Wrap-up
 
 1. Run this repo's test and documentation validation commands until they pass (discover from developer docs or package scripts).
-2. Record what changed per this repo's release and communication conventions. DO NOT detail any old behavior that no longer works in our docs. That belongs in our changeset.
+2. Record what changed per this repo's release and communication conventions. If the repo uses Changesets, create a changeset file in `.changeset/`. DO NOT detail any old behavior that no longer works in our docs. That belongs in our changeset.
 3. Submit work for review and link `WORK_ITEM`.

@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import {
   compileGuides,
+  compileGuideResults,
   assembleGuide,
   writeCompiledGuides,
   type CompileOptionsInput,
@@ -89,6 +90,68 @@ describe('compileGuides', () => {
         manifest: 'index.md',
       });
       expect(out).not.toMatch(/\{#[a-z0-9-]+\}/i);
+    });
+  });
+
+  it('injects source tags around sections by default when outputFile is provided', () => {
+    withTmpDir('mdcp-source-tags-', (work) => {
+      writeFileSync(join(work, 'index.md'), '# Example\n\n- [Section](section.md)\n');
+      writeFileSync(join(work, 'section.md'), '# Section\n\nContent.\n');
+
+      const out = assembleGuide(work, {
+        manifest: 'index.md',
+        outputFile: join(work, 'out', 'guide.md'),
+      });
+
+      expect(out).toContain('<!-- mdcp-shard: start ../section.md -->');
+      expect(out).toContain('<!-- mdcp-shard: end ../section.md -->');
+
+      // Regression test: ensure formatting matches Prettier expectations (blank line before end tag)
+      expect(out).toMatch(
+        /<!-- mdcp-shard: start \.\.\/section\.md -->\n\n## Section\n\nContent\.\n\n<!-- mdcp-shard: end \.\.\/section\.md -->/,
+      );
+    });
+  });
+
+  it('omits source tags when sourceTags is false', () => {
+    withTmpDir('mdcp-no-source-tags-', (work) => {
+      writeFileSync(join(work, 'index.md'), '# Example\n\n- [Section](section.md)\n');
+      writeFileSync(join(work, 'section.md'), '# Section\n\nContent.\n');
+
+      const out = assembleGuide(work, {
+        manifest: 'index.md',
+        outputFile: join(work, 'out', 'guide.md'),
+        sourceTags: false,
+      });
+
+      expect(out).not.toContain('<!-- mdcp-shard: start');
+    });
+  });
+
+  it('per-guide sourceTags:false overrides the top-level default', () => {
+    withTmpDir('mdcp-per-guide-source-tags-', (work) => {
+      mkdirSync(join(work, 'tagged'), { recursive: true });
+      mkdirSync(join(work, 'plain'), { recursive: true });
+      writeFileSync(join(work, 'tagged', 'index.md'), '# Tagged\n\n- [One](one.md)\n');
+      writeFileSync(join(work, 'tagged', 'one.md'), '# One\n\nTagged content.\n');
+      writeFileSync(join(work, 'plain', 'index.md'), '# Plain\n\n- [Two](two.md)\n');
+      writeFileSync(join(work, 'plain', 'two.md'), '# Two\n\nPlain content.\n');
+
+      const results = compileGuideResults({
+        guidesRoot: work,
+        compileOrder: ['tagged', 'plain'],
+        docsRoot: work,
+        config: { outputDir: '.', outputFile: 'guides.md', compileOrder: ['tagged', 'plain'] },
+        guides: [
+          { name: 'tagged', compile: { outputFile: 'tagged.md' } },
+          { name: 'plain', compile: { outputFile: 'plain.md', sourceTags: false } },
+        ],
+      });
+
+      const tagged = results.find((r) => r.name === 'tagged')!;
+      const plain = results.find((r) => r.name === 'plain')!;
+      expect(tagged.text).toContain('<!-- mdcp-shard: start tagged/one.md -->');
+      expect(plain.text).not.toContain('<!-- mdcp-shard: start');
     });
   });
 

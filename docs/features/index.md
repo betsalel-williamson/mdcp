@@ -13,6 +13,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
   - [Agent Skill](./agent-skill.md)
   - [Manifest compile order](./manifest-compile-order.md)
   - [Default compile hooks](./default-compile-hooks.md)
+  - [Source tags and default banner](./source-tags-and-banner.md)
   - [Compile output backup](./compile-output-backup.md)
 - [Link validation](./link-validation.md)
 - [Refs registry path](./refs-registry-path.md)
