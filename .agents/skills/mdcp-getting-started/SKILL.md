@@ -6,7 +6,7 @@ description: >-
   user asks to get started with an MDCP documentation pipeline.
 license: MIT
 compatibility: >-
-  Requires Node.js 24+ and the mdcp-cli installed globally or locally.
+  Requires Node.js 18+ and the mdcp-cli installed globally or locally.
 metadata:
   author: betsalel-williamson
   version: '0.5.0'
