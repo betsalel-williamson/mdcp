@@ -25,13 +25,16 @@ Agents **MUST** load the issue (or equivalent) before editing shards or code. On
 
 ## Standard helper skills
 
-| Helper Skill                                                               | Role                | Primary guides                       |
-| -------------------------------------------------------------------------- | ------------------- | ------------------------------------ |
-| [mdcp-getting-started](../../skills/mdcp-getting-started/SKILL.md)         | Bootstrap pipeline  | all tiers                            |
-| [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)             | Feature engineering | `features/`, `client/`, code + tests |
-| [mdcp-doc-only](../../skills/mdcp-doc-only/SKILL.md)                       | Technical writing   | `features/`, `client/`, `developer/` |
-| [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | ADRs, RFCs          | `features/protocol/`, `features/`    |
-| [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | End-user experience | `client/`                            |
+| Helper Skill                                                               | Role                        | Primary guides                       |
+| -------------------------------------------------------------------------- | --------------------------- | ------------------------------------ |
+| [mdcp-getting-started](../../skills/mdcp-getting-started/SKILL.md)         | Bootstrap pipeline          | all tiers                            |
+| [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)             | Feature engineering         | `features/`, `client/`, code + tests |
+| [mdcp-doc-only](../../skills/mdcp-doc-only/SKILL.md)                       | Technical writing           | `features/`, `client/`, `developer/` |
+| [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md) | Architecture as MDCP shards | `features/protocol/`, `features/`    |
+| [mdcp-ux](../../skills/mdcp-ux/SKILL.md)                                   | End-user experience         | `client/`                            |
+
+Goals and hard boundaries for the design helper (what it is / is not):
+[Design-architecture helper](./mdcp-design-architecture.md).
 
 Index: [skills.md](../../docs/skills.md). Some helpers also have optional [live skill eval](../../developer/live-skill-evals.md) suites under `tests/skills/`.
 
@@ -61,10 +64,23 @@ When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md):
 6. **Validate** — `mdcp check` (and repo test commands)
 7. **Wrap-up** — changeset for breaking/removed behavior (do not link durable shards/ADRs to `.changeset/*.md`); docs describe current behavior only
 
+## Design-architecture workflow (normative summary)
+
+When using [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKILL.md)
+(detail: [Design-architecture helper](./mdcp-design-architecture.md)):
+
+1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
+2. Branch from updated `main` for `WORK_ITEM`
+3. Draft or split architecture intent under `docs/features/` (and ADRs under `docs/features/adr/` when appropriate); update indexes
+4. Retire superseded design text from durable shards; leave product code and client guides to other helpers
+5. **Validate** — `mdcp check` (and repo docs validation)
+6. **Wrap-up** — link `WORK_ITEM`; defer implementation / UX polish explicitly when the ask was oversized
+
 ## Entrypoint chain
 
 ```text
 /mdcp-feature-level → intake questions → shards → mdcp check
+/mdcp-design-architecture → intake → feature/ADR shards → mdcp check
 ```
 
 The helper skill collects `WORK_ITEM_LOOKUP` via intake for scope.
