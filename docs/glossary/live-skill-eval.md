@@ -1,3 +1,3 @@
 # live skill eval
 
-Optional local [skill-creator](../../.agents/skills/skill-creator/SKILL.md) workflow (vendored at `.agents/skills/skill-creator/`): run agents with the skill, grade outputs, and optimize description triggering. Fixtures for that loop live under `tests/skills/mdcp/evals/` (parent) and `tests/skills/mdcp-getting-started/evals/` (bootstrap helper); run outputs go under `.agents/skills/*-workspace/` (gitignored). Never a CI gate in this repository — contrast with [skill content lint](./skill-content-lint.md), which only checks that phrases exist in `SKILL.md`.
+Optional local with/without-skill agent grading via vendored [skill-creator](../../.agents/skills/skill-creator/SKILL.md). Maintainer home: [Live skill evals](../developer/live-skill-evals.md). Never a CI gate in this repository — contrast with [skill content lint](./skill-content-lint.md).

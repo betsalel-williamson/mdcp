@@ -86,10 +86,10 @@ output or `refs.json`.
 
 ### 5. Experience-adaptive content
 
-| EXPERIENCE | Do |
-| ---------- | -- |
+| EXPERIENCE | Do                                                                                                   |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
 | **novice** | Tutorial shards (what a shard is, why compile/check); brief concept pauses; FEATURE/PERSONA starters |
-| **expert** | Minimal FEATURE starters only; no tutorial/onboarding lecture shards |
+| **expert** | Minimal FEATURE starters only; no tutorial/onboarding lecture shards                                 |
 
 Ask whether domain terms need glossary entries now; one `.md` per term + index.
 
