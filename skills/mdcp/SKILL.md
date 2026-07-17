@@ -55,16 +55,42 @@ What compile / check / refs mean and CLI commands:
 
 ## Quality Assurance (QA) Principles
 
-When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
+When applying MDCP, act as a complementary partner to other skills and systems.
+These habits keep docs trustworthy while the product keeps changing:
 
-- **Always reference doc shards:** Insert yourself into the process to ensure the current task references the correct documentation shards.
-- **Update as you go:** Continuously update documentation as work progresses.
-- **Current docs only:** Shards must describe the product **as it works now**. When behavior or guidance changes, remove superseded or stale text from durable docs — do not leave “old way” sections for archaeology. Git history preserves prior wording; consumer notice of breaking or removed behavior belongs in the **changeset** (folded into package CHANGELOGs at release), not in feature/client/developer shards. Never link durable shards or ADRs to pending `.changeset/*.md` files — those notes are temporary.
-- **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
-- **Break it down:** Organize information into the smallest possible pieces (shards).
-- **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
-- **No temp info or backlogs:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools. Pending `.changeset/*.md` files are temporary release notes — write them for the release pipeline; do not link them from ADRs or other durable docs.
-- **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
+- **Always reference doc shards:** Insert yourself into the process so the
+  current task points at the correct documentation shards before work spreads.
+- **Update as you go:** Continuously update documentation as work progresses so
+  shards and code do not drift apart mid-change.
+- **Small batches / one focused feature:** Prefer one shippable slice per branch
+  or session. Oversized requests produce tangled diffs and half-updated docs;
+  split the request (and the shards) before coding so each change stays
+  reviewable and documentation can stay current with it.
+- **Current docs only:** Shards must describe the product **as it works now**.
+  When behavior or guidance changes, remove superseded or stale text from
+  durable docs — do not leave “old way” sections for archaeology. Git history
+  preserves prior wording; consumer notice of breaking or removed behavior
+  belongs in the **changeset** (folded into package CHANGELOGs at release),
+  not in feature/client/developer shards. Never link durable shards or ADRs to
+  pending `.changeset/*.md` files — those notes are temporary.
+- **Capture ambiguity:** Identify ambiguous terms or language and write the
+  clarified details into specific shards.
+- **Break it down:** Organize information into the smallest useful pieces
+  (shards) so agents can load one shard at a time instead of drowning in
+  monoliths.
+- **No code in docs:** Put intent, contracts, and acceptance criteria in
+  shards — not implementation. Code samples and internals drift; the codebase
+  is the source of truth for how something is built. This matches
+  **What belongs where** below.
+- **No temp info or backlogs:** Do not record temporary project information,
+  tickets, incident logs, or migration backlogs and planning in the durable
+  documentation. That information belongs in issue tracking and project
+  planning tools. Pending `.changeset/*.md` files are temporary release notes —
+  write them for the release pipeline; do not link them from ADRs or other
+  durable docs.
+- **Record planning locations:** Record where planning documents and
+  architectural decisions live so agents can find them without stuffing plans
+  into durable product shards.
 
 ## What belongs where
 
@@ -72,12 +98,14 @@ Documentation is a **first-class artifact** alongside code. We use a **spec-driv
 
 The default MDCP structure acts as the "batteries-included" **Code Repository Archetype**. This fundamental four-tier taxonomy enforces strict boundaries to prevent the docs system from falling apart as it scales:
 
-| Guide             | Holds                                                                          | Does not hold                                                 |
-| ----------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| `docs/features/`  | How the plumbing works — capabilities, design, contracts, acceptance criteria  | Step-by-step implementation, duplicated API surface from code |
-| `docs/client/`    | How a specific persona finds value using the software — outcomes, flows, usage | Internal architecture, maintainer-only workflows              |
-| `docs/developer/` | How to work on the repo — setup, layout, validation, delivery                  | Product narrative or end-user tutorials                       |
-| `docs/glossary/`  | Shared terms and disambiguation                                                | General code snippets                                         |
+| Guide             | Holds                                                                                    | Does not hold                                                                 |
+| ----------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `docs/features/`  | How the plumbing works — capabilities, design, contracts, acceptance criteria            | Maintainer runbooks, live eval suites, contributor setup, impl walkthroughs   |
+| `docs/client/`    | How a specific persona finds value using the software — outcomes, flows, usage           | Internal architecture, skill-authoring, live evals, maintainer-only workflows |
+| `docs/developer/` | How to work on the repo — setup, layout, validation, skill development, live skill evals | Product capability narrative or end-user tutorials                            |
+| `docs/glossary/`  | Shared terms and disambiguation                                                          | General code snippets                                                         |
+
+**Placement test:** If only contributors to this repo need the shard, put it in `docs/developer/`. If consumers of the product need it, use `docs/features/` or `docs/client/`. The same topic may span tiers (for example Agent Skill product delivery vs maintainer live evals).
 
 _(Note: The MDCP engine itself is domain-agnostic. Non-code projects can define entirely different guide tiers/archetypes while still using the same compile and validation checks.)_
 
@@ -86,7 +114,7 @@ _(Note: The MDCP engine itself is domain-agnostic. Non-code projects can define 
 - Shards under `docs/**/` are the source of truth.
 - Use `#` headings in shards; mdcp demotes them during compile.
 - After changing a guide's link order (e.g., in `index.md`), run `mdcp compile` — there is no separate manifest sync step.
-- After inserting `[text](#slug)` cross-links, run `mdcp check` so fragments match **compiled** slugs (use `mdcp refs-list` if you need to inspect the registry).
+- After inserting `[text](#slug)` cross-links, run `mdcp check` so fragments match **compiled** slugs (use `mdcp refs list` if you need to inspect the registry).
 
 ## When to use
 
@@ -153,6 +181,25 @@ Task-type instructions live in independent helper skills. Once the MDCP CLI is i
 | `mdcp-design-architecture` | High-level design and planning (RFCs, ADRs)            |
 | `mdcp-feature-level`       | Implement and document features (docs-first, then TDD) |
 | `mdcp-ux`                  | User experience design and client-guide updates        |
+
+**Helper routing (task → skill → artifacts):** Pick **one** helper for the current `WORK_ITEM` (one focused batch per branch). Edit only the artifact paths that helper owns; keep shards current; put no implementation code in durable docs; run `mdcp check` before trusting compiled output.
+
+```mermaid
+flowchart TB
+  Q{What kind of work?}
+
+  Q -->|Bootstrap MDCP in a repo| GS[mdcp-getting-started]
+  Q -->|Docs / technical writing only| DO[mdcp-doc-only]
+  Q -->|ADR / RFC / high-level design| DA[mdcp-design-architecture]
+  Q -->|Feature: docs-first then TDD| FL[mdcp-feature-level]
+  Q -->|UX / end-user experience| UX[mdcp-ux]
+
+  GS --> GSa["docs/features/, docs/client/, docs/developer/, docs/glossary/<br/>+ mdcp.config.json + skill install"]
+  DO --> DOa["docs/features/, docs/client/, docs/developer/<br/>(no product code unless WORK_ITEM says so)"]
+  DA --> DAa["docs/features/ (incl. protocol / ADRs)<br/>design shards only"]
+  FL --> FLa["docs/features/, docs/client/<br/>then source + tests"]
+  UX --> UXa["docs/client/<br/>then UI as needed"]
+```
 
 Bootstrap example:
 

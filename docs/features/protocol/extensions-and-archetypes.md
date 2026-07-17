@@ -18,12 +18,12 @@ MDCP separates:
 
 The parent **Agent Skill** (`skills/mdcp/` → `.agents/skills/mdcp/`) is the portable agent entrypoint.
 
-| Rule                                                                       | Detail                                                    |
-| -------------------------------------------------------------------------- | --------------------------------------------------------- |
-| Agents **MUST NOT** hand-edit vendored skill files for one-off repo advice | Changes belong in shards or `docs/extensions/`            |
-| Broadly applicable improvements                                            | Propose upstream to `skills/mdcp/` via PR                 |
-| Project-specific guidance                                                  | `docs/extensions/` or complementary skills you maintain   |
-| Refresh local dogfood                                                      | `pnpm skill:install` (or `npx skills add . --skill mdcp`) |
+| Rule                                                                       | Detail                                                  |
+| -------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Agents **MUST NOT** hand-edit vendored skill files for one-off repo advice | Changes belong in shards or `docs/extensions/`          |
+| Broadly applicable improvements                                            | Propose upstream to `skills/mdcp/` via PR               |
+| Project-specific guidance                                                  | `docs/extensions/` or complementary skills you maintain |
+| Refresh local dogfood                                                      | `pnpm skill:update` (alias: `pnpm skill:install`)       |
 
 ## SOLID principles for MDCP
 

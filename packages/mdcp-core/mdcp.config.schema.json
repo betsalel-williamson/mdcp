@@ -29,6 +29,11 @@
     "banner": {
       "type": "string"
     },
+    "sourceTags": {
+      "type": "boolean",
+      "default": true,
+      "description": "Wrap each shard's content in HTML source tags indicating its relative path."
+    },
     "guides": {
       "type": "array",
       "items": {
@@ -93,6 +98,7 @@
               "scopeRoot": { "type": "string" },
               "outputFile": { "type": "string" },
               "includeBanner": { "type": "boolean" },
+              "sourceTags": { "type": "boolean" },
               "hooks": {
                 "anyOf": [
                   { "type": "array", "items": { "type": "string" } },

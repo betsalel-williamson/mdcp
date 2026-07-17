@@ -33,7 +33,7 @@ the consumer install path yet.
 
 ## CLI still required (build, validate, cross-link registry)
 
-The skills rely on the `mdcp` CLI. You need Node.js 24+ and must install
+The skills rely on the `mdcp` CLI. You need Node.js 18+ and must install
 `@bwilliamson/mdcp-cli` globally or locally in your project:
 
 ```bash
@@ -53,7 +53,7 @@ This provides the `mdcp` commands for:
 ```bash
 mdcp compile --config <config> --docs-root <docs-root>
 mdcp check --config <config> --docs-root <docs-root>
-mdcp refs-list --config <config> --docs-root <docs-root>
+mdcp refs list --config <config> --docs-root <docs-root>
 ```
 
 Details: `cli-and-scripts.md` in this folder (linked from `SKILL.md`).

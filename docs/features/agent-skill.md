@@ -1,4 +1,4 @@
-# Agent Skill delivery
+# Agent Skill
 
 MDCP ships as a portable **documentation system** Agent Skills pack so projects inherit docs-as-code guardrails without a host-specific IDE extension. The **parent skill** is the intended agent entrypoint for people who want maintainable sharded docs as ideas keep coming.
 
@@ -9,7 +9,7 @@ Agent Skills give:
 - **Lower friction** — zero-install in the repo, or `npx skills add`
 - **Host interoperability** — Cursor, Copilot, Claude Code, VS Code, and CLI hosts
 - **Simpler maintenance** — markdown skill directories agents load from the repo
-- **Composition** — parent skill plus complementary skills (archetype skills are WIP)
+- **Composition** — parent skill plus complementary helpers (catalog: [Helper Skills](./protocol/agent-task-prompts.md); hardened boundaries: [helper skill shards](./protocol/skills/mdcp-getting-started.md); archetype skills are WIP)
 - **Reviewable instructions** — vendored under `.agents/skills/` and committed with the project
 
 ## Parent skill and complementary skills
@@ -54,6 +54,8 @@ Then start bootstrap:
 
 Zero-install: copy `skills/mdcp/` from this repository into the consumer's `.agents/skills/mdcp/`. Do not document complementary archetype install commands until those skills are ready for use.
 
+Qualitative checks of skill behavior (with vs without the skill) are maintainer workflow — see [Live skill evals](../developer/live-skill-evals.md). The static CI gate is `pnpm skill:validate`.
+
 ## Quality Assurance (QA) Principles
 
 When applying MDCP, you must act as a complementary partner to other skills and systems, enforcing docs-as-code hygiene:
@@ -67,25 +69,6 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 - **No temp info:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools. Pending `.changeset/*.md` files are temporary release notes — write them for the release pipeline; do not link them from ADRs or other durable docs.
 - **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
 
-## Acceptance criteria
-
-1. Parent skill is a valid Agent Skills package (`name: mdcp` matches folder under `skills/`).
-2. Install documents the parent skill via `npx skills add` (complementary archetype skills stay unpublished in consumer docs until ready).
-3. Parent skill encodes bootstrap / smallest-context / hard rules for docs-as-code agents.
-4. Skill is host-agnostic — no Marketplace-only required steps.
-5. [`skill content lint`](../glossary/skill-content-lint.md) (`pnpm skill:lint`) and `pnpm skill:validate` ([skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)) pass locally and in CI for changes under `skills/` and `scripts/lint-mdcp-skill.mjs`.
-
-## Content lint and spec validation (CI)
-
-- `pnpm skill:lint` — MDCP-specific static analysis of the parent `SKILL.md` (required/forbidden phrases, frontmatter, line budget). Fixtures live under `scripts/mdcp-skill-content-lint/` (monorepo CI only; not shipped with the skill).
-- `pnpm skill:validate` — `skills-ref validate` on each publishable skill under `skills/` (agentskills.io frontmatter and naming).
-
-Both run in GitHub Actions. Neither is a [live skill eval](../glossary/live-skill-eval.md).
-
-## Live skill evals (optional, local)
-
-Optional skill-creator agent runs and description trigger optimization use fixtures under `skills/mdcp/evals/`. Never required in CI.
-
 ## Ecosystem publication
 
 Primary discovery: [skills.sh](https://skills.sh) via `npx skills`. There is no submit API — the [repo page](https://skills.sh/betsalel-williamson/mdcp) is indexed from anonymous install telemetry. Secondary registries later. Do not publish a VS Code Marketplace VSIX for this delivery path.
@@ -93,4 +76,7 @@ Primary discovery: [skills.sh](https://skills.sh) via `npx skills`. There is no 
 Landing identity for skills.sh:
 
 - Root [README](../../README.md) includes the [install-count badge](https://www.skills.sh/docs#badge) (`https://skills.sh/b/betsalel-williamson/mdcp`) and `npx skills add` install commands.
-- Repo-root [`skills.sh.json`](../../skills.sh.json) groups the parent skill `mdcp` under **Documentation system** on the [skills.sh repo page](https://www.skills.sh/docs/customize). WIP `mdcp-arch-*` skills stay out of groupings until they drop `metadata.internal`.
+- Repo-root [`skills.sh.json`](../../skills.sh.json) lists the parent and release-ready helpers in the **Documentation system** group on the [skills.sh repo page](https://www.skills.sh/docs/customize). WIP `mdcp-arch-*` skills stay `metadata.internal` and out of groupings until ready to release.
+
+Maintainer detail (what the file does and does not control, helper vs internal
+policy, telemetry refresh): [Agent Skill development — skills.sh.json](../developer/agent-skill.md#skillsshjson-repo-page-layout).

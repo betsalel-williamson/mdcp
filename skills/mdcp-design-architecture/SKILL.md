@@ -3,7 +3,7 @@ name: mdcp-design-architecture
 description: 'MDCP Helper: Act as an expert Systems Architect to draft and design system architecture using MDCP shards.'
 license: MIT
 compatibility: >-
-  Requires Node.js 24+ and the mdcp-cli installed globally or locally.
+  Requires Node.js 18+ and the mdcp-cli installed globally or locally.
 metadata:
   author: betsalel-williamson
   version: '0.5.0'
@@ -17,7 +17,10 @@ metadata:
 
 # Design Architecture Helper
 
-> **PREREQUISITE:** This is a helper skill. The `mdcp` parent skill provides the core documentation system. Ensure the `mdcp` CLI is installed.
+> **PREREQUISITE:** This is a helper skill. Follow the `mdcp` parent skill
+> first — especially **Quality Assurance (QA) Principles** (small batches,
+> current docs only, no code in docs) and **What belongs where**. Ensure the
+> `mdcp` CLI is installed.
 
 Act as an expert Systems Architect to draft and design system architecture using MDCP shards.
 
@@ -62,6 +65,7 @@ Collect these via intake (or from the conversation if already stated):
 
 1. Draft the architecture (system diagrams, API contracts, data models) as shards under `docs/features/`. Focus on how the design enables the desired end-user experience.
 2. Check the proposed architecture for bottlenecks and fit with the as-built system.
+3. **Glossary hygiene** — if design shards introduce non-universal jargon, add or update `docs/glossary/` entries per the project’s inclusion bar and link from first use.
 
 ### Step 4: Refactor and Validate
 

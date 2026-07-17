@@ -6,11 +6,12 @@ mdcp/
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── skills/                 # Publishable Agent Skills source (skills.sh layout)
-│   ├── mdcp/               # Parent documentation-system skill
-│   ├── mdcp-arch-oss-library/
-│   └── mdcp-arch-product-docs-site/
-├── skills.sh.json          # skills.sh repo page groupings
-├── .agents/skills/         # Local dogfood installs + workspaces (gitignored publishable copies)
+│   ├── mdcp/               # Parent skill (public consumer entrypoint)
+│   ├── mdcp-*/             # Helper skills (listed in skills.sh.json when release-ready)
+│   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; not in skills.sh.json)
+├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
+├── skills.sh.json          # skills.sh repo page: release-ready packs in Documentation system
+├── .agents/skills/         # Vendor-managed dogfood installs (refresh via pnpm skill:update; do not hand-edit) + skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary

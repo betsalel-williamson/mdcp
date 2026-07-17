@@ -4,7 +4,7 @@ Command and capability reference. For the end-to-end mental model (shards, monol
 
 ## Compile (P0.1)
 
-Stitch shard directories into canonical monoliths or publish outputs. Demotes headings, strips `about-this-guide` preamble, optional per-guide titles and publish paths.
+Stitch shard directories into canonical monoliths or publish outputs. Demotes headings, strips `about-this-guide` preamble, optional per-guide titles and publish paths. Injects source tags and a default warning banner. See [Source tags and default banner](./source-tags-and-banner.md).
 
 ```bash
 mdcp compile --config mdcp.config.json --docs-root .
@@ -16,13 +16,23 @@ Guides compile to per-guide files under `outputDir` by default (`{name}.md`, or 
 
 Heading-slug **registry** for validation after compile — see [Refs registry path](./refs-registry-path.md). Discover shards with host search (`rg`); confirm `#` cross-links with `mdcp check`.
 
-## Agent Skill delivery
+## Agent Skill
 
-Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill delivery](./agent-skill.md).
+Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill](./agent-skill.md).
+
+Helper skills extend the parent for specific authoring jobs — catalog and intake:
+[Helper Skills](./protocol/agent-task-prompts.md). Hardened is/isn’t boundaries:
+[Getting-started](./protocol/skills/mdcp-getting-started.md),
+[Feature-level](./protocol/skills/mdcp-feature-level.md),
+[Doc-only](./protocol/skills/mdcp-doc-only.md),
+[Design-architecture](./protocol/skills/mdcp-design-architecture.md),
+[UX](./protocol/skills/mdcp-ux.md).
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
+
+Optional local with/without-skill grading for helpers is maintainer workflow — see [Live skill evals](../developer/live-skill-evals.md). Not a CI gate.
 
 ## Check gate (P0.4)
 
