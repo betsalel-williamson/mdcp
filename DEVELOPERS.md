@@ -173,10 +173,11 @@ mdcp/
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── skills/                 # Publishable Agent Skills source (skills.sh layout)
-│   ├── mdcp/               # Parent documentation-system skill
-│   ├── mdcp-arch-oss-library/
-│   └── mdcp-arch-product-docs-site/
-├── skills.sh.json          # skills.sh repo page groupings
+│   ├── mdcp/               # Parent skill (public consumer entrypoint)
+│   ├── mdcp-*/             # Helper skills (not curated in skills.sh.json)
+│   └── mdcp-arch-*/        # WIP archetypes (metadata.internal: true)
+├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
+├── skills.sh.json          # skills.sh repo page groupings (display only; see agent-skill.md)
 ├── .agents/skills/         # Dogfood installs (mdcp* gitignored) + vendored skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
@@ -394,6 +395,60 @@ There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-wil
 
 Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
 
+### `skills.sh.json` (repo page layout)
+
+Repo-root [`skills.sh.json`](skills.sh.json) controls **how** the
+[skills.sh repo page](https://skills.sh/betsalel-williamson/mdcp) groups skills
+for humans browsing the catalog. Upstream reference:
+[Customize repo pages](https://www.skills.sh/docs/customize).
+
+#### What it is (and is not)
+
+| Does                                                                          | Does **not**                                         |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Curate section titles, descriptions, and skill order on the skills.sh page    | Change how `npx skills add` installs skills          |
+| Decide which skills appear in named groups vs **Other skills** (`notGrouped`) | Replace `metadata.internal`, CI gates, or live evals |
+| Match skill names/slugs from `skills/*/SKILL.md` `name:`                      | Act as a publish/submit registry                     |
+
+Invalid or missing JSON falls back to the default installs-sorted list. Skills.sh
+picks up edits after the repo is seen again by install telemetry; pages are
+cached, so updates can lag.
+
+#### How it fits this repo
+
+```text
+skills/                     publishable Agent Skill packs (source of truth)
+skills.sh.json              display groupings for the skills.sh repo page
+tests/skills/*/evals/       optional live eval fixtures (not on skills.sh)
+pnpm skill:lint|validate    CI/static gates on skills/ (not on skills.sh.json)
+```
+
+Current policy (keep until intentionally widened):
+
+1. **Group only the parent** — `groupings` lists `mdcp` under **Documentation
+   system**. That is the consumer install entrypoint.
+2. **Helpers stay out of curated groups** — `mdcp-getting-started`,
+   `mdcp-doc-only`, `mdcp-feature-level`, `mdcp-design-architecture`, `mdcp-ux`,
+   and similar helpers are **not** listed in `groupings`. If telemetry has seen
+   them, skills.sh may still show them under **Other skills** (`notGrouped:
+"bottom"`). Do not add them to a curated group until product wants them as
+   first-class public installs.
+3. **WIP archetypes stay internal** — `skills/mdcp-arch-*` keep
+   `metadata.internal: true` so the skills CLI hides them from default
+   `--list` / public prompts. Keep them out of `skills.sh.json` groupings
+   until that flag is dropped. Maintainers can surface them locally with
+   `INSTALL_INTERNAL_SKILLS=1`.
+4. **Live evals are separate** — suite inventory and skill-creator loops live
+   under [Live skill evals](#live-skill-evals). They never belong in
+   `skills.sh.json`.
+
+When changing public skill surface area, update this file in the same PR as the
+skill policy change, and follow the skills.sh step in the
+[release checklist](#release-checklist-maintainers).
+
+Consumer-facing landing identity (badge, README install commands) stays in
+[Agent Skill](docs/features/agent-skill.md#ecosystem-publication).
+
 ## Live skill evals
 
 Optional local workflow that runs an agent **with** and **without** a subject
@@ -518,7 +573,7 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump. Gr
 Use this for every cut. Do not accumulate one-off milestone checklists in this shard.
 
 1. On clean `main`, confirm pending `.changeset/*.md` files cover package changes since the last tag.
-2. **Skills policy:** only the parent `mdcp` skill is public. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` until intentionally published; list only `mdcp` in [`skills.sh.json`](skills.sh.json).
+2. **Skills policy:** only the parent `mdcp` skill is public. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` until intentionally published; list only `mdcp` in [`skills.sh.json`](skills.sh.json) groupings (see [Agent Skill development — skills.sh.json](#skillsshjson-repo-page-layout)).
 3. Preflight: `pnpm skill:lint && pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
 4. In a real TTY: `pnpm release:tag:push` — select bump (patch / minor / major / build), type `vX.Y.Z`, answer `yes`. Agents and CI cannot run this script.
 5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, commits `chore: release vX.Y.Z`, tags, and (with `--push`) pushes `main` + the tag.

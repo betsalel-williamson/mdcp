@@ -77,3 +77,6 @@ Landing identity for skills.sh:
 
 - Root [README](../../README.md) includes the [install-count badge](https://www.skills.sh/docs#badge) (`https://skills.sh/b/betsalel-williamson/mdcp`) and `npx skills add` install commands.
 - Repo-root [`skills.sh.json`](../../skills.sh.json) groups the parent skill `mdcp` under **Documentation system** on the [skills.sh repo page](https://www.skills.sh/docs/customize). WIP `mdcp-arch-*` skills stay out of groupings until they drop `metadata.internal`.
+
+Maintainer detail (what the file does and does not control, helper vs internal
+policy, telemetry refresh): [Agent Skill development — skills.sh.json](../developer/agent-skill.md#skillsshjson-repo-page-layout).
