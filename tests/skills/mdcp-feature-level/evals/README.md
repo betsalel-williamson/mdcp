@@ -6,10 +6,13 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Maintain
 
 ## Layout
 
-| Path                     | Purpose                                                                     |
-| ------------------------ | --------------------------------------------------------------------------- |
-| `evals.json`             | Prompts, `expected_output`, and named `assertions` for docs-first delivery  |
-| `files/feature-fixture/` | Tiny MDCP sandbox with `features/` + `client/` tiers and a real `packages/` |
+| Path                            | Purpose                                                                      |
+| ------------------------------- | ---------------------------------------------------------------------------- |
+| `evals.json`                    | Prompts, `expected_output`, and named `assertions` for docs-first delivery   |
+| `files/feature-fixture/`        | Placement + backfill sandbox (`features/` + `client/` + `packages/`)         |
+| `files/fixture-scope-bait/`     | Multi-feature bait (settings / SSO / billing) for small-batch scoping        |
+| `files/fixture-docs-first-tdd/` | Sync status panel + existing test file for docs-before-code and TDD ordering |
+| `files/fixture-stale-wrapup/`   | `legacySync` + migration backlog seed for current-docs-only wrap-up          |
 
 ## What the suite covers
 
@@ -20,6 +23,13 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Maintain
 2. **User-facing backfill** — a `--format=csv` option must backfill BOTH
    `docs/features/` and `docs/client/` (with index updates), not be buried in
    `docs/developer/`.
+3. **Small-batch / multi-feature bait** — export-to-CSV WORK_ITEM with sibling
+   asks (settings redesign, SSO, billing); agent must defer adjacent scope.
+4. **Docs-first + TDD gate** — `lastSyncedAt` on sync status: shards (and
+   `mdcp check`) before product code; failing tests before implementation when
+   the repo already uses tests.
+5. **Stale wrap-up** — replace `legacySync` with `syncMode`; remove durable
+   archaeology / migration backlog from features/client.
 
 ## Red → green (eval 1)
 
@@ -37,6 +47,24 @@ audience**, with an explicit maintainer-only → `developer/` row and a placemen
 test that forbids co-locating live skill-eval runbooks beside product `skills`
 shards.
 
+## Predicted discrimination (evals 3–5)
+
+| Eval                        | Primary discriminator                                | Without expected fail                              | With expected pass                                  |
+| --------------------------- | ---------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
+| 3 Scope creep / small-batch | `scopes_to_csv_export_only` / `defers_adjacent_asks` | Starts settings/SSO/billing                        | CSV export only; defers siblings                    |
+| 4 Docs-first + TDD          | `shards_before_product_code`                         | Codes under `packages/` before shards              | Features+client shards first, then tests, then impl |
+| 5 Stale wrap-up             | `removes_legacy_and_backlog`                         | Keeps legacySync / migration backlog “for history” | Current `syncMode` only; archaeology removed        |
+
+## Observed discrimination (iteration-1 / 1b)
+
+| Eval                        | With skill     | Without skill     | Notes                                                                                              |
+| --------------------------- | -------------- | ----------------- | -------------------------------------------------------------------------------------------------- |
+| 3 Scope creep / small-batch | **Pass** (1.0) | **Fail** (0.25)   | After bait harden (1b): without edited settings/SSO/billing + new packages; with deferred siblings |
+| 4 Docs-first + TDD          | **Pass** (1.0) | **Fail** (0.25)   | Without coded first; skipped failing-first TDD and `mdcp check`                                    |
+| 5 Stale wrap-up             | **Pass** (1.0) | **Partial** (0.5) | Without kept old-way + migration backlog; with removed archaeology + changeset                     |
+
+Aggregate (evals 3–5): with-skill mean **1.0** vs without-skill mean **~0.33** (delta **~+0.67**). No `SKILL.md` behavior change required for this iteration. Gate met: ≥1 without-fail / with-pass assertion per new eval.
+
 Workspace grading (gitignored): `.agents/skills/mdcp-feature-level-workspace/`.
 
 ## Run path (skill-creator)
@@ -46,5 +74,22 @@ Workspace grading (gitignored): `.agents/skills/mdcp-feature-level-workspace/`.
 3. Copy the listed `files` into an isolated working tree per run (do not edit this monorepo’s real `docs/`).
 4. Follow skill-creator: spawn **with_skill** and **without_skill** baselines together.
 5. Write results under `.agents/skills/mdcp-feature-level-workspace/iteration-N/` (gitignored via `*-workspace/`).
+
+```text
+.agents/skills/mdcp-feature-level-workspace/
+  iteration-N/
+    eval-1-wrong-tier-placement/
+    eval-2-user-facing-backfill/
+    eval-3-scope-creep-small-batch/
+      eval_metadata.json
+      with_skill/{outputs,grading.json,timing.json}
+      without_skill/{outputs,grading.json,timing.json}
+    eval-4-docs-first-tdd-gate/
+    eval-5-stale-wrap-up/
+    benchmark.json
+```
+
+6. Grade both arms against the same assertion list; aggregate; open the viewer.
+7. If skill body fixes are needed, edit `skills/mdcp-feature-level/SKILL.md` then sync via `pnpm skill:install`.
 
 Live runs are local-only (not a CI gate). Workspace artifacts stay under `.agents/skills/mdcp-feature-level-workspace/` (gitignored).

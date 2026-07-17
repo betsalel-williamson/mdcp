@@ -2,14 +2,17 @@
 
 How coding agents load tracker issues and delivery conventions **for this repository**. Helper skills in [Helper Skills](../../docs/skills.md) (installed alongside the MDCP CLI) point here via `WORK_ITEM_LOOKUP`.
 
-Configure an equivalent shard in consumer repos during [local setup](./local-setup.md).
+**This repo’s work-item lookup system uses GitHub** for both **issues** (acceptance, discussion, `Closes #N`) and **project planning** (the Project board below — status, track, roadmap grouping). Do not invent a second tracker or stuff tickets / sprint backlogs into durable `docs/` shards; load scope from GitHub via this shard.
+
+Configure an equivalent shard in consumer repos during [local setup](./local-setup.md) (point `WORK_ITEM_LOOKUP` at whatever issue tracker and project-planning host that repo uses).
 
 ## Tracker
 
 ```text
 Host=GitHub (betsalel-williamson/mdcp)
+Issues=https://github.com/betsalel-williamson/mdcp/issues/  (record WORK_ITEMs here)
+Project board=https://github.com/users/betsalel-williamson/projects/4  (project plan / delivery board)
 Issue base URL=https://github.com/betsalel-williamson/mdcp/issues/
-Project board=https://github.com/users/betsalel-williamson/projects/4
 WORK_ITEM=enough to resolve the issue — number, URL, or short name/description
 ```
 

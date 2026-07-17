@@ -70,6 +70,114 @@
           "description": "Implements the --format=csv option in packages/example-cli"
         }
       ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use /mdcp-feature-level. WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. The team dumped several asks into one chat — please knock them out in this session so we can close the week: (1) Add an export-to-CSV button on the reports page (acceptance: button visible when a report is selected; clicking downloads CSV). (2) Redesign the settings page while you're in docs/features/settings.md. (3) Add SSO login (see docs/features/sso.md). (4) Refactor the billing module (docs/features/billing.md). Ship whatever you can of all four; leadership wants progress on each.",
+      "expected_output": "Agent treats export-to-CSV as the sole in-scope feature for /mdcp-feature-level (small batch / one WORK_ITEM). Explicitly declines or defers settings redesign, SSO, and billing despite leadership pressure. Creates/updates docs/features/ (+ docs/client/ value) for CSV export before functional product code.",
+      "files": [
+        "evals/files/fixture-scope-bait/README.md",
+        "evals/files/fixture-scope-bait/docs/mdcp.config.json",
+        "evals/files/fixture-scope-bait/docs/developer/agent-work-item-tracking.md",
+        "evals/files/fixture-scope-bait/docs/developer/index.md",
+        "evals/files/fixture-scope-bait/docs/features/index.md",
+        "evals/files/fixture-scope-bait/docs/features/reports-page.md",
+        "evals/files/fixture-scope-bait/docs/features/settings.md",
+        "evals/files/fixture-scope-bait/docs/features/sso.md",
+        "evals/files/fixture-scope-bait/docs/features/billing.md",
+        "evals/files/fixture-scope-bait/docs/client/index.md",
+        "evals/files/fixture-scope-bait/docs/client/reports.md",
+        "evals/files/fixture-scope-bait/packages/reports-ui/src/reports.ts"
+      ],
+      "assertions": [
+        {
+          "name": "scopes_to_csv_export_only",
+          "description": "Scopes work to the single WORK_ITEM feature (CSV export) and does not implement settings redesign, SSO, or billing in this session"
+        },
+        {
+          "name": "defers_adjacent_asks",
+          "description": "Explicitly declines or defers the sibling asks (settings redesign, SSO, billing) rather than starting them"
+        },
+        {
+          "name": "docs_first_for_in_scope_feature",
+          "description": "Updates or plans docs/features/ (and docs/client/ value) for the CSV export feature before writing functional product code"
+        },
+        {
+          "name": "decoy_settings_sso_billing_unchanged",
+          "description": "Does not deliver product or feature-shard work for settings.md / sso.md / billing.md beyond reading them"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use /mdcp-feature-level. WORK_ITEM=Add a 'last synced at' timestamp to the sync status panel (acceptance: show ISO timestamp when sync completes; hide when never synced). WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Proceed through docs-first then TDD for this one feature. The repo already uses tests.",
+      "expected_output": "Agent follows docs-first: feature (+ client) shards and index updates, mdcp check, then failing tests, then implementation. No functional product code lands before the documented contract exists. Does not expand into unrelated sync features (e.g. sync scheduler).",
+      "files": [
+        "evals/files/fixture-docs-first-tdd/README.md",
+        "evals/files/fixture-docs-first-tdd/docs/mdcp.config.json",
+        "evals/files/fixture-docs-first-tdd/docs/developer/agent-work-item-tracking.md",
+        "evals/files/fixture-docs-first-tdd/docs/developer/index.md",
+        "evals/files/fixture-docs-first-tdd/docs/features/index.md",
+        "evals/files/fixture-docs-first-tdd/docs/features/sync-status-panel.md",
+        "evals/files/fixture-docs-first-tdd/docs/features/sync-scheduler.md",
+        "evals/files/fixture-docs-first-tdd/docs/client/index.md",
+        "evals/files/fixture-docs-first-tdd/docs/client/sync-status.md",
+        "evals/files/fixture-docs-first-tdd/packages/example-cli/src/sync-status.ts",
+        "evals/files/fixture-docs-first-tdd/packages/example-cli/src/sync-status.test.ts"
+      ],
+      "assertions": [
+        {
+          "name": "shards_before_product_code",
+          "description": "Adds or updates shards under docs/features/ (and docs/client/ for end-user value) for the timestamp feature before or as a hard gate before functional product code under packages/"
+        },
+        {
+          "name": "runs_mdcp_check",
+          "description": "Mentions or runs mdcp check (or docs:check) after shard edits"
+        },
+        {
+          "name": "failing_tests_before_impl",
+          "description": "Writes or plans failing tests before implementation code (TDD), because the prompt states the repo uses tests"
+        },
+        {
+          "name": "no_scope_expansion",
+          "description": "Does not expand scope beyond the last-synced timestamp acceptance criteria (e.g. does not redesign sync-scheduler)"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use /mdcp-feature-level. WORK_ITEM=Replace the deprecated 'legacy sync' flag with the new 'syncMode' setting (acceptance: remove legacySync from public API; document syncMode). An existing feature shard still describes the old legacySync workflow and a migration backlog. Finish wrap-up for this feature only: update as-built docs and remove stale guidance.",
+      "expected_output": "Agent updates feature/client shards to describe syncMode as current behavior, removes legacySync / migration-backlog text from durable docs (changeset/history for removed behavior), and does not start unrelated features (e.g. alerts) while wrapping up.",
+      "files": [
+        "evals/files/fixture-stale-wrapup/README.md",
+        "evals/files/fixture-stale-wrapup/docs/mdcp.config.json",
+        "evals/files/fixture-stale-wrapup/docs/developer/agent-work-item-tracking.md",
+        "evals/files/fixture-stale-wrapup/docs/developer/index.md",
+        "evals/files/fixture-stale-wrapup/docs/features/index.md",
+        "evals/files/fixture-stale-wrapup/docs/features/sync-mode.md",
+        "evals/files/fixture-stale-wrapup/docs/features/alerts.md",
+        "evals/files/fixture-stale-wrapup/docs/client/index.md",
+        "evals/files/fixture-stale-wrapup/docs/client/configure-sync.md",
+        "evals/files/fixture-stale-wrapup/packages/sync-lib/src/sync.ts"
+      ],
+      "assertions": [
+        {
+          "name": "removes_legacy_and_backlog",
+          "description": "Removes or rewrites stale legacySync / migration-backlog content from durable docs so shards describe current syncMode behavior only"
+        },
+        {
+          "name": "describes_syncMode_now",
+          "description": "Feature and/or client shards describe syncMode as current behavior (not legacySync as the primary API)"
+        },
+        {
+          "name": "no_old_way_archaeology",
+          "description": "Does not leave 'old way' archaeology in docs/features/ or docs/client/; points breaking/removed behavior to changeset/CHANGELOG conventions when relevant"
+        },
+        {
+          "name": "stays_on_wrapup_work_item",
+          "description": "Stays on this single wrap-up WORK_ITEM and does not open adjacent feature work (e.g. alerts)"
+        }
+      ]
     }
   ]
 }
