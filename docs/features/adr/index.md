@@ -11,4 +11,4 @@ Delivery backlog and roadmap tracks stay in GitHub issues / the project board �
 - [ADR 0003 — Do not adopt OKF](./0003-do-not-adopt-okf.md)
 - [ADR 0004 — Public-first skills.sh audit sync (MVP A)](./0004-public-first-skills-audit-sync.md)
 - [ADR 0005 — Zero-trust OIDC bridge for skills.sh audits](./0005-skills-audit-oidc-proxy.md)
-- [ADR 0006 — Rolling per-skill security audit Issues](./0006-rolling-skill-security-issues.md)
+- [ADR 0006 — Single project skill-security Issue with per-skill scan comments](./0006-project-skill-security-audit-issue.md)
