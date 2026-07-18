@@ -24,6 +24,9 @@ coverage/
 !.cursor/environment.json
 .cursorindexingignore
 
+# Local git worktrees (isolated checkouts)
+.worktrees/
+
 # Agent Skills — local installs / workspaces (publishable source lives in skills/)
 .agents/skills/mdcp/
 .agents/skills/mdcp-arch-oss-library/
