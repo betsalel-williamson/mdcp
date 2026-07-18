@@ -570,10 +570,8 @@ Published partner audits on [skills.sh](https://skills.sh/betsalel-williamson/md
 
 Tracking: [#153](https://github.com/betsalel-williamson/mdcp/issues/153). Architecture: [ADR 0004](docs/features/adr/0004-public-first-skills-audit-sync.md), [ADR 0005](docs/features/adr/0005-skills-audit-oidc-proxy.md), [ADR 0006](docs/features/adr/0006-project-skill-security-audit-issue.md). Product contracts: [skills.sh audit sync](docs/features/skills-audit-sync.md).
 
-| Doc                                                                           | Use when                                        |
-| ----------------------------------------------------------------------------- | ----------------------------------------------- |
-| [Vercel proxy setup (one-time)](#skillssh-audit-proxy--vercel-setup-one-time) | Creating or redeploying the Hobby proxy project |
-| **This runbook**                                                              | Day-to-day sync, triage, and accept-risk        |
+- **One-time Vercel project:** [skills.sh audit proxy — Vercel setup](#skillssh-audit-proxy--vercel-setup-one-time)
+- **Day-to-day sync / triage / accept-risk:** this runbook
 
 ### What sync does
 
