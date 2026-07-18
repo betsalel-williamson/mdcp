@@ -1,0 +1,28 @@
+{
+  "name": "@bwilliamson/mdcp-skills-audit-proxy",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Vercel OIDC bridge for skills.sh audit sync (GitHub Actions auth gate)",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betsalel-williamson/mdcp.git",
+    "directory": "packages/mdcp-skills-audit-proxy"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "jose": "^6.0.11"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}

@@ -17,7 +17,7 @@ mdcp/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
 │   ├── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
-│   └── mdcp-skills-audit-proxy/  # Vercel OIDC bridge to skills.sh audits (forthcoming; see skills-audit-sync docs)
+│   └── mdcp-skills-audit-proxy/  # @bwilliamson/mdcp-skills-audit-proxy — private Vercel OIDC bridge (see skills-audit-sync docs)
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
 │   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)

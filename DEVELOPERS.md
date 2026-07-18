@@ -235,7 +235,7 @@ mdcp/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
 │   ├── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
-│   └── mdcp-skills-audit-proxy/  # Vercel OIDC bridge to skills.sh audits (forthcoming; see skills-audit-sync docs)
+│   └── mdcp-skills-audit-proxy/  # @bwilliamson/mdcp-skills-audit-proxy — private Vercel OIDC bridge (see skills-audit-sync docs)
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
 │   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)
@@ -290,6 +290,22 @@ Thin Commander wrapper around `mdcp-core`. Source: [`packages/mdcp-cli/src/cli.t
 pnpm --filter @bwilliamson/mdcp-cli run build
 node packages/mdcp-cli/dist/cli.js --help
 ```
+
+### mdcp-skills-audit-proxy
+
+Private Vercel OIDC bridge for [skills.sh audit sync](#skillssh-audit-sync-maintainer-runbook). Source: [`packages/mdcp-skills-audit-proxy/src/`](packages/mdcp-skills-audit-proxy/src).
+
+| Area        | Path            |
+| ----------- | --------------- |
+| Config      | `src/config.ts` |
+| GitHub OIDC | `src/auth.ts`   |
+
+```bash
+pnpm --filter @bwilliamson/mdcp-skills-audit-proxy test
+pnpm --filter @bwilliamson/mdcp-skills-audit-proxy run typecheck
+```
+
+Auth tests sign local JWTs with `jose` `generateKeyPair` and inject JWKS via `createLocalJWKSet` — no network calls. Route handlers and skills.sh forwarding land in later tasks.
 
 ### mdcp-presets
 
