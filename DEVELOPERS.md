@@ -135,7 +135,27 @@ Issue base URL=https://github.com/betsalel-williamson/mdcp/issues/
 WORK_ITEM=enough to resolve the issue — number, URL, or short name/description
 ```
 
-All repo issues live on the public [MarkDown Context Protocol project board](https://github.com/users/betsalel-williamson/projects/4). **Status** tracks delivery (Todo / In Progress / Done); **Track** groups work by roadmap area (0.5 Spec & adoption, 1.0 Formalization, Maintenance, Performance, Future V2+). Move items to **In Progress** when you start a branch; set **Done** when the issue closes.
+All repo issues live on the public [MarkDown Context Protocol project board](https://github.com/users/betsalel-williamson/projects/4). **Status** tracks delivery (Todo / In Progress / Done); **Track** groups work by roadmap area (0.5 Spec & adoption, 1.0 Formalization, Maintenance, Performance, Future V2+). Move items to **In Progress** when you start a branch; set **Done** when the issue closes. Every open issue should appear on that board.
+
+### Issue priority (value-add)
+
+Use **one** mutually exclusive GitHub label so the board and `gh issue list` stay sortable. These labels are **issue triage priority**, not the product capability tiers in [Personas and priority tiers](docs/features/personas-and-priority-tiers.md).
+
+| Label            | Meaning                                                               |
+| ---------------- | --------------------------------------------------------------------- |
+| `priority:P0`    | User-facing blocker or broken core path (compile / check / refs)      |
+| `priority:P1`    | High near-term value — do next after P0                               |
+| `priority:P2`    | Important backlog — clear value, not next                             |
+| `priority:P3`    | Nice-to-have / polish / low urgency                                   |
+| `priority:defer` | Parked on an explicit gate (benchmark, V2 dependency, adopter demand) |
+
+#### How priority is set
+
+1. **Issue forms** — Bug report and Feedback templates require a **Value-add priority** dropdown. That choice is recorded in the issue body.
+2. **Labels** — Maintainers or coding agents apply the matching `priority:*` label when triaging (GitHub forms cannot map a dropdown to a label automatically). Replace any previous `priority:*` label so only one remains.
+3. **What to work on next** — Prefer open issues labeled `priority:P0`, then `P1`. Skip `priority:defer` until the gate in the issue body is met.
+
+Issue templates live under `.github/ISSUE_TEMPLATE/`. Adoption stories do not require a priority dropdown (qualitative evidence, not a delivery backlog item).
 
 ### Load scope (pick what your agent has)
 
@@ -174,6 +194,7 @@ Parent skill QA and day-to-day helpers encode the same rule so plan-only agents 
 4. **Plan Atomic commit groups** — before waiting for human review / implementation, include numbered commit groups for multi-concern work (see [Git and delivery](#git-and-delivery)). After approval, land one group per commit.
 5. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record consumer notice in the changeset (lands in package CHANGELOGs). Never link durable shards or ADRs to pending `.changeset/*.md` files.
 6. **Add a changeset** — run `pnpm changeset` (or manually create a `.changeset/*.md` file) if you changed published package behavior. This is required for release notes and versioning.
+7. **Triage priority** — when opening or reviewing issues, ensure exactly one `priority:*` label matches the template dropdown (see [Issue priority](#issue-priority-value-add)).
 
 ### Example intake answers
 
