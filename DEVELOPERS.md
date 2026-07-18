@@ -664,7 +664,18 @@ GitHub Actions (when sync ships):
 | `issues: write`          | Update in-flight and urgent Issues                              |
 | `contents: read`         | Read accepted log (write only if a future bot opens accept PRs) |
 
-Proxy routes (high level): `GET /api/skills` (owner search, filtered to `betsalel-williamson/mdcp`), `GET /api/audit/{skill}` (per-skill audit payload). Details in [ADR 0005](docs/features/adr/0005-skills-audit-oidc-proxy.md).
+#### Proxy contract (as-built)
+
+Base URL: `SKILLS_AUDIT_PROXY_URL` (Vercel deployment of `packages/mdcp-skills-audit-proxy`). Every route requires `Authorization: Bearer <github-actions-oidc-jwt>` with audience `mdcp-skills-audit-proxy` and repository claim `betsalel-williamson/mdcp`.
+
+| Route                    | Success                   | Upstream                                                                            | Notes                                                                 |
+| ------------------------ | ------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `GET /api/skills`        | `200` JSON search results | `GET /api/v1/skills/search?owner=betsalel-williamson&q=mdcp&limit=200` on skills.sh | Response `data[]` filtered to `source=betsalel-williamson/mdcp` only  |
+| `GET /api/audit/{skill}` | `200` audit JSON          | `GET /api/v1/skills/audit/betsalel-williamson/mdcp/{skill}`                         | `{skill}` is the skills.sh slug (for example `mdcp`, `mdcp-doc-only`) |
+
+Proxy-only errors: `401` missing/invalid GitHub OIDC; `403` wrong repository; `405` non-GET. Upstream `404` (audits pending), `429`, and `503` pass through with `Retry-After` when present. The proxy never returns Vercel OIDC tokens.
+
+Deploy and OIDC Federation: [proxy README](packages/mdcp-skills-audit-proxy/README.md). Architecture: [ADR 0005](docs/features/adr/0005-skills-audit-oidc-proxy.md).
 
 ### Error handling
 

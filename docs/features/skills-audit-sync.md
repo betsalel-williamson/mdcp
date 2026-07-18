@@ -52,16 +52,16 @@ Material change to a previously accepted fingerprint requires re-triage.
 
 Accepted entries require `fingerprint`, `source`, `risk`, `date`, `reason`, and `accepter` (email). Field definitions: [maintainer runbook](../developer/skills-audit-sync.md#accepting-a-risk).
 
-### Proxy (high level)
+### Proxy contract
 
-GitHub Actions presents an OIDC JWT; the monorepo Vercel proxy verifies issuer, audience (`mdcp-skills-audit-proxy`), and repository allowlist, mints a Vercel OIDC token, and forwards to skills.sh:
+GitHub Actions calls the Vercel deployment at `SKILLS_AUDIT_PROXY_URL` with a GitHub Actions OIDC JWT (`Authorization: Bearer …`, audience `mdcp-skills-audit-proxy`, repository `betsalel-williamson/mdcp`). The proxy verifies that JWT, mints a short-lived Vercel OIDC token (`@vercel/oidc`), and forwards to skills.sh. Vercel tokens are never returned to callers.
 
-| Proxy route              | Upstream purpose                                     |
-| ------------------------ | ---------------------------------------------------- |
-| `GET /api/skills`        | List published skills for `betsalel-williamson/mdcp` |
-| `GET /api/audit/{skill}` | Per-skill published audit payload                    |
+| Proxy route              | Upstream                                                                 | Response                                              |
+| ------------------------ | ------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `GET /api/skills`        | skills.sh search by owner, filtered to `source=betsalel-williamson/mdcp` | `200` JSON with `data[]` skill summaries              |
+| `GET /api/audit/{skill}` | skills.sh audit for `betsalel-williamson/mdcp/{skill}`                   | `200` audit JSON; `404` when audits are not ready yet |
 
-Issue updates and classification run in GitHub Actions — not in the proxy.
+Auth failures: `401` / `403`. Upstream `429` / `503` propagate with `Retry-After` when present. Issue updates and classification run in GitHub Actions — not in the proxy. Deploy notes: [proxy README](../../packages/mdcp-skills-audit-proxy/README.md).
 
 ### Schedules
 
