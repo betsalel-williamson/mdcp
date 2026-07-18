@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from './vercelTypes.js';
 import { hasAuthStatus, verifyGitHubActionsOidc } from './auth.js';
 import type { ProxyPayload } from './skillsSh.js';
 

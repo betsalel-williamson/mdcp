@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '../../src/vercelTypes.js';
 import { handleAuthenticatedProxy, SKILL_SLUG_PATTERN } from '../../src/proxyHandler.js';
 import { fetchSkillAudit } from '../../src/skillsSh.js';
 

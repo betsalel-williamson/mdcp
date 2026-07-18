@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '../src/vercelTypes.js';
 import { handleAuthenticatedProxy } from '../src/proxyHandler.js';
 import { listMdcpSkills } from '../src/skillsSh.js';
 
