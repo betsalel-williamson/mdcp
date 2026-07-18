@@ -12,11 +12,13 @@ Describe your change and select the bump type (**patch**, **minor**, or **major*
 
 ### Which bump?
 
-| Change                                  | Bump  |
-| --------------------------------------- | ----- |
-| Bug fix                                 | patch |
-| New command, config field, or hook      | minor |
-| Breaking CLI, config, or compile output | major |
+| Change                                             | Bump  |
+| -------------------------------------------------- | ----- |
+| Bug fix                                            | patch |
+| New command, config field, hook, or skill behavior | minor |
+| Breaking CLI, config, or compile output            | major |
+
+Skill pack edits under `skills/` need a changeset too (typically against `@bwilliamson/mdcp-cli`). Do **not** hand-edit `skills/*/SKILL.md` `metadata.version` — `pnpm release:tag` syncs them to the release tag.
 
 Full policy: [docs/developer/versioning-and-releases.md](../docs/developer/versioning-and-releases.md).
 
@@ -26,7 +28,7 @@ Full policy: [docs/developer/versioning-and-releases.md](../docs/developer/versi
 pnpm changeset:status
 ```
 
-Fails if you changed package code since the PR/upstream base (fallback: `origin/main`) without a changeset.
+Fails if you changed package code **or** `skills/` since the PR/upstream base (fallback: `origin/main`) without a pending changeset.
 
 ## Release
 
