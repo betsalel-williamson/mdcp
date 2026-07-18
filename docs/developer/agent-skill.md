@@ -76,6 +76,8 @@ Complementary `skills/mdcp-arch-*` packs remain WIP (`metadata.internal: true`) 
 
 There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](./versioning-and-releases.md).
 
+Published partner security audits on skills.sh are synced into this repository for maintainer triage — see [skills.sh audit sync (developer)](./skills-audit-sync.md) and [skills.sh audit sync (feature)](../features/skills-audit-sync.md).
+
 Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
 
 ## `skills.sh.json` (repo page layout)
