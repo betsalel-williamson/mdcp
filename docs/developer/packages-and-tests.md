@@ -32,7 +32,7 @@ node packages/mdcp-cli/dist/cli.js --help
 
 ## mdcp-skills-audit-proxy
 
-Private Vercel OIDC bridge for [skills.sh audit sync](./skills-audit-sync.md). Source: [`packages/mdcp-skills-audit-proxy/src/`](../../packages/mdcp-skills-audit-proxy/src/).
+Private Vercel OIDC bridge for [skills.sh audit sync](./skills-audit-sync.md). Source: [`packages/mdcp-skills-audit-proxy/src/`](../../packages/mdcp-skills-audit-proxy/src/). One-time deploy: [Vercel setup](./skills-audit-proxy-vercel.md).
 
 | Area        | Path            |
 | ----------- | --------------- |

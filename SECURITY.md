@@ -25,7 +25,7 @@ MDCP publishes Agent Skills to [skills.sh](https://skills.sh/betsalel-williamson
 
 This repository syncs published skills.sh audit results into GitHub Issues and a committed accepted-risks log (`security/skills-audit-accepted.yaml`) so maintainers can triage, fix, or formally accept risk with a durable audit trail. Public skills.sh audits remain the install-time reputation source of truth.
 
-Maintainers: [skills.sh audit sync runbook](docs/developer/skills-audit-sync.md). Product contracts: [skills.sh audit sync](docs/features/skills-audit-sync.md).
+Maintainers: [skills.sh audit sync runbook](docs/developer/skills-audit-sync.md). One-time proxy deploy: [Vercel setup](docs/developer/skills-audit-proxy-vercel.md). Product contracts: [skills.sh audit sync](docs/features/skills-audit-sync.md).
 
 ## Maintainer practices
 

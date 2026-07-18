@@ -4,7 +4,7 @@ MDCP publishes Agent Skills to [skills.sh](https://skills.sh/betsalel-williamson
 
 This capability syncs **published** skills.sh audit results into GitHub Issues and a committed accepted-risks log. Public skills.sh audits remain the reputation source of truth; the repository adds a maintainer workflow for triage, escalation, and formal acceptance.
 
-Tracking: [#153](https://github.com/betsalel-williamson/mdcp/issues/153). Decisions: [ADR 0004](./adr/0004-public-first-skills-audit-sync.md), [ADR 0005](./adr/0005-skills-audit-oidc-proxy.md), [ADR 0006](./adr/0006-project-skill-security-audit-issue.md). Maintainer runbook: [skills.sh audit sync (developer)](../developer/skills-audit-sync.md).
+Tracking: [#153](https://github.com/betsalel-williamson/mdcp/issues/153). Decisions: [ADR 0004](./adr/0004-public-first-skills-audit-sync.md), [ADR 0005](./adr/0005-skills-audit-oidc-proxy.md), [ADR 0006](./adr/0006-project-skill-security-audit-issue.md). Maintainer runbook: [skills.sh audit sync (developer)](../developer/skills-audit-sync.md). One-time Vercel project: [skills.sh audit proxy — Vercel setup](../developer/skills-audit-proxy-vercel.md).
 
 ## Scope
 
@@ -63,7 +63,7 @@ Material change to a previously accepted fingerprint requires re-triage.
 | `security/skills-audit-accepted.yaml` | Formally accepted risks only (PR-reviewed)       |
 | Urgent Issues                         | Separate Issues for **high** triage work         |
 
-Accepted entries require `fingerprint`, `source`, `risk`, `date`, `reason`, and `accepter` (email). Top-level YAML: `version: 1`, `accepted: []`. Field definitions: [maintainer runbook](../developer/skills-audit-sync.md#accepting-a-risk). Loaded by `loadAcceptedFingerprints` in `scripts/skills-audit-sync/`.
+Accepted entries require `fingerprint`, `source`, `risk`, `date`, `reason`, and `accepter` (email). Top-level YAML: `version: 1`, `accepted: []`. Field definitions: [maintainer runbook — Accept a risk](../developer/skills-audit-sync.md#accept-a-risk). Loaded by `loadAcceptedFingerprints` in `scripts/skills-audit-sync/`.
 
 ### Proxy contract
 
@@ -74,7 +74,7 @@ GitHub Actions calls the Vercel deployment at `SKILLS_AUDIT_PROXY_URL` with a Gi
 | `GET /api/skills`        | skills.sh search by owner, filtered to `source=betsalel-williamson/mdcp` | `200` JSON with `data[]` skill summaries              |
 | `GET /api/audit/{skill}` | skills.sh audit for `betsalel-williamson/mdcp/{skill}`                   | `200` audit JSON; `404` when audits are not ready yet |
 
-Auth failures: `401` / `403`. Upstream `429` / `503` propagate with `Retry-After` when present. Issue updates and classification run in GitHub Actions — not in the proxy. Deploy notes: [proxy README](../../packages/mdcp-skills-audit-proxy/README.md).
+Auth failures: `401` / `403`. Upstream `429` / `503` propagate with `Retry-After` when present. Issue updates and classification run in GitHub Actions — not in the proxy. Deploy: [Vercel proxy setup](../developer/skills-audit-proxy-vercel.md).
 
 ### Schedules
 
@@ -98,5 +98,6 @@ Implemented in [`.github/workflows/skills-audit-sync.yml`](../../.github/workflo
 ## Related docs
 
 - [skills.sh audit sync (maintainer runbook)](../developer/skills-audit-sync.md)
+- [skills.sh audit proxy — Vercel setup](../developer/skills-audit-proxy-vercel.md)
 - [Agent Skill](./agent-skill.md) — consumer install and skills.sh publication
 - [SECURITY.md](../../SECURITY.md) — private vulnerability reporting vs published audit trail

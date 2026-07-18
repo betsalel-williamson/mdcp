@@ -1,6 +1,6 @@
 # @bwilliamson/mdcp-skills-audit-proxy
 
-Private Vercel serverless bridge: GitHub Actions OIDC in, skills.sh audit API out. See [skills.sh audit sync](../../docs/developer/skills-audit-sync.md).
+Private Vercel serverless bridge: GitHub Actions OIDC in, skills.sh audit API out. Day-to-day ops: [skills.sh audit sync](../../docs/developer/skills-audit-sync.md). One-time project creation: [Vercel setup](../../docs/developer/skills-audit-proxy-vercel.md).
 
 ## Routes
 
@@ -15,15 +15,7 @@ Upstream `404`, `429`, and `503` responses pass through; `Retry-After` is preser
 
 ## Deploy
 
-Step-by-step Vercel dashboard guide (templates, Root Directory, build/output, env vars, OIDC Federation, GitHub variable): [skills.sh audit sync — First-time deploy](../../docs/developer/skills-audit-sync.md#first-time-deploy-human-ops).
-
-Summary:
-
-1. **Import Git** `betsalel-williamson/mdcp` — do not use a Marketplace template.
-2. **Framework Preset:** Other · **Root Directory:** `packages/mdcp-skills-audit-proxy`.
-3. **Build / Output:** empty · **Install:** `pnpm install` · Node ≥ 18.
-4. Optional env: `OIDC_AUDIENCE=mdcp-skills-audit-proxy`.
-5. Deploy → enable **Settings → Security → OIDC Federation** → set GitHub Actions variable `SKILLS_AUDIT_PROXY_URL` to the production base URL (no trailing slash).
+Follow the dashboard guide: [skills.sh audit proxy — Vercel setup](../../docs/developer/skills-audit-proxy-vercel.md) (Import Git, Framework Other, Root Directory, build/output, env vars, OIDC Federation, GitHub Actions variable).
 
 ```bash
 cd packages/mdcp-skills-audit-proxy
