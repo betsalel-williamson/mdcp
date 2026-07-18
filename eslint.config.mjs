@@ -8,7 +8,7 @@ export default tseslint.config(
     ignores: ['**/dist/**', '**/node_modules/**', 'legacy/**', '.agents/**'],
   },
   {
-    files: ['packages/**/*.ts'],
+    files: ['packages/**/*.ts', 'scripts/**/*.ts'],
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'error',

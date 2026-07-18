@@ -25,13 +25,26 @@ Tracking: [#153](https://github.com/betsalel-williamson/mdcp/issues/153). Decisi
 
 ### Fingerprint
 
-Stable finding identity (provider-level MVP granularity; one row per skills.sh `audits[]` entry). Ignores lone `auditedAt` churn:
+Stable finding identity (provider-level MVP granularity; one row per skills.sh `audits[]` entry). Ignores lone `auditedAt` churn. Implemented as canonical JSON over:
 
 ```text
 {skill, providerSlug, status, summary, riskLevel}
 ```
 
+(`scripts/skills-audit-sync/src/fingerprint.ts`.)
+
 ### Triage
+
+Severity mapping for **new** findings (`scripts/skills-audit-sync/src/triage.ts`):
+
+| Input (status / riskLevel)          | Level      |
+| ----------------------------------- | ---------- |
+| `pass`                              | —          |
+| `fail`, or `HIGH` / `CRITICAL` risk | **high**   |
+| `warn`, or `MEDIUM` risk (not high) | **medium** |
+| other non-pass                      | **low**    |
+
+Classification (`scripts/skills-audit-sync/src/classify.ts`):
 
 | Classification  | Outcome                                                         |
 | --------------- | --------------------------------------------------------------- |
@@ -50,7 +63,7 @@ Material change to a previously accepted fingerprint requires re-triage.
 | `security/skills-audit-accepted.yaml` | Formally accepted risks only (PR-reviewed)       |
 | Urgent Issues                         | Separate Issues for **high** triage work         |
 
-Accepted entries require `fingerprint`, `source`, `risk`, `date`, `reason`, and `accepter` (email). Field definitions: [maintainer runbook](../developer/skills-audit-sync.md#accepting-a-risk).
+Accepted entries require `fingerprint`, `source`, `risk`, `date`, `reason`, and `accepter` (email). Top-level YAML: `version: 1`, `accepted: []`. Field definitions: [maintainer runbook](../developer/skills-audit-sync.md#accepting-a-risk). Loaded by `loadAcceptedFingerprints` in `scripts/skills-audit-sync/`.
 
 ### Proxy contract
 
@@ -67,7 +80,7 @@ Auth failures: `401` / `403`. Upstream `429` / `503` propagate with `Retry-After
 
 - **Post-release:** daily job ~20–28h after a `v*` release (skills.sh re-audit lag: minutes to ~1 day)
 - **Weekly:** full sync candidate
-- **Spacing:** ~24h minimum between successful syncs (daily and weekly must not double-hit)
+- **Spacing:** ~24h minimum between successful syncs via `shouldSkipScheduledSync` (default 24h); daily and weekly must not double-hit. `workflow_dispatch` may bypass.
 - **`workflow_dispatch`:** force sync; may override spacing
 
 ## Acceptance criteria

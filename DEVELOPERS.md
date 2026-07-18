@@ -601,17 +601,30 @@ Releases are **not** gated on skills.sh audit readiness. Audit latency is handle
 | **Weekly**            | Full sync candidate                                                         |
 | **workflow_dispatch** | Force sync; may override spacing (below)                                    |
 
-**Spacing:** skip any scheduled sync when a **successful** sync ran within the last **~24 hours** (`last_successful_sync_at > now - 24h`, default 24h). This prevents daily and weekly from both running on the same day. `last_successful_sync_at` is recorded in in-flight Issue meta (or an equivalent durable place the job reads).
+**Spacing:** skip any scheduled sync when a **successful** sync ran within the last **~24 hours** (`shouldSkipScheduledSync(lastSuccessfulSyncAt, now)` with default `minIntervalMs = 24h`). Equivalent rule: skip when `last_successful_sync_at > now - 24h`. This prevents daily and weekly from both running on the same day. `last_successful_sync_at` is recorded in in-flight Issue meta (or an equivalent durable place the job reads). `workflow_dispatch` may pass `force: true` to bypass spacing.
 
 Operators may use `workflow_dispatch` to force a run when spacing would otherwise skip.
 
 ### Classification
 
-Each finding is identified by a **fingerprint** (stable identity; ignores lone `auditedAt` churn):
+Each finding is identified by a **fingerprint** (stable identity; ignores lone `auditedAt` churn). The sync library computes it as canonical JSON over:
 
 ```text
 {skill, providerSlug, status, summary, riskLevel}
 ```
+
+(`scripts/skills-audit-sync/src/fingerprint.ts` — `auditedAt` is ignored.)
+
+#### Severity triage
+
+Before classification, unseen findings are triaged (`scripts/skills-audit-sync/src/triage.ts`):
+
+| Input (status / riskLevel)          | Triage                              |
+| ----------------------------------- | ----------------------------------- |
+| `pass`                              | — (no triage; register-only if new) |
+| `fail`, or `HIGH` / `CRITICAL` risk | **high**                            |
+| `warn`, or `MEDIUM` risk (not high) | **medium**                          |
+| other non-pass                      | **low**                             |
 
 For each fingerprint from the proxy / skills.sh API:
 
@@ -639,7 +652,18 @@ Change comments (events only) include a human-readable summary, skills.sh link, 
 Formal accept is a **durable product decision** and belongs in git. Automation must not invent acceptances.
 
 1. Open a PR that adds an entry to [`security/skills-audit-accepted.yaml`](security/skills-audit-accepted.yaml).
-2. Each entry **must** include:
+1. Use this top-level shape and required fields:
+
+```yaml
+version: 1
+accepted:
+  - fingerprint: <stable finding identity from sync library>
+    source: skills.sh/<provider>/<skill>
+    risk: <human-readable summary>
+    date: <ISO 8601 date or datetime>
+    reason: <why accepted>
+    accepter: <email>
+```
 
 | Field         | Meaning                                                    |
 | ------------- | ---------------------------------------------------------- |
@@ -650,7 +674,24 @@ Formal accept is a **durable product decision** and belongs in git. Automation m
 | `reason`      | Why the risk is accepted                                   |
 | `accepter`    | Email of the person who accepted                           |
 
-Merge after review. Sync reads this file before alerting; matching fingerprints are treated as accepted.
+Merge after review. Sync reads this file via `loadAcceptedFingerprints` (`scripts/skills-audit-sync/src/acceptedLog.ts`) before alerting; matching fingerprints are treated as accepted.
+
+#### Sync library (as-built)
+
+Pure helpers under [`scripts/skills-audit-sync/`](scripts/skills-audit-sync) — no GitHub or proxy network calls:
+
+| Module           | Export                          | Role                                            |
+| ---------------- | ------------------------------- | ----------------------------------------------- |
+| `fingerprint.ts` | `fingerprint(finding)`          | Stable identity string                          |
+| `triage.ts`      | `triageFinding(finding)`        | `high` / `medium` / `low` / `null`              |
+| `classify.ts`    | `classifyFinding(...)`          | `accepted` / `in_flight` / `new` + triage       |
+| `spacing.ts`     | `shouldSkipScheduledSync(...)`  | Enforce ~24h between successful scheduled syncs |
+| `acceptedLog.ts` | `loadAcceptedFingerprints(...)` | Read accepted fingerprints from YAML            |
+
+```bash
+pnpm --filter @bwilliamson/mdcp-skills-audit-sync test
+pnpm --filter @bwilliamson/mdcp-skills-audit-sync run typecheck
+```
 
 ### Configuration
 

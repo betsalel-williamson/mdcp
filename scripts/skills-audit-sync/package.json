@@ -1,0 +1,31 @@
+{
+  "name": "@bwilliamson/mdcp-skills-audit-sync",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pure classification helpers for skills.sh audit sync (no network)",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betsalel-williamson/mdcp.git",
+    "directory": "scripts/skills-audit-sync"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}
