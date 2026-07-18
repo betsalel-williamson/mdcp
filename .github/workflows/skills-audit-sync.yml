@@ -1,0 +1,52 @@
+name: Skills audit sync
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Bypass 24h spacing between successful syncs
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+  id-token: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Set sync trigger
+        id: trigger
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "kind=dispatch" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "0 6 * * 1" ]; then
+            echo "kind=weekly" >> "$GITHUB_OUTPUT"
+          else
+            echo "kind=daily" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run skills audit sync
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SKILLS_AUDIT_PROXY_URL: ${{ vars.SKILLS_AUDIT_PROXY_URL }}
+          SKILLS_AUDIT_TRIGGER: ${{ steps.trigger.outputs.kind }}
+          SKILLS_AUDIT_FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force && '1' || '' }}
+        run: pnpm skills-audit:sync

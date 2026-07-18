@@ -678,7 +678,7 @@ Merge after review. Sync reads this file via `loadAcceptedFingerprints` (`script
 
 #### Sync library (as-built)
 
-Pure helpers under [`scripts/skills-audit-sync/`](scripts/skills-audit-sync) — no GitHub or proxy network calls:
+Pure helpers under [`scripts/skills-audit-sync/`](scripts/skills-audit-sync):
 
 | Module           | Export                          | Role                                            |
 | ---------------- | ------------------------------- | ----------------------------------------------- |
@@ -687,19 +687,40 @@ Pure helpers under [`scripts/skills-audit-sync/`](scripts/skills-audit-sync) —
 | `classify.ts`    | `classifyFinding(...)`          | `accepted` / `in_flight` / `new` + triage       |
 | `spacing.ts`     | `shouldSkipScheduledSync(...)`  | Enforce ~24h between successful scheduled syncs |
 | `acceptedLog.ts` | `loadAcceptedFingerprints(...)` | Read accepted fingerprints from YAML            |
+| `github.ts`      | Issue upsert helpers            | In-flight + urgent Issue body parse/render      |
+| `proxy.ts`       | OIDC + proxy fetch              | `/api/skills`, `/api/audit/{slug}`              |
+| `run.ts`         | `runSync(...)`                  | GitHub Actions entrypoint                       |
 
 ```bash
+pnpm skills-audit:sync
 pnpm --filter @bwilliamson/mdcp-skills-audit-sync test
 pnpm --filter @bwilliamson/mdcp-skills-audit-sync run typecheck
 ```
 
+Workflow: [`.github/workflows/skills-audit-sync.yml`](.github/workflows/skills-audit-sync.yml) — weekly cron (Monday 06:00 UTC), daily cron (06:00 UTC), and `workflow_dispatch` with optional `force`. The job sets `SKILLS_AUDIT_TRIGGER` (`daily` | `weekly` | `dispatch`) and reads `SKILLS_AUDIT_PROXY_URL` from repository variables.
+
+In-flight Issue body stores machine-readable meta and register blocks:
+
+```text
+<!-- skills-audit-meta
+last_successful_sync_at: <ISO-8601>
+audits_pending: <comma-separated skill slugs>
+-->
+<!-- skills-audit-in-flight
+[ ... JSON entries ... ]
+-->
+```
+
 ### Configuration
 
-GitHub Actions (when sync ships):
+GitHub Actions ([`skills-audit-sync.yml`](.github/workflows/skills-audit-sync.yml)):
 
-| Setting / secret         | Purpose                                                         |
+| Setting / secret / var   | Purpose                                                         |
 | ------------------------ | --------------------------------------------------------------- |
-| `SKILLS_AUDIT_PROXY_URL` | Public base URL of the Vercel proxy deployment                  |
+| `SKILLS_AUDIT_PROXY_URL` | Repository variable — public base URL of the Vercel proxy       |
+| `SKILLS_AUDIT_TRIGGER`   | Set by workflow: `daily`, `weekly`, or `dispatch`               |
+| `SKILLS_AUDIT_FORCE`     | `1` on `workflow_dispatch` when `force: true` (bypass spacing)  |
+| `GITHUB_TOKEN`           | Issue search/create/update and release window lookup            |
 | OIDC audience            | `mdcp-skills-audit-proxy` (configured on proxy + job)           |
 | `id-token: write`        | Mint GitHub Actions OIDC JWT for the proxy                      |
 | `issues: write`          | Update in-flight and urgent Issues                              |

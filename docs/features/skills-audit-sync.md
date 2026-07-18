@@ -78,10 +78,12 @@ Auth failures: `401` / `403`. Upstream `429` / `503` propagate with `Retry-After
 
 ### Schedules
 
-- **Post-release:** daily job ~20–28h after a `v*` release (skills.sh re-audit lag: minutes to ~1 day)
-- **Weekly:** full sync candidate
-- **Spacing:** ~24h minimum between successful syncs via `shouldSkipScheduledSync` (default 24h); daily and weekly must not double-hit. `workflow_dispatch` may bypass.
+- **Post-release:** daily job ~20–28h after a `v*` release (skills.sh re-audit lag: minutes to ~1 day); exits 0 without updating `last_successful_sync_at` when no release is in window
+- **Weekly:** full sync candidate (Monday 06:00 UTC cron)
+- **Spacing:** ~24h minimum between successful syncs via `shouldSkipScheduledSync` (default 24h); daily and weekly must not double-hit. `workflow_dispatch` may bypass with `force: true`.
 - **`workflow_dispatch`:** force sync; may override spacing
+
+Implemented in [`.github/workflows/skills-audit-sync.yml`](../../.github/workflows/skills-audit-sync.yml) via `pnpm skills-audit:sync`.
 
 ## Acceptance criteria
 
