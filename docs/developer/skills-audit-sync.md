@@ -173,6 +173,32 @@ Proxy-only errors: `401` missing/invalid GitHub OIDC; `403` wrong repository; `4
 
 Deploy and OIDC Federation: [proxy README](../../packages/mdcp-skills-audit-proxy/README.md). Architecture: [ADR 0005](../features/adr/0005-skills-audit-oidc-proxy.md).
 
+## First-time deploy (human ops)
+
+The sync workflow and proxy code ship in this repository; **production deploy is a maintainer step**. Do not invent or document a Vercel URL until after deploy assigns one.
+
+Complete once before scheduled sync can succeed:
+
+1. **Vercel project** — Create or link a project with root directory `packages/mdcp-skills-audit-proxy` ([proxy README](../../packages/mdcp-skills-audit-proxy/README.md)).
+2. **OIDC Federation** — Enable in Vercel Project → Settings → OIDC Federation. Audience: `mdcp-skills-audit-proxy` (override via env `OIDC_AUDIENCE` only if you change the default).
+3. **Deploy** — From the proxy package: `vercel link`, then `vercel deploy --prod`. Record the deployment **base URL** (no trailing slash).
+4. **GitHub Actions variable** — Repository → Settings → Secrets and variables → Actions → **Variables**: set `SKILLS_AUDIT_PROXY_URL` to that base URL.
+5. **Issue labels** — Ensure `skill-security` and `priority:P1` exist in the repository (the sync job creates the in-flight Issue with both).
+
+Env/var names used by automation: `SKILLS_AUDIT_PROXY_URL`, OIDC audience `mdcp-skills-audit-proxy`, and `SKILLS_AUDIT_FORCE` (`1` when `workflow_dispatch` runs with `force: true`).
+
+## Smoke tests
+
+After deploy and variable setup:
+
+| Check                                                                 | Expected                                                              |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Unauthenticated `GET {SKILLS_AUDIT_PROXY_URL}/api/skills` (no Bearer) | `401` — missing or invalid GitHub OIDC                                |
+| Actions → **Skills audit sync** → **Run workflow** → `force: true`    | Job succeeds; in-flight Issue created or updated with sync meta       |
+| PR merging an entry into `security/skills-audit-accepted.yaml`        | Next sync treats matching fingerprints as accepted (no re-alert spam) |
+
+Use `workflow_dispatch` with `force: true` for the first production sync or to bypass ~24h spacing after config changes.
+
 ## Error handling
 
 | Case                        | Behavior                                                          |

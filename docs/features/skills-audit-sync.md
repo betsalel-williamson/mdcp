@@ -8,13 +8,13 @@ Tracking: [#153](https://github.com/betsalel-williamson/mdcp/issues/153). Decisi
 
 ## Scope
 
-**In scope (MVP A):**
+**Implemented:**
 
 - Skills published under `source=betsalel-williamson/mdcp` on skills.sh (discovered via owner search through the proxy), not every on-disk `skills/` folder
-- Scheduled and dispatch sync from GitHub Actions through a thin Vercel OIDC proxy
-- In-flight Issue, urgent Issues for **high** severity, and committed accepted log at `security/skills-audit-accepted.yaml`
+- Scheduled and dispatch sync from GitHub Actions through the Vercel OIDC proxy (`SKILLS_AUDIT_PROXY_URL`, audience `mdcp-skills-audit-proxy`)
+- In-flight Issue (`skill-security`, `priority:P1`), urgent Issues for **high** severity, and accepted log at `security/skills-audit-accepted.yaml` (PR-reviewed entries only)
 
-**Explicit non-goals:**
+**Out of scope:**
 
 - Native CI scanners as a substitute for public audits (dual-track `source:ci` is deferred)
 - Blocking GitHub Release or npm publish until skills.sh audits are ready

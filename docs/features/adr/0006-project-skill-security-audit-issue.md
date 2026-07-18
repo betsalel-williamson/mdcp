@@ -20,11 +20,11 @@ Accepted risk is a durable product decision and belongs in git. In-flight assess
 
 Split state across three stores:
 
-| Store                                                  | Holds                                                          |
-| ------------------------------------------------------ | -------------------------------------------------------------- |
-| **In-flight Issue**                                    | New, assessing, and in-progress risks; change notes; questions |
-| **Accepted log file** (committed YAML or JSON in-repo) | Formally accepted risks only                                   |
-| **Urgent Issues**                                      | Separate Issues for **high** triage work                       |
+| Store                                     | Holds                                                          |
+| ----------------------------------------- | -------------------------------------------------------------- |
+| **In-flight Issue**                       | New, assessing, and in-progress risks; change notes; questions |
+| **`security/skills-audit-accepted.yaml`** | Formally accepted risks only (committed YAML)                  |
+| **Urgent Issues**                         | Separate Issues for **high** triage work                       |
 
 ### Identity (in-flight Issue)
 
@@ -44,15 +44,16 @@ A finding’s stable identity ignores lone `auditedAt` churn:
 
 ### Accepted log file
 
-Path to be chosen at implementation (for example `security/skills-audit-accepted.yaml`). Each accepted entry **must** include:
+Committed at [`security/skills-audit-accepted.yaml`](../../../security/skills-audit-accepted.yaml). Top-level shape: `version: 1`, `accepted: []`. Each accepted entry **must** include:
 
-| Field    | Meaning                                                    |
-| -------- | ---------------------------------------------------------- |
-| source   | Where the risk came from (skills.sh, provider, skill slug) |
-| risk     | Fingerprint and human-readable summary                     |
-| date     | When it was accepted (ISO 8601 date or datetime)           |
-| reason   | Why the risk is accepted                                   |
-| accepter | Email of the person who accepted                           |
+| Field         | Meaning                                                    |
+| ------------- | ---------------------------------------------------------- |
+| `fingerprint` | Stable finding identity (see [Fingerprint](#fingerprint))  |
+| `source`      | Where the risk came from (skills.sh, provider, skill slug) |
+| `risk`        | Human-readable summary                                     |
+| `date`        | When it was accepted (ISO 8601 date or datetime)           |
+| `reason`      | Why the risk is accepted                                   |
+| `accepter`    | Email of the person who accepted                           |
 
 Sync **reads** this file before alerting. Matching fingerprints are treated as accepted: acknowledge quietly (update last-seen / note if useful) and **do not** re-open urgency or spam change alerts.
 
