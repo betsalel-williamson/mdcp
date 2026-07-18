@@ -15,18 +15,21 @@ Upstream `404`, `429`, and `503` responses pass through; `Retry-After` is preser
 
 ## Deploy
 
-1. Create or link a Vercel project with root directory `packages/mdcp-skills-audit-proxy`.
-2. Enable **OIDC Federation** (Project → Settings → OIDC Federation).
-3. Set `OIDC_AUDIENCE` if not using the default `mdcp-skills-audit-proxy`.
-4. Deploy — no long-lived skills.sh secret or shared proxy secret is required.
+Step-by-step Vercel dashboard guide (templates, Root Directory, build/output, env vars, OIDC Federation, GitHub variable): [skills.sh audit sync — First-time deploy](../../docs/developer/skills-audit-sync.md#first-time-deploy-human-ops).
+
+Summary:
+
+1. **Import Git** `betsalel-williamson/mdcp` — do not use a Marketplace template.
+2. **Framework Preset:** Other · **Root Directory:** `packages/mdcp-skills-audit-proxy`.
+3. **Build / Output:** empty · **Install:** `pnpm install` · Node ≥ 18.
+4. Optional env: `OIDC_AUDIENCE=mdcp-skills-audit-proxy`.
+5. Deploy → enable **Settings → Security → OIDC Federation** → set GitHub Actions variable `SKILLS_AUDIT_PROXY_URL` to the production base URL (no trailing slash).
 
 ```bash
 cd packages/mdcp-skills-audit-proxy
 vercel link
 vercel deploy --prod
 ```
-
-Record the deployment URL as `SKILLS_AUDIT_PROXY_URL` in GitHub Actions.
 
 ## Local development
 
