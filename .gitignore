@@ -68,3 +68,6 @@ examples/sample-guides/_build/
 # OS
 .DS_Store
 
+
+# SDD / agent scratch (not durable docs)
+.superpowers/
