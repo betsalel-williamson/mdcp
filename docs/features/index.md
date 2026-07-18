@@ -21,6 +21,9 @@ Product documentation for **what mdcp is designed to do** — the problems it so
   - [ADR 0001 — Remove `mdcp export` profiles](./adr/0001-remove-export-profiles.md)
   - [ADR 0002 — Remove `mdcp refs lookup`](./adr/0002-remove-refs-lookup.md)
   - [ADR 0003 — Do not adopt OKF](./adr/0003-do-not-adopt-okf.md)
+  - [ADR 0004 — Public-first skills.sh audit sync (MVP A)](./adr/0004-public-first-skills-audit-sync.md)
+  - [ADR 0005 — Zero-trust OIDC bridge for skills.sh audits](./adr/0005-skills-audit-oidc-proxy.md)
+  - [ADR 0006 — Rolling per-skill security audit Issues](./adr/0006-rolling-skill-security-issues.md)
 - [Design constraints](./design-constraints/index.md)
   - [Protocol](./protocol/00-vision-and-roadmap.md)
 
