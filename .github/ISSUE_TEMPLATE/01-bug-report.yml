@@ -9,6 +9,22 @@ body:
       value: |
         Thanks for the report. Include steps to reproduce and the `mdcp-cli` version if you can.
 
+        Maintainers apply a matching `priority:*` label from your selection below — see [Agent work-item tracking](https://github.com/betsalel-williamson/mdcp/blob/main/docs/developer/agent-work-item-tracking.md#issue-priority-value-add).
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Value-add priority
+      description: How urgent is this for adopters and the core path? (One label will be applied on triage.)
+      options:
+        - P0 — user-facing blocker or broken core path (compile / check / refs)
+        - P1 — high near-term value
+        - P2 — important backlog
+        - P3 — nice-to-have / low urgency
+        - Defer — parked on an explicit gate
+    validations:
+      required: true
+
   - type: input
     id: mdcp-version
     attributes:

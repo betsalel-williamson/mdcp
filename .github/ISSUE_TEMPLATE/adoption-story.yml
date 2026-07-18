@@ -47,7 +47,7 @@ body:
     id: what-you-tried
     attributes:
       label: What you tried
-      description: Setup path (paste prompt, `mdcp init`, manual config), commands, CI wiring, agent workflow.
+      description: Setup path (skill install / paste prompt, config, commands, CI wiring, agent workflow).
     validations:
       required: true
 
