@@ -1,4 +1,4 @@
-# ADR 0006: Single project skill-security Issue with per-skill scan comments
+# ADR 0006: Project skill-security risk register Issue
 
 - **Status:** Accepted
 - **Date:** 2026-07-18
@@ -7,11 +7,18 @@
 
 ## Context
 
-Public audit findings need a durable place for fix-or-accept-risk decisions. Opening a new Issue per skill (or per sync run) scatters triage across many threads. Fully automated accept-risk is unsafe for security posture. Maintainers want **one project-wide trail** where each sync leaves a clear, per-skill note they can update.
+Public audit findings need a durable place for fix-or-accept-risk decisions. Goals for the tracker:
+
+1. Keep an **open list of risks** that still need attention.
+2. Record **accepted risks** so the same finding does not re-alert when it reappears unchanged.
+3. **Alert on important changes** so maintainers can prioritize work.
+4. Preserve an **audit trail**: monitoring, decisions, work-in-progress, and timelines — without flooding the thread with identical weekly scan dumps.
+
+Opening one Issue per skill scatters triage. Posting one comment per skill per weekly scan creates noise when the same concern persists. Fully automated accept-risk is unsafe.
 
 ## Decision
 
-Maintain **one rolling GitHub Issue for the whole repository’s published skills** as the security audit trail.
+Maintain **one rolling GitHub Issue** for all published `betsalel-williamson/mdcp` skills as a **risk register** (body = state, comments = events).
 
 ### Identity
 
@@ -20,47 +27,80 @@ Maintain **one rolling GitHub Issue for the whole repository’s published skill
 - Body marker: `<!-- skill-security-audit: betsalel-williamson/mdcp -->`
 - Re-runs find the same open Issue via label + marker (create once if missing)
 
-### Body vs comments
+### Fingerprint
 
-- **Issue body** — stable project-level notes: purpose, how to triage, links to skills.sh source, last-sync summary pointers. Not a per-skill checklist that is rewritten every run.
-- **Comments** — **one comment per published skill per sync run**. If five skills are published, one successful sync posts five comments. Each comment covers that skill’s provider-level audit results for that scan (checklist, links, draft triage when needed). Humans update notes on those comments (edit or reply) to record accept-risk or link fix PRs.
+A finding’s stable identity ignores lone `auditedAt` churn:
 
-### Comment content (per skill, per scan)
+`{skill, providerSlug, status, summary, riskLevel}`
 
-- Treat each skills.sh `audits[]` entry as one checklist item (provider-level MVP granularity).
-- Include links to `https://www.skills.sh/betsalel-williamson/mdcp/{skill}/security/{providerSlug}`.
-- Include a stable scan marker (for example `<!-- skill-security-scan: {slug}@{runId|timestamp} -->`) so operators can find a skill’s latest note without opening a second Issue.
-- When a provider status has improved to `pass` since the prior scan, say so in that skill’s comment; do not delete prior scan comments (history stays in the thread).
+(Provider-level MVP granularity; one row per skills.sh `audits[]` entry.)
+
+### Body = registers (state)
+
+Automation maintains structured sections in the Issue body:
+
+| Section      | Holds                                                                                                                               |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Open**     | Risks that still need attention (skill, provider, status, link, first-seen, last-seen)                                              |
+| **Accepted** | Fingerprints humans accepted, with rationale and accepted-at; sync may bump `last-seen` quietly when the same fingerprint reappears |
+| **Meta**     | Purpose, triage instructions, last successful sync timestamp, skills.sh source links                                                |
+
+Unchanged open findings: update `last-seen` only — **no new comment**.
+
+Cleared on skills.sh (`pass` / gone): remove from Open; post a **change** comment that it cleared.
+
+### Comments = events (timeline)
+
+Automation posts comments **only on deltas**, for example:
+
+- New open risk
+- Status worsened (e.g. `warn` → `fail`) or fingerprint changed on a previously known item
+- Previously **Accepted** fingerprint changed materially (needs re-triage; treat as new open until re-accepted)
+- Open risk cleared on skills.sh
+
+Each change comment includes:
+
+- Human-readable summary + skills.sh security link
+- A ready-to-paste accept line: `accept-risk: <fingerprint>` (guardrail: copy-paste, not hand-typed hashes)
+- Optional draft triage prompt (“fix vs accept-risk”)
+
+Humans (or agent drafts awaiting human send) record decisions as **replies** using markers — not by hand-editing Accepted for the happy path.
+
+### Accept-risk via markers (choice B)
+
+1. Human replies with `accept-risk: <fingerprint>` plus rationale (and optionally a target date / fix PR link for “working on it” notes in prose).
+2. Automation **must not** invent accept-risk; it only applies markers authored in the thread.
+3. On the next sync (or an explicit apply path), sync parses markers, promotes matching fingerprints into **Accepted**, removes them from **Open**, and **acknowledges** on the marker comment or with a short follow-up (“Accepted applied: …”) (guardrail: ack on apply).
+4. Unknown / mismatched fingerprints: sync comments that the marker did not match — do not fail the whole job solely for a bad marker.
+5. Hand-editing the Accepted section remains an emergency escape hatch if sync is down; MVP does not promise reconciling arbitrary hand-edits with markers (defer dual-write / C).
+
+Deferred (not MVP): `workflow_dispatch` “apply dispositions now” so markers take effect without waiting for the next cron.
 
 ### Schedule
 
 GitHub Actions (permissions: `contents: read`, `issues: write`, `id-token: write`):
 
-1. **Daily cron** — runs sync when a GitHub Release was published about 20–28 hours ago (post-release ≈24h without multi-hour job sleep).
+1. **Daily cron** — runs sync when a GitHub Release was published about 20–28 hours ago.
 2. **Weekly cron** — full sync (for example Mondays 15:00 UTC — tunable).
-3. **`workflow_dispatch`** — operator-forced sync.
+3. **`workflow_dispatch`** — operator-forced sync (optional override to run even if already synced that UTC day).
 
-**Dedup:** the weekly job **skips** when a successful sync already ran earlier that **UTC calendar day** (for example the daily post-release job or a dispatch). Prefer one sync per UTC day unless an operator explicitly forces another via `workflow_dispatch` with an override input.
-
-### Hybrid triage
-
-- On `warn` / `fail` (or notable `riskLevel` at MEDIUM or higher) in a skill’s scan comment, automation may include a **draft** triage line (template is enough for MVP).
-- Automation **must not** close the project Issue or mark accept-risk without a human.
-- Humans record accept-risk rationale or link fix PRs on the relevant skill comment (or a reply to it).
+**Dedup:** the weekly job **skips** when a successful sync already ran earlier that **UTC calendar day**.
 
 ### Error handling
 
-| Case                        | Behavior                                                                          |
-| --------------------------- | --------------------------------------------------------------------------------- |
-| Proxy `401` / `403`         | Fail the job; do not post misleading comments                                     |
-| skills.sh `404` for a skill | That skill’s comment (or job summary) notes “audits pending”; retry next schedule |
-| Partial skill failures      | Continue other skills; fail the job at the end if any hard errors                 |
-| Rate limit                  | Respect `Retry-After`; backoff                                                    |
+| Case                        | Behavior                                                          |
+| --------------------------- | ----------------------------------------------------------------- |
+| Proxy `401` / `403`         | Fail the job; do not rewrite registers or post misleading events  |
+| skills.sh `404` for a skill | Job summary / meta notes “audits pending”; retry next schedule    |
+| Partial skill failures      | Continue other skills; fail the job at the end if any hard errors |
+| Rate limit                  | Respect `Retry-After`; backoff                                    |
+| Bad `accept-risk` marker    | Note on Issue; continue                                           |
 
 ## Consequences
 
-- There is exactly one open P1 `skill-security` Issue for mdcp published skills after sync settles.
-- Each sync adds one comment per skill (N skills → N comments that run); the thread is the audit trail.
-- Warn/fail public audits should appear as comments within about a day of release.
-- Weekly and daily crons do not double-post on the same UTC day when the daily sync already succeeded.
-- Richer agent-drafted triage and native CI dual-track findings are deferred; they must still respect the human accept-risk gate.
+- One open P1 `skill-security` Issue is the project risk register for published skills.
+- Open and Accepted lists stay accurate without weekly comment floods for unchanged findings.
+- Accepted fingerprints do not re-alert until the fingerprint changes.
+- Change comments + marker replies form the decision timeline; body holds current state.
+- Weekly and daily crons do not double-run successfully on the same UTC day unless forced.
+- Native CI dual-track findings and richer agent triage remain deferred; they must still respect the human accept-risk gate.

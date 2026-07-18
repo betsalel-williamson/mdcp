@@ -23,7 +23,7 @@ Approach 2 adds secrets and ops on the Hobby proxy beyond an auth gate. Approach
 Adopt **MVP A**: sync published skills.sh audit results into this repository as the first delivery track.
 
 - Source of truth for reputation: the public skills.sh audit API and pages.
-- Delivery tracker: one project-wide GitHub Issue with per-skill scan comments (see [ADR 0006](./0006-project-skill-security-audit-issue.md)).
+- Delivery tracker: one project-wide GitHub Issue as a risk register (Open/Accepted in the body; change events + `accept-risk:` markers in comments — see [ADR 0006](./0006-project-skill-security-audit-issue.md)).
 - Access path: thin monorepo Vercel proxy with zero-trust OIDC (see [ADR 0005](./0005-skills-audit-oidc-proxy.md)).
 - Skill set: only skills published under source `betsalel-williamson/mdcp` on skills.sh (discover via owner search through the proxy), not every on-disk `skills/` folder.
 
@@ -37,7 +37,7 @@ Explicit non-goals for this MVP:
 
 ## Consequences
 
-- Maintainers triage public audit findings from one project security Issue (per-skill scan comments) rather than only from skills.sh UI.
+- Maintainers triage public audit findings from one project security risk-register Issue rather than only from skills.sh UI.
 - Native CI scanners remain a later dual-track option (`source:ci` vs `source:skills.sh`), not a prerequisite to ship the sync.
 - Audit latency after first publish or install (minutes to about a day) is handled with retries and a post-release sync window, not a release gate.
 - Implementation work is tracked on [#153](https://github.com/betsalel-williamson/mdcp/issues/153); as-built feature and developer shards land when the sync ships.

@@ -45,5 +45,5 @@ Add a thin Vercel proxy package in this monorepo (`packages/mdcp-skills-audit-pr
 
 - GitHub Actions need `id-token: write` and the proxy’s public base URL / audience configuration.
 - Non-mdcp repositories and unauthenticated callers are denied (verified with a smoke test).
-- Project Issue upsert and per-skill scan comments stay in GitHub Actions / scripts in this repo — not in the proxy.
+- Risk-register upsert (Issue body) and change/disposition comments stay in GitHub Actions / scripts in this repo — not in the proxy.
 - Local proxy development uses Vercel CLI link / `getVercelOidcToken` refresh; `.env.local` must not be committed.
