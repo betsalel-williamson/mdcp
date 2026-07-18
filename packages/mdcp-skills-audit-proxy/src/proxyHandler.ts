@@ -13,8 +13,17 @@ export async function handleAuthenticatedProxy(
     return;
   }
 
+  const authorization = req.headers.authorization;
+  if (Array.isArray(authorization)) {
+    res.status(401).json({
+      error: 'unauthorized',
+      message: 'Missing or invalid Authorization header',
+    });
+    return;
+  }
+
   try {
-    await verifyGitHubActionsOidc(req.headers.authorization);
+    await verifyGitHubActionsOidc(authorization);
   } catch (error) {
     if (hasAuthStatus(error)) {
       res.status(error.status).json({ error: 'unauthorized', message: error.message });

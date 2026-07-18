@@ -4,6 +4,15 @@ import { ALLOWED_REPOSITORY, OIDC_AUDIENCE } from './config.js';
 const GITHUB_OIDC_ISSUER = 'https://token.actions.githubusercontent.com';
 const GITHUB_OIDC_JWKS_URL = new URL(`${GITHUB_OIDC_ISSUER}/.well-known/jwks`);
 
+/**
+ * Process-scoped JWKS (jose caches keys on this instance). Reuse avoids per-request
+ * RemoteJWKSet churn; see https://github.com/panva/jose/security (Remote JWKS / app lifecycle).
+ */
+const GITHUB_OIDC_JWKS = createRemoteJWKSet(GITHUB_OIDC_JWKS_URL);
+
+/** GitHub Actions OIDC JWTs are typically ~1–2 KiB; cap before jwtVerify (jose leaves size limits to apps). */
+export const MAX_GITHUB_OIDC_TOKEN_CHARS = 8192;
+
 export type AuthError = Error & { status: 401 | 403 };
 
 export type VerifyGitHubActionsOidcOptions = {
@@ -34,8 +43,11 @@ export async function verifyGitHubActionsOidc(
   if (!token) {
     throw authError('Missing or invalid Authorization header', 401);
   }
+  if (token.length > MAX_GITHUB_OIDC_TOKEN_CHARS) {
+    throw authError('Authorization token too large', 401);
+  }
 
-  const jwks = options?.jwks ?? createRemoteJWKSet(GITHUB_OIDC_JWKS_URL);
+  const jwks = options?.jwks ?? GITHUB_OIDC_JWKS;
 
   let payload: JWTPayload;
   try {

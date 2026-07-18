@@ -2,7 +2,7 @@
 export interface VercelRequest {
   method?: string;
   headers: {
-    authorization?: string;
+    authorization?: string | string[];
     [name: string]: string | string[] | undefined;
   };
   query: Record<string, string | string[] | undefined>;

@@ -7,7 +7,7 @@ import {
   type CryptoKey,
   type JWTVerifyGetKey,
 } from 'jose';
-import { verifyGitHubActionsOidc } from '../src/auth.js';
+import { MAX_GITHUB_OIDC_TOKEN_CHARS, verifyGitHubActionsOidc } from '../src/auth.js';
 import { ALLOWED_REPOSITORY, OIDC_AUDIENCE } from '../src/config.js';
 
 const GITHUB_OIDC_ISSUER = 'https://token.actions.githubusercontent.com';
@@ -44,6 +44,14 @@ describe('verifyGitHubActionsOidc', () => {
     });
     await expect(verifyGitHubActionsOidc('', { jwks })).rejects.toMatchObject({
       status: 401,
+    });
+  });
+
+  it('returns 401 when the Bearer token exceeds the size cap', async () => {
+    const oversized = 'a'.repeat(MAX_GITHUB_OIDC_TOKEN_CHARS + 1);
+    await expect(verifyGitHubActionsOidc(`Bearer ${oversized}`, { jwks })).rejects.toMatchObject({
+      status: 401,
+      message: 'Authorization token too large',
     });
   });
 
