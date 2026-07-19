@@ -1,12 +1,11 @@
----
-name: mdcp-feature-level
+---name: mdcp-feature-level
 description: 'MDCP Helper: Act as an expert Software Engineer to implement and document new features using MDCP shards.'
 license: MIT
 compatibility: >-
   Requires Node.js 18+ and the mdcp-cli installed globally or locally.
 metadata:
   author: betsalel-williamson
-  version: '0.5.1'
+  version: '0.6.0'
   openclaw:
     category: 'documentation'
     requires:

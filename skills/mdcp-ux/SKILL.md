@@ -1,5 +1,4 @@
----
-name: mdcp-ux
+---name: mdcp-ux
 description: >-
   MDCP Helper: Act as an expert UX Designer for user-centric design — end-user
   value, processes, and workflows in MDCP shards (interfaces when they serve
@@ -9,7 +8,7 @@ compatibility: >-
   Requires Node.js 18+ and the mdcp-cli installed globally or locally.
 metadata:
   author: betsalel-williamson
-  version: '0.5.0'
+  version: '0.6.0'
   openclaw:
     category: 'documentation'
     requires:

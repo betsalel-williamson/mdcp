@@ -1,5 +1,4 @@
----
-name: mdcp
+---name: mdcp
 description: >-
   Documentation system Agent Skill for MDCP (MarkDown Context Protocol): keep
   specs, architecture notes, and product ideas in small Markdown shards so
@@ -17,7 +16,7 @@ compatibility: >-
   wrappers; they do not replace the CLI.
 metadata:
   author: betsalel-williamson
-  version: '0.5.0'
+  version: '0.6.0'
   openclaw:
     category: 'documentation'
     requires:

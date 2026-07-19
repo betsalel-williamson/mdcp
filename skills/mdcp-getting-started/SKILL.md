@@ -1,5 +1,4 @@
----
-name: mdcp-getting-started
+---name: mdcp-getting-started
 description: >-
   Use when bootstrapping MDCP in a greenfield or brownfield repository, first-time
   setup of sharded docs, migrating legacy markdown into MDCP guides, getting started
@@ -10,7 +9,7 @@ compatibility: >-
   Requires Node.js 18+ and the mdcp-cli installed globally or locally.
 metadata:
   author: betsalel-williamson
-  version: '0.5.0'
+  version: '0.6.0'
   openclaw:
     category: 'documentation'
     requires:

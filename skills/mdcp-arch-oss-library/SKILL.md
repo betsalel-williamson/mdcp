@@ -1,5 +1,4 @@
----
-name: mdcp-arch-oss-library
+---name: mdcp-arch-oss-library
 description: >-
   Documentation system archetype for OSS libraries (npm, PyPI, crates.io): keep
   package docs maintainable as APIs and ideas evolve — source holds API truth;
@@ -14,7 +13,7 @@ compatibility: >-
 metadata:
   author: betsalel-williamson
   internal: true
-  version: '0.5.0'
+  version: '0.6.0'
   openclaw:
     category: 'documentation'
 ---

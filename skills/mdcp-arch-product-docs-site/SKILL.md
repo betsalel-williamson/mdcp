@@ -1,5 +1,4 @@
----
-name: mdcp-arch-product-docs-site
+---name: mdcp-arch-product-docs-site
 description: >-
   Documentation system archetype for product docs sites (MkDocs, Docusaurus,
   VitePress): keep human-facing docs maintainable as features keep shipping —
@@ -15,7 +14,7 @@ compatibility: >-
 metadata:
   author: betsalel-williamson
   internal: true
-  version: '0.5.0'
+  version: '0.6.0'
   openclaw:
     category: 'documentation'
 ---
