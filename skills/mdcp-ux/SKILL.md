@@ -1,4 +1,5 @@
----name: mdcp-ux
+---
+name: mdcp-ux
 description: >-
   MDCP Helper: Act as an expert UX Designer for user-centric design — end-user
   value, processes, and workflows in MDCP shards (interfaces when they serve

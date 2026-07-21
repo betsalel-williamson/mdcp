@@ -1,4 +1,5 @@
----name: mdcp-arch-product-docs-site
+---
+name: mdcp-arch-product-docs-site
 description: >-
   Documentation system archetype for product docs sites (MkDocs, Docusaurus,
   VitePress): keep human-facing docs maintainable as features keep shipping —

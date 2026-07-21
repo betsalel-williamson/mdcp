@@ -1,4 +1,5 @@
----name: mdcp
+---
+name: mdcp
 description: >-
   Documentation system Agent Skill for MDCP (MarkDown Context Protocol): keep
   specs, architecture notes, and product ideas in small Markdown shards so

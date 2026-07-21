@@ -152,6 +152,10 @@ function setVersionAllPackages(version) {
 /**
  * Keep each skills/<name>/SKILL.md metadata.version in lockstep with the npm/git tag.
  * Preserves other frontmatter keys (e.g. metadata.internal).
+ *
+ * Opening fence MUST be rewritten as "---\n" + body. A prior bug used "---" +
+ * slice(4) (which drops the newline after ---) and produced "---name:", which
+ * breaks `npx skills add`.
  */
 function setSkillMetadataVersions(version) {
   const skillsDir = join(root, 'skills');
@@ -170,8 +174,9 @@ function setSkillMetadataVersions(version) {
     } catch {
       continue;
     }
-    if (!content.startsWith('---')) continue;
-    const end = content.indexOf('\n---', 3);
+    // Require a real YAML fence ("---\n"), not "---name:" corruption.
+    if (!content.startsWith('---\n')) continue;
+    const end = content.indexOf('\n---', 4);
     if (end === -1) continue;
     const frontmatter = content.slice(4, end);
     if (!/^\s*version:\s*/m.test(frontmatter)) continue;
@@ -180,7 +185,7 @@ function setSkillMetadataVersions(version) {
       `$1'${version}'`,
     );
     if (nextFrontmatter === frontmatter) continue;
-    writeFileSync(skillPath, `---${nextFrontmatter}${content.slice(end)}`);
+    writeFileSync(skillPath, `---\n${nextFrontmatter}${content.slice(end)}`);
   }
 }
 

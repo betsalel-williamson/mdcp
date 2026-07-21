@@ -1,4 +1,5 @@
----name: mdcp-design-architecture
+---
+name: mdcp-design-architecture
 description: 'MDCP Helper: Act as an expert Systems Architect to draft and design system architecture using MDCP shards.'
 license: MIT
 compatibility: >-

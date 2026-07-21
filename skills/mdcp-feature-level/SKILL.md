@@ -1,4 +1,5 @@
----name: mdcp-feature-level
+---
+name: mdcp-feature-level
 description: 'MDCP Helper: Act as an expert Software Engineer to implement and document new features using MDCP shards.'
 license: MIT
 compatibility: >-
