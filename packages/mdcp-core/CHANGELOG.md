@@ -1,5 +1,11 @@
 # @bwilliamson/mdcp-core
 
+## 0.6.1
+
+### Patch Changes
+
+- Fix Agent Skill YAML frontmatter corrupted by release version sync (`---name:`), which broke `npx skills add`. Require `pnpm skill:validate` after version sync in `release:tag` and again in the release workflow before npm publish.
+
 ## 0.6.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@bwilliamson/mdcp-cli",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "MDCP CLI — documentation system compile and check (MarkDown Context Protocol)",
   "license": "MIT",
   "type": "module",
