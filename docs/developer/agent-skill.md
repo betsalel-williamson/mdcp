@@ -44,12 +44,12 @@ When changing skill instructions:
 
 ## Verification
 
-| Command               | Purpose                                                                                   |
-| --------------------- | ----------------------------------------------------------------------------------------- |
-| `pnpm skill:validate` | [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
-| `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                |
+| Command               | Purpose                                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `pnpm skill:validate` | Frontmatter fence lint + [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
+| `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                                         |
 
-`pnpm skill:validate` runs in local `pnpm check` and GitHub Actions CI. It is not a [live skill eval](../glossary/live-skill-eval.md).
+`pnpm skill:validate` runs in local `pnpm check`, PR CI, **`pnpm release:tag` after skill version sync** (hard fail before commit/tag), and the tag [release workflow](../../.github/workflows/release.yml) before npm publish. It is not a [live skill eval](../glossary/live-skill-eval.md).
 
 ## Live skill evals (optional, local)
 

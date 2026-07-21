@@ -51,8 +51,8 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 2. **Skills policy:** parent `mdcp` remains the consumer entrypoint. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` and **out** of [`skills.sh.json`](../../skills.sh.json) until intentionally published. List parent + release-ready helpers in the **Documentation system** grouping (see [Agent Skill development — skills.sh.json](./agent-skill.md#skillsshjson-repo-page-layout)).
 3. Preflight: `pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
 4. In a real TTY: `pnpm release:tag:push` — select bump (patch / minor / major / build), type `vX.Y.Z`, answer `yes`. Agents and CI cannot run this script.
-5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, commits `chore: release vX.Y.Z`, tags, and (with `--push`) pushes `main` + the tag.
-6. Verify CI [release workflow](../../.github/workflows/release.yml): npm versions for all three packages and the GitHub Release for `vX.Y.Z`.
+5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, then **must** run `pnpm skill:validate` (hard fail if invalid — including broken YAML fences like `---name:`). Only after that succeeds does it commit `chore: release vX.Y.Z`, tag, and (with `--push`) push `main` + the tag.
+6. Verify CI [release workflow](../../.github/workflows/release.yml): it runs `pnpm skill:validate` again before npm publish, then publishes all three packages and creates the GitHub Release for `vX.Y.Z`.
 7. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
 
 Preview without writes: `pnpm release:tag --dry-run`.

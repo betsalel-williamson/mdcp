@@ -1,4 +1,5 @@
----name: mdcp-doc-only
+---
+name: mdcp-doc-only
 description: >-
   Use when the work item is documentation-only: authoring or refactoring MDCP
   shards, fixing stale client/feature/developer docs, removing planning

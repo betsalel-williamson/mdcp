@@ -1,4 +1,5 @@
----name: mdcp-arch-oss-library
+---
+name: mdcp-arch-oss-library
 description: >-
   Documentation system archetype for OSS libraries (npm, PyPI, crates.io): keep
   package docs maintainable as APIs and ideas evolve — source holds API truth;
