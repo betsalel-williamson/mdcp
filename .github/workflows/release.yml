@@ -36,6 +36,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
+      # Hard gate after tag: skill packs (including YAML frontmatter) must validate
+      # before npm publish. Catches release:tag version-sync corruption that would
+      # break `npx skills add`.
+      - name: Validate Agent Skills
+        run: pnpm skill:validate
+
       - name: Publish to npm
         run: pnpm changeset publish
         env:

@@ -7,6 +7,9 @@
  *   pnpm release:tag              # interactive version + commit + tag
  *   pnpm release:tag --push       # also push main and tag to origin
  *   pnpm release:tag --dry-run    # prompts + plan only, no writes
+ *
+ * After bumping package + skill metadata.version, always runs
+ * `pnpm skill:validate` and aborts if it fails (no commit/tag).
  */
 import { execSync } from 'node:child_process';
 import { readdirSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs';
@@ -391,6 +394,11 @@ async function main() {
   }
 
   const finalTag = `v${appliedVersion}`;
+
+  // Hard gate: skill packs must still validate after metadata.version sync.
+  // A prior bug rewrote "---\\nname:" as "---name:" and broke `npx skills add`.
+  console.log('\nPost-sync gate: pnpm skill:validate (required; release fails if this fails)');
+  run('pnpm skill:validate');
 
   if (dryRun) {
     console.log(`> git add -A`);
