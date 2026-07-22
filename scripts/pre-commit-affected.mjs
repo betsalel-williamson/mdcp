@@ -23,6 +23,7 @@ const rootConfigChanged = files.some(
   (f) =>
     f === 'package.json' ||
     f === 'pnpm-lock.yaml' ||
+    f === 'pnpm-workspace.yaml' ||
     f === 'eslint.config.mjs' ||
     (f.startsWith('tsconfig') && f.endsWith('.json')),
 );
