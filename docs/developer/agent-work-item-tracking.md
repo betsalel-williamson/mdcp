@@ -20,21 +20,22 @@ All repo issues live on the public [MarkDown Context Protocol project board](htt
 
 ### Project fields
 
-| Field     | Values                                                                             | When to set                                     |
-| --------- | ---------------------------------------------------------------------------------- | ----------------------------------------------- |
-| Status    | Todo · In Progress · Done                                                          | Todo on intake; In Progress on branch start     |
-| Track     | 0.5 Spec & adoption · 1.0 Formalization · Maintenance · Performance · Future (V2+) | On intake ([Track selection](#track-selection)) |
-| Milestone | Current release milestone when the issue is in-scope for that cut (e.g. `v0.7`)    | When it clearly belongs on the next ship slice  |
+| Field     | Values                                                          | When to set                                     |
+| --------- | --------------------------------------------------------------- | ----------------------------------------------- |
+| Status    | Todo · In Progress · Done                                       | Todo on intake; In Progress on branch start     |
+| Track     | 1.0 Formalization · Maintenance · Performance · Future (V2+)    | On intake ([Track selection](#track-selection)) |
+| Milestone | Current open delivery milestone when the issue is in that scope | When it belongs on the next ship slice          |
 
 ### Track selection
 
-| Track               | Use for                                                                              |
-| ------------------- | ------------------------------------------------------------------------------------ |
-| 0.5 Spec & adoption | Residual items still tied to the historical 0.5 epic (prefer closing or retargeting) |
-| 1.0 Formalization   | Protocol ADR, normative spec, schemas, conformance (#44 program)                     |
-| Maintenance         | Bugs, compile/check correctness, agent-process hygiene, adoption polish              |
-| Performance         | SLOs, benchmarks, engine spikes (often `priority:defer`)                             |
-| Future (V2+)        | MCP server, hosted API, and other post-V1 delivery surfaces                          |
+| Track             | Use for                                                                 |
+| ----------------- | ----------------------------------------------------------------------- |
+| 1.0 Formalization | Protocol ADR, normative spec, schemas, conformance                      |
+| Maintenance       | Bugs, compile/check correctness, agent-process hygiene, adoption polish |
+| Performance       | SLOs, benchmarks, engine spikes (often `priority:defer`)                |
+| Future (V2+)      | MCP server, hosted API, and other post-V1 delivery surfaces             |
+
+If the board still shows other Track options, do **not** assign them to new work — use one of the rows above.
 
 ## Auth for board writes
 
@@ -78,8 +79,6 @@ Issue templates live under `.github/ISSUE_TEMPLATE/`. Adoption stories do not re
 | Component | `cli`, `compile`, `refs`, `sections`, `hooks`, `presets`, `lint` | When the work is localized to that surface |
 | Domain    | `protocol`                                                       | Spec / positioning / formalization work    |
 
-Do **not** rely on the historical `0.5` label for new work — prefer Track + milestone instead.
-
 ## New issue intake (required)
 
 Whenever you **open** an issue or find a brand-new open issue missing hygiene, finish this checklist before starting implementation. Same rules for humans and coding agents.
@@ -88,7 +87,7 @@ Whenever you **open** an issue or find a brand-new open issue missing hygiene, f
 2. **Type (+ component/domain)** — see [Other labels](#other-labels-apply-on-intake).
 3. **Project board** — add the issue to [project #4](https://github.com/users/betsalel-williamson/projects/4) if absent; set **Status = Todo**.
 4. **Track** — set per [Track selection](#track-selection).
-5. **Milestone** — attach the current delivery milestone when the issue is in that cut’s scope; leave empty for long-range / deferred work.
+5. **Milestone** — attach the current open delivery milestone when the issue is in that cut’s scope; leave empty for long-range or deferred work.
 6. **Sanity** — title is actionable; body has acceptance criteria or a clear problem statement.
 
 ### Add an issue to the board (`gh`)
@@ -138,10 +137,10 @@ Run **about once a week** (maintainer or coding agent with project scope). Goal:
 1. **Auth** — `gh auth status` shows `project` (or `read:project` at minimum for reads; writes need `project`). Switch to the owner account if needed.
 2. **Open vs board** — list open issues; add any missing ones (intake steps 3–5). Every open issue must appear on the board.
 3. **Label audit** — every open delivery issue has exactly one `priority:*` and a sensible type label; add component/domain when obvious.
-4. **Milestone hygiene** — close empty leftover milestones; keep the current cut (e.g. `v0.7`) populated only with in-scope issues.
-5. **Stale review** — candidates include: epic/goals already shipped in a release, ACs satisfied by existing docs/code, or no meaningful progress with superseded approach. On each candidate, **comment** asking the human to verify close-without-action ([Human verification comment](#human-verification-comment-stale--close-without-action)). Do **not** close until they reply.
+4. **Milestone hygiene** — keep only active delivery milestones open; attach in-scope issues to the current cut.
+5. **Stale review** — candidates: acceptance already met in the repo, superseded approach, or no remaining adopter value. On each candidate, **comment** asking the human to verify close-without-action ([Human verification comment](#human-verification-comment-stale--close-without-action)). Do **not** close until they reply.
 6. **Duplicate review** — if two issues share the same root cause, comment with the canonical issue and ask which to keep. Do **not** close as duplicate without confirmation (related ≠ duplicate).
-7. **Next work** — confirm the top open `priority:P0`, else `P1`, matches the current milestone intent; note it in the weekly wrap-up comment on the milestone or a short maintainer note.
+7. **Next work** — confirm the top open `priority:P0`, else `P1`, matches the current milestone intent; note it briefly for maintainers.
 8. **Done clutter** — closed issues may linger on the board as Done; optional cleanup is fine, not required for a green weekly run.
 
 ### Human verification comment (stale / close-without-action)
@@ -151,7 +150,7 @@ Run **about once a week** (maintainer or coding agent with project scope). Goal:
 
 Evidence:
 
-- <1–3 bullets: shipped release, docs path, maintainer status, superseded approach>
+- <1–3 bullets: current docs/code that satisfy ACs, superseded approach, or no remaining value>
 
 Options:
 
@@ -173,7 +172,7 @@ gh issue list --repo betsalel-williamson/mdcp --state open --limit 100 \
 gh issue list --repo betsalel-williamson/mdcp --state open --label "priority:P0"
 gh issue list --repo betsalel-williamson/mdcp --state open --label "priority:P1"
 
-# Current milestone
+# Issues on the current delivery milestone (replace title as needed)
 gh issue list --repo betsalel-williamson/mdcp --milestone "v0.7" --state open
 ```
 
@@ -224,12 +223,12 @@ Parent skill QA and day-to-day helpers encode the same rule so plan-only agents 
 When a subagent asks for scope, answers can look like:
 
 ```text
-WORK_ITEM=39
+WORK_ITEM=70
 WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md
 ```
 
 ```text
-WORK_ITEM=default compile hooks
+WORK_ITEM=bare sibling link rewrite
 WORK_ITEM_LOOKUP=GitHub
 ```
 
