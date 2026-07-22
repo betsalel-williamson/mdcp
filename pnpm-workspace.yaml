@@ -3,6 +3,12 @@ packages:
 
 # pnpm supply-chain (2026 best practice)
 minimumReleaseAge: 10080
+# Security patch for GHSA-v2hh-gcrm-f6hx (ajv → fast-uri); published inside the age gate.
+minimumReleaseAgeExclude:
+  - fast-uri@3.1.4
 strictDepBuilds: true
 allowBuilds:
   esbuild: true
+# Pin the patched 3.x line (bare >=3.1.4 can float to vulnerable 4.1.0).
+overrides:
+  fast-uri: 3.1.4

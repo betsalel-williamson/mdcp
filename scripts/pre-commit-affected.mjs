@@ -23,6 +23,7 @@ const rootConfigChanged = files.some(
   (f) =>
     f === 'package.json' ||
     f === 'pnpm-lock.yaml' ||
+    f === 'pnpm-workspace.yaml' ||
     f === 'eslint.config.mjs' ||
     (f.startsWith('tsconfig') && f.endsWith('.json')),
 );
@@ -78,4 +79,18 @@ if (docsChanged) {
 if (rootConfigChanged) {
   run('pnpm run typecheck');
   run('pnpm run format:check');
+}
+
+// CI runs `pnpm audit --audit-level=high` on every PR. Catch the same gate when
+// dependency manifests change — lint-staged / docs checks alone will not.
+const lockfileOrManifestChanged = files.some(
+  (f) =>
+    f === 'package.json' ||
+    f === 'pnpm-lock.yaml' ||
+    f === 'pnpm-workspace.yaml' ||
+    /^packages\/[^/]+\/package\.json$/.test(f),
+);
+
+if (lockfileOrManifestChanged) {
+  run('pnpm audit --audit-level=high');
 }
