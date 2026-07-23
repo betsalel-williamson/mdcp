@@ -49,6 +49,8 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [refs registry](#refs-registry)
 - [heading slug](#heading-slug)
 - [cross-link](#cross-link)
+- [standalone guide](#standalone-guide)
+- [coverage](#coverage)
 
 ### Adoption and messaging
 
@@ -1194,6 +1196,30 @@ A Markdown link whose target is another place in the docs set — usually a same
 Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](docs/features/link-validation.md).
 
 <!-- mdcp-shard: end docs/glossary/cross-link.md -->
+
+<!-- mdcp-shard: start docs/glossary/standalone-guide.md -->
+
+## standalone guide
+
+A single markdown file registered as its own guide that is **not** compiled from shards. Declared in `standaloneGuides[]`, it is the source and the published file at once — for example a hand-authored package `README.md` or a top-level `SECURITY.md`.
+
+Contrast with a [guide](#mdcp), which stitches a list of shards into one output. A standalone guide is register-only: compile never stitches, rewrites, or emits it, but its headings still register into [refs](#refs) and its outbound links are validated. Registering a file as standalone marks it as [captured](#coverage) so the coverage scan does not report it.
+
+See [Documentation coverage scan](docs/features/coverage-scan.md).
+
+<!-- mdcp-shard: end docs/glossary/standalone-guide.md -->
+
+<!-- mdcp-shard: start docs/glossary/coverage.md -->
+
+## coverage
+
+Documentation coverage is the set of markdown files MDCP can account for — the **captured** set. A file is captured when it is a shard of a compiled guide, a guide output target (`compile.outputFile`), or a [standalone guide](#standalone-guide).
+
+The coverage scan walks the repository for markdown files, skips vendored paths, and reports any file that is not captured so authors either fold it into a guide or register it in `standaloneGuides[]`.
+
+See [Documentation coverage scan](docs/features/coverage-scan.md).
+
+<!-- mdcp-shard: end docs/glossary/coverage.md -->
 
 <!-- mdcp-shard: start docs/glossary/wiifm.md -->
 

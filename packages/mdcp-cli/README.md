@@ -366,16 +366,17 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 
 ### Command summary
 
-| Command          | When you need it                                                                                   |
-| ---------------- | -------------------------------------------------------------------------------------------------- |
-| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
-| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
-| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
-| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                        |
-| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
-| `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
-| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
-| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
+| Command          | When you need it                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default)      |
+| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                              |
+| `mdcp coverage`  | Report markdown files no guide accounts for (non-fatal); full inventory and flags in the coverage guide |
+| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                                 |
+| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                             |
+| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                                    |
+| `mdcp prose`     | Vale prose lint (peer, if installed)                                                                    |
+| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                             |
+| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                      |
 
 ### Refs subcommands
 
@@ -400,6 +401,55 @@ mdcp refs list
 Discover shards with host search, then read **one** file. Prefer that over pasting a full compiled monolith.
 
 <!-- mdcp-shard: end ../../docs/client-cli/commands-reference.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/coverage.md -->
+
+## Coverage command
+
+`mdcp coverage` reports markdown files that no guide accounts for, so nothing drifts out of your documentation set unnoticed.
+
+### What it reports
+
+- **Captured** — the count of markdown files a guide accounts for.
+- **Uncaptured** — files under the scan root that no guide or `standaloneGuides[]` entry covers.
+- **Standalone inventory** — every file registered in `standaloneGuides[]`.
+- **Missing standalone** — `standaloneGuides[]` entries that match no file on disk.
+
+```bash
+mdcp coverage --config docs/mdcp.config.json --docs-root docs
+```
+
+Add `--json` to emit the full result for scripting.
+
+### Exit behavior
+
+The command exits `0` by default, even when files are uncaptured, so it never breaks a build. Use `--strict` to exit `1` when uncaptured files exist — useful when a team enforces coverage in CI.
+
+| Flag       | Purpose                                                         |
+| ---------- | --------------------------------------------------------------- |
+| `--json`   | Emit captured, uncaptured, standalone, and missing sets as JSON |
+| `--strict` | Exit `1` when uncaptured files exist                            |
+
+`mdcp check` also appends a one-line, non-fatal coverage summary and points here for the full list.
+
+### Registering standalone files
+
+When a file is intentionally standalone — a hand-authored README or a top-level policy file — list it under `standaloneGuides[]` so the scan treats it as captured:
+
+```json
+{
+  "standaloneGuides": ["packages/*/README.md", "SECURITY.md"],
+  "scan": {
+    "ignore": ["legacy"]
+  }
+}
+```
+
+`standaloneGuides` accepts file paths or globs. `scan.ignore` extends the built-in skip list (`node_modules`, `.git`, `dist`, `build`, `_build`, `.caches`, `.agents`, `styles`, `coverage`). The scan root defaults to the invocation directory; override it with `scan.root`.
+
+Standalone files are register-only: compile never rewrites or emits them, but their headings still join the refs registry and their links are validated. For the full capability contract, see [Documentation coverage scan](../../docs/features/coverage-scan.md).
+
+<!-- mdcp-shard: end ../../docs/client-cli/coverage.md -->
 
 <!-- mdcp-shard: start ../../docs/client-cli/compile-refs-registry.md -->
 

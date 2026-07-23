@@ -62,6 +62,10 @@ Detect shards not in manifest or missing files.
 
 Fail on bare `Ch. N` and unlinked chapter-style references.
 
+## Coverage scan (P1.5)
+
+Report markdown files that no guide accounts for. Register single files as [standalone guides](../glossary/standalone-guide.md) or fold them into a compiled guide. Non-fatal warning in `mdcp check`; full inventory via `mdcp coverage`. See [Documentation coverage scan](./coverage-scan.md).
+
 ## Peer linters (P2.1)
 
 Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host repo. Shard markdownlint and Vale prose only touch registered guide shard trees (`compileOrder`); optional `shardsGlobs` / `vale.scanGlobs` narrow scope further.

@@ -6,6 +6,7 @@
   - [Project layout](./project-layout.md)
   - [Config essentials](./config-essentials.md)
   - [Commands reference](./commands-reference.md)
+  - [Coverage command](./coverage.md)
   - [Compile and the refs registry](./compile-refs-registry.md)
   - [Cross-links and refs](./cross-links-and-refs.md)
   - [Optional linters](./optional-linters.md)
