@@ -449,6 +449,8 @@ When a file is intentionally standalone — a hand-authored README or a top-leve
 
 Standalone files are register-only: compile never rewrites or emits them, but their headings still join the refs registry and their links are validated. For the full capability contract, see [Documentation coverage scan](../../docs/features/coverage-scan.md).
 
+Do not list a compiled guide's output (a generated file such as `README.md` or `DEVELOPERS.md`) in `standaloneGuides`. Those outputs are already captured as guide output targets and are never flagged as uncaptured, so they stay out of the standalone set.
+
 <!-- mdcp-shard: end ../../docs/client-cli/coverage.md -->
 
 <!-- mdcp-shard: start ../../docs/client-cli/compile-refs-registry.md -->

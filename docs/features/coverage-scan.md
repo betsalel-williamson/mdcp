@@ -25,7 +25,11 @@ Manifest membership inside a guide directory is the [orphan check](./feature-cat
 
 The scan walks the scan root for `*.md`, removes ignored vendor paths, then subtracts the captured set. Whatever remains is **uncaptured** and reported.
 
-Guide output targets are captured so generated files such as `README.md`, `DEVELOPERS.md`, and the package READMEs never appear as uncaptured.
+### Compiled guides are captured, not standalone
+
+A compiled guide's output file is captured automatically as an output target, so generated files such as `README.md`, `DEVELOPERS.md`, and the package READMEs never appear as uncaptured. **Do not list a compiled guide output in `standaloneGuides[]`** — it is already accounted for, and `standaloneGuides[]` is only for files that no compile step produces.
+
+The two sets are distinct: a file compiled from shards belongs to the guide output set, while `standaloneGuides[]` holds hand-authored single files. A compiled guide is never a standalone guide.
 
 ## Standalone guide behavior
 
