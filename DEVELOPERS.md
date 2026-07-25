@@ -129,10 +129,11 @@ A fresh cloud VM needs the same toolchain as [Local setup](#local-setup), plus a
 
 1. **Startup update script.** `.cursor/environment.json` holds the `install` command that runs on every VM start: it fetches remote refs, then runs `pnpm install`. That committed file is the source of truth and overrides any dashboard-saved environment. Keep it minimal — dependency refresh only, no service startup or build steps.
 2. **Vale peer binary.** Vale is a peer binary, not an npm dependency. Install version 3.15.1 to `/usr/local/bin` (it persists in the VM snapshot); the exact release command is in [`.github/workflows/ci.yml`](.github/workflows/ci.yml). `pnpm docs:check` needs Vale on `PATH`.
-3. **Build before docs or CLI.** `dist/` is gitignored and is not produced by the update script. Run `pnpm build` after a fresh checkout before `pnpm docs:check`, `pnpm docs:compile`, or invoking the `mdcp` CLI.
-4. **Sync Vale styles once.** Run `pnpm vale:sync` before the first `docs:check` on a fresh clone (network required); synced styles then persist in the snapshot.
-5. **Node version.** The VM runs Node 22 (satisfies `engines >=18`); CI uses Node 24. Do not switch Node unless a version-specific issue appears.
-6. **Full gate.** `pnpm check` mirrors CI (typecheck, lint, format, build, test, skill:validate, docs:check).
+3. **gitleaks peer binary.** gitleaks is also a peer binary, not an npm dependency; the pre-commit hook runs `gitleaks protect --staged` when it is on `PATH`. Install version 8.30.1 to `/usr/local/bin` (persists in the VM snapshot). If it goes missing, reinstall from the [gitleaks releases](https://github.com/gitleaks/gitleaks/releases): download `gitleaks_8.30.1_linux_x64.tar.gz` and extract the `gitleaks` binary into `/usr/local/bin` (same pattern as Vale). CI runs its own scan via `gitleaks-action`, so the local install is defense-in-depth.
+4. **Build before docs or CLI.** `dist/` is gitignored and is not produced by the update script. Run `pnpm build` after a fresh checkout before `pnpm docs:check`, `pnpm docs:compile`, or invoking the `mdcp` CLI.
+5. **Sync Vale styles once.** Run `pnpm vale:sync` before the first `docs:check` on a fresh clone (network required); synced styles then persist in the snapshot.
+6. **Node version.** The VM runs Node 22 (satisfies `engines >=18`); CI uses Node 24. Do not switch Node unless a version-specific issue appears.
+7. **Full gate.** `pnpm check` mirrors CI (typecheck, lint, format, build, test, skill:validate, docs:check).
 
 #### Platform limitations and workarounds
 
@@ -147,7 +148,6 @@ These are cloud-agent constraints discovered in practice. Plan work around them 
 | CI runs `pnpm audit --audit-level=high` **before** the build and test gates                     | A new advisory on a pre-existing devDependency fails audit and masks otherwise-green gates. Pin patched versions via `pnpm-workspace.yaml` overrides.   |
 | The pre-commit hook runs `pnpm audit` when dependency manifests change                          | Resolve advisories (overrides) before committing manifest changes, rather than bypassing the hook.                                                      |
 | commitlint rejects non-conventional subjects, including merge commits                           | Give merge commits a conventional subject such as `chore: merge …`, not `merge: …`.                                                                     |
-| `gitleaks` is not installed on the VM                                                           | The pre-commit hook prints a warning and continues; CI runs the real secret scan.                                                                       |
 
 #### Recording issues without issue-creation access
 
