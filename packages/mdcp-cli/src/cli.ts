@@ -13,6 +13,10 @@ import {
   shardLintPaths,
   xrefScanDirs,
   checkOrphansForGuides,
+  computeCoverage,
+  effectiveGuideOutputFile,
+  resolveUnderOutputDir,
+  type CoverageOptions,
   genRefsFromCompiled,
   checkRefsRegistry,
   resolveRefsPath,
@@ -48,6 +52,35 @@ function getDocsRoot(opts: GlobalOpts): string {
 
 function getConfig(opts: GlobalOpts) {
   return loadConfig(opts.config, process.cwd());
+}
+
+/**
+ * Scan root for coverage: `scan.root` (resolved against the invocation dir) else the
+ * invocation dir — not the docs root, since package READMEs live outside `docs/`.
+ */
+function getScanRoot(config: MdcpConfig): string {
+  if (config.scan?.root) return resolve(process.cwd(), config.scan.root);
+  return process.cwd();
+}
+
+function coverageInputs(config: MdcpConfig, opts: GlobalOpts): CoverageOptions {
+  const docsRoot = getDocsRoot(opts);
+  const outputFiles: string[] = [];
+  for (const name of config.compileOrder) {
+    const cfg = getGuideConfig(config, name);
+    const outFile = effectiveGuideOutputFile(name, cfg?.compile, config.compileOrder.length);
+    outputFiles.push(resolveUnderOutputDir(docsRoot, config.outputDir, outFile));
+  }
+  const topOutput = resolveOutputPath(config, docsRoot);
+  if (topOutput) outputFiles.push(topOutput);
+  return {
+    root: getScanRoot(config),
+    guideDirs: config.compileOrder.map((name) => resolveGuideDir(name, config, docsRoot)),
+    outputFiles,
+    standaloneGuides: config.standaloneGuides,
+    ignore: config.scan?.ignore ?? [],
+    gitignore: config.scan?.gitignore ?? true,
+  };
 }
 
 function valeScanPaths(config: MdcpConfig, docsRoot: string): string[] {
@@ -349,6 +382,24 @@ cli.command('shard', 'Split monolith into shards (md-tree)').action((opts: Globa
 });
 
 cli
+  .command('coverage', 'Report markdown files no guide or standaloneGuides accounts for')
+  .option('--json', 'Emit the full coverage result as JSON')
+  .option('--strict', 'Exit 1 when uncaptured files exist')
+  .action((opts: GlobalOpts & { json?: boolean; strict?: boolean }) => {
+    const config = getConfig(opts);
+    const result = computeCoverage(coverageInputs(config, opts));
+    if (opts.json) {
+      console.log(JSON.stringify(result, null, 2));
+    } else {
+      console.log(`captured: ${result.captured.length}`);
+      for (const p of result.uncaptured) console.log(`uncaptured: ${p}`);
+      for (const p of result.standalone) console.log(`standalone: ${p}`);
+      for (const p of result.missingStandalone) console.log(`missing-standalone: ${p}`);
+    }
+    if (opts.strict && result.uncaptured.length > 0) process.exit(1);
+  });
+
+cli
   .command('check', 'Full validation gate')
   .option('--require-lint', 'Require markdownlint-cli2')
   .option('--require-vale', 'Require Vale')
@@ -488,6 +539,13 @@ cli
             ],
           });
         }
+      }
+
+      const coverage = computeCoverage(coverageInputs(config, opts));
+      if (coverage.uncaptured.length > 0) {
+        console.error(
+          `coverage: ${coverage.uncaptured.length} markdown file(s) not captured by a guide or standaloneGuides (run \`mdcp coverage\`)`,
+        );
       }
 
       if (failures.length > 0) {
