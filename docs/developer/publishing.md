@@ -110,4 +110,4 @@ Changesets config: [`.changeset/config.json`](../../.changeset/config.json) — 
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
-See [SECURITY.md](../../SECURITY.md) for vulnerability reporting.
+See [SECURITY.md](../../SECURITY.md) for vulnerability reporting. For advisory triage, deprecate-vs-unpublish, and when a finding is only transitive **dev** tooling: [Security-incident triage](./security-incident-triage.md).

@@ -137,10 +137,11 @@ Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you 
 
 ## Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](../../SECURITY.md) for the supported-versions table — update that table when cutting a new minor line.
+Security fixes target the **latest minor** on npm. See [SECURITY.md](../../SECURITY.md) for the supported-versions table — update that table when cutting a new minor line. After a security patch ships, follow [Security-incident triage](./security-incident-triage.md) when deciding whether to `npm deprecate` (or rarely unpublish) a bad version.
 
 ## Related docs
 
 - [Publishing](./publishing.md) — first publish, Trusted Publishing, npm commands
+- [Security-incident triage](./security-incident-triage.md) — audit impact class, deprecate vs unpublish
 - [Agent Skill](./agent-skill.md) — skill pack, WIP `internal` flag, skills.sh
 - [.changeset/README.md](../../.changeset/README.md) — quick changeset reference
