@@ -17,9 +17,11 @@ A guide compiles a list of shards into one output. A [standalone guide](../gloss
 
 [Coverage](../glossary/coverage.md) is the set of markdown files MDCP can account for. A file is **captured** when it is one of:
 
-- a shard belonging to a guide in `compileOrder` (its manifest sections),
+- a markdown file inside a guide directory (a guide listed in `compileOrder`),
 - a guide output target (`compile.outputFile`, or the top-level `outputFile`), or
 - a `standaloneGuides[]` entry.
+
+Manifest membership inside a guide directory is the [orphan check](./feature-catalog.md#orphan-check-p13)'s job, so the coverage scan treats a whole guide directory as accounted for and does not double-report its shards.
 
 The scan walks the scan root for `*.md`, removes ignored vendor paths, then subtracts the captured set. Whatever remains is **uncaptured** and reported.
 
