@@ -39,6 +39,6 @@ When a file is intentionally standalone — a hand-authored README or a top-leve
 }
 ```
 
-`standaloneGuides` accepts file paths or globs. `scan.ignore` extends the built-in skip list (`node_modules`, `.git`, `dist`, `build`, `_build`, `.caches`, `.agents`, `styles`, `coverage`). The scan root defaults to the invocation directory; override it with `scan.root`.
+`standaloneGuides` accepts file paths or globs. The scan honors your `.gitignore` by default, so version-controlled ignores (for example `node_modules`, `dist`, and build output) are skipped automatically; set `scan.gitignore: false` to turn that off. A built-in default always skips `.git`, `node_modules`, and `.agents`. `scan.ignore` extends what is skipped, and `scan.root` overrides the walk root (default: the invocation directory).
 
 Standalone files are register-only: compile never rewrites or emits them, but their headings still join the refs registry and their links are validated. For the full capability contract, see [Documentation coverage scan](../features/coverage-scan.md).

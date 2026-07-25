@@ -36,9 +36,11 @@ A standalone guide is register-only:
 
 `standaloneGuides[]` accepts file paths or globs (for example `packages/*/README.md`), resolved from the scan root. It doubles as the canonical inventory of intentionally isolated shards.
 
-## Ignored vendor paths
+## What the scan skips
 
-The scan skips generated and vendored directories by default: `node_modules`, `.git`, `dist`, `build`, `_build`, `.caches`, `.agents`, `styles`, and `coverage`. The `scan.ignore` config list extends these defaults. The scan root defaults to the invocation directory and is overridable with `scan.root`.
+The scan honors the repository `.gitignore` by default, so paths already excluded from version control (for example `node_modules`, `dist`, `build`, `_build`, `.caches`, `coverage`) are skipped with no extra config. A small built-in default always skips `.git`, `node_modules`, and `.agents`, even when `.gitignore` does not list them.
+
+`scan.ignore` extends what is skipped, `scan.gitignore: false` turns off `.gitignore` honoring, and `scan.root` overrides the walk root (default: the invocation directory).
 
 ## Coverage command and check summary
 
@@ -72,17 +74,19 @@ The orphan check stays a hard error because a shard in a guide directory is clea
 {
   "standaloneGuides": ["packages/*/README.md", "SECURITY.md"],
   "scan": {
+    "gitignore": true,
     "ignore": ["legacy"],
     "root": "."
   }
 }
 ```
 
-| Knob               | Default              | Role                                               |
-| ------------------ | -------------------- | -------------------------------------------------- |
-| `standaloneGuides` | `[]`                 | Files or globs registered as standalone (captured) |
-| `scan.ignore`      | built-in vendor list | Extra directories or globs to skip                 |
-| `scan.root`        | invocation directory | Root the scan walks for markdown files             |
+| Knob               | Default                                    | Role                                               |
+| ------------------ | ------------------------------------------ | -------------------------------------------------- |
+| `standaloneGuides` | `[]`                                       | Files or globs registered as standalone (captured) |
+| `scan.gitignore`   | `true`                                     | Honor the repository `.gitignore` when walking     |
+| `scan.ignore`      | built-in `.git`, `node_modules`, `.agents` | Extra directories or globs to skip                 |
+| `scan.root`        | invocation directory                       | Root the scan walks for markdown files             |
 
 ## Coverage scan acceptance criteria
 
@@ -90,7 +94,8 @@ The orphan check stays a hard error because a shard in a guide directory is clea
 - A guide output target (`compile.outputFile` and top-level `outputFile`) is captured.
 - A `standaloneGuides[]` entry is captured, including glob matches.
 - A markdown file outside every guide and outside `standaloneGuides[]` is reported as uncaptured.
-- Default vendor directories are skipped; `scan.ignore` extends them.
+- The scan honors `.gitignore` by default; `scan.gitignore: false` disables it.
+- Built-in defaults (`.git`, `node_modules`, `.agents`) are always skipped; `scan.ignore` extends them.
 - A `standaloneGuides[]` entry matching no file is reported as missing.
 - `mdcp coverage` exits `0` by default and `1` with `--strict` when uncaptured files exist.
 - `mdcp coverage --json` emits captured, uncaptured, standalone, and missing sets.
