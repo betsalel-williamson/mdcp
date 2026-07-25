@@ -26,3 +26,6 @@ overrides:
   # GHSA-pm4m-ph32-ghv5: vulnerable >=5.0.0 <=5.2.1, patched >=5.2.2.
   # Scope to the 5.x line so js-yaml 3.x/4.x consumers stay on their major.
   js-yaml@5: 5.2.2
+  # Slidev → monaco-editor → dompurify (dev-only presentation tooling).
+  # GHSA-v2wj-7wpq-c8vv / GHSA-h7mw-gpvr-xq4m / GHSA-crv5-9vww-q3g8: patched >=3.4.0.
+  dompurify: ^3.4.0

@@ -26,3 +26,5 @@ We follow coordinated disclosure: we will confirm receipt, work on a fix, and pu
 - Gitleaks on commit and in CI
 - `pnpm audit --audit-level=high` in CI
 - Frozen lockfile installs in CI
+
+Triage (prod vs dev-only impact, prefer deprecate over unpublish): [docs/developer/security-incident-triage.md](docs/developer/security-incident-triage.md).
