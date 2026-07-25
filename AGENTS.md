@@ -45,6 +45,28 @@ scripts — use those rather than duplicating them here.
 - `gitleaks` is not installed; the pre-commit hook prints a warning and
   continues (CI runs the real scan).
 
+### Cloud-agent limitations & workarounds
+
+Human-facing detail: **Cursor Cloud environment** in `DEVELOPERS.md`
+(compiled from `docs/developer/cursor-cloud-environment.md`). Key constraints
+for agents in this environment:
+
+- `gh` is **read-only** — it cannot create or modify issues or PRs. Use the
+  dedicated PR tooling for PRs and PR comments; a human creates GitHub issues
+  from agent-supplied text (add `Closes #N` afterward).
+- **No GitHub MCP**, and we do not add one in the cloud. MCP servers load at
+  session start, `.cursor/*` (except `environment.json`) is gitignored, and a
+  GitHub PAT in Secrets is not wired to `gh` or any tool — so it does not
+  enable issue creation. Do not rely on it.
+- The agent **cannot merge PRs** or push to protected `main` (a human merges).
+  It may merge one working branch into another locally to unblock CI (for
+  example, a dependency-fix branch into a feature branch).
+- CI runs `pnpm audit --audit-level=high` **before** build/test; a new advisory
+  on a pre-existing devDependency fails it and masks otherwise-green gates. Fix
+  by pinning patched versions via `pnpm-workspace.yaml` `overrides`.
+- Merge commits need a **conventional subject** (`chore: merge …`) or commitlint
+  rejects them.
+
 ### Full verification gate
 
 `pnpm run check` runs typecheck → lint → format:check → build → test →

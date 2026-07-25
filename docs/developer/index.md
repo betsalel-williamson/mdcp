@@ -4,6 +4,7 @@
   - [About this guide](./about-this-guide.md)
   - [Glossary](../glossary/index.md)
   - [Local setup](./local-setup.md)
+  - [Cursor Cloud environment](./cursor-cloud-environment.md)
   - [Agent work-item tracking](./agent-work-item-tracking.md)
   - [Repository layout](./repository-layout.md)
   - [Packages and tests](./packages-and-tests.md)
