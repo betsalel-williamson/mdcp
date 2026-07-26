@@ -48,15 +48,18 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 
 ## Comprehensive review when guides are involved
 
-When a change touches a guide — a doc shard, a skill, or code whose behavior a guide documents — review the change and the affected guides together, as a whole, not in isolation. Guides carry the intent behind the code, so a narrow diff review can miss drift between what a guide promises and what the change actually does.
+This is the guide-specific application of the [two-level review](../features/agent-skill.md#quality-assurance-qa-principles) QA principle. Review at two levels:
 
-Apply this whenever:
+1. **In isolation** — review each changed idea or shard on its own for local correctness.
+2. **Comprehensively** — review it against the other ideas, as a whole. This high-level pass catches duplication and surfaces organization improvements (shards to merge, split, or relocate), and — when a change touches a guide (a doc shard, a skill, or code whose behavior a guide documents) — drift between what a guide promises and what the change actually does.
+
+Guides carry the intent behind the code, so a narrow diff review can miss this. Apply the comprehensive pass whenever:
 
 - a shard changes and related code or a skill describes the same behavior,
 - code or a skill changes and a guide documents that behavior, or
 - a review spans more than one surface (for example a feature and its client guide, or a skill and its supporting guides).
 
-In those cases, read the related guides alongside the diff and flag any drift: stale guidance, a promise the change breaks, or a guide that should change with it. A review is complete only when the change and its guides agree.
+Read the related guides alongside the diff and flag any drift (stale guidance, a promise the change breaks, or a guide that should change with it), duplication, or reorganization. A review is complete only when the change and its guides agree.
 
 ## Agent context
 
