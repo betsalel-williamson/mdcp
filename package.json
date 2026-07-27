@@ -10,7 +10,7 @@
   "packageManager": "pnpm@11.13.0",
   "scripts": {
     "build": "pnpm -r run build",
-    "test": "pnpm -r run test",
+    "test": "pnpm -r run test && node --test scripts/**/*.test.mjs",
     "typecheck": "pnpm -r run typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -71,8 +71,8 @@
     ]
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.2",
-    "@commitlint/cli": "^21.0.2",
+    "@changesets/cli": "^2.31.1",
+    "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "^10.0.1",
     "@slidev/cli": "latest",

@@ -14,3 +14,4 @@
   - [Live skill evals](./live-skill-evals.md)
   - [Versioning and releases](./versioning-and-releases.md)
   - [Publishing](./publishing.md)
+  - [Security-incident triage](./security-incident-triage.md)

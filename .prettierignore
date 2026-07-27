@@ -12,3 +12,4 @@ examples/sample-guides/refs.json
 docs/guides.md
 docs/refs.json
 .agents/
+.worktrees/
