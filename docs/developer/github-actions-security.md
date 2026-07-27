@@ -70,7 +70,10 @@ Fork PRs from outside collaborators still run CI under the base-repo policy; cod
 
 ## Static analysis
 
-We run **CodeQL** and **Zizmor** on push and pull request. Zizmor checks our workflow files for security misconfigurations and surfaces annotations. CodeQL provides SAST for our JavaScript/TypeScript code.
+We run **CodeQL** and **Zizmor** on push and pull request:
+
+- **CodeQL** — JavaScript/TypeScript SAST. The analyze job fails on findings; make it a **required** status check on `main` if it should gate merges.
+- **Zizmor** — GitHub Actions workflow misconfiguration scanner. During rollout the job uses `continue-on-error: true`, so it is **advisory only** (annotations + logs; does not block merge). Do not treat a green Zizmor check as enforcement until that flag is removed and the check is required.
 
 ## Related docs
 

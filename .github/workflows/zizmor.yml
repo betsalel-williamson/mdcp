@@ -1,4 +1,4 @@
-name: "Zizmor"
+name: 'Zizmor'
 
 on:
   push:
@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
 
     steps:
       - name: Checkout repository
@@ -21,10 +20,11 @@ jobs:
         with:
           persist-credentials: false
 
+      # Advisory during rollout: continue-on-error keeps the job green so findings
+      # do not block merge yet. Treat this check as non-enforcing until removed.
+      # Annotations alone can truncate (~10/run); always read the job log.
       - name: Run Zizmor
         uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
-        # Set continue-on-error to true so we don't fail the whole gate on the first introduce
-        # if findings flood.
         continue-on-error: true
         with:
           advanced-security: false
