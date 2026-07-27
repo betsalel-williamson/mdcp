@@ -1,4 +1,4 @@
-import { relative, resolve, sep } from 'node:path';
+import { dirname, relative, resolve, sep } from 'node:path';
 import fg from 'fast-glob';
 import ignoreFactory from 'ignore';
 import { readFileSync, existsSync } from 'node:fs';
@@ -25,7 +25,7 @@ export interface CoverageOptions {
   standaloneGuides: string[];
   /** Extra ignore globs; built-in defaults are always added internally. */
   ignore: string[];
-  /** Honor the root `.gitignore` when walking. */
+  /** Honor `.gitignore`: repo-root when inside git; scan-root only otherwise. */
   gitignore: boolean;
 }
 
@@ -46,12 +46,53 @@ function isUnder(dir: string, absPath: string): boolean {
   return rel === '' || (!rel.startsWith('..') && !rel.startsWith(`..${sep}`));
 }
 
-/** Filter root-relative POSIX paths through the root `.gitignore`, when present. */
+/**
+ * Walk up from `start` looking for a `.git` entry (directory or file, as in
+ * worktrees). Returns the repository root, or null when `start` is not inside
+ * a git working tree.
+ */
+function findGitRoot(start: string): string | null {
+  let dir = resolve(start);
+  for (;;) {
+    if (existsSync(resolve(dir, '.git'))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+}
+
+/**
+ * Locate the `.gitignore` that should apply to `start`.
+ *
+ * - Inside a git repo: use the repository-root `.gitignore` only (never walk
+ *   above the `.git` boundary).
+ * - Outside a git repo: honor `.gitignore` at `start` itself only — do not
+ *   climb parents, which would escape the project root into unrelated trees.
+ */
+function findApplicableGitignore(start: string): { dir: string; content: string } | null {
+  const root = resolve(start);
+  const gitRoot = findGitRoot(root);
+  // Inside git: repo-root `.gitignore`. Outside git: scan-root only (no parent climb).
+  const ignoreDir = gitRoot ?? root;
+  const gitignorePath = resolve(ignoreDir, '.gitignore');
+  if (!existsSync(gitignorePath)) return null;
+  return { dir: ignoreDir, content: readFileSync(gitignorePath, 'utf-8') };
+}
+
+/**
+ * Filter scan-root-relative POSIX paths through the applicable `.gitignore`
+ * (repo-root when inside git; scan-root only otherwise).
+ */
 function gitignoreFilter(root: string, relPaths: string[]): string[] {
-  const gitignorePath = resolve(root, '.gitignore');
-  if (!existsSync(gitignorePath)) return relPaths;
-  const matcher = ignoreFactory().add(readFileSync(gitignorePath, 'utf-8'));
-  return relPaths.filter((rel) => !matcher.ignores(rel));
+  const found = findApplicableGitignore(root);
+  if (!found) return relPaths;
+  const matcher = ignoreFactory().add(found.content);
+  return relPaths.filter((rel) => {
+    const abs = resolve(root, rel);
+    const fromIgnoreRoot = toPosix(relative(found.dir, abs));
+    if (fromIgnoreRoot === '' || fromIgnoreRoot.startsWith('..')) return true;
+    return !matcher.ignores(fromIgnoreRoot);
+  });
 }
 
 /**
