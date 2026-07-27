@@ -33,7 +33,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                     |
 | Require approval for external           | `reviewed (2026-07-27)`                                                      | CODEOWNERS added; require-code-owner reviews are maintainer ops.                     |
 | Dependabot for Actions                  | `reviewed (2026-07-27)`                                                      | Configured for weekly updates.                                                       |
-| Dependabot cooldown                     | `reviewed (2026-07-27)`                                                      | Explicit 7-day cooldown on `github-actions`.                                         |
+| Dependabot cooldown                     | `reviewed (2026-07-27)`                                                      | Explicit 7-day cooldown on `npm` and `github-actions`.                               |
 | Artifact / cache poisoning              | `reviewed (2026-07-27)`                                                      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                       |
 | Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                         |
 | Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`                                                      | CodeQL + Zizmor workflows; Zizmor fails the job on findings.                         |
