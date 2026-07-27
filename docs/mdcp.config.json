@@ -79,7 +79,26 @@
   ],
   "scan": {
     "strict": true,
-    "ignore": [".changeset/**", "tests/**", "examples/**", "**/CHANGELOG.md"]
+    "ignore": [
+      ".changeset/**",
+      ".github/**",
+      ".cursor/**",
+      ".claude/**",
+      ".husky/**",
+      ".vscode/**",
+      ".superpowers/**",
+      ".worktrees/**",
+      ".specstory/**",
+      ".tmp/**",
+      ".caches/**",
+      ".pnpm-store/**",
+      ".compile-build/**",
+      ".shard-work/**",
+      "legacy/**",
+      "tests/**",
+      "examples/**",
+      "**/CHANGELOG.md"
+    ]
   },
   "refs": {
     "registryFile": "_build/refs.json",
