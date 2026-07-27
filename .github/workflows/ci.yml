@@ -7,10 +7,15 @@ on:
     # Any target branch (stacked feature PRs, not only main).
     # Changeset checks use github.event.pull_request.base.sha — never a hardcoded branch name.
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
   check:
+    name: Check
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -54,6 +59,7 @@ jobs:
         run: git diff --exit-code
 
   changeset:
+    name: Changeset
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     permissions:
