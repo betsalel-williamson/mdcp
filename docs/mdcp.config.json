@@ -75,6 +75,7 @@
     "SECURITY.md",
     "docs/skills.md",
     "packages/mdcp-presets/README.md",
+    "packages/mdcp-skills-audit-proxy/README.md",
     "skills/**/*.md"
   ],
   "scan": {

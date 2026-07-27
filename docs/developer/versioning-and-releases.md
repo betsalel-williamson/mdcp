@@ -54,6 +54,7 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, then **must** run `pnpm skill:validate` (hard fail if invalid — including broken YAML fences like `---name:`). Only after that succeeds does it commit `chore: release vX.Y.Z`, tag, and (with `--push`) push `main` + the tag.
 6. Verify CI [release workflow](../../.github/workflows/release.yml): it runs `pnpm skill:validate` again before npm publish, then publishes all three packages and creates the GitHub Release for `vX.Y.Z`.
 7. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
+8. **skills.sh partner audits:** after a skill-facing release, partner re-audits on skills.sh typically land within minutes to about a day. Releases are not gated on audit readiness. The daily sync job (~20–28h after release) pulls published audits through the Vercel proxy; see [skills.sh audit sync](./skills-audit-sync.md).
 
 Preview without writes: `pnpm release:tag --dry-run`.
 

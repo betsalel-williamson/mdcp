@@ -1,5 +1,6 @@
 packages:
   - 'packages/*'
+  - 'scripts/skills-audit-sync'
 
 # pnpm supply-chain (2026 best practice)
 minimumReleaseAge: 10080

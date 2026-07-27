@@ -29,6 +29,9 @@ coverage/
 # Linked git worktrees (local agent / contributor checkouts)
 .worktrees/
 
+# Local git worktrees (isolated checkouts)
+.worktrees/
+
 # Agent Skills — local installs / workspaces (publishable source lives in skills/)
 .agents/skills/mdcp/
 .agents/skills/mdcp-arch-oss-library/
@@ -70,3 +73,6 @@ examples/sample-guides/_build/
 # OS
 .DS_Store
 
+
+# SDD / agent scratch (not durable docs)
+.superpowers/

@@ -30,6 +30,22 @@ pnpm --filter @bwilliamson/mdcp-cli run build
 node packages/mdcp-cli/dist/cli.js --help
 ```
 
+## mdcp-skills-audit-proxy
+
+Private Vercel OIDC bridge for [skills.sh audit sync](./skills-audit-sync.md). Source: [`packages/mdcp-skills-audit-proxy/src/`](../../packages/mdcp-skills-audit-proxy/src/). One-time deploy: [Vercel setup](./skills-audit-proxy-vercel.md).
+
+| Area        | Path            |
+| ----------- | --------------- |
+| Config      | `src/config.ts` |
+| GitHub OIDC | `src/auth.ts`   |
+
+```bash
+pnpm --filter @bwilliamson/mdcp-skills-audit-proxy test
+pnpm --filter @bwilliamson/mdcp-skills-audit-proxy run typecheck
+```
+
+Auth tests sign local JWTs with `jose` `generateKeyPair` and inject JWKS via `createLocalJWKSet` — no network calls. Route handlers and skills.sh forwarding land in later tasks.
+
 ## mdcp-presets
 
 JSONC markdownlint configs only — no TypeScript build. Edit `*.markdownlint-cli2.jsonc` directly.

@@ -11,11 +11,13 @@ mdcp/
 │   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; not in skills.sh.json)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
 ├── skills.sh.json          # skills.sh repo page: release-ready packs in Documentation system
+├── security/               # Committed security registers (skills.sh accepted-risks log)
 ├── .agents/skills/         # Vendor-managed dogfood installs (refresh via pnpm skill:update; do not hand-edit) + skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
-│   └── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
+│   ├── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
+│   └── mdcp-skills-audit-proxy/  # @bwilliamson/mdcp-skills-audit-proxy — private Vercel OIDC bridge (see skills-audit-sync docs)
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
 │   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)

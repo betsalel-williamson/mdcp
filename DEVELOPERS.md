@@ -412,11 +412,13 @@ mdcp/
 │   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; not in skills.sh.json)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
 ├── skills.sh.json          # skills.sh repo page: release-ready packs in Documentation system
+├── security/               # Committed security registers (skills.sh accepted-risks log)
 ├── .agents/skills/         # Vendor-managed dogfood installs (refresh via pnpm skill:update; do not hand-edit) + skill-creator (committed)
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
-│   └── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
+│   ├── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
+│   └── mdcp-skills-audit-proxy/  # @bwilliamson/mdcp-skills-audit-proxy — private Vercel OIDC bridge (see skills-audit-sync docs)
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
 │   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)
@@ -471,6 +473,22 @@ Thin Commander wrapper around `mdcp-core`. Source: [`packages/mdcp-cli/src/cli.t
 pnpm --filter @bwilliamson/mdcp-cli run build
 node packages/mdcp-cli/dist/cli.js --help
 ```
+
+### mdcp-skills-audit-proxy
+
+Private Vercel OIDC bridge for [skills.sh audit sync](#skillssh-audit-sync-maintainer-runbook). Source: [`packages/mdcp-skills-audit-proxy/src/`](packages/mdcp-skills-audit-proxy/src). One-time deploy: [Vercel setup](#skillssh-audit-proxy--vercel-setup-one-time).
+
+| Area        | Path            |
+| ----------- | --------------- |
+| Config      | `src/config.ts` |
+| GitHub OIDC | `src/auth.ts`   |
+
+```bash
+pnpm --filter @bwilliamson/mdcp-skills-audit-proxy test
+pnpm --filter @bwilliamson/mdcp-skills-audit-proxy run typecheck
+```
+
+Auth tests sign local JWTs with `jose` `generateKeyPair` and inject JWKS via `createLocalJWKSet` — no network calls. Route handlers and skills.sh forwarding land in later tasks.
 
 ### mdcp-presets
 
@@ -685,6 +703,8 @@ Complementary `skills/mdcp-arch-*` packs remain WIP (`metadata.internal: true`) 
 
 There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases). Do not hand-edit those versions in feature PRs; add a changeset when `skills/` changes so release notes capture the work.
 
+Published partner security audits on skills.sh are synced into this repository for maintainer triage — see [skills.sh audit sync (developer)](#skillssh-audit-sync-maintainer-runbook) and [skills.sh audit sync (feature)](docs/features/skills-audit-sync.md).
+
 Documented consumer install path: `.agents/skills/`. Avoid Cursor-only or Marketplace-only packaging for this work.
 
 ### `skills.sh.json` (repo page layout)
@@ -739,6 +759,312 @@ Consumer-facing landing identity (badge, README install commands) stays in
 [Agent Skill](docs/features/agent-skill.md#ecosystem-publication).
 
 <!-- mdcp-shard: end docs/developer/agent-skill.md -->
+
+<!-- mdcp-shard: start docs/developer/skills-audit-sync.md -->
+
+## skills.sh audit sync (maintainer runbook)
+
+Published partner audits on [skills.sh](https://skills.sh/betsalel-williamson/mdcp) are the public trust source of truth for install-time reputation. This repository mirrors those findings into GitHub Issues and a committed accepted-risks log so maintainers can fix, track, or formally accept risk without relying on the skills.sh UI alone.
+
+Tracking: [#153](https://github.com/betsalel-williamson/mdcp/issues/153). Architecture: [ADR 0004](docs/features/adr/0004-public-first-skills-audit-sync.md), [ADR 0005](docs/features/adr/0005-skills-audit-oidc-proxy.md), [ADR 0006](docs/features/adr/0006-project-skill-security-audit-issue.md). Product contracts: [skills.sh audit sync](docs/features/skills-audit-sync.md).
+
+- **One-time Vercel project:** [skills.sh audit proxy — Vercel setup](#skillssh-audit-proxy--vercel-setup-one-time)
+- **Day-to-day sync / triage / accept-risk:** this runbook
+
+### What sync does
+
+On each successful run, automation:
+
+1. Calls the monorepo Vercel proxy (GitHub Actions OIDC → proxy → skills.sh audit API) for skills published under `source=betsalel-williamson/mdcp`.
+2. Classifies each finding fingerprint against the accepted log and the in-flight Issue.
+3. Updates the in-flight Issue, opens or updates urgent Issues for **high** severity, and records sync metadata.
+
+The proxy is auth gate + OIDC mint + forward only — classification and Issue writes stay in this repository.
+
+### One-time setup
+
+Complete once before scheduled sync can succeed:
+
+1. Deploy the proxy and set `SKILLS_AUDIT_PROXY_URL` — follow [Vercel proxy setup](#skillssh-audit-proxy--vercel-setup-one-time) end to end (Import Git, Root Directory, build settings, OIDC Federation, labels, smoke checks).
+2. Confirm labels **`skill-security`** and **`priority:P1`** exist.
+
+You should not need that guide again unless the Vercel project is rebuilt or the production URL changes (then update the GitHub Actions variable).
+
+### Regular tasks
+
+#### After a release
+
+```text
+GitHub Release (v*)
+  → skills.sh re-audits (minutes … ~1 day)
+  → Daily job (~20–28h after release) calls the Vercel proxy
+  → Classification updates the in-flight Issue (and urgent Issues for high)
+```
+
+Releases are **not** gated on skills.sh audit readiness. Prefer waiting for the daily window; use a forced sync only if you need earlier visibility.
+
+#### Force a sync
+
+Actions → **Skills audit sync** → **Run workflow** → set `force: true` when you must bypass ~24h spacing (first production sync, config change, or urgent re-check).
+
+#### Triage in-flight findings
+
+Open the rolling Issue titled `Security audit trail: betsalel-williamson/mdcp skills` (labels `priority:P1`, `skill-security`). Review change comments and the in-flight register. High findings also get dedicated urgent Issues.
+
+#### Accept a risk
+
+Formal accept is a **durable product decision** in git. Automation must not invent acceptances.
+
+1. Open a PR that adds an entry to [`security/skills-audit-accepted.yaml`](security/skills-audit-accepted.yaml).
+2. Use this top-level shape and required fields:
+
+```yaml
+version: 1
+accepted:
+  - fingerprint: <stable finding identity from sync library>
+    source: skills.sh/<provider>/<skill>
+    risk: <human-readable summary>
+    date: <ISO 8601 date or datetime>
+    reason: <why accepted>
+    accepter: <email>
+```
+
+| Field         | Meaning                                                    |
+| ------------- | ---------------------------------------------------------- |
+| `fingerprint` | Stable finding identity ([fingerprint](#classification))   |
+| `source`      | Where the risk came from (skills.sh, provider, skill slug) |
+| `risk`        | Human-readable summary                                     |
+| `date`        | When accepted (ISO 8601 date or datetime)                  |
+| `reason`      | Why the risk is accepted                                   |
+| `accepter`    | Email of the person who accepted                           |
+
+Merge after review. The next sync treats matching fingerprints as accepted (no re-alert spam).
+
+#### Local / CI commands
+
+```bash
+pnpm skills-audit:sync
+pnpm --filter @bwilliamson/mdcp-skills-audit-sync test
+pnpm --filter @bwilliamson/mdcp-skills-audit-sync run typecheck
+pnpm --filter @bwilliamson/mdcp-skills-audit-proxy test
+```
+
+### Schedules (reference)
+
+| Trigger               | When it runs                                                                |
+| --------------------- | --------------------------------------------------------------------------- |
+| **Daily**             | If a Release was published ~20–28h ago → run sync (else no-op for that arm) |
+| **Weekly**            | Full sync candidate                                                         |
+| **workflow_dispatch** | Force sync; `force: true` bypasses spacing                                  |
+
+**Spacing:** skip any scheduled sync when a **successful** sync ran within the last **~24 hours**. `last_successful_sync_at` lives in in-flight Issue meta.
+
+Workflow: [`.github/workflows/skills-audit-sync.yml`](.github/workflows/skills-audit-sync.yml).
+
+### Classification
+
+Each finding is identified by a **fingerprint** (stable identity; ignores lone `auditedAt` churn):
+
+```text
+{skill, providerSlug, status, summary, riskLevel}
+```
+
+(`scripts/skills-audit-sync/src/fingerprint.ts`.)
+
+#### Severity triage
+
+| Input (status / riskLevel)          | Triage                              |
+| ----------------------------------- | ----------------------------------- |
+| `pass`                              | — (no triage; register-only if new) |
+| `fail`, or `HIGH` / `CRITICAL` risk | **high**                            |
+| `warn`, or `MEDIUM` risk (not high) | **medium**                          |
+| other non-pass                      | **low**                             |
+
+| State                         | Action                                                           |
+| ----------------------------- | ---------------------------------------------------------------- |
+| **Accepted** in log           | Acknowledge quietly; update last-seen if useful; no urgency spam |
+| **In-flight** on Issue        | Note still assessing or in progress                              |
+| **Never seen** → **high**     | Create or update a dedicated urgent Issue + in-flight note       |
+| **Never seen** → medium / low | In-flight register only (+ change comment when new or worsened)  |
+
+Unchanged in-flight findings: bump `last-seen` only — **no** new comment. Cleared on skills.sh: remove from in-flight; post a change note. If a previously **accepted** fingerprint **changes** materially, treat as new (needs re-triage).
+
+#### In-flight Issue identity
+
+- Title: `Security audit trail: betsalel-williamson/mdcp skills`
+- Labels: `priority:P1`, `skill-security`
+- Body marker: `<!-- skill-security-audit: betsalel-williamson/mdcp -->`
+- Meta / register blocks: `<!-- skills-audit-meta ... -->` and `<!-- skills-audit-in-flight ... -->`
+
+### Configuration (reference)
+
+| Setting / secret / var                                 | Purpose                                                   |
+| ------------------------------------------------------ | --------------------------------------------------------- |
+| `SKILLS_AUDIT_PROXY_URL`                               | Repository variable — public base URL of the Vercel proxy |
+| `SKILLS_AUDIT_TRIGGER`                                 | Set by workflow: `daily`, `weekly`, or `dispatch`         |
+| `SKILLS_AUDIT_FORCE`                                   | `1` on `workflow_dispatch` when `force: true`             |
+| `GITHUB_TOKEN`                                         | Issue search/create/update and release window lookup      |
+| OIDC audience                                          | `mdcp-skills-audit-proxy`                                 |
+| `id-token: write` / `issues: write` / `contents: read` | Workflow permissions                                      |
+
+#### Proxy contract
+
+Base URL: `SKILLS_AUDIT_PROXY_URL`. Every route requires `Authorization: Bearer <github-actions-oidc-jwt>` with audience `mdcp-skills-audit-proxy` and repository claim `betsalel-williamson/mdcp`.
+
+| Route                    | Success          | Upstream                                                              |
+| ------------------------ | ---------------- | --------------------------------------------------------------------- |
+| `GET /api/skills`        | `200` JSON       | skills.sh owner search, filtered to `source=betsalel-williamson/mdcp` |
+| `GET /api/audit/{skill}` | `200` audit JSON | `GET /api/v1/skills/audit/betsalel-williamson/mdcp/{skill}`           |
+
+Proxy-only errors: `401` / `403` / `405`. Upstream `404` / `429` / `503` pass through with `Retry-After` when present. Never returns Vercel OIDC tokens. Deploy: [Vercel setup](#skillssh-audit-proxy--vercel-setup-one-time).
+
+#### Sync library modules
+
+| Module           | Export                          | Role                                       |
+| ---------------- | ------------------------------- | ------------------------------------------ |
+| `fingerprint.ts` | `fingerprint(finding)`          | Stable identity string                     |
+| `triage.ts`      | `triageFinding(finding)`        | `high` / `medium` / `low` / `null`         |
+| `classify.ts`    | `classifyFinding(...)`          | `accepted` / `in_flight` / `new` + triage  |
+| `spacing.ts`     | `shouldSkipScheduledSync(...)`  | ~24h between successful scheduled syncs    |
+| `acceptedLog.ts` | `loadAcceptedFingerprints(...)` | Read accepted fingerprints from YAML       |
+| `github.ts`      | Issue upsert helpers            | In-flight + urgent Issue body parse/render |
+| `proxy.ts`       | OIDC + proxy fetch              | `/api/skills`, `/api/audit/{slug}`         |
+| `run.ts`         | `runSync(...)`                  | GitHub Actions entrypoint                  |
+
+### Error handling
+
+| Case                        | Behavior                                                          |
+| --------------------------- | ----------------------------------------------------------------- |
+| Proxy `401` / `403`         | Fail the job; do not rewrite registers or post misleading events  |
+| skills.sh `404` for a skill | Meta notes “audits pending”; retry next eligible sync             |
+| Partial skill failures      | Continue other skills; fail the job at the end if any hard errors |
+| Rate limit                  | Respect `Retry-After`; backoff                                    |
+
+### Related docs
+
+- [Vercel proxy setup (one-time)](#skillssh-audit-proxy--vercel-setup-one-time)
+- [skills.sh audit sync (feature)](docs/features/skills-audit-sync.md)
+- [Agent Skill development](#agent-skill-development)
+- [Versioning and releases](#versioning-and-releases)
+- [SECURITY.md](SECURITY.md)
+
+<!-- mdcp-shard: end docs/developer/skills-audit-sync.md -->
+
+<!-- mdcp-shard: start docs/developer/skills-audit-proxy-vercel.md -->
+
+## skills.sh audit proxy — Vercel setup (one-time)
+
+One-time creation of the Hobby Vercel project that hosts [`packages/mdcp-skills-audit-proxy`](packages/mdcp-skills-audit-proxy). Day-to-day sync ops live in [skills.sh audit sync (maintainer runbook)](#skillssh-audit-sync-maintainer-runbook). Architecture: [ADR 0005](docs/features/adr/0005-skills-audit-oidc-proxy.md).
+
+Do **not** invent or document a production URL until deploy assigns one.
+
+### Before you start
+
+- Vercel account on the team that will own the proxy (Hobby is enough)
+- Access to import GitHub repo **`betsalel-williamson/mdcp`**
+- Permission to set GitHub Actions **variables** and create Issue labels on that repo
+
+### 1. Templates — import Git, do not use a framework template
+
+1. Sign in at [vercel.com](https://vercel.com).
+2. **Add New… → Project**.
+3. Under **Import Git Repository**, choose **GitHub** and select **`betsalel-williamson/mdcp`**.
+   - If the repo is missing, connect the GitHub app / grant access, then refresh.
+4. **Do not** pick a Marketplace or starter **template** (Next.js blog, etc.). This app is the monorepo package with serverless routes under `api/` — Import Git only.
+
+Optional later: CLI-only link (`cd packages/mdcp-skills-audit-proxy && vercel link`) instead of dashboard import; dashboard + Git is preferred so production tracks `main`.
+
+### 2. Application presets (framework)
+
+On the **Configure Project** screen (or later under **Settings → Build and Deployment**):
+
+| Field                | Value                                                                            |
+| -------------------- | -------------------------------------------------------------------------------- |
+| **Framework Preset** | **Other** (not Next.js, not Vite)                                                |
+| **Project Name**     | e.g. `mdcp-skills-audit-proxy` (any unique name; used in the `*.vercel.app` URL) |
+
+Leave “Include files outside the Root Directory” **off** — the proxy package is self-contained (no workspace deps at runtime).
+
+### 3. Root Directory
+
+| Field              | Value                              |
+| ------------------ | ---------------------------------- |
+| **Root Directory** | `packages/mdcp-skills-audit-proxy` |
+
+Edit (pencil) → enter that path → continue. Vercel installs and builds only from that folder (`vercel.json` and `api/**/*.ts` live there).
+
+### 4. Build and output settings
+
+Override Framework defaults so Vercel does not look for a static `dist/` site:
+
+| Field                | Value                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| **Build Command**    | leave **empty** (or clear override) — serverless `api/` routes compile without an app build |
+| **Output Directory** | leave **empty**                                                                             |
+| **Install Command**  | `pnpm install` (packageManager is pnpm; do not use `npm install` unless you must)           |
+| **Node.js Version**  | **22.x** or **24.x** (must be ≥ 18; match CI when practical)                                |
+
+Ignored Build Step (optional cost save): under **Settings → Build and Deployment → Ignored Build Step**, choose **Only build if there are changes in a folder** and set `packages/mdcp-skills-audit-proxy` so unrelated monorepo pushes skip proxy rebuilds.
+
+### 5. Environment variables
+
+In **Configure Project → Environment Variables**, or after create under **Settings → Environment Variables**:
+
+| Name            | Value                     | Environments                                  | Required?                                                                       |
+| --------------- | ------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------- |
+| `OIDC_AUDIENCE` | `mdcp-skills-audit-proxy` | Production (and Preview if you test previews) | No — code defaults to this; set explicitly so dashboard and GitHub stay aligned |
+
+**Do not** add:
+
+- skills.sh API keys or long-lived secrets (skills.sh auth is Vercel OIDC at runtime)
+- GitHub PATs for the proxy
+- `VERCEL_OIDC_TOKEN` as a hand-managed secret (Vercel injects OIDC when Federation is on)
+
+### 6. Deployment
+
+1. Click **Deploy**. Wait for the Production deployment to succeed.
+2. Open the deployment → copy the **base URL** (e.g. `https://mdcp-skills-audit-proxy.vercel.app`) with **no trailing slash**.
+3. Enable **OIDC Federation** (required for skills.sh):
+   - Project → **Settings → Security**
+   - **OIDC Federation** — turn **on** (label may read “Secure … access with OIDC Federation”)
+   - Prefer **Team** issuer mode when available
+   - Save; redeploy Production if the toggle was off on the first deploy so functions pick up OIDC
+4. Confirm `api/skills` and `api/audit/[skill]` appear as Serverless Functions on the deployment.
+
+CLI alternative (same Root Directory settings after `vercel link`):
+
+```bash
+cd packages/mdcp-skills-audit-proxy
+vercel link          # select the Git-connected project
+vercel env pull      # optional local .env.local — do not commit
+vercel deploy --prod
+```
+
+### 7. Wire GitHub Actions + labels
+
+1. In GitHub **`betsalel-williamson/mdcp`** → **Settings → Secrets and variables → Actions → Variables**: set `SKILLS_AUDIT_PROXY_URL` to the Vercel base URL from step 6.
+2. Ensure labels **`skill-security`** and **`priority:P1`** exist (the sync job creates the in-flight Issue with both).
+
+Automation names: `SKILLS_AUDIT_PROXY_URL`, OIDC audience `mdcp-skills-audit-proxy`, `SKILLS_AUDIT_FORCE` (`1` when `workflow_dispatch` runs with `force: true`).
+
+### 8. One-time smoke checks
+
+After deploy and variable setup:
+
+| Check                                                                 | Expected                                                        |
+| --------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Unauthenticated `GET {SKILLS_AUDIT_PROXY_URL}/api/skills` (no Bearer) | `401` — missing or invalid GitHub OIDC                          |
+| Actions → **Skills audit sync** → **Run workflow** → `force: true`    | Job succeeds; in-flight Issue created or updated with sync meta |
+
+Then use the [maintainer runbook](#skillssh-audit-sync-maintainer-runbook) for ongoing sync, triage, and accept-risk PRs.
+
+### Related
+
+- [skills.sh audit sync (maintainer runbook)](#skillssh-audit-sync-maintainer-runbook)
+- [proxy package README](packages/mdcp-skills-audit-proxy/README.md)
+- [skills.sh audit sync (feature)](docs/features/skills-audit-sync.md)
+
+<!-- mdcp-shard: end docs/developer/skills-audit-proxy-vercel.md -->
 
 <!-- mdcp-shard: start docs/developer/live-skill-evals.md -->
 
@@ -878,6 +1204,7 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, then **must** run `pnpm skill:validate` (hard fail if invalid — including broken YAML fences like `---name:`). Only after that succeeds does it commit `chore: release vX.Y.Z`, tag, and (with `--push`) push `main` + the tag.
 6. Verify CI [release workflow](.github/workflows/release.yml): it runs `pnpm skill:validate` again before npm publish, then publishes all three packages and creates the GitHub Release for `vX.Y.Z`.
 7. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
+8. **skills.sh partner audits:** after a skill-facing release, partner re-audits on skills.sh typically land within minutes to about a day. Releases are not gated on audit readiness. The daily sync job (~20–28h after release) pulls published audits through the Vercel proxy; see [skills.sh audit sync](#skillssh-audit-sync-maintainer-runbook).
 
 Preview without writes: `pnpm release:tag --dry-run`.
 
