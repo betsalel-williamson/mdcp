@@ -1272,7 +1272,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | **Runners & Environments**              |                                                                              |                                                                                      |
 | Self-hosted runners                     | `not a concern (2026-07-27)`                                                 | Using `ubuntu-latest` GitHub-hosted runners.                                         |
 | Runner groups                           | `not a concern (2026-07-27)`                                                 | Not applicable to GitHub-hosted runners.                                             |
-| Egress monitoring                       | `open risk ([#179](https://github.com/betsalel-williamson/mdcp/issues/179))` | Harden-Runner not implemented.                                                       |
+| Egress monitoring                       | `reviewed (2026-07-27)`                                                      | Harden-Runner in audit mode only (not block).                                        |
 | Environment required reviewers          | `open risk ([#180](https://github.com/betsalel-williamson/mdcp/issues/180))` | Release environment needs manual approval.                                           |
 | **Code & Supply Chain**                 |                                                                              |                                                                                      |
 | Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                     |

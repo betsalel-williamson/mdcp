@@ -11,6 +11,11 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      # Harden-Runner: audit mode only — logs egress; block mode is follow-up (#179).
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
@@ -48,6 +53,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
+      # Harden-Runner: audit mode only — logs egress; block mode is follow-up (#179).
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
