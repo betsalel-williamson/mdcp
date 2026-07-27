@@ -1261,7 +1261,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Secrets: inherit                        | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
 | Mask sensitive data                     | `reviewed (2026-07-27)`                                                      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                     |
 | **Workflows & Execution**               |                                                                              |                                                                                      |
-| Pin actions to commit SHA               | `open risk ([#175](https://github.com/betsalel-williamson/mdcp/issues/175))` | Currently using mutable tags (`@v7`, etc.).                                          |
+| Pin actions to commit SHA               | `reviewed (2026-07-27)`                                                      | All third-party actions pinned to full commit SHAs with tag comments in workflows.   |
 | Third-party actions caution             | `reviewed (2026-07-27)`                                                      | Documented current set.                                                              |
 | Sanitize untrusted context / input      | `reviewed (2026-07-27)`                                                      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.            |
 | `pull_request_target` trigger           | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
