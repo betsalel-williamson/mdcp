@@ -1136,6 +1136,8 @@ Never unpublish a version that other packages or consumers legitimately depend o
 ### Related docs
 
 - [SECURITY.md](SECURITY.md) — reporting and maintainer security practices
+- [GitHub Actions security posture](#github-actions-security-posture) — CI workflow and repository settings audit trail
+- [GitHub Actions security checklist](#github-actions-security-checklist) — OWASP topic checklist with as-built status
 - [Versioning and releases](#versioning-and-releases) — cutting fixed releases
 - [Publishing](#publishing) — npm publish mechanics and Trusted Publishing
 
