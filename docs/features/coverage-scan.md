@@ -48,20 +48,17 @@ The scan honors the repository `.gitignore` by default, so paths already exclude
 
 `scan.ignore` extends what is skipped, `scan.gitignore: false` turns off `.gitignore` honoring, and `scan.root` overrides the walk root (default: the invocation directory).
 
-## Coverage command and check summary
+## Check surface
 
-Two surfaces report coverage:
+`mdcp check` runs the coverage scan and prints each uncaptured path (`uncaptured: …`) plus any `standaloneGuides[]` entries that match no file (`missing-standalone: …`). When uncaptured files exist, it also prints a one-line `coverage:` summary. The report is always non-fatal — uncaptured files never fail the gate by themselves (same home as the orphan check, different severity).
 
-- `mdcp coverage` — prints the captured count, the uncaptured files, the standalone inventory, and any `standaloneGuides[]` entries that match no file. `--json` emits the full result for scripting.
-- `mdcp check` — appends one non-fatal summary line naming how many files are uncaptured and pointing to `mdcp coverage`.
+Machine-readable inventory (captured / uncaptured / standalone / missing) is available from core via `computeCoverage`. CI enforcement can come later as a `check` flag or `scan.strict` config if a consumer needs it — not as a parallel command.
 
-The coverage warning is non-fatal by default so it never breaks a build. `mdcp coverage --strict` exits `1` for teams that choose to enforce coverage in CI.
-
-| Condition                    | `mdcp coverage` exit | `mdcp check` exit contribution |
-| ---------------------------- | -------------------- | ------------------------------ |
-| No uncaptured files          | `0`                  | none                           |
-| Uncaptured files, default    | `0`                  | none (warning line only)       |
-| Uncaptured files, `--strict` | `1`                  | not applicable                 |
+| Condition                | `mdcp check` exit contribution |
+| ------------------------ | ------------------------------ |
+| No uncaptured files      | none                           |
+| Uncaptured files         | none (warning lines only)      |
+| Missing standalone entry | none (warning lines only)      |
 
 ## Relationship to the orphan check
 
@@ -103,15 +100,13 @@ The orphan check stays a hard error because a shard in a guide directory is clea
 - The scan honors `.gitignore` by default; `scan.gitignore: false` disables it.
 - Built-in defaults (`.git`, `node_modules`, `.agents`) are always skipped; `scan.ignore` extends them.
 - A `standaloneGuides[]` entry matching no file is reported as missing.
-- `mdcp coverage` exits `0` by default and `1` with `--strict` when uncaptured files exist.
-- `mdcp coverage --json` emits captured, uncaptured, standalone, and missing sets.
-- `mdcp check` appends a non-fatal coverage summary line and never fails on uncaptured files.
+- `mdcp check` prints uncaptured and missing-standalone paths as a non-fatal warning and never fails on them.
 - The existing orphan check behavior is unchanged.
 
 ## Coverage scan related
 
 - [Standalone guide](../glossary/standalone-guide.md)
 - [Coverage](../glossary/coverage.md)
-- [Coverage command](../client-cli/coverage.md)
+- [Coverage in check](../client-cli/coverage.md)
 - [Commands reference](../client-cli/commands-reference.md)
 - [Feature catalog](./feature-catalog.md)

@@ -382,24 +382,6 @@ cli.command('shard', 'Split monolith into shards (md-tree)').action((opts: Globa
 });
 
 cli
-  .command('coverage', 'Report markdown files no guide or standaloneGuides accounts for')
-  .option('--json', 'Emit the full coverage result as JSON')
-  .option('--strict', 'Exit 1 when uncaptured files exist')
-  .action((opts: GlobalOpts & { json?: boolean; strict?: boolean }) => {
-    const config = getConfig(opts);
-    const result = computeCoverage(coverageInputs(config, opts));
-    if (opts.json) {
-      console.log(JSON.stringify(result, null, 2));
-    } else {
-      console.log(`captured: ${result.captured.length}`);
-      for (const p of result.uncaptured) console.log(`uncaptured: ${p}`);
-      for (const p of result.standalone) console.log(`standalone: ${p}`);
-      for (const p of result.missingStandalone) console.log(`missing-standalone: ${p}`);
-    }
-    if (opts.strict && result.uncaptured.length > 0) process.exit(1);
-  });
-
-cli
   .command('check', 'Full validation gate')
   .option('--require-lint', 'Require markdownlint-cli2')
   .option('--require-vale', 'Require Vale')
@@ -542,9 +524,11 @@ cli
       }
 
       const coverage = computeCoverage(coverageInputs(config, opts));
+      for (const p of coverage.uncaptured) console.error(`uncaptured: ${p}`);
+      for (const p of coverage.missingStandalone) console.error(`missing-standalone: ${p}`);
       if (coverage.uncaptured.length > 0) {
         console.error(
-          `coverage: ${coverage.uncaptured.length} markdown file(s) not captured by a guide or standaloneGuides (run \`mdcp coverage\`)`,
+          `coverage: ${coverage.uncaptured.length} markdown file(s) not captured by a guide or standaloneGuides (non-fatal)`,
         );
       }
 

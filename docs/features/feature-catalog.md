@@ -64,7 +64,7 @@ Fail on bare `Ch. N` and unlinked chapter-style references.
 
 ## Coverage scan (P1.5)
 
-Report markdown files that no guide accounts for. Register single files as [standalone guides](../glossary/standalone-guide.md) or fold them into a compiled guide. Non-fatal warning in `mdcp check`; full inventory via `mdcp coverage`. See [Documentation coverage scan](./coverage-scan.md).
+Report markdown files that no guide accounts for. Register single files as [standalone guides](../glossary/standalone-guide.md) or fold them into a compiled guide. Non-fatal warning in `mdcp check` (prints uncaptured paths). See [Documentation coverage scan](./coverage-scan.md).
 
 ## Peer linters (P2.1)
 
