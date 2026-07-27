@@ -1254,7 +1254,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | **Authentication & Authorization**      |                                                                              |                                                                                      |
 | Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`                                                      | Repo default is read-only.                                                           |
 | Workflow-level `permissions: {}`        | `open risk ([#177](https://github.com/betsalel-williamson/mdcp/issues/177))` | Missing on `ci.yml` and `gitleaks.yml`.                                              |
-| `persist-credentials: false`            | `open risk ([#178](https://github.com/betsalel-williamson/mdcp/issues/178))` | Missing on `actions/checkout` steps.                                                 |
+| `persist-credentials: false`            | `reviewed (2026-07-27)`                                                      | Set on all `actions/checkout` steps.                                                 |
 | Eliminate static credentials            | `reviewed (2026-07-27)`                                                      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.              |
 | OIDC for cloud providers                | `reviewed (2026-07-27)`                                                      | Used for npm Trusted Publishing.                                                     |
 | Secure handling of static credentials   | `not a concern (2026-07-27)`                                                 | No static credentials remain in workflows.                                           |
