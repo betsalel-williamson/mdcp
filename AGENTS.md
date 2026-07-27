@@ -42,8 +42,33 @@ scripts — use those rather than duplicating them here.
   edit the compiled files. CI fails on `git diff` if they are stale.
 - Node on this VM is v22 (satisfies `engines >=18`); CI uses Node 24. Do not
   switch Node via nvm/`.nvmrc` unless a version-specific issue appears.
-- `gitleaks` is not installed; the pre-commit hook prints a warning and
-  continues (CI runs the real scan).
+- `gitleaks` is a **peer binary** (not an npm dep), installed at
+  `/usr/local/bin/gitleaks` (v8.30.1) and persisted in the VM snapshot; the
+  pre-commit hook runs `gitleaks protect --staged`. If it goes missing,
+  reinstall from the gitleaks GitHub release (`gitleaks_8.30.1_linux_x64.tar.gz`
+  → `/usr/local/bin`), same as Vale. CI runs its own scan via `gitleaks-action`.
+
+### Cloud-agent limitations & workarounds
+
+Human-facing detail: **Cursor Cloud environment** in `DEVELOPERS.md`
+(compiled from `docs/developer/cursor-cloud-environment.md`). Key constraints
+for agents in this environment:
+
+- `gh` is **read-only** — it cannot create or modify issues or PRs. Use the
+  dedicated PR tooling for PRs and PR comments; a human creates GitHub issues
+  from agent-supplied text (add `Closes #N` afterward).
+- **No GitHub MCP**, and we do not add one in the cloud. MCP servers load at
+  session start, `.cursor/*` (except `environment.json`) is gitignored, and a
+  GitHub PAT in Secrets is not wired to `gh` or any tool — so it does not
+  enable issue creation. Do not rely on it.
+- The agent **cannot merge PRs** or push to protected `main` (a human merges).
+  It may merge one working branch into another locally to unblock CI (for
+  example, a dependency-fix branch into a feature branch).
+- CI runs `pnpm audit --audit-level=high` **before** build/test; a new advisory
+  on a pre-existing devDependency fails it and masks otherwise-green gates. Fix
+  by pinning patched versions via `pnpm-workspace.yaml` `overrides`.
+- Merge commits need a **conventional subject** (`chore: merge …`) or commitlint
+  rejects them.
 
 ### Full verification gate
 

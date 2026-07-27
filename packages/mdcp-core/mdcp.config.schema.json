@@ -135,6 +135,38 @@
         "required": ["name"]
       }
     },
+    "standaloneGuides": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Files or globs (relative to scan root) registered as standalone guides — captured, never compiled."
+    },
+    "scan": {
+      "type": "object",
+      "description": "Repository-wide markdown coverage scan options.",
+      "properties": {
+        "gitignore": {
+          "type": "boolean",
+          "default": true,
+          "description": "Honor the repository .gitignore when walking for markdown files."
+        },
+        "ignore": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Extra ignore globs beyond the built-in defaults (.git, node_modules, .agents)."
+        },
+        "root": {
+          "type": "string",
+          "description": "Walk root for the scan (default: invocation directory)."
+        },
+        "strict": {
+          "type": "boolean",
+          "default": false,
+          "description": "Fail mdcp check when uncaptured files or missing standalone entries exist."
+        }
+      }
+    },
     "backup": {
       "type": "object",
       "properties": {

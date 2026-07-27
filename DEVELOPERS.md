@@ -49,6 +49,8 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [refs registry](#refs-registry)
 - [heading slug](#heading-slug)
 - [cross-link](#cross-link)
+- [standalone guide](#standalone-guide)
+- [coverage](#coverage)
 
 ### Adoption and messaging
 
@@ -115,6 +117,46 @@ CI runs the full gate: `pnpm run check`.
 
 <!-- mdcp-shard: end docs/developer/local-setup.md -->
 
+<!-- mdcp-shard: start docs/developer/cursor-cloud-environment.md -->
+
+### Cursor Cloud environment
+
+How this repository behaves inside Cursor cloud agents: how to stand up a new cloud environment, and the platform limitations to plan around. For the standard local toolchain and daily commands, read [Local setup](#local-setup) — this section only adds cloud-specific setup and constraints.
+
+Durable, machine-facing notes for future agents also live in the repository `AGENTS.md` under "Cursor Cloud specific instructions". Keep the two in sync: this guide is the human-facing explanation; `AGENTS.md` is the short agent checklist.
+
+#### Setting up a new cloud environment
+
+A fresh cloud VM needs the same toolchain as [Local setup](#local-setup), plus a few cloud-specific steps:
+
+1. **Startup update script.** `.cursor/environment.json` holds the `install` command that runs on every VM start: it fetches remote refs, then runs `pnpm install`. That committed file is the source of truth and overrides any dashboard-saved environment. Keep it minimal — dependency refresh only, no service startup or build steps.
+2. **Vale peer binary.** Vale is a peer binary, not an npm dependency. Install version 3.15.1 to `/usr/local/bin` (it persists in the VM snapshot); the exact release command is in [`.github/workflows/ci.yml`](.github/workflows/ci.yml). `pnpm docs:check` needs Vale on `PATH`.
+3. **gitleaks peer binary.** gitleaks is also a peer binary, not an npm dependency; the pre-commit hook runs `gitleaks protect --staged` when it is on `PATH`. Install version 8.30.1 to `/usr/local/bin` (persists in the VM snapshot). If it goes missing, reinstall from the [gitleaks releases](https://github.com/gitleaks/gitleaks/releases): download `gitleaks_8.30.1_linux_x64.tar.gz` and extract the `gitleaks` binary into `/usr/local/bin` (same pattern as Vale). CI runs its own scan via `gitleaks-action`, so the local install is defense-in-depth.
+4. **Build before docs or CLI.** `dist/` is gitignored and is not produced by the update script. Run `pnpm build` after a fresh checkout before `pnpm docs:check`, `pnpm docs:compile`, or invoking the `mdcp` CLI.
+5. **Sync Vale styles once.** Run `pnpm vale:sync` before the first `docs:check` on a fresh clone (network required); synced styles then persist in the snapshot.
+6. **Node version.** The VM runs Node 22 (satisfies `engines >=18`); CI uses Node 24. Do not switch Node unless a version-specific issue appears.
+7. **Full gate.** `pnpm check` mirrors CI (typecheck, lint, format, build, test, skill:validate, docs:check).
+
+#### Platform limitations and workarounds
+
+These are cloud-agent constraints discovered in practice. Plan work around them rather than fighting them.
+
+| Limitation                                                                                      | Workaround                                                                                                                                              |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The `gh` CLI is **read-only** for the agent; it cannot create or modify issues or pull requests | Use the dedicated pull-request tooling for PRs and PR comments. A human creates GitHub issues from agent-supplied text; add `Closes #N` afterward.      |
+| **No GitHub MCP** is available, and we do not add one in the cloud                              | Accept it. MCP servers load at session start and `.cursor/*` (except `environment.json`) is gitignored, so an agent cannot self-enable one mid-run.     |
+| A GitHub **PAT in Secrets is not wired** to `gh` or any agent tool                              | Do not rely on a PAT to unblock issue creation in the cloud; it does not help. Issue creation stays a human step.                                       |
+| The agent **cannot merge PRs** or push to protected `main`                                      | A human merges. The agent may merge one working branch into another locally to unblock CI (for example, a dependency-fix branch into a feature branch). |
+| CI runs `pnpm audit --audit-level=high` **before** the build and test gates                     | A new advisory on a pre-existing devDependency fails audit and masks otherwise-green gates. Pin patched versions via `pnpm-workspace.yaml` overrides.   |
+| The pre-commit hook runs `pnpm audit` when dependency manifests change                          | Resolve advisories (overrides) before committing manifest changes, rather than bypassing the hook.                                                      |
+| commitlint rejects non-conventional subjects, including merge commits                           | Give merge commits a conventional subject such as `chore: merge …`, not `merge: …`.                                                                     |
+
+#### Recording issues without issue-creation access
+
+Because the agent cannot open GitHub issues, capture work items as ready-to-paste issue text (title, body with acceptance criteria, labels, and project fields per [Agent work-item tracking](#agent-work-item-tracking)) inside the pull request that delivers the work. A maintainer creates the issue and links it with `Closes #N`.
+
+<!-- mdcp-shard: end docs/developer/cursor-cloud-environment.md -->
+
 <!-- mdcp-shard: start docs/developer/agent-work-item-tracking.md -->
 
 ## Agent work-item tracking
@@ -135,7 +177,40 @@ Issue base URL=https://github.com/betsalel-williamson/mdcp/issues/
 WORK_ITEM=enough to resolve the issue — number, URL, or short name/description
 ```
 
-All repo issues live on the public [MarkDown Context Protocol project board](https://github.com/users/betsalel-williamson/projects/4). **Status** tracks delivery (Todo / In Progress / Done); **Track** groups work by roadmap area (0.5 Spec & adoption, 1.0 Formalization, Maintenance, Performance, Future V2+). Move items to **In Progress** when you start a branch; set **Done** when the issue closes. Every open issue should appear on that board.
+All repo issues live on the public [MarkDown Context Protocol project board](https://github.com/users/betsalel-williamson/projects/4). **Status** tracks delivery (Todo / In Progress / Done); **Track** groups work by roadmap area. Move items to **In Progress** when you start a branch; set **Done** when the issue closes. Every open issue should appear on that board.
+
+#### Project fields
+
+| Field     | Values                                                          | When to set                                     |
+| --------- | --------------------------------------------------------------- | ----------------------------------------------- |
+| Status    | Todo · In Progress · Done                                       | Todo on intake; In Progress on branch start     |
+| Track     | 1.0 Formalization · Maintenance · Performance · Future (V2+)    | On intake ([Track selection](#track-selection)) |
+| Milestone | Current open delivery milestone when the issue is in that scope | When it belongs on the next ship slice          |
+
+#### Track selection
+
+| Track             | Use for                                                                 |
+| ----------------- | ----------------------------------------------------------------------- |
+| 1.0 Formalization | Protocol ADR, normative spec, schemas, conformance                      |
+| Maintenance       | Bugs, compile/check correctness, agent-process hygiene, adoption polish |
+| Performance       | SLOs, benchmarks, engine spikes (often `priority:defer`)                |
+| Future (V2+)      | MCP server, hosted API, and other post-V1 delivery surfaces             |
+
+If the board still shows other Track options, do **not** assign them to new work — use one of the rows above.
+
+### Auth for board writes
+
+Issue CRUD needs the usual `repo` scope. **Adding or updating Project items needs `project` scope** on the token used by `gh` or GitHub MCP.
+
+```bash
+gh auth status
+# If Project GraphQL fails with INSUFFICIENT_SCOPES / missing read:project|project:
+gh auth refresh -s project
+# Multi-account: use the owner account that has project scope
+gh auth switch --user betsalel-williamson
+```
+
+Without `project` scope you can still triage labels and milestones; note board gaps in the issue comment and stop — do not invent a second tracker.
 
 ### Issue priority (value-add)
 
@@ -156,6 +231,113 @@ Use **one** mutually exclusive GitHub label so the board and `gh issue list` sta
 3. **What to work on next** — Prefer open issues labeled `priority:P0`, then `P1`. Skip `priority:defer` until the gate in the issue body is met.
 
 Issue templates live under `.github/ISSUE_TEMPLATE/`. Adoption stories do not require a priority dropdown (qualitative evidence, not a delivery backlog item).
+
+#### Other labels (apply on intake)
+
+| Kind      | Labels                                                           | Rule                                       |
+| --------- | ---------------------------------------------------------------- | ------------------------------------------ |
+| Type      | `bug`, `enhancement`, `documentation`, `feedback`, `epic`        | At least one type that matches the issue   |
+| Component | `cli`, `compile`, `refs`, `sections`, `hooks`, `presets`, `lint` | When the work is localized to that surface |
+| Domain    | `protocol`                                                       | Spec / positioning / formalization work    |
+
+### New issue intake (required)
+
+Whenever you **open** an issue or find a brand-new open issue missing hygiene, finish this checklist before starting implementation. Same rules for humans and coding agents.
+
+1. **Priority** — exactly one `priority:*` (from the form dropdown or triage judgment).
+2. **Type (+ component/domain)** — see [Other labels](#other-labels-apply-on-intake).
+3. **Project board** — add the issue to [project #4](https://github.com/users/betsalel-williamson/projects/4) if absent; set **Status = Todo**.
+4. **Track** — set per [Track selection](#track-selection).
+5. **Milestone** — attach the current open delivery milestone when the issue is in that cut’s scope; leave empty for long-range or deferred work.
+6. **Sanity** — title is actionable; body has acceptance criteria or a clear problem statement.
+
+#### Add an issue to the board (`gh`)
+
+Resolve the project and issue node IDs, then add the item (requires `project` scope):
+
+```bash
+# Project #4 under the user account
+PROJECT_ID=$(gh api graphql -f query='
+  query { user(login:"betsalel-williamson") {
+    projectV2(number:4) { id }
+  }}' --jq '.data.user.projectV2.id')
+
+ISSUE_NODE=$(gh api graphql -f query='
+  query($n:Int!) {
+    repository(owner:"betsalel-williamson", name:"mdcp") {
+      issue(number:$n) { id }
+    }
+  }' -F n=<N> --jq '.data.repository.issue.id')
+
+gh api graphql -f query='
+  mutation($project:ID!, $content:ID!) {
+    addProjectV2ItemById(input:{projectId:$project, contentId:$content}) {
+      item { id }
+    }
+  }' -f project="$PROJECT_ID" -f content="$ISSUE_NODE"
+```
+
+Set **Status** / **Track** in the GitHub Project UI, or via `updateProjectV2ItemFieldValue` after reading field and option IDs from `projectV2 { fields(...) }` (option IDs change if the field is rebuilt — always re-query; do not hard-code them in scripts committed to the repo).
+
+**GitHub MCP:** create/update the issue with labels, then add it to the user project (same project number **4**). If the MCP token lacks project scope, fall back to `gh` with a token that has `project`, or leave a comment listing the board gap for a maintainer.
+
+#### Labels via CLI
+
+```bash
+gh issue edit <N> --add-label "priority:P1" --add-label "bug" --add-label "compile"
+# Replace priority: remove the old one when changing level
+gh issue edit <N> --remove-label "priority:P2" --add-label "priority:P1"
+```
+
+### Weekly triage run
+
+Run **about once a week** (maintainer or coding agent with project scope). Goal: board and labels match reality; stale or duplicate tickets get a **human verification prompt** — never silent close-without-action.
+
+#### Checklist
+
+1. **Auth** — `gh auth status` shows `project` (or `read:project` at minimum for reads; writes need `project`). Switch to the owner account if needed.
+2. **Open vs board** — list open issues; add any missing ones (intake steps 3–5). Every open issue must appear on the board.
+3. **Label audit** — every open delivery issue has exactly one `priority:*` and a sensible type label; add component/domain when obvious.
+4. **Milestone hygiene** — keep only active delivery milestones open; attach in-scope issues to the current cut.
+5. **Stale review** — candidates: acceptance already met in the repo, superseded approach, or no remaining adopter value. On each candidate, **comment** asking the human to verify close-without-action ([Human verification comment](#human-verification-comment-stale--close-without-action)). Do **not** close until they reply.
+6. **Duplicate review** — if two issues share the same root cause, comment with the canonical issue and ask which to keep. Do **not** close as duplicate without confirmation (related ≠ duplicate).
+7. **Next work** — confirm the top open `priority:P0`, else `P1`, matches the current milestone intent; note it briefly for maintainers.
+8. **Done clutter** — closed issues may linger on the board as Done; optional cleanup is fine, not required for a green weekly run.
+
+#### Human verification comment (stale / close-without-action)
+
+```markdown
+**Triage (YYYY-MM-DD):** Candidate to close without further action — please verify.
+
+Evidence:
+
+- <1–3 bullets: current docs/code that satisfy ACs, superseded approach, or no remaining value>
+
+Options:
+
+- Reply `close: completed` if done enough
+- Reply `close: not_planned` if abandoned
+- Reply `keep` + note if work remains (we will narrow acceptance criteria)
+
+No auto-close until you confirm.
+```
+
+#### Suggested commands
+
+```bash
+# Open issues (labels + milestone)
+gh issue list --repo betsalel-williamson/mdcp --state open --limit 100 \
+  --json number,title,labels,milestone,updatedAt
+
+# Priority queue
+gh issue list --repo betsalel-williamson/mdcp --state open --label "priority:P0"
+gh issue list --repo betsalel-williamson/mdcp --state open --label "priority:P1"
+
+# Issues on the current delivery milestone (replace title as needed)
+gh issue list --repo betsalel-williamson/mdcp --milestone "v0.7" --state open
+```
+
+Compare the open-issue set to the board (Project UI filter, or GraphQL `projectV2.items`) and add gaps via [Add an issue to the board](#add-an-issue-to-the-board-gh).
 
 ### Load scope (pick what your agent has)
 
@@ -194,19 +376,20 @@ Parent skill QA and day-to-day helpers encode the same rule so plan-only agents 
 4. **Plan Atomic commit groups** — before waiting for human review / implementation, include numbered commit groups for multi-concern work (see [Git and delivery](#git-and-delivery)). After approval, land one group per commit.
 5. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record consumer notice in the changeset (lands in package CHANGELOGs). Never link durable shards or ADRs to pending `.changeset/*.md` files.
 6. **Add a changeset** — run `pnpm changeset` (or manually create a `.changeset/*.md` file) if you changed published package behavior. This is required for release notes and versioning.
-7. **Triage priority** — when opening or reviewing issues, ensure exactly one `priority:*` label matches the template dropdown (see [Issue priority](#issue-priority-value-add)).
+7. **Issue intake** — when opening or first touching an issue, complete [New issue intake](#new-issue-intake-required) (labels, board, Track, Status, milestone).
+8. **Weekly triage** — once a week, run [Weekly triage run](#weekly-triage-run); prompt humans before closing stale or duplicate tickets.
 
 ### Example intake answers
 
 When a subagent asks for scope, answers can look like:
 
 ```text
-WORK_ITEM=39
+WORK_ITEM=70
 WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md
 ```
 
 ```text
-WORK_ITEM=default compile hooks
+WORK_ITEM=bare sibling link rewrite
 WORK_ITEM_LOOKUP=GitHub
 ```
 
@@ -347,7 +530,7 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 **Surface ownership:** `repo-readme/` = Agent Skill landing; `client-cli/` = CLI commands/config only; `client-core/` = library API/hooks only. Cross-link the other surfaces instead of duplicating skill, CLI, or API narrative across package READMEs.
 
-Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
+Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith. Coverage dogfood uses `scan.strict: true` with `standaloneGuides` / `scan.ignore` so tooling trees (`.worktrees`, `.cursor`, `.changeset`, tests, examples, …) never fail `mdcp check`; publishable skills under `skills/` are registered as standalone.
 
 Publish landing style for root README: [Personas and priority tiers](docs/features/personas-and-priority-tiers.md#publish-landing-style).
 
@@ -377,6 +560,21 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 2. If you changed a guide's `index.md` link order, re-run compile — order is read from the manifest. See [Manifest compile order](docs/features/manifest-compile-order.md) when using `compile.sectionsHeading`.
 3. Run `pnpm docs:compile:repo` then `pnpm docs:check:repo`.
 4. Commit shard changes. Regenerated `docs/_build/` (monolith, per-guide outputs, `.caches/refs.json`) is gitignored — CI and `pnpm docs:check` compile locally. Commit [`DEVELOPERS.md`](DEVELOPERS.md) when `developer/` shards change; commit [`README.md`](README.md) when `repo-readme/` shards change; commit package READMEs when `client-cli/` or `client-core/` shards change.
+
+### Comprehensive review when guides are involved
+
+This is the guide-specific application of the [two-level review](docs/features/agent-skill.md#quality-assurance-qa-principles) QA principle (**future-looking:** the published parent skill does not yet include this bullet, so agents will not enforce it from the skill until that source is updated). Review at two levels:
+
+1. **In isolation** — review each changed idea or shard on its own for local correctness.
+2. **Comprehensively** — review it against the other ideas, as a whole. This high-level pass catches duplication and surfaces organization improvements (shards to merge, split, or relocate), and — when a change touches a guide (a doc shard, a skill, or code whose behavior a guide documents) — drift between what a guide promises and what the change actually does.
+
+Guides carry the intent behind the code, so a narrow diff review can miss this. Apply the comprehensive pass whenever:
+
+- a shard changes and related code or a skill describes the same behavior,
+- code or a skill changes and a guide documents that behavior, or
+- a review spans more than one surface (for example a feature and its client guide, or a skill and its supporting guides).
+
+Read the related guides alongside the diff and flag any drift (stale guidance, a promise the change breaks, or a guide that should change with it), duplication, or reorganization. A review is complete only when the change and its guides agree.
 
 ### Agent context
 
@@ -473,12 +671,12 @@ When changing skill instructions:
 
 ### Verification
 
-| Command               | Purpose                                                                                   |
-| --------------------- | ----------------------------------------------------------------------------------------- |
-| `pnpm skill:validate` | [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
-| `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                |
+| Command               | Purpose                                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `pnpm skill:validate` | Frontmatter fence lint + [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
+| `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                                         |
 
-`pnpm skill:validate` runs in local `pnpm check` and GitHub Actions CI. It is not a [live skill eval](docs/glossary/live-skill-eval.md).
+`pnpm skill:validate` runs in local `pnpm check`, PR CI, **`pnpm release:tag` after skill version sync** (hard fail before commit/tag), and the tag [release workflow](.github/workflows/release.yml) before npm publish. It is not a [live skill eval](docs/glossary/live-skill-eval.md).
 
 ### Live skill evals (optional, local)
 
@@ -503,7 +701,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 
 Complementary `skills/mdcp-arch-*` packs remain WIP (`metadata.internal: true`) — keep them off consumer get-started copy **and** out of [`skills.sh.json`](skills.sh.json) until ready to release. Maintainers can install them with `INSTALL_INTERNAL_SKILLS=1`.
 
-There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases).
+There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases). Do not hand-edit those versions in feature PRs; add a changeset when `skills/` changes so release notes capture the work.
 
 Published partner security audits on skills.sh are synced into this repository for maintainer triage — see [skills.sh audit sync (developer)](#skillssh-audit-sync-maintainer-runbook) and [skills.sh audit sync (feature)](docs/features/skills-audit-sync.md).
 
@@ -971,7 +1169,7 @@ There is **no calendar cadence**. Releases are **event-driven**:
 3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
 4. CI publishes to npm when the **`v*`** tag lands on GitHub.
 
-**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). See [Agent Skill](#agent-skill-development).
+**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). Feature PRs that change `skills/` must add a changeset and must **not** hand-bump those versions. See [Agent Skill](#agent-skill-development).
 
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
@@ -1003,8 +1201,8 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 2. **Skills policy:** parent `mdcp` remains the consumer entrypoint. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` and **out** of [`skills.sh.json`](skills.sh.json) until intentionally published. List parent + release-ready helpers in the **Documentation system** grouping (see [Agent Skill development — skills.sh.json](#skillsshjson-repo-page-layout)).
 3. Preflight: `pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
 4. In a real TTY: `pnpm release:tag:push` — select bump (patch / minor / major / build), type `vX.Y.Z`, answer `yes`. Agents and CI cannot run this script.
-5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, commits `chore: release vX.Y.Z`, tags, and (with `--push`) pushes `main` + the tag.
-6. Verify CI [release workflow](.github/workflows/release.yml): npm versions for all three packages and the GitHub Release for `vX.Y.Z`.
+5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, then **must** run `pnpm skill:validate` (hard fail if invalid — including broken YAML fences like `---name:`). Only after that succeeds does it commit `chore: release vX.Y.Z`, tag, and (with `--push`) push `main` + the tag.
+6. Verify CI [release workflow](.github/workflows/release.yml): it runs `pnpm skill:validate` again before npm publish, then publishes all three packages and creates the GitHub Release for `vX.Y.Z`.
 7. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
 8. **skills.sh partner audits:** after a skill-facing release, partner re-audits on skills.sh typically land within minutes to about a day. Releases are not gated on audit readiness. The daily sync job (~20–28h after release) pulls published audits through the Vercel proxy; see [skills.sh audit sync](#skillssh-audit-sync-maintainer-runbook).
 
@@ -1022,23 +1220,27 @@ Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR
 - `packages/mdcp-cli/src/**`
 - `packages/mdcp-presets/*.jsonc`
 - Published package `package.json` metadata consumers depend on
+- **`skills/**`** — consumer-facing Agent Skill packs (helpers, parent skill, install/guidance that ships via `npx skills add`)
+
+**Do not hand-edit** `skills/*/SKILL.md` `metadata.version` in feature PRs. `pnpm release:tag` sets every skill’s `metadata.version` in lockstep with the npm/git tag. Describe skill work in a changeset (usually against `@bwilliamson/mdcp-cli`) so the note lands in the package CHANGELOG at release.
 
 **Skip a changeset** for:
 
-- Root `README.md`, `docs/`, `examples/` only
-- CI, Husky, or dev tooling that does not ship in npm tarballs
+- Root `README.md`, `docs/`, `examples/` only (when the PR does **not** change `skills/` or published package sources)
+- CI, Husky, or other tooling that does not change skill packs or npm package behavior
+- `devDependencies` bumps in root or `packages/*/package.json` (including `@types/*`) when no other package fields or sources change
 - Typo fixes in package READMEs with no behavior change (maintainer discretion)
 
-CI on pull requests runs `pnpm changeset:status` to catch missing changesets when package code changed.
+CI on pull requests runs `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed. Package-level `devDependencies`-only bumps are treated as tooling and do not fail the check.
 
 ### Dependabot
 
-Dependabot does not add changesets. Treat its PRs like any other:
+Dependabot does not add changesets. **Non-dev dependency bumps need a human** — review the PR, add a changeset, then merge. Dev-only bumps should pass CI without one.
 
-| Dependabot PR type                                      | Changeset                                     |
-| ------------------------------------------------------- | --------------------------------------------- |
-| Production dependency bump in `packages/*/package.json` | Add a **patch** changeset before merge        |
-| Root dev-dependencies (grouped) or GitHub Actions only  | No changeset (CI `changeset` job should pass) |
+| Dependabot PR type                                                                         | Changeset / merge gate                                |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `dependencies`, `peerDependencies`, or `optionalDependencies` in `packages/*/package.json` | **Human approval** + **patch** changeset before merge |
+| `devDependencies` only (root and/or `packages/*/package.json`), or GitHub Actions          | No changeset (CI `changeset` job should pass)         |
 
 ### Bump selection guide
 
@@ -1087,11 +1289,12 @@ Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you 
 
 ### Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](SECURITY.md) for the supported-versions table — update that table when cutting a new minor line.
+Security fixes target the **latest minor** on npm. See [SECURITY.md](SECURITY.md) for the supported-versions table — update that table when cutting a new minor line. After a security patch ships, follow [Security-incident triage](#security-incident-triage) when deciding whether to `npm deprecate` (or rarely unpublish) a bad version.
 
 ### Related docs
 
 - [Publishing](#publishing) — first publish, Trusted Publishing, npm commands
+- [Security-incident triage](#security-incident-triage) — audit impact class, deprecate vs unpublish
 - [Agent Skill](#agent-skill-development) — skill pack, WIP `internal` flag, skills.sh
 - [.changeset/README.md](.changeset/README.md) — quick changeset reference
 
@@ -1211,9 +1414,166 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
-See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+See [SECURITY.md](SECURITY.md) for vulnerability reporting. For advisory triage, deprecate-vs-unpublish, and when a finding is only transitive **dev** tooling: [Security-incident triage](#security-incident-triage).
 
 <!-- mdcp-shard: end docs/developer/publishing.md -->
+
+<!-- mdcp-shard: start docs/developer/security-incident-triage.md -->
+
+## Security-incident triage
+
+Maintainer runbook for dependency advisories and “burn a bad release” decisions on `@bwilliamson/mdcp-*`. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); this shard covers **triage and remediation**.
+
+### Classify impact first
+
+Before changing lockfiles, deprecating versions, or cutting a release, decide where the finding lands:
+
+| Impact class                    | Typical signal                                                                                | Default response                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Published / prod**            | Affects `@bwilliamson/mdcp-*` runtime deps or ships in the npm tarball                        | Patch, release, and (when consumers may have installed a bad version) deprecate that version           |
+| **Transitive dev-only tooling** | Only under root `devDependencies` (e.g. Slidev, lint/test helpers); `pnpm audit --prod` clean | Prefer a workspace **override** or upstream bump; do **not** deprecate or unpublish published packages |
+
+Quick checks:
+
+```bash
+pnpm audit --prod                 # published-package surface
+pnpm audit --audit-level=moderate # full tree including presentation tooling
+pnpm why <package>                # which path pulls the vulnerable package
+```
+
+CI gates on `pnpm audit --audit-level=high` (see [Packages and tests](#packages-and-tests)). Moderate noise in **dev-only** trees is hygiene, not an automatic security release of `@bwilliamson/mdcp-*`.
+
+Workspace overrides for this monorepo live under `overrides:` in [`pnpm-workspace.yaml`](pnpm-workspace.yaml) (pnpm 11+ no longer reads `package.json` → `pnpm.overrides`).
+
+### Prefer patch + deprecate over unpublish
+
+When a **published** version is unsafe or badly broken for consumers:
+
+1. **Ship a fixed release** (usually a **patch**) via the normal Changesets path — [Versioning and releases](#versioning-and-releases) and [Publishing](#publishing).
+2. **`npm deprecate`** the bad versions with a short reason and the safe replacement range. Deprecation warns installers without rewriting registry history.
+3. **Announce** via GitHub Security Advisory / release notes when disclosure timing requires it ([SECURITY.md](SECURITY.md)).
+
+Do **not** unpublish solely to silence an advisory when a patched successor exists. Unpublish breaks lockfiles and CI that pin exact versions.
+
+Example deprecate (maintainer machine, 2FA as required by npm):
+
+```bash
+npm deprecate @bwilliamson/mdcp-cli@<bad-version> "Security issue; use >=<fixed-version>"
+# Repeat for mdcp-core / mdcp-presets when those versions share the defect
+```
+
+### When unpublish (or npm Support) is appropriate
+
+Unpublish is rare. Prefer it only when **all** of the following hold (or npm’s current policy requires it):
+
+- The version must not remain installable (e.g. secrets or malware in the tarball), **and**
+- Deprecation alone is insufficient for the risk, **and**
+- You are within npm’s unpublish window / policy for that package and version
+
+Otherwise:
+
+- Use **deprecate** + patched release for ordinary vulnerabilities and broken builds.
+- Contact **npm Support** when the version is outside the self-serve unpublish window, the package was compromised, or you need a registry-side takedown.
+
+Never unpublish a version that other packages or consumers legitimately depend on unless the alternative is worse (credential leak, malware). Document the decision in the advisory, not in durable product shards.
+
+### Related docs
+
+- [SECURITY.md](SECURITY.md) — reporting and maintainer security practices
+- [GitHub Actions security posture](#github-actions-security-posture) — CI workflow and repository settings audit trail
+- [GitHub Actions security checklist](#github-actions-security-checklist) — OWASP topic checklist with as-built status
+- [Versioning and releases](#versioning-and-releases) — cutting fixed releases
+- [Publishing](#publishing) — npm publish mechanics and Trusted Publishing
+
+<!-- mdcp-shard: end docs/developer/security-incident-triage.md -->
+
+<!-- mdcp-shard: start docs/developer/github-actions-security.md -->
+
+## GitHub Actions security posture
+
+Maintainer guide for tracking **GitHub Actions security posture** in this public OSS monorepo. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); dependency and release triage stays in [Security-incident triage](#security-incident-triage). This shard is the audit trail for CI workflow and repository settings against the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html).
+
+Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status.
+
+### Status vocabulary
+
+Each checklist row uses **exactly one** of these statuses (normative):
+
+| Status                       | Meaning                                                                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `reviewed (YYYY-MM-DD)`      | Topic assessed against current repo state on that date; controls in place or accepted with documented rationale                |
+| `not a concern (YYYY-MM-DD)` | OWASP topic does not apply to this repo (e.g. no self-hosted runners)                                                          |
+| `open risk (#N)`             | Gap remains; `#N` is a **remediation issue** that is a child of [#173](https://github.com/betsalel-williamson/mdcp/issues/173) |
+
+Do not invent alternate labels. When a risk closes, update the row to `reviewed` or `not a concern` with the resolution date.
+
+### Re-review cadence
+
+Re-run the checklist when any of the following change:
+
+- Workflow files under `.github/workflows/` (triggers, permissions, action versions, secrets usage)
+- Repository or organization **Actions** settings (default `GITHUB_TOKEN` permissions, allowed actions, environments)
+- Branch protection, rulesets, or required checks that gate merges and releases
+- Dependabot or secret-scanning configuration
+- Release mechanics ([Publishing](#publishing) — OIDC, environments, npm trust)
+
+Even when nothing changes, schedule a **periodic pass** (for example quarterly) so third-party action advisories and OWASP guidance updates do not drift unnoticed.
+
+### Related docs
+
+- [SECURITY.md](SECURITY.md) — reporting and maintainer security practices
+- [Security-incident triage](#security-incident-triage) — dependency advisories and release remediation
+- [Publishing](#publishing) — npm publish mechanics and Trusted Publishing (OIDC)
+- [GitHub Actions security checklist](#github-actions-security-checklist) — OWASP topic checklist with as-built status
+
+<!-- mdcp-shard: end docs/developer/github-actions-security.md -->
+
+<!-- mdcp-shard: start docs/developer/github-actions-security-checklist.md -->
+
+## GitHub Actions security checklist
+
+This checklist tracks our compliance with the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html). See [GitHub Actions security posture](#github-actions-security-posture) for vocabulary and re-review guidance. All open risks are tracked under epic [#173](https://github.com/betsalel-williamson/mdcp/issues/173).
+
+| OWASP Topic                             | Status                                                                       | Notes                                                                                |
+| --------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Pipeline Governance**                 |                                                                              |                                                                                      |
+| Treat CI/CD as critical production code | `reviewed (2026-07-27)`                                                      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173. |
+| **Authentication & Authorization**      |                                                                              |                                                                                      |
+| Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`                                                      | Repo default is read-only.                                                           |
+| Workflow-level `permissions: {}`        | `open risk ([#177](https://github.com/betsalel-williamson/mdcp/issues/177))` | Missing on `ci.yml` and `gitleaks.yml`.                                              |
+| `persist-credentials: false`            | `open risk ([#178](https://github.com/betsalel-williamson/mdcp/issues/178))` | Missing on `actions/checkout` steps.                                                 |
+| Eliminate static credentials            | `reviewed (2026-07-27)`                                                      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.              |
+| OIDC for cloud providers                | `reviewed (2026-07-27)`                                                      | Used for npm Trusted Publishing.                                                     |
+| Secure handling of static credentials   | `not a concern (2026-07-27)`                                                 | No static credentials remain in workflows.                                           |
+| Secrets: inherit                        | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| Mask sensitive data                     | `reviewed (2026-07-27)`                                                      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                     |
+| **Workflows & Execution**               |                                                                              |                                                                                      |
+| Pin actions to commit SHA               | `open risk ([#175](https://github.com/betsalel-williamson/mdcp/issues/175))` | Currently using mutable tags (`@v7`, etc.).                                          |
+| Third-party actions caution             | `reviewed (2026-07-27)`                                                      | Documented current set.                                                              |
+| Sanitize untrusted context / input      | `reviewed (2026-07-27)`                                                      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.            |
+| `pull_request_target` trigger           | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| `workflow_run` trigger                  | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| `issue_comment` trigger                 | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| Curated shared workflows                | `not a concern (2026-07-27)`                                                 | Single-repo monorepo; no centralized shared-workflows repository.                    |
+| Multi-repo shared workflows             | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| **Runners & Environments**              |                                                                              |                                                                                      |
+| Self-hosted runners                     | `not a concern (2026-07-27)`                                                 | Using `ubuntu-latest` GitHub-hosted runners.                                         |
+| Runner groups                           | `not a concern (2026-07-27)`                                                 | Not applicable to GitHub-hosted runners.                                             |
+| Egress monitoring                       | `open risk ([#179](https://github.com/betsalel-williamson/mdcp/issues/179))` | Harden-Runner not implemented.                                                       |
+| Environment required reviewers          | `open risk ([#180](https://github.com/betsalel-williamson/mdcp/issues/180))` | Release environment needs manual approval.                                           |
+| **Code & Supply Chain**                 |                                                                              |                                                                                      |
+| Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                     |
+| Require approval for external           | `open risk ([#182](https://github.com/betsalel-williamson/mdcp/issues/182))` | Missing CODEOWNERS and approval requirement.                                         |
+| Dependabot for Actions                  | `reviewed (2026-07-27)`                                                      | Configured for weekly updates.                                                       |
+| Dependabot cooldown                     | `open risk ([#181](https://github.com/betsalel-williamson/mdcp/issues/181))` | Missing cooldown period for actions ecosystem.                                       |
+| Artifact / cache poisoning              | `open risk ([#183](https://github.com/betsalel-williamson/mdcp/issues/183))` | `release.yml` uses `cache: pnpm` on the publish path.                                |
+| Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                         |
+| Static analysis (CodeQL/Zizmor)         | `open risk ([#174](https://github.com/betsalel-williamson/mdcp/issues/174))` | Missing workflow and code scanning.                                                  |
+| AI-in-CI                                | `not a concern (2026-07-27)`                                                 | No AI assistants used in CI.                                                         |
+| **Incident Response**                   |                                                                              |                                                                                      |
+| Incident response plan                  | `reviewed (2026-07-27)`                                                      | Covered in `SECURITY.md` and triage docs.                                            |
+
+<!-- mdcp-shard: end docs/developer/github-actions-security-checklist.md -->
 
 <!-- mdcp-shard: start docs/glossary/domain-glossary.md -->
 
@@ -1377,6 +1737,30 @@ A Markdown link whose target is another place in the docs set — usually a same
 Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](docs/features/link-validation.md).
 
 <!-- mdcp-shard: end docs/glossary/cross-link.md -->
+
+<!-- mdcp-shard: start docs/glossary/standalone-guide.md -->
+
+## standalone guide
+
+A single markdown file registered as its own guide that is **not** compiled from shards. Declared in `standaloneGuides[]`, it is the source and the published file at once — for example a hand-authored package `README.md` or a top-level `SECURITY.md`.
+
+Contrast with a [guide](#mdcp), which stitches a list of shards into one output. A standalone guide is register-only: compile never stitches, rewrites, or emits it, but its headings still register into [refs](#refs) and its outbound links are validated. Registering a file as standalone marks it as [captured](#coverage) so the coverage scan does not report it.
+
+See [Documentation coverage scan](docs/features/coverage-scan.md).
+
+<!-- mdcp-shard: end docs/glossary/standalone-guide.md -->
+
+<!-- mdcp-shard: start docs/glossary/coverage.md -->
+
+## coverage
+
+Documentation coverage is the set of markdown files MDCP can account for — the **captured** set. A file is captured when it is a shard of a compiled guide (including a guide's `compile.scopeRoot`), a guide output target (`compile.outputFile`), or a [standalone guide](#standalone-guide).
+
+The coverage scan walks the repository for markdown files, skips vendored paths, and reports any file that is not captured so authors either fold it into a guide or register it in `standaloneGuides[]`. With `scan.strict: true`, gaps fail `mdcp check`.
+
+See [Documentation coverage scan](docs/features/coverage-scan.md).
+
+<!-- mdcp-shard: end docs/glossary/coverage.md -->
 
 <!-- mdcp-shard: start docs/glossary/wiifm.md -->
 

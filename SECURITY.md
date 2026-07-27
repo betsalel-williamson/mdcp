@@ -34,3 +34,5 @@ Maintainers: [skills.sh audit sync runbook](docs/developer/skills-audit-sync.md)
 - Gitleaks on commit and in CI
 - `pnpm audit --audit-level=high` in CI
 - Frozen lockfile installs in CI
+
+Triage (prod vs dev-only impact, prefer deprecate over unpublish): [docs/developer/security-incident-triage.md](docs/developer/security-incident-triage.md).

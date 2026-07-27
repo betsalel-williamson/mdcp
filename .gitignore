@@ -23,6 +23,11 @@ coverage/
 .cursor/*
 !.cursor/environment.json
 .cursorindexingignore
+.claude/
+.superpowers/
+
+# Linked git worktrees (local agent / contributor checkouts)
+.worktrees/
 
 # Local git worktrees (isolated checkouts)
 .worktrees/

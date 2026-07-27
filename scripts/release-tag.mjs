@@ -7,6 +7,9 @@
  *   pnpm release:tag              # interactive version + commit + tag
  *   pnpm release:tag --push       # also push main and tag to origin
  *   pnpm release:tag --dry-run    # prompts + plan only, no writes
+ *
+ * After bumping package + skill metadata.version, always runs
+ * `pnpm skill:validate` and aborts if it fails (no commit/tag).
  */
 import { execSync } from 'node:child_process';
 import { readdirSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs';
@@ -152,6 +155,10 @@ function setVersionAllPackages(version) {
 /**
  * Keep each skills/<name>/SKILL.md metadata.version in lockstep with the npm/git tag.
  * Preserves other frontmatter keys (e.g. metadata.internal).
+ *
+ * Opening fence MUST be rewritten as "---\n" + body. A prior bug used "---" +
+ * slice(4) (which drops the newline after ---) and produced "---name:", which
+ * breaks `npx skills add`.
  */
 function setSkillMetadataVersions(version) {
   const skillsDir = join(root, 'skills');
@@ -170,8 +177,9 @@ function setSkillMetadataVersions(version) {
     } catch {
       continue;
     }
-    if (!content.startsWith('---')) continue;
-    const end = content.indexOf('\n---', 3);
+    // Require a real YAML fence ("---\n"), not "---name:" corruption.
+    if (!content.startsWith('---\n')) continue;
+    const end = content.indexOf('\n---', 4);
     if (end === -1) continue;
     const frontmatter = content.slice(4, end);
     if (!/^\s*version:\s*/m.test(frontmatter)) continue;
@@ -180,7 +188,7 @@ function setSkillMetadataVersions(version) {
       `$1'${version}'`,
     );
     if (nextFrontmatter === frontmatter) continue;
-    writeFileSync(skillPath, `---${nextFrontmatter}${content.slice(end)}`);
+    writeFileSync(skillPath, `---\n${nextFrontmatter}${content.slice(end)}`);
   }
 }
 
@@ -386,6 +394,11 @@ async function main() {
   }
 
   const finalTag = `v${appliedVersion}`;
+
+  // Hard gate: skill packs must still validate after metadata.version sync.
+  // A prior bug rewrote "---\\nname:" as "---name:" and broke `npx skills add`.
+  console.log('\nPost-sync gate: pnpm skill:validate (required; release fails if this fails)');
+  run('pnpm skill:validate');
 
   if (dryRun) {
     console.log(`> git add -A`);

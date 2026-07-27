@@ -4,9 +4,12 @@ dist/
 pnpm-lock.yaml
 .specstory/
 .cursor/
+.superpowers/
+docs/superpowers/
 legacy/
 examples/sample-guides/guides.md
 examples/sample-guides/refs.json
 docs/guides.md
 docs/refs.json
 .agents/
+.worktrees/

@@ -17,7 +17,7 @@ compatibility: >-
   wrappers; they do not replace the CLI.
 metadata:
   author: betsalel-williamson
-  version: '0.5.0'
+  version: '0.6.1'
   openclaw:
     category: 'documentation'
     requires:
@@ -183,7 +183,7 @@ Task-type instructions live in independent helper skills. Once the MDCP CLI is i
 
 | Helper Skill               | Description                                            |
 | -------------------------- | ------------------------------------------------------ |
-| `mdcp-getting-started`     | Bootstrap MDCP in a new repository                     |
+| `mdcp-getting-started`     | Bootstrap MDCP + optional first-feature tutorial       |
 | `mdcp-doc-only`            | Documentation-only work                                |
 | `mdcp-design-architecture` | High-level design and planning (RFCs, ADRs)            |
 | `mdcp-feature-level`       | Implement and document features (docs-first, then TDD) |

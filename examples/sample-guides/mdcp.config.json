@@ -38,6 +38,18 @@
       }
     }
   ],
+  "scan": {
+    "root": "examples/sample-guides",
+    "strict": true,
+    "ignore": [
+      "diagrams/**",
+      "figures/**",
+      "media/**",
+      "tables/**",
+      "inserts/**",
+      "inserts-demo/**"
+    ]
+  },
   "refs": {
     "slugAlgorithm": "github"
   },

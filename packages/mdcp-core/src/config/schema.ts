@@ -88,6 +88,23 @@ export const MdcpConfigSchema = z.object({
   sourceTags: z.boolean().default(true),
   guides: z.array(GuideSchema).optional(),
 
+  /** Files or globs (relative to scan root) registered as standalone guides — captured, never compiled. */
+  standaloneGuides: z.array(z.string()).default([]),
+
+  /** Repository-wide markdown coverage scan options. */
+  scan: z
+    .object({
+      /** Honor the repository `.gitignore` when walking (default true). */
+      gitignore: z.boolean().default(true),
+      /** Extra ignore globs beyond the built-in defaults. */
+      ignore: z.array(z.string()).default([]),
+      /** Walk root for the scan (default: invocation directory). */
+      root: z.string().optional(),
+      /** Fail `mdcp check` when uncaptured files or missing standalone entries exist. */
+      strict: z.boolean().default(false),
+    })
+    .default({ gitignore: true, ignore: [], strict: false }),
+
   /** Opt-in backup of existing compile/export targets before overwrite. */
   backup: z
     .object({

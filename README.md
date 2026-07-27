@@ -36,7 +36,7 @@ Then start a bootstrap session:
 /mdcp help me get started
 ```
 
-The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout, and validation. Once the pipeline exists, agents proactively look up shard context, compile documentation, and validate references before writing code.
+The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout, and validation. After bootstrap, it can walk an optional **first feature** through design → feature → UX → doc-only (recommended example or your own). Once the pipeline exists, agents proactively look up shard context, compile documentation, and validate references before writing code.
 
 <!-- mdcp-shard: end docs/repo-readme/get-started.md -->
 

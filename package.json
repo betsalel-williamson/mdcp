@@ -10,7 +10,7 @@
   "packageManager": "pnpm@11.13.0",
   "scripts": {
     "build": "pnpm -r run build",
-    "test": "pnpm -r run test",
+    "test": "pnpm -r run test && node --test scripts/**/*.test.mjs",
     "typecheck": "pnpm -r run typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -40,7 +40,7 @@
     "release:tag": "node scripts/release-tag.mjs",
     "release:tag:push": "node scripts/release-tag.mjs --push",
     "prepare": "husky",
-    "skill:validate": "skills-ref validate ./skills/mdcp && skills-ref validate ./skills/mdcp-getting-started && skills-ref validate ./skills/mdcp-doc-only && skills-ref validate ./skills/mdcp-design-architecture && skills-ref validate ./skills/mdcp-feature-level && skills-ref validate ./skills/mdcp-ux && skills-ref validate ./skills/mdcp-arch-oss-library && skills-ref validate ./skills/mdcp-arch-product-docs-site",
+    "skill:validate": "node scripts/lint-skill-frontmatter.mjs && skills-ref validate ./skills/mdcp && skills-ref validate ./skills/mdcp-getting-started && skills-ref validate ./skills/mdcp-doc-only && skills-ref validate ./skills/mdcp-design-architecture && skills-ref validate ./skills/mdcp-feature-level && skills-ref validate ./skills/mdcp-ux && skills-ref validate ./skills/mdcp-arch-oss-library && skills-ref validate ./skills/mdcp-arch-product-docs-site",
     "skill:install": "npx skills add .",
     "skill:update": "pnpm run skill:install",
     "skill:evals:view": "bash scripts/view-skill-evals.sh",
@@ -72,8 +72,8 @@
     ]
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.2",
-    "@commitlint/cli": "^21.0.2",
+    "@changesets/cli": "^2.31.1",
+    "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "^10.0.1",
     "@slidev/cli": "latest",

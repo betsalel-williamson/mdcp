@@ -55,7 +55,7 @@ npm install -g @bwilliamson/mdcp-cli
 
 #### Get involved
 
-Visit [github.com/betsalel-williamson/mdcp](https://github.com/betsalel-williamson/mdcp), **star** the repo to follow progress, and **open or comment on [GitHub Issues](https://github.com/betsalel-williamson/mdcp/issues)** with feedback, adoption stories, or bugs.
+Visit [github.com/betsalel-williamson/mdcp](https://github.com/betsalel-williamson/mdcp), **star** the repo to follow progress, **share** it if it helps your team, and **open or comment on [GitHub Issues](https://github.com/betsalel-williamson/mdcp/issues)** with feedback, adoption stories, or reviews. Explore [DORA AI Capabilities](https://dora.dev/ai/) and join the community at [dora.community/join](https://dora.community/join) for SDLC best practices.
 
 Optional lint tooling (install in your repo when you want `mdcp lint`, `mdcp prose`, or `mdcp check --require-lint`):
 
@@ -366,16 +366,16 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 
 ### Command summary
 
-| Command          | When you need it                                                                                   |
-| ---------------- | -------------------------------------------------------------------------------------------------- |
-| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
-| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters                         |
-| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
-| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                        |
-| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
-| `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
-| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
-| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
+| Command          | When you need it                                                                                      |
+| ---------------- | ----------------------------------------------------------------------------------------------------- |
+| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default)    |
+| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters; non-fatal coverage report |
+| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                               |
+| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                           |
+| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                                  |
+| `mdcp prose`     | Vale prose lint (peer, if installed)                                                                  |
+| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                           |
+| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                    |
 
 ### Refs subcommands
 
@@ -400,6 +400,46 @@ mdcp refs list
 Discover shards with host search, then read **one** file. Prefer that over pasting a full compiled monolith.
 
 <!-- mdcp-shard: end ../../docs/client-cli/commands-reference.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/coverage.md -->
+
+## Coverage in check
+
+`mdcp check` reports markdown files that no guide accounts for, so nothing drifts out of your documentation set unnoticed. By default the report is non-fatal. Set `scan.strict: true` when CI should fail on gaps (this repository dogfoods that).
+
+### What it reports
+
+- **Uncaptured** — files under the scan root that no guide, `compile.scopeRoot`, or `standaloneGuides[]` entry covers (`uncaptured: <path>`).
+- **Missing standalone** — `standaloneGuides[]` entries that match no file on disk (`missing-standalone: <path>`).
+- **Summary** — when gaps exist, a one-line `coverage:` count.
+
+```bash
+mdcp check --config docs/mdcp.config.json --docs-root docs
+```
+
+The full captured / standalone inventory lives in core (`computeCoverage`); use that API when you need a machine-readable result. For the capability contract, see [Documentation coverage scan](../../docs/features/coverage-scan.md).
+
+### Registering standalone files
+
+When a file is intentionally standalone — a hand-authored README or a top-level policy file — list it under `standaloneGuides[]` so the scan treats it as captured:
+
+```json
+{
+  "standaloneGuides": ["packages/*/README.md", "SECURITY.md"],
+  "scan": {
+    "ignore": ["legacy"],
+    "strict": true
+  }
+}
+```
+
+`standaloneGuides` accepts file paths or globs. The scan honors your `.gitignore` by default, so version-controlled ignores (for example `node_modules`, `dist`, and build output) are skipped automatically; set `scan.gitignore: false` to turn that off. A built-in default always skips `.git`, `node_modules`, and `.agents`. `scan.ignore` extends what is skipped, and `scan.root` overrides the walk root (default: the invocation directory).
+
+Standalone files are register-only: compile never rewrites or emits them, but their headings still join the refs registry and their links are validated.
+
+Do not list a compiled guide's output (a generated file such as `README.md` or `DEVELOPERS.md`) in `standaloneGuides`. Those outputs are already captured as guide output targets and are never flagged as uncaptured, so they stay out of the standalone set.
+
+<!-- mdcp-shard: end ../../docs/client-cli/coverage.md -->
 
 <!-- mdcp-shard: start ../../docs/client-cli/compile-refs-registry.md -->
 

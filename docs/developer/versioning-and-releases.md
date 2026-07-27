@@ -19,7 +19,7 @@ There is **no calendar cadence**. Releases are **event-driven**:
 3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
 4. CI publishes to npm when the **`v*`** tag lands on GitHub.
 
-**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). See [Agent Skill](./agent-skill.md).
+**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into `.agents/skills/`. On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). Feature PRs that change `skills/` must add a changeset and must **not** hand-bump those versions. See [Agent Skill](./agent-skill.md).
 
 Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
 
@@ -51,8 +51,8 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 2. **Skills policy:** parent `mdcp` remains the consumer entrypoint. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` and **out** of [`skills.sh.json`](../../skills.sh.json) until intentionally published. List parent + release-ready helpers in the **Documentation system** grouping (see [Agent Skill development — skills.sh.json](./agent-skill.md#skillsshjson-repo-page-layout)).
 3. Preflight: `pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
 4. In a real TTY: `pnpm release:tag:push` — select bump (patch / minor / major / build), type `vX.Y.Z`, answer `yes`. Agents and CI cannot run this script.
-5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, commits `chore: release vX.Y.Z`, tags, and (with `--push`) pushes `main` + the tag.
-6. Verify CI [release workflow](../../.github/workflows/release.yml): npm versions for all three packages and the GitHub Release for `vX.Y.Z`.
+5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, then **must** run `pnpm skill:validate` (hard fail if invalid — including broken YAML fences like `---name:`). Only after that succeeds does it commit `chore: release vX.Y.Z`, tag, and (with `--push`) push `main` + the tag.
+6. Verify CI [release workflow](../../.github/workflows/release.yml): it runs `pnpm skill:validate` again before npm publish, then publishes all three packages and creates the GitHub Release for `vX.Y.Z`.
 7. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
 8. **skills.sh partner audits:** after a skill-facing release, partner re-audits on skills.sh typically land within minutes to about a day. Releases are not gated on audit readiness. The daily sync job (~20–28h after release) pulls published audits through the Vercel proxy; see [skills.sh audit sync](./skills-audit-sync.md).
 
@@ -70,23 +70,27 @@ Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR
 - `packages/mdcp-cli/src/**`
 - `packages/mdcp-presets/*.jsonc`
 - Published package `package.json` metadata consumers depend on
+- **`skills/**`** — consumer-facing Agent Skill packs (helpers, parent skill, install/guidance that ships via `npx skills add`)
+
+**Do not hand-edit** `skills/*/SKILL.md` `metadata.version` in feature PRs. `pnpm release:tag` sets every skill’s `metadata.version` in lockstep with the npm/git tag. Describe skill work in a changeset (usually against `@bwilliamson/mdcp-cli`) so the note lands in the package CHANGELOG at release.
 
 **Skip a changeset** for:
 
-- Root `README.md`, `docs/`, `examples/` only
-- CI, Husky, or dev tooling that does not ship in npm tarballs
+- Root `README.md`, `docs/`, `examples/` only (when the PR does **not** change `skills/` or published package sources)
+- CI, Husky, or other tooling that does not change skill packs or npm package behavior
+- `devDependencies` bumps in root or `packages/*/package.json` (including `@types/*`) when no other package fields or sources change
 - Typo fixes in package READMEs with no behavior change (maintainer discretion)
 
-CI on pull requests runs `pnpm changeset:status` to catch missing changesets when package code changed.
+CI on pull requests runs `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed. Package-level `devDependencies`-only bumps are treated as tooling and do not fail the check.
 
 ## Dependabot
 
-Dependabot does not add changesets. Treat its PRs like any other:
+Dependabot does not add changesets. **Non-dev dependency bumps need a human** — review the PR, add a changeset, then merge. Dev-only bumps should pass CI without one.
 
-| Dependabot PR type                                      | Changeset                                     |
-| ------------------------------------------------------- | --------------------------------------------- |
-| Production dependency bump in `packages/*/package.json` | Add a **patch** changeset before merge        |
-| Root dev-dependencies (grouped) or GitHub Actions only  | No changeset (CI `changeset` job should pass) |
+| Dependabot PR type                                                                         | Changeset / merge gate                                |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `dependencies`, `peerDependencies`, or `optionalDependencies` in `packages/*/package.json` | **Human approval** + **patch** changeset before merge |
+| `devDependencies` only (root and/or `packages/*/package.json`), or GitHub Actions          | No changeset (CI `changeset` job should pass)         |
 
 ## Bump selection guide
 
@@ -135,10 +139,11 @@ Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you 
 
 ## Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](../../SECURITY.md) for the supported-versions table — update that table when cutting a new minor line.
+Security fixes target the **latest minor** on npm. See [SECURITY.md](../../SECURITY.md) for the supported-versions table — update that table when cutting a new minor line. After a security patch ships, follow [Security-incident triage](./security-incident-triage.md) when deciding whether to `npm deprecate` (or rarely unpublish) a bad version.
 
 ## Related docs
 
 - [Publishing](./publishing.md) — first publish, Trusted Publishing, npm commands
+- [Security-incident triage](./security-incident-triage.md) — audit impact class, deprecate vs unpublish
 - [Agent Skill](./agent-skill.md) — skill pack, WIP `internal` flag, skills.sh
 - [.changeset/README.md](../../.changeset/README.md) — quick changeset reference
