@@ -74,6 +74,30 @@ describe('MdcpConfigSchema', () => {
     expect(cfg.backup.ext).toBe('.bak');
   });
 
+  it('defaults standaloneGuides and scan when absent', () => {
+    const cfg = MdcpConfigSchema.parse({
+      compileOrder: ['glossary'],
+    });
+    expect(cfg.standaloneGuides).toEqual([]);
+    expect(cfg.scan.gitignore).toBe(true);
+    expect(cfg.scan.ignore).toEqual([]);
+    expect(cfg.scan.root).toBeUndefined();
+    expect(cfg.scan.strict).toBe(false);
+  });
+
+  it('parses explicit standaloneGuides and scan config', () => {
+    const cfg = MdcpConfigSchema.parse({
+      compileOrder: ['glossary'],
+      standaloneGuides: ['packages/*/README.md', 'SECURITY.md'],
+      scan: { gitignore: false, ignore: ['legacy'], root: '.', strict: true },
+    });
+    expect(cfg.standaloneGuides).toEqual(['packages/*/README.md', 'SECURITY.md']);
+    expect(cfg.scan.gitignore).toBe(false);
+    expect(cfg.scan.ignore).toEqual(['legacy']);
+    expect(cfg.scan.root).toBe('.');
+    expect(cfg.scan.strict).toBe(true);
+  });
+
   it('parses link validation defaults', () => {
     const cfg = MdcpConfigSchema.parse({
       compileOrder: ['glossary'],

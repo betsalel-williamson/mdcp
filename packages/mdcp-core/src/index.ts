@@ -113,6 +113,7 @@ export {
   type LintLinksOptions,
 } from './links/lint.js';
 export { checkOrphansForGuides, type OrphanIssue, type GuideDirEntry } from './validate/orphans.js';
+export { computeCoverage, type CoverageResult, type CoverageOptions } from './validate/coverage.js';
 export {
   abbreviateProtocolVersion,
   expandProtocolVersion,

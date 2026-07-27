@@ -3,7 +3,10 @@
  * Require a pending changeset when package sources or skills/ changed since base.
  *
  * 1. Runs `changeset status --since=<base>` (packages).
- * 2. If `skills/` changed since base and there is no pending `.changeset/*.md`
+ * 2. If that fails only because packages/<name>/package.json `devDependencies`
+ *    changed (no other package fields/files), skips the package check — tooling
+ *    bumps do not need a release note.
+ * 3. If `skills/` changed since base and there is no pending `.changeset/*.md`
  *    (other than README.md / config.json), fails — unless this PR consumed
  *    changesets (release versioning deleted `.changeset/*.md`).
  *
@@ -16,6 +19,7 @@
 import { spawnSync, execSync } from 'node:child_process';
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { isDevDependencyOnlyPackageChange } from './lib/dev-dep-only-package-changes.mjs';
 
 function tryExec(cmd) {
   try {
@@ -63,6 +67,22 @@ function changesetsConsumed(since) {
   return deleted.split('\n').filter((p) => p.endsWith('.md') && !p.endsWith('README.md')).length;
 }
 
+function readPackageJsonPair(since, path) {
+  const beforeRaw = tryExec(`git show ${since}:${path}`);
+  const afterRaw = tryExec(`git show HEAD:${path}`);
+  if (!beforeRaw || !afterRaw) return null;
+  try {
+    return { before: JSON.parse(beforeRaw), after: JSON.parse(afterRaw) };
+  } catch {
+    return null;
+  }
+}
+
+function onlyDevDependencyPackageChanges(since) {
+  const changed = listChanged(since, 'packages/');
+  return isDevDependencyOnlyPackageChange(changed, (path) => readPackageJsonPair(since, path));
+}
+
 const since = resolveSince();
 console.log(`changeset status --since=${since}`);
 const result = spawnSync('pnpm', ['exec', 'changeset', 'status', `--since=${since}`], {
@@ -75,6 +95,11 @@ if (exitCode !== 0) {
   if (consumed > 0) {
     console.log(
       'Changesets consumed in this PR (release versioning) — skipping package changeset check.',
+    );
+    exitCode = 0;
+  } else if (onlyDevDependencyPackageChanges(since)) {
+    console.log(
+      'Only packages/<name>/package.json devDependencies changed since base — skipping package changeset check.',
     );
     exitCode = 0;
   }

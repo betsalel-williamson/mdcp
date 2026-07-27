@@ -49,6 +49,8 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [refs registry](#refs-registry)
 - [heading slug](#heading-slug)
 - [cross-link](#cross-link)
+- [standalone guide](#standalone-guide)
+- [coverage](#coverage)
 
 ### Adoption and messaging
 
@@ -114,6 +116,46 @@ Pre-commit runs in two phases:
 CI runs the full gate: `pnpm run check`.
 
 <!-- mdcp-shard: end docs/developer/local-setup.md -->
+
+<!-- mdcp-shard: start docs/developer/cursor-cloud-environment.md -->
+
+### Cursor Cloud environment
+
+How this repository behaves inside Cursor cloud agents: how to stand up a new cloud environment, and the platform limitations to plan around. For the standard local toolchain and daily commands, read [Local setup](#local-setup) — this section only adds cloud-specific setup and constraints.
+
+Durable, machine-facing notes for future agents also live in the repository `AGENTS.md` under "Cursor Cloud specific instructions". Keep the two in sync: this guide is the human-facing explanation; `AGENTS.md` is the short agent checklist.
+
+#### Setting up a new cloud environment
+
+A fresh cloud VM needs the same toolchain as [Local setup](#local-setup), plus a few cloud-specific steps:
+
+1. **Startup update script.** `.cursor/environment.json` holds the `install` command that runs on every VM start: it fetches remote refs, then runs `pnpm install`. That committed file is the source of truth and overrides any dashboard-saved environment. Keep it minimal — dependency refresh only, no service startup or build steps.
+2. **Vale peer binary.** Vale is a peer binary, not an npm dependency. Install version 3.15.1 to `/usr/local/bin` (it persists in the VM snapshot); the exact release command is in [`.github/workflows/ci.yml`](.github/workflows/ci.yml). `pnpm docs:check` needs Vale on `PATH`.
+3. **gitleaks peer binary.** gitleaks is also a peer binary, not an npm dependency; the pre-commit hook runs `gitleaks protect --staged` when it is on `PATH`. Install version 8.30.1 to `/usr/local/bin` (persists in the VM snapshot). If it goes missing, reinstall from the [gitleaks releases](https://github.com/gitleaks/gitleaks/releases): download `gitleaks_8.30.1_linux_x64.tar.gz` and extract the `gitleaks` binary into `/usr/local/bin` (same pattern as Vale). CI runs its own scan via `gitleaks-action`, so the local install is defense-in-depth.
+4. **Build before docs or CLI.** `dist/` is gitignored and is not produced by the update script. Run `pnpm build` after a fresh checkout before `pnpm docs:check`, `pnpm docs:compile`, or invoking the `mdcp` CLI.
+5. **Sync Vale styles once.** Run `pnpm vale:sync` before the first `docs:check` on a fresh clone (network required); synced styles then persist in the snapshot.
+6. **Node version.** The VM runs Node 22 (satisfies `engines >=18`); CI uses Node 24. Do not switch Node unless a version-specific issue appears.
+7. **Full gate.** `pnpm check` mirrors CI (typecheck, lint, format, build, test, skill:validate, docs:check).
+
+#### Platform limitations and workarounds
+
+These are cloud-agent constraints discovered in practice. Plan work around them rather than fighting them.
+
+| Limitation                                                                                      | Workaround                                                                                                                                              |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The `gh` CLI is **read-only** for the agent; it cannot create or modify issues or pull requests | Use the dedicated pull-request tooling for PRs and PR comments. A human creates GitHub issues from agent-supplied text; add `Closes #N` afterward.      |
+| **No GitHub MCP** is available, and we do not add one in the cloud                              | Accept it. MCP servers load at session start and `.cursor/*` (except `environment.json`) is gitignored, so an agent cannot self-enable one mid-run.     |
+| A GitHub **PAT in Secrets is not wired** to `gh` or any agent tool                              | Do not rely on a PAT to unblock issue creation in the cloud; it does not help. Issue creation stays a human step.                                       |
+| The agent **cannot merge PRs** or push to protected `main`                                      | A human merges. The agent may merge one working branch into another locally to unblock CI (for example, a dependency-fix branch into a feature branch). |
+| CI runs `pnpm audit --audit-level=high` **before** the build and test gates                     | A new advisory on a pre-existing devDependency fails audit and masks otherwise-green gates. Pin patched versions via `pnpm-workspace.yaml` overrides.   |
+| The pre-commit hook runs `pnpm audit` when dependency manifests change                          | Resolve advisories (overrides) before committing manifest changes, rather than bypassing the hook.                                                      |
+| commitlint rejects non-conventional subjects, including merge commits                           | Give merge commits a conventional subject such as `chore: merge …`, not `merge: …`.                                                                     |
+
+#### Recording issues without issue-creation access
+
+Because the agent cannot open GitHub issues, capture work items as ready-to-paste issue text (title, body with acceptance criteria, labels, and project fields per [Agent work-item tracking](#agent-work-item-tracking)) inside the pull request that delivers the work. A maintainer creates the issue and links it with `Closes #N`.
+
+<!-- mdcp-shard: end docs/developer/cursor-cloud-environment.md -->
 
 <!-- mdcp-shard: start docs/developer/agent-work-item-tracking.md -->
 
@@ -470,7 +512,7 @@ This repo's documentation is sharded under [`docs/`](../). Shards are the **sour
 
 **Surface ownership:** `repo-readme/` = Agent Skill landing; `client-cli/` = CLI commands/config only; `client-core/` = library API/hooks only. Cross-link the other surfaces instead of duplicating skill, CLI, or API narrative across package READMEs.
 
-Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith.
+Config: [`docs/mdcp.config.json`](docs/mdcp.config.json). Guides with `compile.outputFile` publish to a separate path and are **excluded** from the monolith. Coverage dogfood uses `scan.strict: true` with `standaloneGuides` / `scan.ignore` so tooling trees (`.worktrees`, `.cursor`, `.changeset`, tests, examples, …) never fail `mdcp check`; publishable skills under `skills/` are registered as standalone.
 
 Publish landing style for root README: [Personas and priority tiers](docs/features/personas-and-priority-tiers.md#publish-landing-style).
 
@@ -859,18 +901,19 @@ Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR
 
 - Root `README.md`, `docs/`, `examples/` only (when the PR does **not** change `skills/` or published package sources)
 - CI, Husky, or other tooling that does not change skill packs or npm package behavior
+- `devDependencies` bumps in root or `packages/*/package.json` (including `@types/*`) when no other package fields or sources change
 - Typo fixes in package READMEs with no behavior change (maintainer discretion)
 
-CI on pull requests runs `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed.
+CI on pull requests runs `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed. Package-level `devDependencies`-only bumps are treated as tooling and do not fail the check.
 
 ### Dependabot
 
-Dependabot does not add changesets. Treat its PRs like any other:
+Dependabot does not add changesets. **Non-dev dependency bumps need a human** — review the PR, add a changeset, then merge. Dev-only bumps should pass CI without one.
 
-| Dependabot PR type                                      | Changeset                                     |
-| ------------------------------------------------------- | --------------------------------------------- |
-| Production dependency bump in `packages/*/package.json` | Add a **patch** changeset before merge        |
-| Root dev-dependencies (grouped) or GitHub Actions only  | No changeset (CI `changeset` job should pass) |
+| Dependabot PR type                                                                         | Changeset / merge gate                                |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `dependencies`, `peerDependencies`, or `optionalDependencies` in `packages/*/package.json` | **Human approval** + **patch** changeset before merge |
+| `devDependencies` only (root and/or `packages/*/package.json`), or GitHub Actions          | No changeset (CI `changeset` job should pass)         |
 
 ### Bump selection guide
 
@@ -919,11 +962,12 @@ Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you 
 
 ### Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](SECURITY.md) for the supported-versions table — update that table when cutting a new minor line.
+Security fixes target the **latest minor** on npm. See [SECURITY.md](SECURITY.md) for the supported-versions table — update that table when cutting a new minor line. After a security patch ships, follow [Security-incident triage](#security-incident-triage) when deciding whether to `npm deprecate` (or rarely unpublish) a bad version.
 
 ### Related docs
 
 - [Publishing](#publishing) — first publish, Trusted Publishing, npm commands
+- [Security-incident triage](#security-incident-triage) — audit impact class, deprecate vs unpublish
 - [Agent Skill](#agent-skill-development) — skill pack, WIP `internal` flag, skills.sh
 - [.changeset/README.md](.changeset/README.md) — quick changeset reference
 
@@ -1043,9 +1087,76 @@ Changesets config: [`.changeset/config.json`](.changeset/config.json) — all th
 
 Each package runs `prepublishOnly` to build (or verify) before publish.
 
-See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+See [SECURITY.md](SECURITY.md) for vulnerability reporting. For advisory triage, deprecate-vs-unpublish, and when a finding is only transitive **dev** tooling: [Security-incident triage](#security-incident-triage).
 
 <!-- mdcp-shard: end docs/developer/publishing.md -->
+
+<!-- mdcp-shard: start docs/developer/security-incident-triage.md -->
+
+## Security-incident triage
+
+Maintainer runbook for dependency advisories and “burn a bad release” decisions on `@bwilliamson/mdcp-*`. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); this shard covers **triage and remediation**.
+
+### Classify impact first
+
+Before changing lockfiles, deprecating versions, or cutting a release, decide where the finding lands:
+
+| Impact class                    | Typical signal                                                                                | Default response                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Published / prod**            | Affects `@bwilliamson/mdcp-*` runtime deps or ships in the npm tarball                        | Patch, release, and (when consumers may have installed a bad version) deprecate that version           |
+| **Transitive dev-only tooling** | Only under root `devDependencies` (e.g. Slidev, lint/test helpers); `pnpm audit --prod` clean | Prefer a workspace **override** or upstream bump; do **not** deprecate or unpublish published packages |
+
+Quick checks:
+
+```bash
+pnpm audit --prod                 # published-package surface
+pnpm audit --audit-level=moderate # full tree including presentation tooling
+pnpm why <package>                # which path pulls the vulnerable package
+```
+
+CI gates on `pnpm audit --audit-level=high` (see [Packages and tests](#packages-and-tests)). Moderate noise in **dev-only** trees is hygiene, not an automatic security release of `@bwilliamson/mdcp-*`.
+
+Workspace overrides for this monorepo live under `overrides:` in [`pnpm-workspace.yaml`](pnpm-workspace.yaml) (pnpm 11+ no longer reads `package.json` → `pnpm.overrides`).
+
+### Prefer patch + deprecate over unpublish
+
+When a **published** version is unsafe or badly broken for consumers:
+
+1. **Ship a fixed release** (usually a **patch**) via the normal Changesets path — [Versioning and releases](#versioning-and-releases) and [Publishing](#publishing).
+2. **`npm deprecate`** the bad versions with a short reason and the safe replacement range. Deprecation warns installers without rewriting registry history.
+3. **Announce** via GitHub Security Advisory / release notes when disclosure timing requires it ([SECURITY.md](SECURITY.md)).
+
+Do **not** unpublish solely to silence an advisory when a patched successor exists. Unpublish breaks lockfiles and CI that pin exact versions.
+
+Example deprecate (maintainer machine, 2FA as required by npm):
+
+```bash
+npm deprecate @bwilliamson/mdcp-cli@<bad-version> "Security issue; use >=<fixed-version>"
+# Repeat for mdcp-core / mdcp-presets when those versions share the defect
+```
+
+### When unpublish (or npm Support) is appropriate
+
+Unpublish is rare. Prefer it only when **all** of the following hold (or npm’s current policy requires it):
+
+- The version must not remain installable (e.g. secrets or malware in the tarball), **and**
+- Deprecation alone is insufficient for the risk, **and**
+- You are within npm’s unpublish window / policy for that package and version
+
+Otherwise:
+
+- Use **deprecate** + patched release for ordinary vulnerabilities and broken builds.
+- Contact **npm Support** when the version is outside the self-serve unpublish window, the package was compromised, or you need a registry-side takedown.
+
+Never unpublish a version that other packages or consumers legitimately depend on unless the alternative is worse (credential leak, malware). Document the decision in the advisory, not in durable product shards.
+
+### Related docs
+
+- [SECURITY.md](SECURITY.md) — reporting and maintainer security practices
+- [Versioning and releases](#versioning-and-releases) — cutting fixed releases
+- [Publishing](#publishing) — npm publish mechanics and Trusted Publishing
+
+<!-- mdcp-shard: end docs/developer/security-incident-triage.md -->
 
 <!-- mdcp-shard: start docs/glossary/domain-glossary.md -->
 
@@ -1209,6 +1320,30 @@ A Markdown link whose target is another place in the docs set — usually a same
 Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](docs/features/link-validation.md).
 
 <!-- mdcp-shard: end docs/glossary/cross-link.md -->
+
+<!-- mdcp-shard: start docs/glossary/standalone-guide.md -->
+
+## standalone guide
+
+A single markdown file registered as its own guide that is **not** compiled from shards. Declared in `standaloneGuides[]`, it is the source and the published file at once — for example a hand-authored package `README.md` or a top-level `SECURITY.md`.
+
+Contrast with a [guide](#mdcp), which stitches a list of shards into one output. A standalone guide is register-only: compile never stitches, rewrites, or emits it, but its headings still register into [refs](#refs) and its outbound links are validated. Registering a file as standalone marks it as [captured](#coverage) so the coverage scan does not report it.
+
+See [Documentation coverage scan](docs/features/coverage-scan.md).
+
+<!-- mdcp-shard: end docs/glossary/standalone-guide.md -->
+
+<!-- mdcp-shard: start docs/glossary/coverage.md -->
+
+## coverage
+
+Documentation coverage is the set of markdown files MDCP can account for — the **captured** set. A file is captured when it is a shard of a compiled guide (including a guide's `compile.scopeRoot`), a guide output target (`compile.outputFile`), or a [standalone guide](#standalone-guide).
+
+The coverage scan walks the repository for markdown files, skips vendored paths, and reports any file that is not captured so authors either fold it into a guide or register it in `standaloneGuides[]`. With `scan.strict: true`, gaps fail `mdcp check`.
+
+See [Documentation coverage scan](docs/features/coverage-scan.md).
+
+<!-- mdcp-shard: end docs/glossary/coverage.md -->
 
 <!-- mdcp-shard: start docs/glossary/wiifm.md -->
 
