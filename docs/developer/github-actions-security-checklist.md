@@ -8,7 +8,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Treat CI/CD as critical production code | `reviewed (2026-07-27)`                                                      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173. |
 | **Authentication & Authorization**      |                                                                              |                                                                                      |
 | Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`                                                      | Repo default is read-only.                                                           |
-| Workflow-level `permissions: {}`        | `open risk ([#177](https://github.com/betsalel-williamson/mdcp/issues/177))` | Missing on `ci.yml` and `gitleaks.yml`.                                              |
+| Workflow-level `permissions: {}`        | `reviewed (2026-07-27)`                                                      | Empty top-level on ci/gitleaks/release; job-scoped writes.                           |
 | `persist-credentials: false`            | `reviewed (2026-07-27)`                                                      | Set on all `actions/checkout` steps.                                                 |
 | Eliminate static credentials            | `reviewed (2026-07-27)`                                                      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.              |
 | OIDC for cloud providers                | `reviewed (2026-07-27)`                                                      | Used for npm Trusted Publishing.                                                     |
