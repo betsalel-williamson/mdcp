@@ -1199,6 +1199,46 @@ We run **CodeQL** and **Zizmor** on push and pull request:
 - **CodeQL** — JavaScript/TypeScript SAST. The analyze job fails on findings; make it a **required** status check on `main` if it should gate merges.
 - **Zizmor** — GitHub Actions workflow misconfiguration scanner. The job **fails on findings** (blocking); annotations surface issues on the PR. Make it a **required** status check on `main` if it should gate merges.
 
+### CODEOWNERS and external contributor review
+
+OWASP recommends requiring approval from code owners so external contributors cannot merge changes to critical paths without maintainer review. This repo assigns `@betsalel-williamson` in [`.github/CODEOWNERS`](.github/CODEOWNERS) for:
+
+- All paths (`*`) — default owner
+- `.github/` — workflows, Dependabot, and repository automation
+- `packages/` — published npm packages and CLI
+- `docs/` — sharded documentation compiled into READMEs
+- `skills/` and `.agents/skills/` — publishable and committed Agent Skills
+
+CODEOWNERS alone does not block merges; branch protection must enforce owner review.
+
+#### Branch protection settings (repo admin)
+
+After CODEOWNERS is on `main`, a repo admin enables review enforcement:
+
+1. Open **Settings → Branches → Branch protection rules → `main`** (or the active ruleset for `main`).
+2. Under **Require a pull request before merging**, enable **Require review from Code Owners**.
+3. Set **Required approving reviews** to at least **1**.
+4. Keep **Dismiss stale pull request approvals when new commits are pushed** enabled (already on as of 2026-07-27).
+
+As of the #182 audit, `main` had status checks required but `require_code_owner_reviews` was **false** and `required_approving_review_count` was **0**. Those toggles are repository settings and are not changed by this PR.
+
+Optional automation (requires admin `gh` auth):
+
+```bash
+gh api -X PATCH repos/betsalel-williamson/mdcp/branches/main/protection/required_pull_request_reviews \
+  -f require_code_owner_reviews=true \
+  -f required_approving_review_count=1
+```
+
+Verify after enabling:
+
+```bash
+gh api repos/betsalel-williamson/mdcp/branches/main/protection \
+  --jq '.required_pull_request_reviews | {require_code_owner_reviews, required_approving_review_count}'
+```
+
+Fork PRs from outside collaborators still run CI under the base-repo policy; code-owner review ensures `@betsalel-williamson` approves changes to owned paths before merge.
+
 ### Related docs
 
 - [SECURITY.md](SECURITY.md) — reporting and maintainer security practices
@@ -1220,15 +1260,15 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Treat CI/CD as critical production code | `reviewed (2026-07-27)`                                                      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173. |
 | **Authentication & Authorization**      |                                                                              |                                                                                      |
 | Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`                                                      | Repo default is read-only.                                                           |
-| Workflow-level `permissions: {}`        | `open risk ([#177](https://github.com/betsalel-williamson/mdcp/issues/177))` | Missing on `ci.yml` and `gitleaks.yml`.                                              |
-| `persist-credentials: false`            | `open risk ([#178](https://github.com/betsalel-williamson/mdcp/issues/178))` | Missing on `actions/checkout` steps.                                                 |
+| Workflow-level `permissions: {}`        | `reviewed (2026-07-27)`                                                      | Empty top-level on ci/gitleaks/release; job-scoped writes.                           |
+| `persist-credentials: false`            | `reviewed (2026-07-27)`                                                      | Set on all `actions/checkout` steps.                                                 |
 | Eliminate static credentials            | `reviewed (2026-07-27)`                                                      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.              |
 | OIDC for cloud providers                | `reviewed (2026-07-27)`                                                      | Used for npm Trusted Publishing.                                                     |
 | Secure handling of static credentials   | `not a concern (2026-07-27)`                                                 | No static credentials remain in workflows.                                           |
 | Secrets: inherit                        | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
 | Mask sensitive data                     | `reviewed (2026-07-27)`                                                      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                     |
 | **Workflows & Execution**               |                                                                              |                                                                                      |
-| Pin actions to commit SHA               | `open risk ([#175](https://github.com/betsalel-williamson/mdcp/issues/175))` | Currently using mutable tags (`@v7`, etc.).                                          |
+| Pin actions to commit SHA               | `reviewed (2026-07-27)`                                                      | All third-party actions pinned to full commit SHAs with tag comments in workflows.   |
 | Third-party actions caution             | `reviewed (2026-07-27)`                                                      | Documented current set.                                                              |
 | Sanitize untrusted context / input      | `reviewed (2026-07-27)`                                                      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.            |
 | `pull_request_target` trigger           | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
@@ -1239,14 +1279,14 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | **Runners & Environments**              |                                                                              |                                                                                      |
 | Self-hosted runners                     | `not a concern (2026-07-27)`                                                 | Using `ubuntu-latest` GitHub-hosted runners.                                         |
 | Runner groups                           | `not a concern (2026-07-27)`                                                 | Not applicable to GitHub-hosted runners.                                             |
-| Egress monitoring                       | `open risk ([#179](https://github.com/betsalel-williamson/mdcp/issues/179))` | Harden-Runner not implemented.                                                       |
+| Egress monitoring                       | `reviewed (2026-07-27)`                                                      | Harden-Runner in audit mode only (not block).                                        |
 | Environment required reviewers          | `open risk ([#180](https://github.com/betsalel-williamson/mdcp/issues/180))` | Release environment needs manual approval.                                           |
 | **Code & Supply Chain**                 |                                                                              |                                                                                      |
 | Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                     |
-| Require approval for external           | `open risk ([#182](https://github.com/betsalel-williamson/mdcp/issues/182))` | Missing CODEOWNERS and approval requirement.                                         |
+| Require approval for external           | `reviewed (2026-07-27)`                                                      | CODEOWNERS added; require-code-owner reviews are maintainer ops.                     |
 | Dependabot for Actions                  | `reviewed (2026-07-27)`                                                      | Configured for weekly updates.                                                       |
-| Dependabot cooldown                     | `open risk ([#181](https://github.com/betsalel-williamson/mdcp/issues/181))` | Missing cooldown period for actions ecosystem.                                       |
-| Artifact / cache poisoning              | `open risk ([#183](https://github.com/betsalel-williamson/mdcp/issues/183))` | `release.yml` uses `cache: pnpm` on the publish path.                                |
+| Dependabot cooldown                     | `reviewed (2026-07-27)`                                                      | Explicit 7-day cooldown on `github-actions`.                                         |
+| Artifact / cache poisoning              | `reviewed (2026-07-27)`                                                      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                       |
 | Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                         |
 | Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`                                                      | CodeQL + Zizmor workflows; Zizmor fails the job on findings.                         |
 | AI-in-CI                                | `not a concern (2026-07-27)`                                                 | No AI assistants used in CI.                                                         |
