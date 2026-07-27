@@ -69,6 +69,37 @@
       }
     }
   ],
+  "standaloneGuides": [
+    "AGENTS.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md",
+    "docs/skills.md",
+    "packages/mdcp-presets/README.md",
+    "skills/**/*.md"
+  ],
+  "scan": {
+    "strict": true,
+    "ignore": [
+      ".changeset/**",
+      ".github/**",
+      ".cursor/**",
+      ".claude/**",
+      ".husky/**",
+      ".vscode/**",
+      ".superpowers/**",
+      ".worktrees/**",
+      ".specstory/**",
+      ".tmp/**",
+      ".caches/**",
+      ".pnpm-store/**",
+      ".compile-build/**",
+      ".shard-work/**",
+      "legacy/**",
+      "tests/**",
+      "examples/**",
+      "**/CHANGELOG.md"
+    ]
+  },
   "refs": {
     "registryFile": "_build/refs.json",
     "slugAlgorithm": "github"

@@ -23,6 +23,11 @@ coverage/
 .cursor/*
 !.cursor/environment.json
 .cursorindexingignore
+.claude/
+.superpowers/
+
+# Linked git worktrees (local agent / contributor checkouts)
+.worktrees/
 
 # Agent Skills — local installs / workspaces (publishable source lives in skills/)
 .agents/skills/mdcp/
