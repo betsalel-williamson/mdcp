@@ -1194,7 +1194,10 @@ Even when nothing changes, schedule a **periodic pass** (for example quarterly) 
 
 ### Static analysis
 
-We run **CodeQL** and **Zizmor** on push and pull request. Zizmor checks our workflow files for security misconfigurations and surfaces annotations. CodeQL provides SAST for our JavaScript/TypeScript code.
+We run **CodeQL** and **Zizmor** on push and pull request:
+
+- **CodeQL** — JavaScript/TypeScript SAST. The analyze job fails on findings; make it a **required** status check on `main` if it should gate merges.
+- **Zizmor** — GitHub Actions workflow misconfiguration scanner. During rollout the job uses `continue-on-error: true`, so it is **advisory only** (annotations + logs; does not block merge). Do not treat a green Zizmor check as enforcement until that flag is removed and the check is required.
 
 ### Related docs
 
@@ -1211,44 +1214,44 @@ We run **CodeQL** and **Zizmor** on push and pull request. Zizmor checks our wor
 
 This checklist tracks our compliance with the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html). See [GitHub Actions security posture](#github-actions-security-posture) for vocabulary and re-review guidance. All open risks are tracked under epic [#173](https://github.com/betsalel-williamson/mdcp/issues/173).
 
-| OWASP Topic                             | Status                                                                       | Notes                                                                                |
-| --------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| **Pipeline Governance**                 |                                                                              |                                                                                      |
-| Treat CI/CD as critical production code | `reviewed (2026-07-27)`                                                      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173. |
-| **Authentication & Authorization**      |                                                                              |                                                                                      |
-| Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`                                                      | Repo default is read-only.                                                           |
-| Workflow-level `permissions: {}`        | `open risk ([#177](https://github.com/betsalel-williamson/mdcp/issues/177))` | Missing on `ci.yml` and `gitleaks.yml`.                                              |
-| `persist-credentials: false`            | `open risk ([#178](https://github.com/betsalel-williamson/mdcp/issues/178))` | Missing on `actions/checkout` steps.                                                 |
-| Eliminate static credentials            | `reviewed (2026-07-27)`                                                      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.              |
-| OIDC for cloud providers                | `reviewed (2026-07-27)`                                                      | Used for npm Trusted Publishing.                                                     |
-| Secure handling of static credentials   | `not a concern (2026-07-27)`                                                 | No static credentials remain in workflows.                                           |
-| Secrets: inherit                        | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
-| Mask sensitive data                     | `reviewed (2026-07-27)`                                                      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                     |
-| **Workflows & Execution**               |                                                                              |                                                                                      |
-| Pin actions to commit SHA               | `open risk ([#175](https://github.com/betsalel-williamson/mdcp/issues/175))` | Currently using mutable tags (`@v7`, etc.).                                          |
-| Third-party actions caution             | `reviewed (2026-07-27)`                                                      | Documented current set.                                                              |
-| Sanitize untrusted context / input      | `reviewed (2026-07-27)`                                                      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.            |
-| `pull_request_target` trigger           | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
-| `workflow_run` trigger                  | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
-| `issue_comment` trigger                 | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
-| Curated shared workflows                | `not a concern (2026-07-27)`                                                 | Single-repo monorepo; no centralized shared-workflows repository.                    |
-| Multi-repo shared workflows             | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
-| **Runners & Environments**              |                                                                              |                                                                                      |
-| Self-hosted runners                     | `not a concern (2026-07-27)`                                                 | Using `ubuntu-latest` GitHub-hosted runners.                                         |
-| Runner groups                           | `not a concern (2026-07-27)`                                                 | Not applicable to GitHub-hosted runners.                                             |
-| Egress monitoring                       | `open risk ([#179](https://github.com/betsalel-williamson/mdcp/issues/179))` | Harden-Runner not implemented.                                                       |
-| Environment required reviewers          | `open risk ([#180](https://github.com/betsalel-williamson/mdcp/issues/180))` | Release environment needs manual approval.                                           |
-| **Code & Supply Chain**                 |                                                                              |                                                                                      |
-| Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                     |
-| Require approval for external           | `open risk ([#182](https://github.com/betsalel-williamson/mdcp/issues/182))` | Missing CODEOWNERS and approval requirement.                                         |
-| Dependabot for Actions                  | `reviewed (2026-07-27)`                                                      | Configured for weekly updates.                                                       |
-| Dependabot cooldown                     | `open risk ([#181](https://github.com/betsalel-williamson/mdcp/issues/181))` | Missing cooldown period for actions ecosystem.                                       |
-| Artifact / cache poisoning              | `open risk ([#183](https://github.com/betsalel-williamson/mdcp/issues/183))` | `release.yml` uses `cache: pnpm` on the publish path.                                |
-| Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                         |
-| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`                                                      | Added CodeQL and Zizmor workflows.                                                   |
-| AI-in-CI                                | `not a concern (2026-07-27)`                                                 | No AI assistants used in CI.                                                         |
-| **Incident Response**                   |                                                                              |                                                                                      |
-| Incident response plan                  | `reviewed (2026-07-27)`                                                      | Covered in `SECURITY.md` and triage docs.                                            |
+| OWASP Topic                             | Status                                                                       | Notes                                                                                                         |
+| --------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Pipeline Governance**                 |                                                                              |                                                                                                               |
+| Treat CI/CD as critical production code | `reviewed (2026-07-27)`                                                      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173.                          |
+| **Authentication & Authorization**      |                                                                              |                                                                                                               |
+| Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`                                                      | Repo default is read-only.                                                                                    |
+| Workflow-level `permissions: {}`        | `open risk ([#177](https://github.com/betsalel-williamson/mdcp/issues/177))` | Missing on `ci.yml` and `gitleaks.yml`.                                                                       |
+| `persist-credentials: false`            | `open risk ([#178](https://github.com/betsalel-williamson/mdcp/issues/178))` | Missing on `actions/checkout` steps.                                                                          |
+| Eliminate static credentials            | `reviewed (2026-07-27)`                                                      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.                                       |
+| OIDC for cloud providers                | `reviewed (2026-07-27)`                                                      | Used for npm Trusted Publishing.                                                                              |
+| Secure handling of static credentials   | `not a concern (2026-07-27)`                                                 | No static credentials remain in workflows.                                                                    |
+| Secrets: inherit                        | `not a concern (2026-07-27)`                                                 | Not used.                                                                                                     |
+| Mask sensitive data                     | `reviewed (2026-07-27)`                                                      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                                              |
+| **Workflows & Execution**               |                                                                              |                                                                                                               |
+| Pin actions to commit SHA               | `open risk ([#175](https://github.com/betsalel-williamson/mdcp/issues/175))` | Currently using mutable tags (`@v7`, etc.).                                                                   |
+| Third-party actions caution             | `reviewed (2026-07-27)`                                                      | Documented current set.                                                                                       |
+| Sanitize untrusted context / input      | `reviewed (2026-07-27)`                                                      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.                                     |
+| `pull_request_target` trigger           | `not a concern (2026-07-27)`                                                 | Not used.                                                                                                     |
+| `workflow_run` trigger                  | `not a concern (2026-07-27)`                                                 | Not used.                                                                                                     |
+| `issue_comment` trigger                 | `not a concern (2026-07-27)`                                                 | Not used.                                                                                                     |
+| Curated shared workflows                | `not a concern (2026-07-27)`                                                 | Single-repo monorepo; no centralized shared-workflows repository.                                             |
+| Multi-repo shared workflows             | `not a concern (2026-07-27)`                                                 | Not used.                                                                                                     |
+| **Runners & Environments**              |                                                                              |                                                                                                               |
+| Self-hosted runners                     | `not a concern (2026-07-27)`                                                 | Using `ubuntu-latest` GitHub-hosted runners.                                                                  |
+| Runner groups                           | `not a concern (2026-07-27)`                                                 | Not applicable to GitHub-hosted runners.                                                                      |
+| Egress monitoring                       | `open risk ([#179](https://github.com/betsalel-williamson/mdcp/issues/179))` | Harden-Runner not implemented.                                                                                |
+| Environment required reviewers          | `open risk ([#180](https://github.com/betsalel-williamson/mdcp/issues/180))` | Release environment needs manual approval.                                                                    |
+| **Code & Supply Chain**                 |                                                                              |                                                                                                               |
+| Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                                              |
+| Require approval for external           | `open risk ([#182](https://github.com/betsalel-williamson/mdcp/issues/182))` | Missing CODEOWNERS and approval requirement.                                                                  |
+| Dependabot for Actions                  | `reviewed (2026-07-27)`                                                      | Configured for weekly updates.                                                                                |
+| Dependabot cooldown                     | `open risk ([#181](https://github.com/betsalel-williamson/mdcp/issues/181))` | Missing cooldown period for actions ecosystem.                                                                |
+| Artifact / cache poisoning              | `open risk ([#183](https://github.com/betsalel-williamson/mdcp/issues/183))` | `release.yml` uses `cache: pnpm` on the publish path.                                                         |
+| Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                                                  |
+| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`                                                      | CodeQL workflow added (enforce via required checks). Zizmor is advisory during rollout (`continue-on-error`). |
+| AI-in-CI                                | `not a concern (2026-07-27)`                                                 | No AI assistants used in CI.                                                                                  |
+| **Incident Response**                   |                                                                              |                                                                                                               |
+| Incident response plan                  | `reviewed (2026-07-27)`                                                      | Covered in `SECURITY.md` and triage docs.                                                                     |
 
 <!-- mdcp-shard: end docs/developer/github-actions-security-checklist.md -->
 
