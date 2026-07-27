@@ -28,6 +28,46 @@ Re-run the checklist when any of the following change:
 
 Even when nothing changes, schedule a **periodic pass** (for example quarterly) so third-party action advisories and OWASP guidance updates do not drift unnoticed.
 
+## CODEOWNERS and external contributor review
+
+OWASP recommends requiring approval from code owners so external contributors cannot merge changes to critical paths without maintainer review. This repo assigns `@betsalel-williamson` in [`.github/CODEOWNERS`](../../.github/CODEOWNERS) for:
+
+- All paths (`*`) — default owner
+- `.github/` — workflows, Dependabot, and repository automation
+- `packages/` — published npm packages and CLI
+- `docs/` — sharded documentation compiled into READMEs
+- `skills/` and `.agents/skills/` — publishable and committed Agent Skills
+
+CODEOWNERS alone does not block merges; branch protection must enforce owner review.
+
+### Branch protection settings (repo admin)
+
+After CODEOWNERS is on `main`, a repo admin enables review enforcement:
+
+1. Open **Settings → Branches → Branch protection rules → `main`** (or the active ruleset for `main`).
+2. Under **Require a pull request before merging**, enable **Require review from Code Owners**.
+3. Set **Required approving reviews** to at least **1**.
+4. Keep **Dismiss stale pull request approvals when new commits are pushed** enabled (already on as of 2026-07-27).
+
+As of the #182 audit, `main` had status checks required but `require_code_owner_reviews` was **false** and `required_approving_review_count` was **0**. Those toggles are repository settings and are not changed by this PR.
+
+Optional automation (requires admin `gh` auth):
+
+```bash
+gh api -X PATCH repos/betsalel-williamson/mdcp/branches/main/protection/required_pull_request_reviews \
+  -f require_code_owner_reviews=true \
+  -f required_approving_review_count=1
+```
+
+Verify after enabling:
+
+```bash
+gh api repos/betsalel-williamson/mdcp/branches/main/protection \
+  --jq '.required_pull_request_reviews | {require_code_owner_reviews, required_approving_review_count}'
+```
+
+Fork PRs from outside collaborators still run CI under the base-repo policy; code-owner review ensures `@betsalel-williamson` approves changes to owned paths before merge.
+
 ## Related docs
 
 - [SECURITY.md](../../SECURITY.md) — reporting and maintainer security practices

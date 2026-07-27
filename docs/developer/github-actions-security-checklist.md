@@ -31,7 +31,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Environment required reviewers          | `open risk ([#180](https://github.com/betsalel-williamson/mdcp/issues/180))` | Release environment needs manual approval.                                           |
 | **Code & Supply Chain**                 |                                                                              |                                                                                      |
 | Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                     |
-| Require approval for external           | `open risk ([#182](https://github.com/betsalel-williamson/mdcp/issues/182))` | Missing CODEOWNERS and approval requirement.                                         |
+| Require approval for external           | `reviewed (2026-07-27)`                                                      | CODEOWNERS added; require-code-owner reviews are maintainer ops.                     |
 | Dependabot for Actions                  | `reviewed (2026-07-27)`                                                      | Configured for weekly updates.                                                       |
 | Dependabot cooldown                     | `open risk ([#181](https://github.com/betsalel-williamson/mdcp/issues/181))` | Missing cooldown period for actions ecosystem.                                       |
 | Artifact / cache poisoning              | `open risk ([#183](https://github.com/betsalel-williamson/mdcp/issues/183))` | `release.yml` uses `cache: pnpm` on the publish path.                                |
