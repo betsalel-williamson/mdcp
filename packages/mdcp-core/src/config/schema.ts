@@ -94,7 +94,7 @@ export const MdcpConfigSchema = z.object({
   /** Repository-wide markdown coverage scan options. */
   scan: z
     .object({
-      /** Honor nearest ancestor `.gitignore` (walks up from scan.root; default true). */
+      /** Honor `.gitignore` (repo-root inside git; scan-root only otherwise; default true). */
       gitignore: z.boolean().default(true),
       /** Extra ignore globs beyond the built-in defaults. */
       ignore: z.array(z.string()).default([]),

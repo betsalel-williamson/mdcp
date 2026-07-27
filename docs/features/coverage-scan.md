@@ -45,7 +45,7 @@ A standalone guide is register-only:
 
 ## What the scan skips
 
-The scan honors the repository `.gitignore` by default, so paths already excluded from version control (for example `node_modules`, `dist`, `build`, `_build`, `.caches`, `coverage`) are skipped with no extra config. When `scan.root` is nested below the repository root, the scan walks up from that root until it finds a `.gitignore` (or hits a `.git` directory / filesystem root). A small built-in default always skips `.git`, `node_modules`, and `.agents`, even when `.gitignore` does not list them.
+The scan honors the repository `.gitignore` by default, so paths already excluded from version control (for example `node_modules`, `dist`, `build`, `_build`, `.caches`, `coverage`) are skipped with no extra config. When `scan.root` is nested below the repository root, the scan locates the enclosing git working tree (a `.git` entry) and applies that repository's `.gitignore` — it never climbs past the git root. If `scan.root` is not inside a git working tree, only a `.gitignore` at `scan.root` itself is honored (parent directories are not searched). A small built-in default always skips `.git`, `node_modules`, and `.agents`, even when `.gitignore` does not list them.
 
 `scan.ignore` extends what is skipped, `scan.gitignore: false` turns off `.gitignore` honoring, and `scan.root` overrides the walk root (default: the invocation directory).
 
@@ -88,13 +88,13 @@ The orphan check stays a hard error because a shard in a guide directory is clea
 }
 ```
 
-| Knob               | Default                                    | Role                                                            |
-| ------------------ | ------------------------------------------ | --------------------------------------------------------------- |
-| `standaloneGuides` | `[]`                                       | Files or globs registered as standalone (captured)              |
-| `scan.gitignore`   | `true`                                     | Honor nearest ancestor `.gitignore` (walks up from `scan.root`) |
-| `scan.ignore`      | built-in `.git`, `node_modules`, `.agents` | Extra directories or globs to skip                              |
-| `scan.root`        | invocation directory                       | Root the scan walks for markdown files                          |
-| `scan.strict`      | `false`                                    | Fail `mdcp check` on coverage gaps                              |
+| Knob               | Default                                    | Role                                                              |
+| ------------------ | ------------------------------------------ | ----------------------------------------------------------------- |
+| `standaloneGuides` | `[]`                                       | Files or globs registered as standalone (captured)                |
+| `scan.gitignore`   | `true`                                     | Honor repo-root `.gitignore` inside git; scan-root only otherwise |
+| `scan.ignore`      | built-in `.git`, `node_modules`, `.agents` | Extra directories or globs to skip                                |
+| `scan.root`        | invocation directory                       | Root the scan walks for markdown files                            |
+| `scan.strict`      | `false`                                    | Fail `mdcp check` on coverage gaps                                |
 
 ## Coverage scan acceptance criteria
 
@@ -103,7 +103,7 @@ The orphan check stays a hard error because a shard in a guide directory is clea
 - A guide output target (`compile.outputFile` and top-level `outputFile`) is captured.
 - A `standaloneGuides[]` entry is captured, including glob matches.
 - A markdown file outside every guide and outside `standaloneGuides[]` is reported as uncaptured.
-- The scan honors `.gitignore` by default (walking up from `scan.root` to the repository `.gitignore`); `scan.gitignore: false` disables it.
+- The scan honors `.gitignore` by default (repo-root `.gitignore` when inside a git working tree; `scan.root` `.gitignore` only when not); `scan.gitignore: false` disables it.
 - Built-in defaults (`.git`, `node_modules`, `.agents`) are always skipped; `scan.ignore` extends them.
 - A `standaloneGuides[]` entry matching no file is reported as missing.
 - `mdcp check` prints uncaptured and missing-standalone paths; with `scan.strict: true` those gaps fail the gate.

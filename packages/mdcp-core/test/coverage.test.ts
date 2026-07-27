@@ -68,6 +68,7 @@ describe('computeCoverage', () => {
 
   it('honors .gitignore by default', () => {
     const opts = setup();
+    write('.git'); // mark repo root (file or dir both count)
     write('.gitignore', 'dist/\n');
     write('dist/generated.md');
     const result = computeCoverage(opts);
@@ -76,6 +77,7 @@ describe('computeCoverage', () => {
   });
 
   it('walks up from scan.root to honor an ancestor repository .gitignore', () => {
+    write('.git');
     write('.gitignore', '.caches/\n');
     write('docs/guide/index.md');
     write('docs/.caches/mdcp/prompts/legacy.prompt.md');
@@ -91,6 +93,39 @@ describe('computeCoverage', () => {
     expect(result.uncaptured).not.toContain('.caches/mdcp/prompts/legacy.prompt.md');
     expect(result.uncaptured).toContain('stray.md');
     expect(result.captured).toContain('guide/index.md');
+  });
+
+  it('does not walk above scan.root for .gitignore when not inside a git repo', () => {
+    // Parent has a .gitignore but no .git — must not escape the project root.
+    write('.gitignore', '.caches/\n');
+    write('docs/guide/index.md');
+    write('docs/.caches/mdcp/prompts/legacy.prompt.md');
+    write('docs/stray.md');
+    const result = computeCoverage({
+      root: join(work.path, 'docs'),
+      guideDirs: [join(work.path, 'docs/guide')],
+      outputFiles: [],
+      standaloneGuides: [],
+      ignore: [],
+      gitignore: true,
+    });
+    expect(result.uncaptured).toContain('.caches/mdcp/prompts/legacy.prompt.md');
+    expect(result.uncaptured).toContain('stray.md');
+  });
+
+  it('still honors .gitignore at scan.root when not inside a git repo', () => {
+    write('.gitignore', 'dist/\n');
+    write('dist/generated.md');
+    write('guide/index.md');
+    const result = computeCoverage({
+      root: work.path,
+      guideDirs: [join(work.path, 'guide')],
+      outputFiles: [],
+      standaloneGuides: [],
+      ignore: [],
+      gitignore: true,
+    });
+    expect(result.uncaptured).not.toContain('dist/generated.md');
   });
 
   it('does not honor .gitignore when gitignore is false', () => {

@@ -25,7 +25,7 @@ export interface CoverageOptions {
   standaloneGuides: string[];
   /** Extra ignore globs; built-in defaults are always added internally. */
   ignore: string[];
-  /** Honor the nearest ancestor `.gitignore` (walks up from the scan root). */
+  /** Honor `.gitignore`: repo-root when inside git; scan-root only otherwise. */
   gitignore: boolean;
 }
 
@@ -47,19 +47,14 @@ function isUnder(dir: string, absPath: string): boolean {
 }
 
 /**
- * Walk up from `start` to find a `.gitignore`, stopping at the git repo root
- * (a `.git` entry) or the filesystem root. Returns the directory that owns the
- * file and its contents, or null when none is found.
+ * Walk up from `start` looking for a `.git` entry (directory or file, as in
+ * worktrees). Returns the repository root, or null when `start` is not inside
+ * a git working tree.
  */
-function findAncestorGitignore(start: string): { dir: string; content: string } | null {
+function findGitRoot(start: string): string | null {
   let dir = resolve(start);
   for (;;) {
-    const gitignorePath = resolve(dir, '.gitignore');
-    if (existsSync(gitignorePath)) {
-      return { dir, content: readFileSync(gitignorePath, 'utf-8') };
-    }
-    // Do not walk out of the repository.
-    if (existsSync(resolve(dir, '.git'))) return null;
+    if (existsSync(resolve(dir, '.git'))) return dir;
     const parent = dirname(dir);
     if (parent === dir) return null;
     dir = parent;
@@ -67,11 +62,29 @@ function findAncestorGitignore(start: string): { dir: string; content: string } 
 }
 
 /**
- * Filter scan-root-relative POSIX paths through the nearest ancestor
- * `.gitignore` (repository root when nested under `scan.root`).
+ * Locate the `.gitignore` that should apply to `start`.
+ *
+ * - Inside a git repo: use the repository-root `.gitignore` only (never walk
+ *   above the `.git` boundary).
+ * - Outside a git repo: honor `.gitignore` at `start` itself only — do not
+ *   climb parents, which would escape the project root into unrelated trees.
+ */
+function findApplicableGitignore(start: string): { dir: string; content: string } | null {
+  const root = resolve(start);
+  const gitRoot = findGitRoot(root);
+  // Inside git: repo-root `.gitignore`. Outside git: scan-root only (no parent climb).
+  const ignoreDir = gitRoot ?? root;
+  const gitignorePath = resolve(ignoreDir, '.gitignore');
+  if (!existsSync(gitignorePath)) return null;
+  return { dir: ignoreDir, content: readFileSync(gitignorePath, 'utf-8') };
+}
+
+/**
+ * Filter scan-root-relative POSIX paths through the applicable `.gitignore`
+ * (repo-root when inside git; scan-root only otherwise).
  */
 function gitignoreFilter(root: string, relPaths: string[]): string[] {
-  const found = findAncestorGitignore(root);
+  const found = findApplicableGitignore(root);
   if (!found) return relPaths;
   const matcher = ignoreFactory().add(found.content);
   return relPaths.filter((rel) => {
