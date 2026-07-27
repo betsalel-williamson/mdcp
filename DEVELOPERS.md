@@ -1192,6 +1192,10 @@ Re-run the checklist when any of the following change:
 
 Even when nothing changes, schedule a **periodic pass** (for example quarterly) so third-party action advisories and OWASP guidance updates do not drift unnoticed.
 
+### Static analysis
+
+We run **CodeQL** and **Zizmor** on push and pull request. Zizmor checks our workflow files for security misconfigurations and surfaces annotations. CodeQL provides SAST for our JavaScript/TypeScript code.
+
 ### Related docs
 
 - [SECURITY.md](SECURITY.md) — reporting and maintainer security practices
@@ -1241,7 +1245,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Dependabot cooldown                     | `open risk ([#181](https://github.com/betsalel-williamson/mdcp/issues/181))` | Missing cooldown period for actions ecosystem.                                       |
 | Artifact / cache poisoning              | `open risk ([#183](https://github.com/betsalel-williamson/mdcp/issues/183))` | `release.yml` uses `cache: pnpm` on the publish path.                                |
 | Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                         |
-| Static analysis (CodeQL/Zizmor)         | `open risk ([#174](https://github.com/betsalel-williamson/mdcp/issues/174))` | Missing workflow and code scanning.                                                  |
+| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`                                                      | Added CodeQL and Zizmor workflows.                                                   |
 | AI-in-CI                                | `not a concern (2026-07-27)`                                                 | No AI assistants used in CI.                                                         |
 | **Incident Response**                   |                                                                              |                                                                                      |
 | Incident response plan                  | `reviewed (2026-07-27)`                                                      | Covered in `SECURITY.md` and triage docs.                                            |

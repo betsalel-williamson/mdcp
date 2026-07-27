@@ -28,6 +28,10 @@ Re-run the checklist when any of the following change:
 
 Even when nothing changes, schedule a **periodic pass** (for example quarterly) so third-party action advisories and OWASP guidance updates do not drift unnoticed.
 
+## Static analysis
+
+We run **CodeQL** and **Zizmor** on push and pull request. Zizmor checks our workflow files for security misconfigurations and surfaces annotations. CodeQL provides SAST for our JavaScript/TypeScript code.
+
 ## Related docs
 
 - [SECURITY.md](../../SECURITY.md) — reporting and maintainer security practices
