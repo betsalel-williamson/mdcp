@@ -9,6 +9,7 @@ import {
   URGENT_LABELS,
   URGENT_MARKER_PREFIX,
 } from './config.js';
+import { sanitizeBodyText, sanitizeTitleText } from './sanitize.js';
 import type { AuditFinding, TriageLevel } from './types.js';
 
 export interface GitHubIssue {
@@ -176,14 +177,19 @@ export function formatChangeComment(
   finding: Pick<AuditFinding, 'skill' | 'providerSlug' | 'status' | 'summary' | 'riskLevel'>,
   triage?: TriageLevel | null,
 ): string {
-  const skillUrl = `${SKILLS_SH_PAGE}/${finding.skill}`;
+  const skillUrl = `${SKILLS_SH_PAGE}/${sanitizeBodyText(finding.skill, 100)}`;
+  const provider = sanitizeBodyText(finding.providerSlug, 100);
+  const status = sanitizeBodyText(finding.status, 200);
+  const summary = sanitizeBodyText(finding.summary, 2000);
+  const risk = sanitizeBodyText(finding.riskLevel, 100);
+
   if (event === 'cleared') {
     return [
       '### Audit finding cleared on skills.sh',
       '',
-      `- **Skill:** [\`${finding.skill}\`](${skillUrl})`,
-      `- **Provider:** \`${finding.providerSlug}\``,
-      `- **Was:** ${finding.status} — ${finding.summary}`,
+      `- **Skill:** [\`${sanitizeBodyText(finding.skill, 100)}\`](${skillUrl})`,
+      `- **Provider:** \`${provider}\``,
+      `- **Was:** ${status} — ${summary}`,
       '',
       'No action required unless this reappears on a future sync.',
     ].join('\n');
@@ -193,11 +199,11 @@ export function formatChangeComment(
   return [
     `### New audit finding${triageLine}`,
     '',
-    `- **Skill:** [\`${finding.skill}\`](${skillUrl})`,
-    `- **Provider:** \`${finding.providerSlug}\``,
-    `- **Status:** ${finding.status}`,
-    `- **Risk:** ${finding.riskLevel}`,
-    `- **Summary:** ${finding.summary}`,
+    `- **Skill:** [\`${sanitizeBodyText(finding.skill, 100)}\`](${skillUrl})`,
+    `- **Provider:** \`${provider}\``,
+    `- **Status:** ${status}`,
+    `- **Risk:** ${risk}`,
+    `- **Summary:** ${summary}`,
     '',
     '**Suggested next steps:** triage on the in-flight Issue, fix or open a PR to `security/skills-audit-accepted.yaml` if accepting risk.',
   ].join('\n');
@@ -208,32 +214,30 @@ export function urgentIssueMarker(fingerprint: string): string {
 }
 
 export function renderUrgentIssueBody(finding: AuditFinding, fingerprint: string): string {
-  const skillUrl = `${SKILLS_SH_PAGE}/${finding.skill}`;
+  const skill = sanitizeBodyText(finding.skill, 100);
+  const provider = sanitizeBodyText(finding.providerSlug, 100);
+  const status = sanitizeBodyText(finding.status, 200);
+  const summary = sanitizeBodyText(finding.summary, 2000);
+  const risk = sanitizeBodyText(finding.riskLevel, 100);
+
+  const skillUrl = `${SKILLS_SH_PAGE}/${skill}`;
   return `${urgentIssueMarker(fingerprint)}
 
 # Urgent: skills.sh audit finding (high)
 
-- **Skill:** [\`${finding.skill}\`](${skillUrl})
-- **Provider:** \`${finding.providerSlug}\`
-- **Status:** ${finding.status}
-- **Risk:** ${finding.riskLevel}
-- **Summary:** ${finding.summary}
+- **Skill:** [\`${skill}\`](${skillUrl})
+- **Provider:** \`${provider}\`
+- **Status:** ${status}
+- **Risk:** ${risk}
+- **Summary:** ${summary}
 
 Track progress here; the in-flight register Issue holds the full audit trail.
 `;
 }
 
-export function truncateTitle(text: string, max = 80): string {
-  if (text.length <= max) {
-    return text;
-  }
-  return `${text.slice(0, max - 1)}…`;
-}
-
 export function urgentIssueTitle(finding: AuditFinding): string {
-  return truncateTitle(
-    `[skill-security] HIGH: ${finding.skill} — ${finding.providerSlug}: ${finding.summary}`,
-  );
+  const title = `[skill-security] HIGH: ${finding.skill} — ${finding.providerSlug}: ${finding.summary}`;
+  return sanitizeTitleText(title, 200);
 }
 
 export function hasReleaseInDailyWindow(

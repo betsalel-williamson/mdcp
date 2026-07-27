@@ -1,3 +1,4 @@
+import { sanitizeBodyText } from './sanitize.js';
 import type { AuditFinding } from './types.js';
 
 export function parseSkillsList(payload: unknown): Array<{ slug: string }> {
@@ -35,11 +36,11 @@ export function parseAuditFindings(skillSlug: string, payload: unknown): AuditFi
     const audit = item as Record<string, unknown>;
     const providerRaw = audit.slug ?? audit.provider ?? 'unknown';
     return {
-      skill: skillSlug,
-      providerSlug: String(providerRaw).toLowerCase(),
-      status: String(audit.status ?? 'unknown'),
-      summary: String(audit.summary ?? ''),
-      riskLevel: String(audit.riskLevel ?? audit.risk ?? 'UNKNOWN').toUpperCase(),
+      skill: sanitizeBodyText(skillSlug, 100),
+      providerSlug: sanitizeBodyText(String(providerRaw).toLowerCase(), 100),
+      status: sanitizeBodyText(String(audit.status ?? 'unknown'), 200),
+      summary: sanitizeBodyText(String(audit.summary ?? ''), 2000),
+      riskLevel: sanitizeBodyText(String(audit.riskLevel ?? audit.risk ?? 'UNKNOWN').toUpperCase(), 100),
       auditedAt: audit.auditedAt != null ? String(audit.auditedAt) : undefined,
     };
   });
