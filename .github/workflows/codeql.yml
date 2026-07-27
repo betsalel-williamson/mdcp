@@ -7,24 +7,18 @@ on:
     # Any target branch (stacked feature PRs, not only main).
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ matrix.language }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions: {}
 
 jobs:
   analyze:
-    name: Analyze (${{ matrix.language }})
+    name: Analyze
     runs-on: ubuntu-latest
     permissions:
       security-events: write # Upload CodeQL SARIF results
       contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        # javascript-typescript: package/source SAST
-        # actions: GitHub Actions workflow queries (OWASP GHA cheat sheet)
-        language: [javascript-typescript, actions]
 
     steps:
       # Harden-Runner: audit mode only — logs egress; block mode is follow-up (#179).
@@ -40,9 +34,8 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@4187e74d05793876e9989daffde9c3e66b4acd07 # v3.37.3
         with:
-          languages: ${{ matrix.language }}
+          # Package/source SAST + GitHub Actions workflow queries (OWASP).
+          languages: javascript-typescript,actions
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@4187e74d05793876e9989daffde9c3e66b4acd07 # v3.37.3
-        with:
-          category: '/language:${{ matrix.language }}'
