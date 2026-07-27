@@ -66,8 +66,14 @@ function getScanRoot(config: MdcpConfig): string {
 function coverageInputs(config: MdcpConfig, opts: GlobalOpts): CoverageOptions {
   const docsRoot = getDocsRoot(opts);
   const outputFiles: string[] = [];
+  const guideDirs: string[] = [];
   for (const name of config.compileOrder) {
     const cfg = getGuideConfig(config, name);
+    guideDirs.push(resolveGuideDir(name, config, docsRoot));
+    // scopeRoot trees (e.g. shared glossary) are compiled into guides — treat as captured.
+    if (cfg?.compile?.scopeRoot) {
+      guideDirs.push(resolve(docsRoot, cfg.compile.scopeRoot));
+    }
     const outFile = effectiveGuideOutputFile(name, cfg?.compile, config.compileOrder.length);
     outputFiles.push(resolveUnderOutputDir(docsRoot, config.outputDir, outFile));
   }
@@ -75,7 +81,7 @@ function coverageInputs(config: MdcpConfig, opts: GlobalOpts): CoverageOptions {
   if (topOutput) outputFiles.push(topOutput);
   return {
     root: getScanRoot(config),
-    guideDirs: config.compileOrder.map((name) => resolveGuideDir(name, config, docsRoot)),
+    guideDirs,
     outputFiles,
     standaloneGuides: config.standaloneGuides,
     ignore: config.scan?.ignore ?? [],
@@ -526,10 +532,20 @@ cli
       const coverage = computeCoverage(coverageInputs(config, opts));
       for (const p of coverage.uncaptured) console.error(`uncaptured: ${p}`);
       for (const p of coverage.missingStandalone) console.error(`missing-standalone: ${p}`);
-      if (coverage.uncaptured.length > 0) {
+      const coverageGaps = coverage.uncaptured.length + coverage.missingStandalone.length;
+      if (coverageGaps > 0) {
+        const strict = config.scan?.strict === true;
         console.error(
-          `coverage: ${coverage.uncaptured.length} markdown file(s) not captured by a guide or standaloneGuides (non-fatal)`,
+          `coverage: ${coverage.uncaptured.length} uncaptured, ${coverage.missingStandalone.length} missing standalone` +
+            (strict ? '' : ' (non-fatal; set scan.strict to fail check)'),
         );
+        if (strict) {
+          console.error('');
+          console.error(
+            'mdcp check failed: coverage gaps. Fold files into a guide, register standaloneGuides, or add scan.ignore.',
+          );
+          process.exit(1);
+        }
       }
 
       if (failures.length > 0) {

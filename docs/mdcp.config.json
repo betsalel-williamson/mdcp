@@ -69,6 +69,18 @@
       }
     }
   ],
+  "standaloneGuides": [
+    "AGENTS.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md",
+    "docs/skills.md",
+    "packages/mdcp-presets/README.md",
+    "skills/**/*.md"
+  ],
+  "scan": {
+    "strict": true,
+    "ignore": [".changeset/**", "tests/**", "examples/**", "**/CHANGELOG.md"]
+  },
   "refs": {
     "registryFile": "_build/refs.json",
     "slugAlgorithm": "github"

@@ -1,12 +1,12 @@
 # Coverage in check
 
-`mdcp check` reports markdown files that no guide accounts for, so nothing drifts out of your documentation set unnoticed. The report is non-fatal: uncaptured files never fail the gate by themselves.
+`mdcp check` reports markdown files that no guide accounts for, so nothing drifts out of your documentation set unnoticed. By default the report is non-fatal. Set `scan.strict: true` when CI should fail on gaps (this repository dogfoods that).
 
 ## What it reports
 
-- **Uncaptured** — files under the scan root that no guide or `standaloneGuides[]` entry covers (`uncaptured: <path>`).
+- **Uncaptured** — files under the scan root that no guide, `compile.scopeRoot`, or `standaloneGuides[]` entry covers (`uncaptured: <path>`).
 - **Missing standalone** — `standaloneGuides[]` entries that match no file on disk (`missing-standalone: <path>`).
-- **Summary** — when any file is uncaptured, a one-line `coverage:` count (still non-fatal).
+- **Summary** — when gaps exist, a one-line `coverage:` count.
 
 ```bash
 mdcp check --config docs/mdcp.config.json --docs-root docs
@@ -22,7 +22,8 @@ When a file is intentionally standalone — a hand-authored README or a top-leve
 {
   "standaloneGuides": ["packages/*/README.md", "SECURITY.md"],
   "scan": {
-    "ignore": ["legacy"]
+    "ignore": ["legacy"],
+    "strict": true
   }
 }
 ```

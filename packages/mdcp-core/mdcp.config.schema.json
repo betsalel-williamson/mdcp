@@ -159,6 +159,11 @@
         "root": {
           "type": "string",
           "description": "Walk root for the scan (default: invocation directory)."
+        },
+        "strict": {
+          "type": "boolean",
+          "default": false,
+          "description": "Fail mdcp check when uncaptured files or missing standalone entries exist."
         }
       }
     },

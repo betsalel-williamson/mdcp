@@ -18,6 +18,7 @@ A guide compiles a list of shards into one output. A [standalone guide](../gloss
 [Coverage](../glossary/coverage.md) is the set of markdown files MDCP can account for. A file is **captured** when it is one of:
 
 - a markdown file inside a guide directory (a guide listed in `compileOrder`),
+- a markdown file inside a guide's `compile.scopeRoot` (shared trees such as a glossary),
 - a guide output target (`compile.outputFile`, or the top-level `outputFile`), or
 - a `standaloneGuides[]` entry.
 
@@ -50,24 +51,26 @@ The scan honors the repository `.gitignore` by default, so paths already exclude
 
 ## Check surface
 
-`mdcp check` runs the coverage scan and prints each uncaptured path (`uncaptured: …`) plus any `standaloneGuides[]` entries that match no file (`missing-standalone: …`). When uncaptured files exist, it also prints a one-line `coverage:` summary. The report is always non-fatal — uncaptured files never fail the gate by themselves (same home as the orphan check, different severity).
+`mdcp check` runs the coverage scan and prints each uncaptured path (`uncaptured: …`) plus any `standaloneGuides[]` entries that match no file (`missing-standalone: …`). When gaps exist, it also prints a one-line `coverage:` summary.
 
-Machine-readable inventory (captured / uncaptured / standalone / missing) is available from core via `computeCoverage`. CI enforcement can come later as a `check` flag or `scan.strict` config if a consumer needs it — not as a parallel command.
+By default the report is non-fatal. Set `scan.strict: true` so `mdcp check` exits `1` on uncaptured files or missing standalone entries — use that in dogfood CI once the inventory is registered.
 
-| Condition                | `mdcp check` exit contribution |
-| ------------------------ | ------------------------------ |
-| No uncaptured files      | none                           |
-| Uncaptured files         | none (warning lines only)      |
-| Missing standalone entry | none (warning lines only)      |
+Machine-readable inventory (captured / uncaptured / standalone / missing) is available from core via `computeCoverage`.
+
+| Condition                        | `mdcp check` exit contribution |
+| -------------------------------- | ------------------------------ |
+| No gaps                          | none                           |
+| Gaps, `scan.strict` false/absent | none (warning lines only)      |
+| Gaps, `scan.strict: true`        | fails check                    |
 
 ## Relationship to the orphan check
 
 The coverage scan does not replace the [orphan check](./feature-catalog.md#orphan-check-p13). They cover different mistakes:
 
-| Check         | Scope                                                       | Severity                   |
-| ------------- | ----------------------------------------------------------- | -------------------------- |
-| Orphan check  | A shard inside a guide directory missing from its manifest  | Error (fails `mdcp check`) |
-| Coverage scan | Any markdown file under the repo that no guide accounts for | Warning (non-fatal)        |
+| Check         | Scope                                                       | Severity                                   |
+| ------------- | ----------------------------------------------------------- | ------------------------------------------ |
+| Orphan check  | A shard inside a guide directory missing from its manifest  | Error (fails `mdcp check`)                 |
+| Coverage scan | Any markdown file under the repo that no guide accounts for | Warning, or error when `scan.strict: true` |
 
 The orphan check stays a hard error because a shard in a guide directory is clearly meant to compile. The coverage scan is a warning because an uncaptured file may be intentional until registered as standalone.
 
@@ -79,7 +82,8 @@ The orphan check stays a hard error because a shard in a guide directory is clea
   "scan": {
     "gitignore": true,
     "ignore": ["legacy"],
-    "root": "."
+    "root": ".",
+    "strict": true
   }
 }
 ```
@@ -90,17 +94,19 @@ The orphan check stays a hard error because a shard in a guide directory is clea
 | `scan.gitignore`   | `true`                                     | Honor the repository `.gitignore` when walking     |
 | `scan.ignore`      | built-in `.git`, `node_modules`, `.agents` | Extra directories or globs to skip                 |
 | `scan.root`        | invocation directory                       | Root the scan walks for markdown files             |
+| `scan.strict`      | `false`                                    | Fail `mdcp check` on coverage gaps                 |
 
 ## Coverage scan acceptance criteria
 
 - A shard in a compiled guide is captured.
+- A guide `compile.scopeRoot` tree is captured.
 - A guide output target (`compile.outputFile` and top-level `outputFile`) is captured.
 - A `standaloneGuides[]` entry is captured, including glob matches.
 - A markdown file outside every guide and outside `standaloneGuides[]` is reported as uncaptured.
 - The scan honors `.gitignore` by default; `scan.gitignore: false` disables it.
 - Built-in defaults (`.git`, `node_modules`, `.agents`) are always skipped; `scan.ignore` extends them.
 - A `standaloneGuides[]` entry matching no file is reported as missing.
-- `mdcp check` prints uncaptured and missing-standalone paths as a non-fatal warning and never fails on them.
+- `mdcp check` prints uncaptured and missing-standalone paths; with `scan.strict: true` those gaps fail the gate.
 - The existing orphan check behavior is unchanged.
 
 ## Coverage scan related

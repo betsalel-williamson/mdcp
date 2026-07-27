@@ -100,8 +100,10 @@ export const MdcpConfigSchema = z.object({
       ignore: z.array(z.string()).default([]),
       /** Walk root for the scan (default: invocation directory). */
       root: z.string().optional(),
+      /** Fail `mdcp check` when uncaptured files or missing standalone entries exist. */
+      strict: z.boolean().default(false),
     })
-    .default({ gitignore: true, ignore: [] }),
+    .default({ gitignore: true, ignore: [], strict: false }),
 
   /** Opt-in backup of existing compile/export targets before overwrite. */
   backup: z
