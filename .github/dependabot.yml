@@ -6,6 +6,8 @@ updates:
       interval: weekly
     labels:
       - dependencies
+    cooldown:
+      default-days: 7
     groups:
       dev-dependencies:
         dependency-type: development

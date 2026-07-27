@@ -1,9 +1,10 @@
-name: gitleaks
+name: 'CodeQL'
 
 on:
   push:
+    branches: [main]
   pull_request:
-  workflow_dispatch:
+    # Any target branch (stacked feature PRs, not only main).
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -17,21 +18,29 @@ env:
 permissions: {}
 
 jobs:
-  scan:
-    name: Scan
+  analyze:
+    name: Analyze
     runs-on: ubuntu-latest
     permissions:
+      security-events: write # Upload CodeQL SARIF results
       contents: read
+
     steps:
       # Harden-Runner: audit mode only — logs egress; block mode is follow-up (#179).
       - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          fetch-depth: 0
           persist-credentials: false
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
+        with:
+          # Package/source SAST + GitHub Actions workflow queries (OWASP).
+          languages: javascript-typescript,actions
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
