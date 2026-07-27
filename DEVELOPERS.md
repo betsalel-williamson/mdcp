@@ -844,18 +844,19 @@ Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR
 
 - Root `README.md`, `docs/`, `examples/` only (when the PR does **not** change `skills/` or published package sources)
 - CI, Husky, or other tooling that does not change skill packs or npm package behavior
+- `devDependencies` bumps in root or `packages/*/package.json` (including `@types/*`) when no other package fields or sources change
 - Typo fixes in package READMEs with no behavior change (maintainer discretion)
 
-CI on pull requests runs `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed.
+CI on pull requests runs `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed. Package-level `devDependencies`-only bumps are treated as tooling and do not fail the check.
 
 ### Dependabot
 
-Dependabot does not add changesets. Treat its PRs like any other:
+Dependabot does not add changesets. **Non-dev dependency bumps need a human** — review the PR, add a changeset, then merge. Dev-only bumps should pass CI without one.
 
-| Dependabot PR type                                      | Changeset                                     |
-| ------------------------------------------------------- | --------------------------------------------- |
-| Production dependency bump in `packages/*/package.json` | Add a **patch** changeset before merge        |
-| Root dev-dependencies (grouped) or GitHub Actions only  | No changeset (CI `changeset` job should pass) |
+| Dependabot PR type                                                                         | Changeset / merge gate                                |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `dependencies`, `peerDependencies`, or `optionalDependencies` in `packages/*/package.json` | **Human approval** + **patch** changeset before merge |
+| `devDependencies` only (root and/or `packages/*/package.json`), or GitHub Actions          | No changeset (CI `changeset` job should pass)         |
 
 ### Bump selection guide
 
