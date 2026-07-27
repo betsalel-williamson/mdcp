@@ -5,14 +5,19 @@ on:
     tags:
       - 'v*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
   publish:
+    name: Publish
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      id-token: write
+      contents: write # Create GitHub Release for the tag
+      id-token: write # npm OIDC Trusted Publishing
     environment: release
     steps:
       # Harden-Runner: audit mode only — logs egress; block mode is follow-up (#179).
