@@ -1239,7 +1239,7 @@ Fork PRs from outside collaborators still run CI under the base-repo policy; cod
 We run **CodeQL** and **Zizmor** on push and pull request:
 
 - **CodeQL** — JavaScript/TypeScript SAST. The analyze job fails on findings; make it a **required** status check on `main` if it should gate merges.
-- **Zizmor** — GitHub Actions workflow misconfiguration scanner. During rollout the job uses `continue-on-error: true`, so it is **advisory only** (annotations + logs; does not block merge). Do not treat a green Zizmor check as enforcement until that flag is removed and the check is required.
+- **Zizmor** — GitHub Actions workflow misconfiguration scanner. The job **fails on findings** (blocking); annotations surface issues on the PR. Make it a **required** status check on `main` if it should gate merges.
 
 ### Related docs
 
@@ -1290,7 +1290,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Dependabot cooldown                     | `reviewed (2026-07-27)`                                                      | Explicit 7-day cooldown on `github-actions`.                                         |
 | Artifact / cache poisoning              | `reviewed (2026-07-27)`                                                      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                       |
 | Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                         |
-| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`                                                      | CodeQL workflow added (enforce via required checks). Zizmor is advisory during rollout (`continue-on-error`). |
+| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`                                                      | CodeQL + Zizmor workflows; Zizmor fails the job on findings.                         |
 | AI-in-CI                                | `not a concern (2026-07-27)`                                                 | No AI assistants used in CI.                                                         |
 | **Incident Response**                   |                                                                              |                                                                                      |
 | Incident response plan                  | `reviewed (2026-07-27)`                                                      | Covered in `SECURITY.md` and triage docs.                                            |
