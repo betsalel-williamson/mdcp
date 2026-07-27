@@ -71,8 +71,8 @@
     ]
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.2",
-    "@commitlint/cli": "^21.0.2",
+    "@changesets/cli": "^2.31.1",
+    "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "^10.0.1",
     "@slidev/cli": "latest",
