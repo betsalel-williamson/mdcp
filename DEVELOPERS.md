@@ -1141,6 +1141,94 @@ Never unpublish a version that other packages or consumers legitimately depend o
 
 <!-- mdcp-shard: end docs/developer/security-incident-triage.md -->
 
+<!-- mdcp-shard: start docs/developer/github-actions-security.md -->
+
+## GitHub Actions security posture
+
+Maintainer guide for tracking **GitHub Actions security posture** in this public OSS monorepo. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); dependency and release triage stays in [Security-incident triage](#security-incident-triage). This shard is the audit trail for CI workflow and repository settings against the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html).
+
+Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status.
+
+### Status vocabulary
+
+Each checklist row uses **exactly one** of these statuses (normative):
+
+| Status                       | Meaning                                                                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `reviewed (YYYY-MM-DD)`      | Topic assessed against current repo state on that date; controls in place or accepted with documented rationale                |
+| `not a concern (YYYY-MM-DD)` | OWASP topic does not apply to this repo (e.g. no self-hosted runners)                                                          |
+| `open risk (#N)`             | Gap remains; `#N` is a **remediation issue** that is a child of [#173](https://github.com/betsalel-williamson/mdcp/issues/173) |
+
+Do not invent alternate labels. When a risk closes, update the row to `reviewed` or `not a concern` with the resolution date.
+
+### Re-review cadence
+
+Re-run the checklist when any of the following change:
+
+- Workflow files under `.github/workflows/` (triggers, permissions, action versions, secrets usage)
+- Repository or organization **Actions** settings (default `GITHUB_TOKEN` permissions, allowed actions, environments)
+- Branch protection, rulesets, or required checks that gate merges and releases
+- Dependabot or secret-scanning configuration
+- Release mechanics ([Publishing](#publishing) — OIDC, environments, npm trust)
+
+Even when nothing changes, schedule a **periodic pass** (for example quarterly) so third-party action advisories and OWASP guidance updates do not drift unnoticed.
+
+### Related docs
+
+- [SECURITY.md](SECURITY.md) — reporting and maintainer security practices
+- [Security-incident triage](#security-incident-triage) — dependency advisories and release remediation
+- [Publishing](#publishing) — npm publish mechanics and Trusted Publishing (OIDC)
+- [GitHub Actions security checklist](#github-actions-security-checklist) — OWASP topic checklist with as-built status
+
+<!-- mdcp-shard: end docs/developer/github-actions-security.md -->
+
+<!-- mdcp-shard: start docs/developer/github-actions-security-checklist.md -->
+
+## GitHub Actions security checklist
+
+This checklist tracks our compliance with the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html). See [GitHub Actions security posture](#github-actions-security-posture) for vocabulary and re-review guidance. All open risks are tracked under epic [#173](https://github.com/betsalel-williamson/mdcp/issues/173).
+
+| OWASP Topic                             | Status                                                                       | Notes                                                                                |
+| --------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Pipeline Governance**                 |                                                                              |                                                                                      |
+| Treat CI/CD as critical production code | `reviewed (2026-07-27)`                                                      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173. |
+| **Authentication & Authorization**      |                                                                              |                                                                                      |
+| Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`                                                      | Repo default is read-only.                                                           |
+| Workflow-level `permissions: {}`        | `open risk ([#177](https://github.com/betsalel-williamson/mdcp/issues/177))` | Missing on `ci.yml` and `gitleaks.yml`.                                              |
+| `persist-credentials: false`            | `open risk ([#178](https://github.com/betsalel-williamson/mdcp/issues/178))` | Missing on `actions/checkout` steps.                                                 |
+| Eliminate static credentials            | `reviewed (2026-07-27)`                                                      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.              |
+| OIDC for cloud providers                | `reviewed (2026-07-27)`                                                      | Used for npm Trusted Publishing.                                                     |
+| Secure handling of static credentials   | `not a concern (2026-07-27)`                                                 | No static credentials remain in workflows.                                           |
+| Secrets: inherit                        | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| Mask sensitive data                     | `reviewed (2026-07-27)`                                                      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                     |
+| **Workflows & Execution**               |                                                                              |                                                                                      |
+| Pin actions to commit SHA               | `open risk ([#175](https://github.com/betsalel-williamson/mdcp/issues/175))` | Currently using mutable tags (`@v7`, etc.).                                          |
+| Third-party actions caution             | `reviewed (2026-07-27)`                                                      | Documented current set.                                                              |
+| Sanitize untrusted context / input      | `reviewed (2026-07-27)`                                                      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.            |
+| `pull_request_target` trigger           | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| `workflow_run` trigger                  | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| `issue_comment` trigger                 | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| Curated shared workflows                | `not a concern (2026-07-27)`                                                 | Single-repo monorepo; no centralized shared-workflows repository.                    |
+| Multi-repo shared workflows             | `not a concern (2026-07-27)`                                                 | Not used.                                                                            |
+| **Runners & Environments**              |                                                                              |                                                                                      |
+| Self-hosted runners                     | `not a concern (2026-07-27)`                                                 | Using `ubuntu-latest` GitHub-hosted runners.                                         |
+| Runner groups                           | `not a concern (2026-07-27)`                                                 | Not applicable to GitHub-hosted runners.                                             |
+| Egress monitoring                       | `open risk ([#179](https://github.com/betsalel-williamson/mdcp/issues/179))` | Harden-Runner not implemented.                                                       |
+| Environment required reviewers          | `open risk ([#180](https://github.com/betsalel-williamson/mdcp/issues/180))` | Release environment needs manual approval.                                           |
+| **Code & Supply Chain**                 |                                                                              |                                                                                      |
+| Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                     |
+| Require approval for external           | `open risk ([#182](https://github.com/betsalel-williamson/mdcp/issues/182))` | Missing CODEOWNERS and approval requirement.                                         |
+| Dependabot for Actions                  | `reviewed (2026-07-27)`                                                      | Configured for weekly updates.                                                       |
+| Dependabot cooldown                     | `open risk ([#181](https://github.com/betsalel-williamson/mdcp/issues/181))` | Missing cooldown period for actions ecosystem.                                       |
+| Artifact / cache poisoning              | `open risk ([#183](https://github.com/betsalel-williamson/mdcp/issues/183))` | `release.yml` uses `cache: pnpm` on the publish path.                                |
+| Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                         |
+| Static analysis (CodeQL/Zizmor)         | `open risk ([#174](https://github.com/betsalel-williamson/mdcp/issues/174))` | Missing workflow and code scanning.                                                  |
+| AI-in-CI                                | `not a concern (2026-07-27)`                                                 | No AI assistants used in CI.                                                         |
+| **Incident Response**                   |                                                                              |                                                                                      |
+| Incident response plan                  | `reviewed (2026-07-27)`                                                      | Covered in `SECURITY.md` and triage docs.                                            |
+
+<!-- mdcp-shard: end docs/developer/github-actions-security-checklist.md -->
+
 <!-- mdcp-shard: start docs/glossary/domain-glossary.md -->
 
 ## domain glossary
