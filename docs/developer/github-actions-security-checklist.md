@@ -33,7 +33,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Branch protection baseline              | `reviewed (2026-07-27)`                                                      | Main branch protected with PR and status checks.                                     |
 | Require approval for external           | `open risk ([#182](https://github.com/betsalel-williamson/mdcp/issues/182))` | Missing CODEOWNERS and approval requirement.                                         |
 | Dependabot for Actions                  | `reviewed (2026-07-27)`                                                      | Configured for weekly updates.                                                       |
-| Dependabot cooldown                     | `open risk ([#181](https://github.com/betsalel-williamson/mdcp/issues/181))` | Missing cooldown period for actions ecosystem.                                       |
+| Dependabot cooldown                     | `reviewed (2026-07-27)`                                                      | `github-actions` ecosystem uses explicit 7-day cooldown (stricter than 3-day default). |
 | Artifact / cache poisoning              | `open risk ([#183](https://github.com/betsalel-williamson/mdcp/issues/183))` | `release.yml` uses `cache: pnpm` on the publish path.                                |
 | Secret scanning                         | `reviewed (2026-07-27)`                                                      | Gitleaks workflow is active.                                                         |
 | Static analysis (CodeQL/Zizmor)         | `open risk ([#174](https://github.com/betsalel-williamson/mdcp/issues/174))` | Missing workflow and code scanning.                                                  |
