@@ -5,14 +5,24 @@ on:
     tags:
       - 'v*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Force JS actions onto Node 24 (Node 20 deprecated on runners).
+# https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions: {}
 
 jobs:
   publish:
+    name: Publish
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      id-token: write
+      contents: write # Create GitHub Release for the tag
+      id-token: write # npm OIDC Trusted Publishing
     environment: release
     steps:
       # Harden-Runner: audit mode only — logs egress; block mode is follow-up (#179).
@@ -29,8 +39,7 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
-
-      - run: npm install -g npm@latest
+          package-manager-cache: false
 
       - name: Verify tag matches package version
         run: |
@@ -56,7 +65,7 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3
-        with:
-          generate_release_notes: true
-          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: gh release create "$TAG_NAME" --generate-notes

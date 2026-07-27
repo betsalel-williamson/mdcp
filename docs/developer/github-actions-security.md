@@ -68,6 +68,13 @@ gh api repos/betsalel-williamson/mdcp/branches/main/protection \
 
 Fork PRs from outside collaborators still run CI under the base-repo policy; code-owner review ensures `@betsalel-williamson` approves changes to owned paths before merge.
 
+## Static analysis
+
+We run **CodeQL** and **Zizmor** on push and pull request:
+
+- **CodeQL** — matrix over `javascript-typescript` (package/source SAST) and `actions` (workflow queries per OWASP). Analysis uploads SARIF; make the **Analyze** / **CodeQL** checks **required** on `main`, and set code-scanning severity so findings block merges.
+- **Zizmor** — GitHub Actions workflow misconfiguration scanner. The job **fails on findings** (blocking); annotations surface issues on the PR. Make it a **required** status check on `main` if it should gate merges.
+
 ## Related docs
 
 - [SECURITY.md](../../SECURITY.md) — reporting and maintainer security practices
