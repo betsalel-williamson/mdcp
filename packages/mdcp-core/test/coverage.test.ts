@@ -75,6 +75,24 @@ describe('computeCoverage', () => {
     expect(result.captured).not.toContain('dist/generated.md');
   });
 
+  it('walks up from scan.root to honor an ancestor repository .gitignore', () => {
+    write('.gitignore', '.caches/\n');
+    write('docs/guide/index.md');
+    write('docs/.caches/mdcp/prompts/legacy.prompt.md');
+    write('docs/stray.md');
+    const result = computeCoverage({
+      root: join(work.path, 'docs'),
+      guideDirs: [join(work.path, 'docs/guide')],
+      outputFiles: [],
+      standaloneGuides: [],
+      ignore: [],
+      gitignore: true,
+    });
+    expect(result.uncaptured).not.toContain('.caches/mdcp/prompts/legacy.prompt.md');
+    expect(result.uncaptured).toContain('stray.md');
+    expect(result.captured).toContain('guide/index.md');
+  });
+
   it('does not honor .gitignore when gitignore is false', () => {
     const opts = { ...setup(), gitignore: false };
     write('.gitignore', 'dist/\n');

@@ -1,4 +1,4 @@
-import { relative, resolve, sep } from 'node:path';
+import { dirname, relative, resolve, sep } from 'node:path';
 import fg from 'fast-glob';
 import ignoreFactory from 'ignore';
 import { readFileSync, existsSync } from 'node:fs';
@@ -25,7 +25,7 @@ export interface CoverageOptions {
   standaloneGuides: string[];
   /** Extra ignore globs; built-in defaults are always added internally. */
   ignore: string[];
-  /** Honor the root `.gitignore` when walking. */
+  /** Honor the nearest ancestor `.gitignore` (walks up from the scan root). */
   gitignore: boolean;
 }
 
@@ -46,12 +46,40 @@ function isUnder(dir: string, absPath: string): boolean {
   return rel === '' || (!rel.startsWith('..') && !rel.startsWith(`..${sep}`));
 }
 
-/** Filter root-relative POSIX paths through the root `.gitignore`, when present. */
+/**
+ * Walk up from `start` to find a `.gitignore`, stopping at the git repo root
+ * (a `.git` entry) or the filesystem root. Returns the directory that owns the
+ * file and its contents, or null when none is found.
+ */
+function findAncestorGitignore(start: string): { dir: string; content: string } | null {
+  let dir = resolve(start);
+  for (;;) {
+    const gitignorePath = resolve(dir, '.gitignore');
+    if (existsSync(gitignorePath)) {
+      return { dir, content: readFileSync(gitignorePath, 'utf-8') };
+    }
+    // Do not walk out of the repository.
+    if (existsSync(resolve(dir, '.git'))) return null;
+    const parent = dirname(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+}
+
+/**
+ * Filter scan-root-relative POSIX paths through the nearest ancestor
+ * `.gitignore` (repository root when nested under `scan.root`).
+ */
 function gitignoreFilter(root: string, relPaths: string[]): string[] {
-  const gitignorePath = resolve(root, '.gitignore');
-  if (!existsSync(gitignorePath)) return relPaths;
-  const matcher = ignoreFactory().add(readFileSync(gitignorePath, 'utf-8'));
-  return relPaths.filter((rel) => !matcher.ignores(rel));
+  const found = findAncestorGitignore(root);
+  if (!found) return relPaths;
+  const matcher = ignoreFactory().add(found.content);
+  return relPaths.filter((rel) => {
+    const abs = resolve(root, rel);
+    const fromIgnoreRoot = toPosix(relative(found.dir, abs));
+    if (fromIgnoreRoot === '' || fromIgnoreRoot.startsWith('..')) return true;
+    return !matcher.ignores(fromIgnoreRoot);
+  });
 }
 
 /**
