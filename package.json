@@ -83,6 +83,6 @@
     "markdownlint-cli2": "^0.23.0",
     "prettier": "^3.5.3",
     "skills-ref": "^0.1.5",
-    "typescript-eslint": "^8.28.0"
+    "typescript-eslint": "^8.65.0"
   }
 }
