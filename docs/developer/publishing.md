@@ -42,6 +42,8 @@ npm view @bwilliamson/mdcp-presets version
 
 ### Step 2 — Configure Trusted Publishing (after packages exist)
 
+**Important Security Requirement:** The `release.yml` workflow is bound to the `release` GitHub Environment. Maintainers **must** configure Environment protection rules (required reviewers) in GitHub Settings → Environments → release. This ensures that no release can be published without manual approval.
+
 Option A — npm website (easiest):
 
 1. Open each package → **Settings** → **Trusted Publisher** → **GitHub Actions**
