@@ -36,8 +36,6 @@ jobs:
           node-version: 24
           package-manager-cache: false
 
-      - run: npm install -g npm@latest
-
       - name: Verify tag matches package version
         run: |
           TAG="${GITHUB_REF_NAME#v}"
