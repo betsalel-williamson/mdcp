@@ -13,6 +13,10 @@ import {
   shardLintPaths,
   xrefScanDirs,
   checkOrphansForGuides,
+  computeCoverage,
+  effectiveGuideOutputFile,
+  resolveUnderOutputDir,
+  type CoverageOptions,
   genRefsFromCompiled,
   checkRefsRegistry,
   resolveRefsPath,
@@ -48,6 +52,41 @@ function getDocsRoot(opts: GlobalOpts): string {
 
 function getConfig(opts: GlobalOpts) {
   return loadConfig(opts.config, process.cwd());
+}
+
+/**
+ * Scan root for coverage: `scan.root` (resolved against the invocation dir) else the
+ * invocation dir — not the docs root, since package READMEs live outside `docs/`.
+ */
+function getScanRoot(config: MdcpConfig): string {
+  if (config.scan?.root) return resolve(process.cwd(), config.scan.root);
+  return process.cwd();
+}
+
+function coverageInputs(config: MdcpConfig, opts: GlobalOpts): CoverageOptions {
+  const docsRoot = getDocsRoot(opts);
+  const outputFiles: string[] = [];
+  const guideDirs: string[] = [];
+  for (const name of config.compileOrder) {
+    const cfg = getGuideConfig(config, name);
+    guideDirs.push(resolveGuideDir(name, config, docsRoot));
+    // scopeRoot trees (e.g. shared glossary) are compiled into guides — treat as captured.
+    if (cfg?.compile?.scopeRoot) {
+      guideDirs.push(resolve(docsRoot, cfg.compile.scopeRoot));
+    }
+    const outFile = effectiveGuideOutputFile(name, cfg?.compile, config.compileOrder.length);
+    outputFiles.push(resolveUnderOutputDir(docsRoot, config.outputDir, outFile));
+  }
+  const topOutput = resolveOutputPath(config, docsRoot);
+  if (topOutput) outputFiles.push(topOutput);
+  return {
+    root: getScanRoot(config),
+    guideDirs,
+    outputFiles,
+    standaloneGuides: config.standaloneGuides,
+    ignore: config.scan?.ignore ?? [],
+    gitignore: config.scan?.gitignore ?? true,
+  };
 }
 
 function valeScanPaths(config: MdcpConfig, docsRoot: string): string[] {
@@ -487,6 +526,25 @@ cli
               'Fix prose style alerts, or use `--skip-vale` only when prose is intentionally out of scope.',
             ],
           });
+        }
+      }
+
+      const coverage = computeCoverage(coverageInputs(config, opts));
+      for (const p of coverage.uncaptured) console.error(`uncaptured: ${p}`);
+      for (const p of coverage.missingStandalone) console.error(`missing-standalone: ${p}`);
+      const coverageGaps = coverage.uncaptured.length + coverage.missingStandalone.length;
+      if (coverageGaps > 0) {
+        const strict = config.scan?.strict === true;
+        console.error(
+          `coverage: ${coverage.uncaptured.length} uncaptured, ${coverage.missingStandalone.length} missing standalone` +
+            (strict ? '' : ' (non-fatal; set scan.strict to fail check)'),
+        );
+        if (strict) {
+          console.error('');
+          console.error(
+            'mdcp check failed: coverage gaps. Fold files into a guide, register standaloneGuides, or add scan.ignore.',
+          );
+          process.exit(1);
         }
       }
 
