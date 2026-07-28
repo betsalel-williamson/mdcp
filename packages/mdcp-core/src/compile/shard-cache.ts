@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
 import { extractLinks, type ExtractedLink } from '../links/extract.js';
 import type { LinkProvenance } from '../links/mark-broken.js';
+import { parseAtxHeading, stripPandocAnchors } from '../markdown/index.js';
 import { githubSlugify } from '../refs/slugs.js';
 import { extractFirstHeading } from './compile-title.js';
 import { sectionBodyForSlug, slugForDemotedSection } from './section-slug.js';
@@ -21,12 +22,9 @@ export type ShardCache = Map<string, ShardSnapshot>;
 function anchorSlugsFromProcessed(processed: string): Set<string> {
   const slugs = new Set<string>();
   for (const line of processed.split('\n')) {
-    const m = line.match(/^#{1,6}\s+(.+)$/);
+    const m = parseAtxHeading(line);
     if (!m) continue;
-    const title = m[1]
-      .replace(/\{#.*?\}/g, '')
-      .replace(/\*\*/g, '')
-      .trim();
+    const title = stripPandocAnchors(m.title).replace(/\*\*/g, '').trim();
     if (title) slugs.add(githubSlugify(title));
   }
   const first = extractFirstHeading(processed);

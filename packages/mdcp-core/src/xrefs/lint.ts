@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { isAtxHeading } from '../markdown/index.js';
 
 const LINK_RE = /\[([^\]]*)\]\([^)]*\)/g;
 const CH_REF_RE =
@@ -34,7 +35,7 @@ function lintFile(path: string, root: string): string[] {
       continue;
     }
     if (inFence || !stripped) continue;
-    if (/^#{1,6}\s+/.test(stripped)) continue;
+    if (isAtxHeading(stripped)) continue;
 
     const plain = stripLinks(line);
     for (const m of plain.matchAll(CH_REF_RE)) {
