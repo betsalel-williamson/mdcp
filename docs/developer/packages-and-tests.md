@@ -15,6 +15,8 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
+Shared heading and `{#id}` helpers live under `src/markdown/` — see [Safe markdown parsing](./safe-markdown-parsing.md) for why.
+
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
 pnpm --filter @bwilliamson/mdcp-core run typecheck

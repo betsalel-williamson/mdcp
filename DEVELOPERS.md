@@ -51,6 +51,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [cross-link](#cross-link)
 - [standalone guide](#standalone-guide)
 - [coverage](#coverage)
+- [ReDoS](#redos)
 
 ### Adoption and messaging
 
@@ -456,6 +457,8 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Shard (split)      | `src/shard/`                  |
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
+
+Shared heading and `` helpers live under `src/markdown/` — see [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers) for why.
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -1163,13 +1166,51 @@ Never unpublish a version that other packages or consumers legitimately depend o
 
 <!-- mdcp-shard: end docs/developer/security-incident-triage.md -->
 
+<!-- mdcp-shard: start docs/developer/safe-markdown-parsing.md -->
+
+## Safe markdown parsing (heading and anchor helpers)
+
+Maintainer note for why `mdcp-core` centralizes ATX heading and Pandoc-style `` handling in shared helpers instead of ad-hoc regular expressions.
+
+Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
+
+### Why this is necessary
+
+GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip `` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](docs/glossary/redos.md) class of denial-of-service risk.
+
+Even when everyday docs never hit the pathological case, the open alerts block a clean security dashboard, and the same regex shapes were copied across compile, refs, links, and xref lint. Fixing call sites one-by-one without a shared parse path invites the class to return.
+
+### What we do instead (Phase A)
+
+Phase A introduces shared **linear** helpers for:
+
+- recognizing and demoting ATX headings
+- stripping Pandoc-style `` markers (including optional preceding whitespace when cleaning compiled output)
+- producing plain heading text for [heading slug](docs/glossary/heading-slug.md) generation
+
+Public package APIs keep their existing names; call sites delegate to the helpers. Duration-budget regression tests exercise the known CodeQL pump classes so a future regex reintroduction fails CI.
+
+See [Packages and tests](#packages-and-tests) for where the helper module lives under `mdcp-core`.
+
+### What Phase B covers
+
+Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example chapter xref lint and code-evidence patterns). Those stay out of the Phase A release gate. Rewrite or keep case-by-case; do not block shipping Phase A on a full regex purge.
+
+### Authoring implications
+
+- Prefer the shared helpers for new heading or `` logic; do not add new polynomial-risk regexes for those jobs.
+- Explicit `` markers in shards remain supported; stripping and slug behavior stay aligned with prior golden tests for normal content.
+- After merge to the default branch, confirm CodeQL alerts for this class close on the next scan of `main`.
+
+<!-- mdcp-shard: end docs/developer/safe-markdown-parsing.md -->
+
 <!-- mdcp-shard: start docs/developer/github-actions-security.md -->
 
 ## GitHub Actions security posture
 
 Maintainer guide for tracking **GitHub Actions security posture** in this public OSS monorepo. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); dependency and release triage stays in [Security-incident triage](#security-incident-triage). This shard is the audit trail for CI workflow and repository settings against the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html).
 
-Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status.
+Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](docs/glossary/redos.md)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
 
 ### Status vocabulary
 
@@ -1484,6 +1525,16 @@ The coverage scan walks the repository for markdown files, skips vendored paths,
 See [Documentation coverage scan](docs/features/coverage-scan.md).
 
 <!-- mdcp-shard: end docs/glossary/coverage.md -->
+
+<!-- mdcp-shard: start docs/glossary/redos.md -->
+
+## ReDoS
+
+**ReDoS** (Regular expression Denial of Service) is when a regular expression takes far too long on certain inputs — often because overlapping or unbounded quantifiers force the engine to explore many matching paths. Attackers (or accidental pathological strings) can stall a process that runs the pattern on untrusted or library-controlled text.
+
+In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
+
+<!-- mdcp-shard: end docs/glossary/redos.md -->
 
 <!-- mdcp-shard: start docs/glossary/wiifm.md -->
 
