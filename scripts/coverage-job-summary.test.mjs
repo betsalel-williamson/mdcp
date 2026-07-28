@@ -45,7 +45,7 @@ describe('formatCoverageJobSummary', () => {
       { name: 'mdcp-cli', summaryPath: path.join(cliDir, 'coverage-summary.json') },
     ]);
 
-    assert.match(md, /## Test coverage/);
+    assert.match(md, /## Package code coverage/);
     assert.match(md, /\| Package \| Statements \| Branches \| Functions \| Lines \|/);
     assert.match(md, /\| mdcp-core \| 80\.1% \| 70% \| 90\.25% \| 81% \|/);
     assert.match(md, /\| mdcp-cli \| 60% \| 50\.5% \| 55% \| 61\.1% \|/);

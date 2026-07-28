@@ -32,7 +32,7 @@ export async function formatCoverageJobSummary(packages) {
   }
 
   return [
-    '## Test coverage',
+    '## Package code coverage',
     '',
     '| Package | Statements | Branches | Functions | Lines |',
     '| --- | --- | --- | --- | --- |',
