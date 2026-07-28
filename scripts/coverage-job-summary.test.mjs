@@ -50,4 +50,44 @@ describe('formatCoverageJobSummary', () => {
     assert.match(md, /\| mdcp-core \| 80\.1% \| 70% \| 90\.25% \| 81% \|/);
     assert.match(md, /\| mdcp-cli \| 60% \| 50\.5% \| 55% \| 61\.1% \|/);
   });
+
+  it('emits n/a for missing or unreadable summaries, but succeeds if at least one works', async () => {
+    const root = await mkdtemp(path.join(tmpdir(), 'cov-sum-'));
+    after(async () => {
+      await rm(root, { recursive: true, force: true });
+    });
+
+    const coreDir = path.join(root, 'core');
+    await mkdir(coreDir);
+
+    await writeFile(
+      path.join(coreDir, 'coverage-summary.json'),
+      JSON.stringify({
+        total: {
+          statements: { pct: 80.1 },
+          branches: { pct: 70 },
+          functions: { pct: 90.25 },
+          lines: { pct: 81 },
+        },
+      }),
+    );
+
+    const md = await formatCoverageJobSummary([
+      { name: 'mdcp-core', summaryPath: path.join(coreDir, 'coverage-summary.json') },
+      { name: 'mdcp-cli', summaryPath: path.join(root, 'missing', 'coverage-summary.json') },
+    ]);
+
+    assert.match(md, /\| mdcp-core \| 80\.1% \| 70% \| 90\.25% \| 81% \|/);
+    assert.match(md, /\| mdcp-cli \| n\/a \| n\/a \| n\/a \| n\/a \|/);
+  });
+
+  it('throws an error if all packages fail', async () => {
+    await assert.rejects(
+      formatCoverageJobSummary([
+        { name: 'mdcp-core', summaryPath: 'does-not-exist.json' },
+        { name: 'mdcp-cli', summaryPath: 'also-does-not-exist.json' },
+      ]),
+      /All packages failed to provide coverage summaries/,
+    );
+  });
 });

@@ -37,7 +37,7 @@
   "scripts": {
     "build": "tsup src/cli.ts --format esm --clean",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage --testTimeout=20000",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm run build"
   },

@@ -12,13 +12,23 @@ import { pathToFileURL } from 'node:url';
  */
 export async function formatCoverageJobSummary(packages) {
   const rows = [];
+  let successCount = 0;
   for (const pkg of packages) {
-    const raw = await readFile(pkg.summaryPath, 'utf8');
-    const data = JSON.parse(raw);
-    const t = data.total;
-    rows.push(
-      `| ${pkg.name} | ${fmtPct(t.statements.pct)} | ${fmtPct(t.branches.pct)} | ${fmtPct(t.functions.pct)} | ${fmtPct(t.lines.pct)} |`,
-    );
+    try {
+      const raw = await readFile(pkg.summaryPath, 'utf8');
+      const data = JSON.parse(raw);
+      const t = data.total;
+      rows.push(
+        `| ${pkg.name} | ${fmtPct(t.statements.pct)} | ${fmtPct(t.branches.pct)} | ${fmtPct(t.functions.pct)} | ${fmtPct(t.lines.pct)} |`,
+      );
+      successCount++;
+    } catch {
+      rows.push(`| ${pkg.name} | n/a | n/a | n/a | n/a |`);
+    }
+  }
+
+  if (successCount === 0 && packages.length > 0) {
+    throw new Error('All packages failed to provide coverage summaries');
   }
 
   return [
@@ -49,7 +59,12 @@ if (isDirectRun) {
       summaryPath: 'packages/mdcp-cli/coverage/coverage-summary.json',
     },
   ];
-  formatCoverageJobSummary(defaults).then((md) => {
-    process.stdout.write(md);
-  });
+  formatCoverageJobSummary(defaults)
+    .then((md) => {
+      process.stdout.write(md);
+    })
+    .catch((err) => {
+      process.stderr.write(String(err.stack || err) + '\n');
+      process.exit(1);
+    });
 }
