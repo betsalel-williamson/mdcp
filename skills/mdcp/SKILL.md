@@ -17,7 +17,7 @@ compatibility: >-
   wrappers; they do not replace the CLI.
 metadata:
   author: betsalel-williamson
-  version: '0.6.1'
+  version: '0.7.0'
   openclaw:
     category: 'documentation'
     requires:

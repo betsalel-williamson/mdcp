@@ -1,5 +1,20 @@
 # @bwilliamson/mdcp-cli
 
+## 0.7.0
+
+### Minor Changes
+
+- Fix coverage scan to honor the repository-root `.gitignore` when `scan.root` is nested inside a git working tree (bounded by `.git`), and never climb parent directories for `.gitignore` when not inside git.
+
+  Replace polynomial-risk heading and Pandoc `{#id}` regexes with linear shared markdown helpers, clearing CodeQL `js/polynomial-redos` alerts (#200). Includes intentional heading/anchor edge-case tightening and newline `\s` parity for compiled strip.
+
+  Add a repository-wide markdown coverage scan plus `standaloneGuides` config, honoring `.gitignore`. `mdcp check` reports uncaptured paths; `scan.strict` fails the gate (dogfooded in this repo).
+
+### Patch Changes
+
+- Updated dependencies
+  - @bwilliamson/mdcp-core@0.7.0
+
 ## 0.6.1
 
 ### Patch Changes
