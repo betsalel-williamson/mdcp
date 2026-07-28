@@ -1,11 +1,12 @@
-const HEADING_RE = /^(#{1,6})(\s+)(.*)$/;
+import { parseAtxHeading } from '../markdown/index.js';
+
 const FENCE_RE = /^(`{3,}|~{3,})(.*)$/;
 
 function demoteLine(line: string, levels: number): string {
-  const m = line.match(HEADING_RE);
+  const m = parseAtxHeading(line);
   if (!m) return line;
-  const depth = Math.min(m[1].length + levels, 6);
-  return '#'.repeat(depth) + m[2] + m[3];
+  const depth = Math.min(m.level + levels, 6);
+  return '#'.repeat(depth) + m.whitespace + m.title;
 }
 
 function mapLinesPreservingFences(text: string, mapFn: (line: string) => string): string {
@@ -70,8 +71,8 @@ export function demoteExceptFirstH1(text: string): string {
       continue;
     }
 
-    const m = line.match(HEADING_RE);
-    if (m && m[1].length === 1 && !keptFirstH1) {
+    const m = parseAtxHeading(line);
+    if (m && m.level === 1 && !keptFirstH1) {
       keptFirstH1 = true;
       out.push(line);
       continue;
