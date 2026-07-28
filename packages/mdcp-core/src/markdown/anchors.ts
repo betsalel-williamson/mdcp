@@ -60,11 +60,13 @@ export function stripPandocAnchors(
   text: string,
   options?: { trimPrecedingWhitespace?: boolean },
 ): string {
-  if (text.indexOf('{#') === -1) return text;
+  const first = text.indexOf('{#');
+  if (first === -1) return text;
 
   const trimPreceding = options?.trimPrecedingWhitespace ?? false;
-  let result = '';
-  let i = 0;
+  // Skip the prefix before the first marker; scan from there.
+  let result = text.slice(0, first);
+  let i = first;
 
   // Mode A (trimPrecedingWhitespace: true): parity with old regex /\s*\{#[a-z0-9-]+\}/gi
   // requires >=1 slug char and trims all preceding regex whitespace.

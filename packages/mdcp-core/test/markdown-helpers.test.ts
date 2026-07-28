@@ -175,6 +175,16 @@ describe('stripPandocAnchors', () => {
     );
   });
 
+  it('strips two anchors on the same line (adjacent and spaced)', () => {
+    expect(stripPandocAnchors('## Title {#one} {#two}', { trimPrecedingWhitespace: true })).toBe(
+      '## Title',
+    );
+    expect(stripPandocAnchors('## Title{#one}{#two}', { trimPrecedingWhitespace: true })).toBe(
+      '## Title',
+    );
+    expect(stripPandocAnchors('x{#a}{#b}y', { trimPrecedingWhitespace: false })).toBe('xy');
+  });
+
   it('leaves incomplete {# pumps alone', () => {
     expect(stripPandocAnchors('prefix {#no-close', { trimPrecedingWhitespace: true })).toBe(
       'prefix {#no-close',
