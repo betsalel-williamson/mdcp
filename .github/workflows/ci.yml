@@ -55,13 +55,93 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run format:check
       - run: pnpm run build
-      - run: pnpm run test
+      - name: Test with package-labeled job summaries
+        run: |
+          # Vitest 4.1 hardcodes "## Vitest Test Report" with no package name.
+          # Dump each package's summary separately, then append with a label.
+          REAL_SUMMARY="$GITHUB_STEP_SUMMARY"
+          CORE_DUMP="$(mktemp)"
+          CLI_DUMP="$(mktemp)"
+          set +e
+          GITHUB_STEP_SUMMARY="$CORE_DUMP" pnpm --filter @bwilliamson/mdcp-core test
+          CORE_STATUS=$?
+          GITHUB_STEP_SUMMARY="$CLI_DUMP" pnpm --filter @bwilliamson/mdcp-cli test
+          CLI_STATUS=$?
+          node --test scripts/*.test.mjs scripts/**/*.test.mjs
+          SCRIPTS_STATUS=$?
+          set -e
+          GITHUB_STEP_SUMMARY="$REAL_SUMMARY" node scripts/append-labeled-vitest-summary.mjs mdcp-core "$CORE_DUMP"
+          GITHUB_STEP_SUMMARY="$REAL_SUMMARY" node scripts/append-labeled-vitest-summary.mjs mdcp-cli "$CLI_DUMP"
+          if [ "$CORE_STATUS" -ne 0 ] || [ "$CLI_STATUS" -ne 0 ] || [ "$SCRIPTS_STATUS" -ne 0 ]; then
+            exit 1
+          fi
       - run: pnpm run skill:validate
       - run: pnpm run prepare:docs
       - run: pnpm run docs:check
       - run: pnpm run docs:compile
       - name: Ensure documentation outputs are up-to-date
         run: git diff --exit-code
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # Harden-Runner: audit mode only — logs egress; block mode is follow-up (#179).
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - name: Coverage with package-labeled job summaries
+        run: |
+          REAL_SUMMARY="$GITHUB_STEP_SUMMARY"
+          CORE_DUMP="$(mktemp)"
+          CLI_DUMP="$(mktemp)"
+          set +e
+          GITHUB_STEP_SUMMARY="$CORE_DUMP" pnpm --filter @bwilliamson/mdcp-core run test:coverage
+          CORE_STATUS=$?
+          GITHUB_STEP_SUMMARY="$CLI_DUMP" pnpm --filter @bwilliamson/mdcp-cli run test:coverage
+          CLI_STATUS=$?
+          set -e
+          GITHUB_STEP_SUMMARY="$REAL_SUMMARY" node scripts/append-labeled-vitest-summary.mjs mdcp-core "$CORE_DUMP"
+          GITHUB_STEP_SUMMARY="$REAL_SUMMARY" node scripts/append-labeled-vitest-summary.mjs mdcp-cli "$CLI_DUMP"
+          if [ "$CORE_STATUS" -ne 0 ] || [ "$CLI_STATUS" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Write coverage totals table
+        if: always()
+        run: node scripts/coverage-job-summary.mjs >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload mdcp-core coverage
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-mdcp-core
+          path: packages/mdcp-core/coverage
+          if-no-files-found: warn
+
+      - name: Upload mdcp-cli coverage
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-mdcp-cli
+          path: packages/mdcp-cli/coverage
+          if-no-files-found: warn
 
   changeset:
     name: Changeset
