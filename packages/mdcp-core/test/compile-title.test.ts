@@ -26,6 +26,14 @@ describe('compile-title', () => {
     expect(stripFirstHeadingLine('# T\n\nbody')).toBe('body');
   });
 
+  it('leaves body unchanged when the first line is not a heading', () => {
+    expect(stripFirstHeadingLine('plain\n\nbody')).toBe('plain\n\nbody');
+  });
+
+  it('returns nulls when there is no ATX heading', () => {
+    expect(extractFirstHeading('no heading\n\nbody')).toEqual({ text: null, anchor: null });
+  });
+
   it('formats compile title as h2', () => {
     expect(formatCompileTitle('Example glossary')).toBe('## Example glossary');
   });

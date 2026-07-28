@@ -32,6 +32,14 @@ describe('demoteExceptFirstH1', () => {
     expect(out).toContain('### Two');
     expect(out).toContain('## Also demoted');
   });
+
+  it('preserves headings inside fenced code', () => {
+    const input = '# Keep\n\n```md\n# Fake\n```\n\n## After';
+    const out = demoteExceptFirstH1(input);
+    expect(out).toMatch(/^# Keep/m);
+    expect(out).toContain('# Fake');
+    expect(out).toContain('### After');
+  });
 });
 
 describe('stripAboutThisGuideHeading', () => {
@@ -39,11 +47,19 @@ describe('stripAboutThisGuideHeading', () => {
     const input = '# About this guide\n\nBody text.\n';
     expect(stripAboutThisGuideHeading(input)).toBe('Body text.\n\n');
   });
+
+  it('returns empty string when only the about heading remains', () => {
+    expect(stripAboutThisGuideHeading('# About this guide\n\n')).toBe('');
+  });
 });
 
 describe('extractGuideH1', () => {
   it('returns first h1 from index', () => {
     const index = '# My Guide\n\n- [a](a.md)\n';
     expect(extractGuideH1(index)).toBe('# My Guide\n\n');
+  });
+
+  it('returns null when no h1 is present', () => {
+    expect(extractGuideH1('## Only h2\n')).toBeNull();
   });
 });

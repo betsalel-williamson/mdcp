@@ -151,6 +151,17 @@ describe('stripPandocAnchors', () => {
     expect(stripPandocAnchors('## Review\t\t{#aaa}', { trimPrecedingWhitespace: true })).toBe(
       '## Review',
     );
+    expect(stripPandocAnchors('## Review\r\f\v{#aaa}', { trimPrecedingWhitespace: true })).toBe(
+      '## Review',
+    );
+  });
+
+  it('strips a leading anchor with nothing to trim (no-op trim branch)', () => {
+    expect(stripPandocAnchors('{#only}', { trimPrecedingWhitespace: true })).toBe('');
+  });
+
+  it('aborts mode B when a nested { appears inside the marker', () => {
+    expect(stripPandocAnchors('x {#a{b}', { trimPrecedingWhitespace: false })).toBe('x {#a{b}');
   });
 
   it('leaves text unchanged when there is no {# sequence', () => {
