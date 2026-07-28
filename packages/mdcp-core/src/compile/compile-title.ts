@@ -1,17 +1,22 @@
+import { isAtxHeading, parseAtxHeading, splitTrailingPandocAnchor } from '../markdown/index.js';
+
 export function extractFirstHeading(body: string): {
   text: string | null;
   anchor: string | null;
 } {
   const trimmed = body.trimStart();
-  const match = trimmed.match(/^#{1,6}\s+(.+?)(?:\s+\{#([a-z0-9-]+)\})?\s*(?:\n|$)/);
-  if (!match) return { text: null, anchor: null };
-  return { text: match[1].trim(), anchor: match[2] ? match[2].toLowerCase() : null };
+  const newline = trimmed.indexOf('\n');
+  const firstLine = newline === -1 ? trimmed : trimmed.slice(0, newline);
+  const parsed = parseAtxHeading(firstLine);
+  if (!parsed) return { text: null, anchor: null };
+  const { text, anchor } = splitTrailingPandocAnchor(parsed.title);
+  return { text: text || null, anchor };
 }
 
 export function stripFirstHeadingLine(body: string): string {
   const lines = body.split('\n');
   if (lines.length === 0) return body;
-  if (/^#{1,6}\s+/.test(lines[0])) {
+  if (isAtxHeading(lines[0])) {
     return lines.slice(1).join('\n').trimStart();
   }
   return body;

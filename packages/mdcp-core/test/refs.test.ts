@@ -73,6 +73,17 @@ describe('buildSlugRegistry', () => {
     );
     expect(reg.headings.map((h) => h.slug)).toEqual(expected);
   });
+
+  it('skips headings whose title is empty after stripping anchors', () => {
+    const reg = buildSlugRegistry('# Guide\n\n## {#only-id}\n\n## Real\n');
+    expect(reg.headings.map((h) => h.title)).toEqual(['Guide', 'Real']);
+  });
+
+  it('falls back to guide when the h1 slug is empty', () => {
+    const reg = buildSlugRegistry('# !!!\n\n## Section\n');
+    const section = reg.headings.find((h) => h.title === 'Section');
+    expect(section?.guide).toBe('guide');
+  });
 });
 
 describe('public refs API', () => {

@@ -1,23 +1,18 @@
 import GithubSlugger, { slug as githubSlug } from 'github-slugger';
+import { parseAtxHeading, stripPandocAnchors, headingTitlePlain } from '../markdown/index.js';
 
 /**
  * Strip mdcp heading adornments before slugging.
  * github-slugger expects plain visible text (html-pipeline `node.text`), not raw Markdown.
  */
 export function headingTextToPlain(text: string): string {
-  return text
-    .trim()
-    .replace(/\{#.*?\}/g, '')
-    .replace(/[*_`]/g, '')
-    .trim();
+  return headingTitlePlain(text);
 }
 
 /** GitHub heading slug via github-slugger (html-pipeline TableOfContentsFilter algorithm). */
 export function githubSlugify(text: string): string {
   return githubSlug(headingTextToPlain(text));
 }
-
-const HEADING_RE = /^(#{1,6})\s+(.+)$/;
 
 export interface HeadingEntry {
   key: string | null;
@@ -61,14 +56,11 @@ export function buildSlugRegistry(
   const lines = compiledText.split('\n');
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const m = line.match(HEADING_RE);
-    if (!m) continue;
+    const parsed = parseAtxHeading(line);
+    if (!parsed) continue;
 
-    const level = m[1].length;
-    const rawTitle = m[2]
-      .replace(/\{#.*?\}/g, '')
-      .replace(/\*\*/g, '')
-      .trim();
+    const level = parsed.level;
+    const rawTitle = stripPandocAnchors(parsed.title).replace(/\*\*/g, '').trim();
     if (!rawTitle) continue;
 
     if (level === 1) {

@@ -87,6 +87,7 @@
       ".husky/**",
       ".vscode/**",
       ".superpowers/**",
+      "docs/superpowers/**",
       ".worktrees/**",
       ".specstory/**",
       ".tmp/**",

@@ -8,11 +8,14 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | ------------------ | ----------------------------- |
 | Config schema      | `src/config/`                 |
 | Compile / assemble | `src/compile/`                |
+| Markdown helpers   | `src/markdown/`               |
 | Refs / slugs       | `src/refs/`                   |
 | Validation         | `src/validate/`, `src/xrefs/` |
 | Shard (split)      | `src/shard/`                  |
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
+
+Shared heading and `{#id}` helpers live under `src/markdown/` — see [Safe markdown parsing](./safe-markdown-parsing.md) for why.
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test

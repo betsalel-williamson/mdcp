@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, basename, resolve } from 'node:path';
 import { extractLinks } from './extract.js';
 import { defaultSearchRoots, resolveRelativeFile } from '../compile/hooks/path-resolve.js';
+import { parseAtxHeading, stripPandocAnchors } from '../markdown/index.js';
 import { githubSlugify } from '../refs/slugs.js';
 import { demoteHeadings, stripAboutThisGuideHeading } from '../compile/headings.js';
 import { extractFirstHeading } from '../compile/compile-title.js';
@@ -19,12 +20,9 @@ function shardSlugSetFromText(name: string, raw: string): Set<string> {
   }
   const slugs = new Set<string>();
   for (const line of processed.split('\n')) {
-    const m = line.match(/^#{1,6}\s+(.+)$/);
+    const m = parseAtxHeading(line);
     if (!m) continue;
-    const title = m[1]
-      .replace(/\{#.*?\}/g, '')
-      .replace(/\*\*/g, '')
-      .trim();
+    const title = stripPandocAnchors(m.title).replace(/\*\*/g, '').trim();
     if (title) slugs.add(githubSlugify(title));
   }
   const first = extractFirstHeading(processed);
