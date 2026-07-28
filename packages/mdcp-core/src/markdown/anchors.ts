@@ -8,6 +8,17 @@ function isAsciiSpaceOrTab(ch: string): boolean {
   return ch === ' ' || ch === '\t';
 }
 
+/** Whitespace that JS `\\s` matches for common markdown (no regex). */
+function isJsWhitespace(ch: string): boolean {
+  return ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r' || ch === '\f' || ch === '\v';
+}
+
+function trimTrailingWhitespace(s: string): string {
+  let end = s.length;
+  while (end > 0 && isJsWhitespace(s[end - 1])) end--;
+  return end === s.length ? s : s.slice(0, end);
+}
+
 /** Split trailing Pandoc {#id} from a heading title (forward scan, stripPandocAnchors rules). */
 export function splitTrailingPandocAnchor(title: string): { text: string; anchor: string | null } {
   let end = title.length;
@@ -85,7 +96,7 @@ export function stripPandocAnchors(
 
       if (valid && j < text.length && text[j] === '}') {
         if (trimPreceding) {
-          result = result.replace(/\s+$/, '');
+          result = trimTrailingWhitespace(result);
         }
         i = j + 1;
         continue;
