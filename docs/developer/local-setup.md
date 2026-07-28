@@ -24,6 +24,7 @@ If you use coding agents with helper skills ([helper skills](../../docs/skills.m
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `pnpm build`             | Build all packages (`mdcp-core`, `mdcp-cli`)                                                                                         |
 | `pnpm test`              | Run `vitest` in `mdcp-core`                                                                                                          |
+| `pnpm test:coverage`     | Vitest coverage for `mdcp-core` and `mdcp-cli` (HTML under `packages/*/coverage/`)                                                   |
 | `pnpm run typecheck`     | TypeScript across packages                                                                                                           |
 | `pnpm run lint`          | ESLint on TypeScript sources                                                                                                         |
 | `pnpm run format:check`  | Prettier check                                                                                                                       |
