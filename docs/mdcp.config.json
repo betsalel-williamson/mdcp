@@ -95,6 +95,7 @@
       ".compile-build/**",
       ".shard-work/**",
       "legacy/**",
+      "docs/superpowers/**",
       "tests/**",
       "examples/**",
       "**/CHANGELOG.md"
