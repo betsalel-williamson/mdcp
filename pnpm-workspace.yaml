@@ -29,3 +29,7 @@ overrides:
   # Slidev → monaco-editor → dompurify (dev-only presentation tooling).
   # GHSA-v2wj-7wpq-c8vv / GHSA-h7mw-gpvr-xq4m / GHSA-crv5-9vww-q3g8: patched >=3.4.0.
   dompurify: ^3.4.0
+  # Slidev → MCP SDK → @hono/node-server (dev-only presentation tooling).
+  # GHSA-frvp-7c67-39w9: path traversal <2.0.5; GHSA-9mqv-5hh9-4cgg: DoS <=2.0.9.
+  # Pin >=2.0.10 (2.0.11+ still inside minimumReleaseAge).
+  '@hono/node-server@<2.0.10': 2.0.10
