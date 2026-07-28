@@ -8,6 +8,7 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | ------------------ | ----------------------------- |
 | Config schema      | `src/config/`                 |
 | Compile / assemble | `src/compile/`                |
+| Markdown helpers   | `src/markdown/`               |
 | Refs / slugs       | `src/refs/`                   |
 | Validation         | `src/validate/`, `src/xrefs/` |
 | Shard (split)      | `src/shard/`                  |
