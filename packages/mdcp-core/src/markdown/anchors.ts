@@ -1,18 +1,17 @@
 export function isSlugChar(ch: string): boolean {
-  const c = ch.charCodeAt(0);
   return (
-    (c >= 0x41 && c <= 0x5a) || (c >= 0x61 && c <= 0x7a) || (c >= 0x30 && c <= 0x39) || c === 0x2d
+    (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch === '-'
   );
+}
+
+function isAsciiSpaceOrTab(ch: string): boolean {
+  return ch === ' ' || ch === '\t';
 }
 
 /** Split trailing Pandoc {#id} from a heading title (forward scan, stripPandocAnchors rules). */
 export function splitTrailingPandocAnchor(title: string): { text: string; anchor: string | null } {
   let end = title.length;
-  while (end > 0) {
-    const c = title.charCodeAt(end - 1);
-    if (c === 0x20 || c === 0x09) end--;
-    else break;
-  }
+  while (end > 0 && isAsciiSpaceOrTab(title[end - 1])) end--;
 
   if (end === 0 || title[end - 1] !== '}') {
     return { text: title.trim(), anchor: null };
@@ -39,11 +38,7 @@ export function splitTrailingPandocAnchor(title: string): { text: string; anchor
   }
 
   let textEnd = openBrace;
-  while (textEnd > 0) {
-    const c = title.charCodeAt(textEnd - 1);
-    if (c === 0x20 || c === 0x09) textEnd--;
-    else break;
-  }
+  while (textEnd > 0 && isAsciiSpaceOrTab(title[textEnd - 1])) textEnd--;
 
   const slug = title.slice(slugStart, closeBrace);
   return { text: title.slice(0, textEnd).trim(), anchor: slug.toLowerCase() };
