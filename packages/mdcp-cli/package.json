@@ -37,6 +37,7 @@
   "scripts": {
     "build": "tsup src/cli.ts --format esm --clean",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm run build"
   },
@@ -49,6 +50,7 @@
     "@types/node": "^26.1.1",
     "tsup": "^8.4.0",
     "typescript": "^6.0.3",
+    "@vitest/coverage-v8": "^4.1.8",
     "vitest": "^4.1.8"
   }
 }
