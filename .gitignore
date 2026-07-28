@@ -25,6 +25,8 @@ coverage/
 .cursorindexingignore
 .claude/
 .superpowers/
+# Superpowers agent specs/plans (ephemeral; durable docs live in MDCP shards)
+docs/superpowers/
 
 # Linked git worktrees (local agent / contributor checkouts)
 .worktrees/
