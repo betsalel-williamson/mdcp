@@ -11,9 +11,9 @@ At compile time, MDCP:
 1. Builds a **guide link index** from every guide in `compileOrder` — each manifest-listed shard maps to its compiled `{guideName, outputBasename, slug}` (slug from the demoted first heading, same rules as intra-guide rewrite), plus shards linked transitively from section bodies
 2. Rewrites **cross-guide** `.md` links per shard (using the shard path for relative resolution) before sections are stitched
 3. Rewrites **publish-relative** `../` file links per shard when the guide has `compile.outputFile` — see [Publish-relative link rewriting](./publish-relative-links.md)
-4. Rewrites **same-guide** `./section.md` links on the assembled body (intra-guide pass)
+4. Rewrites **same-guide** section links per shard (intra-guide pass with `sourceFile`), then again on the assembled body (intra-guide pass scoped to `guideDir`)
 
-Cross-guide handles indexed markdown between guides. Publish-relative rebases remaining file paths for outputs outside the shard tree (no manual path config). This is an **assembly-time pass**, not a compile hook.
+Cross-guide handles indexed markdown between guides. Publish-relative rebases remaining file paths for outputs outside the shard tree (no manual path config). Intra-guide handles same-guide section targets. These are **assembly-time passes**, not compile hooks.
 
 ## Cross-guide link matching
 
@@ -25,7 +25,40 @@ A link is rewritten when **all** of the following hold:
 - Target resolves to a shard registered in the guide link index
 - Target shard's guide is **not** listed in `compile.crossGuideLinks.ignoreGuides` on the compiling guide
 
-Same-guide `./section.md` links are handled by the intra-guide pass after assembly; cross-guide rewrite handles `../` and repo-scoped paths that point at another guide's shards.
+Cross-guide rewrite matches only links whose path starts with `./` or `../`. Same-guide section links — bare sibling paths (`topic/section.md`) and optional `./section.md` — are handled by the intra-guide pass, not cross-guide.
+
+## Link rewrite passes (cross-guide vs intra-guide)
+
+Assembly splits `.md` link rewriting by link shape and target scope:
+
+| Pass            | When                     | Link shapes matched                   | Resolution base                                             |
+| --------------- | ------------------------ | ------------------------------------- | ----------------------------------------------------------- |
+| **Cross-guide** | Per shard, before stitch | `./` and `../` to indexed shards      | `dirname(sourceFile)`, then parent / scopeRoot / cwd        |
+| **Intra-guide** | Per shard; post-assembly | Bare sibling or `./` same-guide paths | Per shard: `dirname(sourceFile)`; post-assembly: `guideDir` |
+
+Cross-guide does **not** match bare sibling paths — those are intra-guide only. Publish-relative handles remaining `../` file links on publish outputs; see [Publish-relative link rewriting](./publish-relative-links.md).
+
+### guideDir misaligned with shard tree
+
+Some guides set `path` to a **compiled subdirectory** while section shards live elsewhere under the same guide tree (often one level up from `guideDir`). Example:
+
+```text
+guide/
+  compiled/shards.md   ← manifest (guideDir)
+  section-a.md
+  topic/section-b.md
+  assets/diagram.md
+```
+
+Config uses `"path": "guide/compiled"` with `"compile": { "manifest": "shards.md", … }`.
+
+Bare sibling links authored from shards outside `guideDir` — for example `[Section B](topic/section-b.md)` in `guide/section-a.md` — resolve from **`dirname(sourceFile)`** during the per-shard intra-guide pass, not from `guideDir` alone. The post-assembly intra pass still runs against `guideDir` for any remaining same-guide links on the stitched body.
+
+Links that must step **up and out** of the shard directory still require **`../`**. A manifest under `compiled/shards.md` links to sibling shards with paths like `../section-a.md`; bare paths cannot express parent traversal.
+
+### Transitive section discovery
+
+Manifest listing and the guide link index include shards reachable via transitive markdown `.md` links within the guide tree (`linkedSectionFiles`). To mention a path for readers **without** pulling it into the compile graph, use a backtick path (`` `topic/section-b.md` ``) instead of a markdown link — inline code is not scanned for transitive inclusion or link rewrite.
 
 ## Cross-guide resolution
 

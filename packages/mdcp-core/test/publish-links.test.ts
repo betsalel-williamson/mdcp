@@ -199,4 +199,68 @@ describe('publish link rewriting', () => {
       expect(features).not.toContain('compile-hooks/index.md');
     });
   });
+
+  it('rewrites bare sibling links when sourceFile is outside guideDir', () => {
+    const guideDir = '/fake/guide/compiled';
+    const sourceFile = '/fake/guide/section-a.md';
+    const slugByPath = new Map([
+      [resolve('/fake/guide/section-a.md'), 'section-a'],
+      [resolve('/fake/guide/topic/section-b.md'), 'section-b'],
+      [resolve('/fake/guide/assets/diagram.md'), 'diagram'],
+    ]);
+
+    const input =
+      'See [Section B](topic/section-b.md) and [Diagram](assets/diagram.md#architecture).';
+
+    const out = rewriteIntraGuideFileLinks(input, slugByPath, guideDir, { sourceFile });
+    expect(out).toBe('See [Section B](#section-b) and [Diagram](#architecture).');
+  });
+
+  it('e2e: rewrites bare sibling links when guideDir differs from shard tree', () => {
+    withTmpDir('mdcp-bare-sibling-e2e-', (work) => {
+      const guideBase = join(work, 'guide');
+      const guideCompiled = join(guideBase, 'compiled');
+      mkdirSync(guideCompiled, { recursive: true });
+      mkdirSync(join(guideBase, 'topic'), { recursive: true });
+      mkdirSync(join(guideBase, 'assets'), { recursive: true });
+
+      writeFileSync(
+        join(guideCompiled, 'shards.md'),
+        '- [A](../section-a.md)\n- [B](../topic/section-b.md)\n- [Diag](../assets/diagram.md)\n',
+      );
+      writeFileSync(
+        join(guideBase, 'section-a.md'),
+        '# Section A\n\nSee [Topic B](topic/section-b.md) and [Diagram](assets/diagram.md).\n',
+      );
+      writeFileSync(join(guideBase, 'topic', 'section-b.md'), '# Section B\n');
+      writeFileSync(join(guideBase, 'assets', 'diagram.md'), '# Diagram\n');
+
+      const results = compileGuideResults({
+        guidesRoot: work,
+        compileOrder: ['guide/compiled'],
+        docsRoot: work,
+        config: {
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['guide/compiled'],
+        },
+        guides: [
+          {
+            name: 'guide/compiled',
+            compile: {
+              manifest: 'shards.md',
+              outputFile: 'my-guide.md',
+              scopeRoot: '.',
+            },
+          },
+        ],
+      });
+
+      const guideText = results.find((r) => r.name === 'guide/compiled')!.text;
+      expect(guideText).toContain('[Topic B](#section-b)');
+      expect(guideText).toContain('[Diagram](#diagram)');
+      expect(guideText).not.toContain('topic/section-b.md)');
+      expect(guideText).not.toContain('assets/diagram.md)');
+    });
+  });
 });

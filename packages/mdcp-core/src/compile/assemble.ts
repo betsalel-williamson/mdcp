@@ -107,6 +107,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
 
   const hookState = createCompileHookState();
   const provenance: LinkProvenance[] = [];
+  const slugByPath = options.slugByPath ?? buildSectionSlugMap(files, cache, preambleSection);
 
   for (let i = 0; i < files.length; i++) {
     const filePath = files[i];
@@ -158,6 +159,8 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
       });
     }
 
+    body = rewriteIntraGuideFileLinks(body, slugByPath, guideDir, { sourceFile: filePath });
+
     if (options.publishOutputFile) {
       body = rewritePublishRelativeLinks(body, {
         sourceFile: filePath,
@@ -187,7 +190,6 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
     compiled = stripExplicitAnchorMarkers(compiled);
   }
 
-  const slugByPath = options.slugByPath ?? buildSectionSlugMap(files, cache, preambleSection);
   compiled = rewriteIntraGuideFileLinks(compiled, slugByPath, guideDir);
 
   const intraSlugs = new Set(slugByPath.values());
