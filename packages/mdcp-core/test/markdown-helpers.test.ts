@@ -4,6 +4,8 @@ import {
   isAtxHeading,
   stripPandocAnchors,
   headingTitlePlain,
+  isSlugChar,
+  splitTrailingPandocAnchor,
 } from '../src/markdown/index.js';
 
 describe('parseAtxHeading', () => {
@@ -13,6 +15,21 @@ describe('parseAtxHeading', () => {
       marker: '##',
       whitespace: '  ',
       title: 'Hello',
+    });
+  });
+
+  it('parses level 1 and level 6 boundaries', () => {
+    expect(parseAtxHeading('# One')).toEqual({
+      level: 1,
+      marker: '#',
+      whitespace: ' ',
+      title: 'One',
+    });
+    expect(parseAtxHeading('###### Six')).toEqual({
+      level: 6,
+      marker: '######',
+      whitespace: ' ',
+      title: 'Six',
     });
   });
 
@@ -29,10 +46,82 @@ describe('parseAtxHeading', () => {
     });
   });
 
-  it('returns null for non-headings and fence-like lines', () => {
+  it('returns null for non-headings and missing space after hashes', () => {
+    expect(parseAtxHeading('')).toBeNull();
     expect(parseAtxHeading('not a heading')).toBeNull();
     expect(parseAtxHeading('#nofence')).toBeNull();
+    expect(parseAtxHeading('##')).toBeNull();
     expect(isAtxHeading('### Title')).toBe(true);
+    expect(isAtxHeading('#nofence')).toBe(false);
+  });
+
+  it('keeps empty title when only hashes and whitespace', () => {
+    expect(parseAtxHeading('###   ')).toEqual({
+      level: 3,
+      marker: '###',
+      whitespace: '   ',
+      title: '',
+    });
+  });
+});
+
+describe('isSlugChar', () => {
+  it('accepts alphanumerics and hyphen', () => {
+    expect(isSlugChar('A')).toBe(true);
+    expect(isSlugChar('z')).toBe(true);
+    expect(isSlugChar('0')).toBe(true);
+    expect(isSlugChar('9')).toBe(true);
+    expect(isSlugChar('-')).toBe(true);
+  });
+
+  it('rejects punctuation, whitespace, and braces', () => {
+    expect(isSlugChar(' ')).toBe(false);
+    expect(isSlugChar('_')).toBe(false);
+    expect(isSlugChar('{')).toBe(false);
+    expect(isSlugChar('}')).toBe(false);
+    expect(isSlugChar('#')).toBe(false);
+  });
+});
+
+describe('splitTrailingPandocAnchor', () => {
+  it('splits trailing {#id} and lowercases the slug', () => {
+    expect(splitTrailingPandocAnchor('Title {#My-Id}')).toEqual({
+      text: 'Title',
+      anchor: 'my-id',
+    });
+  });
+
+  it('allows no space before the marker', () => {
+    expect(splitTrailingPandocAnchor('Title{#id}')).toEqual({
+      text: 'Title',
+      anchor: 'id',
+    });
+  });
+
+  it('returns null anchor when marker is missing or incomplete', () => {
+    expect(splitTrailingPandocAnchor('Plain title')).toEqual({
+      text: 'Plain title',
+      anchor: null,
+    });
+    expect(splitTrailingPandocAnchor('Title {#}')).toEqual({
+      text: 'Title {#}',
+      anchor: null,
+    });
+    expect(splitTrailingPandocAnchor('Title {#bad id}')).toEqual({
+      text: 'Title {#bad id}',
+      anchor: null,
+    });
+    expect(splitTrailingPandocAnchor('Title {#unclosed')).toEqual({
+      text: 'Title {#unclosed',
+      anchor: null,
+    });
+  });
+
+  it('trims trailing spaces and tabs before looking for the marker', () => {
+    expect(splitTrailingPandocAnchor('Title {#id}  \t')).toEqual({
+      text: 'Title',
+      anchor: 'id',
+    });
   });
 });
 
@@ -55,9 +144,29 @@ describe('stripPandocAnchors', () => {
     );
   });
 
-  it('trims JS regex whitespace (newlines etc.) preceding anchor in mode A', () => {
+  it('trims preceding newlines/tabs/spaces in mode A', () => {
     expect(stripPandocAnchors('## Review\n\n\n{#aaa}\n', { trimPrecedingWhitespace: true })).toBe(
       '## Review\n',
+    );
+    expect(stripPandocAnchors('## Review\t\t{#aaa}', { trimPrecedingWhitespace: true })).toBe(
+      '## Review',
+    );
+  });
+
+  it('leaves text unchanged when there is no {# sequence', () => {
+    expect(stripPandocAnchors('no anchors here')).toBe('no anchors here');
+    expect(stripPandocAnchors('{ not-an-anchor }')).toBe('{ not-an-anchor }');
+  });
+
+  it('strips multiple anchors in one pass', () => {
+    expect(stripPandocAnchors('A {#a} and B {#b}', { trimPrecedingWhitespace: true })).toBe(
+      'A and B',
+    );
+  });
+
+  it('leaves incomplete {# pumps alone', () => {
+    expect(stripPandocAnchors('prefix {#no-close', { trimPrecedingWhitespace: true })).toBe(
+      'prefix {#no-close',
     );
   });
 
@@ -81,5 +190,9 @@ describe('stripPandocAnchors', () => {
 describe('headingTitlePlain', () => {
   it('matches prior headingTextToPlain semantics', () => {
     expect(headingTitlePlain('**Bold** `{#custom-id}`')).toBe('Bold');
+  });
+
+  it('strips anchors and trims without requiring preceding space', () => {
+    expect(headingTitlePlain('  Hello{#world}  ')).toBe('Hello');
   });
 });
