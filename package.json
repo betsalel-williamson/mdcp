@@ -77,11 +77,11 @@
     "@eslint/js": "^10.0.1",
     "@slidev/cli": "latest",
     "@slidev/theme-default": "latest",
-    "eslint": "^10.5.0",
+    "eslint": "^10.7.0",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.7",
-    "markdownlint-cli2": "^0.23.0",
-    "prettier": "^3.5.3",
+    "lint-staged": "^17.1.0",
+    "markdownlint-cli2": "^0.23.1",
+    "prettier": "^3.9.5",
     "skills-ref": "^0.1.5",
     "typescript-eslint": "^8.65.0"
   }
