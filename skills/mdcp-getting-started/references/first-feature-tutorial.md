@@ -32,8 +32,9 @@ before advancing. Atomic commit groups apply **inside** each day-to-day helper
 | 3     | `mdcp-ux`                  | Client journey / end-user value under `docs/client/` |
 | 4     | `mdcp-doc-only`            | Polish: glossary, indexes, consistency               |
 
-For each phase: open the matching installed skill under `.agents/skills/` (or
-`skills/`), complete that helper’s intake if values are missing, follow its
+For each phase: open the matching installed skill in your agent’s skills
+directory (for example `.agents/skills/` in Cursor/Amp, or `skills/` in this
+monorepo), complete that helper’s intake if values are missing, follow its
 Process, validate, then announce the next phase.
 
 ## Recommended example: hello-greeting
