@@ -42,9 +42,9 @@ What compile / check / refs mean and CLI commands:
 ## Hard rules
 
 - **NEVER** invent MDCP workflow when this skill already defines it — follow the skill first.
-- **NEVER** hand-edit vendored skill files under `.agents/skills/` for
-  repo-specific guidance — use complementary skills, `docs/extensions/`, or
-  normative shards.
+- **NEVER** hand-edit files in a vendor-managed install under your agent’s skills
+  directory (for example `.agents/skills/` in Cursor/Amp) for repo-specific
+  guidance — use complementary skills, `docs/extensions/`, or normative shards.
 - **NEVER** edit generated compile output (`docs/_build/`, compiled publish
   targets) — fix shards and recompile.
 - **NEVER** dump whole monoliths into context — discover with host search (`rg`,
@@ -217,10 +217,13 @@ Bootstrap example:
 Hosts that can fork work (Task tool, `context: fork`, and similar) may run the chosen helper in an isolated agent; otherwise follow it in the main session.
 
 When no `mdcp.config.json` yet: create docs root + config + guide dirs, install
-the parent skill under `.agents/skills/mdcp/`, optionally add
+the parent skill via `npx skills add betsalel-williamson/mdcp --skill mdcp`
+(see [references/install.md](references/install.md)), optionally add
 `@bwilliamson/mdcp-presets`, then compile and check.
 
 ## Zero-install
 
-Copy `.agents/skills/mdcp/` into the consumer repo (portable default). Hosts may
-also read `.github/skills/` or `.claude/skills/`.
+Copy the `mdcp` skill folder into the skills directory **your agent discovers**
+(see [skills CLI Supported Agents](https://github.com/vercel-labs/skills#supported-agents)).
+For example `.agents/skills/mdcp/` for Cursor/Amp project installs — not a
+universal portable path.
