@@ -18,7 +18,7 @@ Heading-slug **registry** for validation after compile — see [Refs registry pa
 
 ## Agent Skill
 
-Parent Agent Skill at `skills/mdcp/SKILL.md` (install target `.agents/skills/mdcp/`). See [Agent Skill](./agent-skill.md).
+Parent Agent Skill at `skills/mdcp/SKILL.md` (install via `npx skills add` into your agent's skills directory). See [Agent Skill](./agent-skill.md).
 
 Helper skills extend the parent for specific authoring jobs — catalog and intake:
 [Helper Skills](./protocol/agent-task-prompts.md). Hardened is/isn’t boundaries:

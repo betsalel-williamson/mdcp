@@ -13,7 +13,7 @@
 
 ## Getting Started: Agent Skills
 
-Install the MDCP Agent Skill in your repo (`.agents/skills/mdcp/SKILL.md`):
+Install the MDCP Agent Skill in your repo (your agent's `SKILL.md` after `npx skills add`):
 
 ```bash
 npx skills add betsalel-williamson/mdcp --skill mdcp
@@ -37,7 +37,7 @@ This isn't a magic bullet that instantly understands your legacy codebase. It's 
 
 - Open **Cursor** (or any LLM tool) in a repo.
 - Install the skill, then type: `/mdcp help me get started`
-- The agent reads `.agents/skills/mdcp/SKILL.md` and the getting-started subagent.
+- The agent reads the installed parent skill and the getting-started subagent.
 - Watch it set up your documentation shards and capture intent _before_ writing code.
 
 ---

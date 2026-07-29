@@ -10,7 +10,7 @@ Install the core documentation-system Agent Skill into your repository:
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-_(This copies the skill into `.agents/skills/mdcp/` in your repository. Commit it to git so every teammate and agent shares the same documentation discipline)._
+_(This copies the skill into your agent's skills directory (chosen by the [`skills` CLI](https://www.skills.sh/docs/cli) via `--agent` or auto-detect). Commit it to git so every teammate and agent shares the same documentation discipline. Per-agent paths: [Supported Agents](https://github.com/vercel-labs/skills#supported-agents).)_
 
 Then start a bootstrap session:
 

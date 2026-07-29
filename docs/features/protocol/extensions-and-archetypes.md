@@ -16,7 +16,7 @@ MDCP separates:
 
 ## Do not hand-edit agent entrypoints for repo-specific guidance
 
-The parent **Agent Skill** (`skills/mdcp/` → `.agents/skills/mdcp/`) is the portable agent entrypoint.
+The parent **Agent Skill** (`skills/mdcp/` → your agent's skills directory after `npx skills add`) is the portable agent entrypoint.
 
 | Rule                                                                       | Detail                                                  |
 | -------------------------------------------------------------------------- | ------------------------------------------------------- |
@@ -53,11 +53,11 @@ Published and community extensions live as complementary skills under `skills/md
 - **Contribute back** via PR when an extension is broadly useful — we want shared archetypes to grow.
 - **No obligation** — mdcp uses **MIT**; local-only proprietary extensions are explicitly encouraged when they encode competitive or regulated workflow detail.
 
-**Bootstrap:** Install the parent skill with `npx skills add betsalel-williamson/mdcp --skill mdcp`. Commit `.agents/skills/mdcp/` in consumer repos so agents share the same instructions.
+**Bootstrap:** Install the parent skill with `npx skills add betsalel-williamson/mdcp --skill mdcp`. Commit the vendored skill in your agent's skills directory so agents share the same instructions.
 
 **Security:** Agent Skills operate with identical permissions to the user. Treat third-party Agent Skills as untrusted. Future work: trusted-source allowlist and sandboxed execution.
 
-Built-in subagents (such as the `mdcp` feature and doc-only subagents) resolve directly via the `.agents/skills/` directory. Each Agent Skill is an isolated, independent entity.
+Built-in subagents (such as the `mdcp` feature and doc-only subagents) resolve via the skills directory your host discovers. Each Agent Skill is an isolated, independent entity.
 
 ## Archetypes ("Battery Types")
 

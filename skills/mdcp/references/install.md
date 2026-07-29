@@ -6,18 +6,28 @@
 npx skills add betsalel-williamson/mdcp --skill mdcp
 ```
 
-That copies the skill into your repo under `.agents/skills/mdcp/` (the install
-target).
+Use `-a` / `--agent` to target a specific host when you have more than one agent
+installed (for example `-a cursor` or `-a claude-code`).
 
-Zero-install: copy the `mdcp` skill folder into
-`.agents/skills/mdcp/` in your repository.
+The [skills CLI](https://github.com/vercel-labs/skills) copies or symlinks the
+skill into the **selected agent’s project (or global) skills directory**. Exact
+paths depend on the agent — see [Supported Agents](https://github.com/vercel-labs/skills#supported-agents)
+(for example `.agents/skills/` for Cursor/Amp project installs, `.claude/skills/`
+for Claude Code, `.windsurf/skills/` for Windsurf).
 
-Prefer `.agents/skills/` as the portable install path. Some hosts also discover
-`.github/skills/` or `.claude/skills/`.
+**Zero-install:** copy the `mdcp` skill folder into the skills directory **your
+agent discovers** (same Supported Agents list), not a single fixed path.
 
 ## After install
 
-The `mdcp` parent skill provides the core system. To perform specific tasks, you should install the helper skills alongside it (e.g., `mdcp-getting-started`, `mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`).
+The `mdcp` parent skill provides the core system. To perform specific tasks, you should install the helper skills alongside it (e.g., `mdcp-getting-started`, `mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`):
+
+```bash
+npx skills add betsalel-williamson/mdcp --skill mdcp-getting-started
+```
+
+Use the same `-a` / `--agent` flag when targeting a host. Replace the skill name
+for other helpers.
 
 Start a bootstrap session with a natural-language turn under the getting-started helper skill:
 
