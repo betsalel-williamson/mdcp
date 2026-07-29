@@ -145,17 +145,32 @@ export function rewritePublishRelativeLinks(
   });
 }
 
+export interface IntraGuideLinkRewriteOptions {
+  sourceFile?: string;
+}
+
 /** Rewrite same-guide shard links to in-document anchors for publish outputs (npm READMEs). */
 export function rewriteIntraGuideFileLinks(
   markdown: string,
   slugByPath: Map<string, string>,
   guideDir: string,
+  options?: IntraGuideLinkRewriteOptions,
 ): string {
   return rewriteMarkdownLinkLines(markdown, INTRA_GUIDE_MD_LINK_RE, (originalMatch, m) => {
     const file = m[2];
     const fragment = m[3];
     const normalized = file.replace(/^\.\//, '');
-    let slug = slugByPath.get(resolve(guideDir, normalized));
+    if (options?.sourceFile && normalized.startsWith('../')) return originalMatch;
+    let slug: string | undefined;
+
+    if (options?.sourceFile) {
+      slug = slugByPath.get(resolve(dirname(options.sourceFile), normalized));
+    }
+
+    if (!slug) {
+      slug = slugByPath.get(resolve(guideDir, normalized));
+    }
+
     if (!slug) {
       for (const [path, pathSlug] of slugByPath) {
         if (basename(path) === normalized) {
