@@ -200,6 +200,20 @@ describe('publish link rewriting', () => {
     });
   });
 
+  it('leaves parent-traversal links unchanged even when resolvable via sourceFile', () => {
+    const guideDir = '/fake/guide/compiled';
+    const sourceFile = '/fake/guide/topic/section.md';
+    const slugByPath = new Map([
+      [resolve('/fake/guide/topic/section.md'), 'section'],
+      [resolve('/fake/guide/other.md'), 'other'],
+    ]);
+
+    const input = 'See [Other](../other.md).';
+    const out = rewriteIntraGuideFileLinks(input, slugByPath, guideDir, { sourceFile });
+    // Should NOT rewrite parent traversal, leave for cross-guide / ignoreGuides passes.
+    expect(out).toBe('See [Other](../other.md).');
+  });
+
   it('rewrites bare sibling links when sourceFile is outside guideDir', () => {
     const guideDir = '/fake/guide/compiled';
     const sourceFile = '/fake/guide/section-a.md';
