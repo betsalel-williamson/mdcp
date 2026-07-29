@@ -66,6 +66,14 @@ Fail on bare `Ch. N` and unlinked chapter-style references.
 
 Report markdown files that no guide accounts for. Register single files as [standalone guides](../glossary/standalone-guide.md) or fold them into a compiled guide. Reported in `mdcp check`; fails the gate when `scan.strict: true`. See [Documentation coverage scan](./coverage-scan.md).
 
+## Docs coverage evaluation (P1.6)
+
+Given a change set (PR paths or git diff), decide whether matching MDCP shards exist for the inferred guide surfaces. Emits JSON (`covered` / `missing_docs` / `needs_clarification`) for host automations. Advisory or gate mode. See [Docs coverage evaluation](./doc-coverage-evaluation.md).
+
+```bash
+mdcp evaluate-doc-coverage --git --mode advisory --config docs/mdcp.config.json --docs-root docs
+```
+
 ## Peer linters (P2.1)
 
 Orchestrate markdownlint-cli2, Vale, Prettier, markdown-link-check from host repo. Shard markdownlint and Vale prose only touch registered guide shard trees (`compileOrder`); optional `shardsGlobs` / `vale.scanGlobs` narrow scope further.

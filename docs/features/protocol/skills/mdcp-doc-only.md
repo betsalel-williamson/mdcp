@@ -37,6 +37,8 @@ See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the pl
 Intake is the same as other work-item helpers: `WORK_ITEM` and
 `WORK_ITEM_LOOKUP` before branching or editing.
 
+When an automation already ran [docs coverage evaluation](../../doc-coverage-evaluation.md), treat its JSON (`docSurfaces`, `candidateShards`, `reasons`, `questions`) as intake context. If `status` is `needs_clarification`, resolve `questions` with a human before editing shards.
+
 ## What this helper is not
 
 - **Implementing CLI flags, packages, or unit tests** — use

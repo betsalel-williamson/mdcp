@@ -29,13 +29,25 @@ The parent **Agent Skill** (`skills/mdcp/` → your agent's skills directory aft
 
 Design constraints for the protocol and its ecosystem — analogous to SOLID in software design, applied to **documentation context contracts**.
 
-| Principle                 | MDCP meaning                                                                                                            |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **S**ingle responsibility | Agent Skill = entrypoint and workflow; shards = intent; code = implementation; extensions = vertical overlays           |
-| **O**pen/closed           | Core protocol versioned and stable; extend through complementary skills without forking the base skill                  |
-| **L**iskov substitution   | Optional extensions **MUST NOT** break core `mdcp check` when disabled; archetypes compose on top of conforming layouts |
-| **I**nterface segregation | Compile hooks and complementary skills are separate opt-in surfaces                                                     |
-| **D**ependency inversion  | Agents and CI depend on **compiled contracts** and `mdcp check`, not ad-hoc README prose or host-specific rules         |
+| Principle                 | MDCP meaning                                                                                                                              |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **S**ingle responsibility | Agent Skill = entrypoint and workflow; shards = intent; code = implementation; extensions = vertical overlays                             |
+| **O**pen/closed           | Core protocol versioned and stable; extend through complementary skills without forking the base skill                                    |
+| **L**iskov substitution   | Optional extensions **MUST NOT** break core `mdcp check` when disabled; archetypes compose on top of conforming layouts                   |
+| **I**nterface segregation | Compile hooks and complementary skills are separate opt-in surfaces                                                                       |
+| **D**ependency inversion  | Agents and CI depend on **compiled contracts**, `mdcp check`, and `evaluate-doc-coverage`, not ad-hoc README prose or host-specific rules |
+
+## Host adapters (automation)
+
+A **host adapter** is a thin wrapper around the portable [docs coverage evaluation](../doc-coverage-evaluation.md) contract. Adapters **MUST NOT** encode guide-surface taxonomy in host-specific prompts.
+
+| Adapter role | Allowed work                                         | Forbidden work                        |
+| ------------ | ---------------------------------------------------- | ------------------------------------- |
+| Trigger      | PR opened/pushed, schedule, webhook                  | Re-deciding which guides exist        |
+| Input        | Collect changed paths; pass `--mode`                 | Hard-coding `features`/`client` rules |
+| Output       | Comment, check run, Slack, interactive HIL questions | Inventing shard content without skill |
+
+Cursor Automation is one adapter example — not the product center. Any CI system that can run `mdcp evaluate-doc-coverage` and parse JSON is a conforming adapter. See [Evaluate doc coverage](../../client-cli/evaluate-doc-coverage.md).
 
 ## Extensions directory
 

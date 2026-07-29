@@ -62,6 +62,20 @@ mdcp check --config docs/mdcp.config.json --docs-root docs
 
 `--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](./config-essentials.md#--config-vs---docs-root).
 
+## Automation integration
+
+Wire host automations (CI, Cursor, other agents) to the CLI evaluator — not to a host-specific prompt that reimplements MDCP taxonomy:
+
+```bash
+mdcp evaluate-doc-coverage \
+  --git --base origin/main \
+  --mode advisory \
+  --config docs/mdcp.config.json \
+  --docs-root docs
+```
+
+Stdout is JSON (`status`, `docSurfaces`, `candidateShards`, `reasons`, `questions`). Start in **advisory** mode; use **gate** when you want the check to fail on `missing_docs` or `needs_clarification`. Full adapter guide: [Evaluate doc coverage](./evaluate-doc-coverage.md). Capability contract: [Docs coverage evaluation](../features/doc-coverage-evaluation.md).
+
 Global options (apply to every command):
 
 | Option                | Default            | Purpose                                                                          |

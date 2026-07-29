@@ -9,6 +9,7 @@
   - [Repository layout](./repository-layout.md)
   - [Packages and tests](./packages-and-tests.md)
   - [Docs dogfooding](./docs-dogfooding.md)
+  - [Docs coverage evaluation (dogfood)](./docs-coverage-evaluation.md)
   - [Markdown formatting](./markdown-formatting.md)
   - [Agent Skill](./agent-skill.md)
   - [Live skill evals](./live-skill-evals.md)

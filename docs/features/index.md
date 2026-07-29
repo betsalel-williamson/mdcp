@@ -17,6 +17,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
   - [Compile output backup](./compile-output-backup.md)
 - [Link validation](./link-validation.md)
 - [Documentation coverage scan](./coverage-scan.md)
+- [Docs coverage evaluation](./doc-coverage-evaluation.md)
 - [Refs registry path](./refs-registry-path.md)
 - [Architecture decision records](./adr/index.md)
   - [ADR 0001 — Remove `mdcp export` profiles](./adr/0001-remove-export-profiles.md)
