@@ -160,7 +160,7 @@ export function rewriteIntraGuideFileLinks(
     const file = m[2];
     const fragment = m[3];
     const normalized = file.replace(/^\.\//, '');
-    if (normalized.startsWith('../')) return originalMatch;
+    if (options?.sourceFile && normalized.startsWith('../')) return originalMatch;
     let slug: string | undefined;
 
     if (options?.sourceFile) {

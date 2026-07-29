@@ -200,6 +200,19 @@ describe('publish link rewriting', () => {
     });
   });
 
+  it('rewrites publish-rebased parent paths in post-assembly pass without sourceFile', () => {
+    const guideDir = '/fake/docs/client-core';
+    const glossaryDir = '/fake/docs/glossary';
+    const slugByPath = new Map([
+      [resolve(glossaryDir, 'ignore-guides.md'), 'ignoreguides'],
+      [resolve(guideDir, 'api-config.md'), 'api-config'],
+    ]);
+
+    const input = 'See [ignoreGuides](../../docs/glossary/ignore-guides.md).';
+    const out = rewriteIntraGuideFileLinks(input, slugByPath, guideDir);
+    expect(out).toBe('See [ignoreGuides](#ignoreguides).');
+  });
+
   it('leaves parent-traversal links unchanged even when resolvable via sourceFile', () => {
     const guideDir = '/fake/guide/compiled';
     const sourceFile = '/fake/guide/topic/section.md';
