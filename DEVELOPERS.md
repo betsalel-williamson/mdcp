@@ -42,11 +42,13 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ### Documentation structure
 
+- [shard](#shard)
 - [idea mitosis](#idea-mitosis)
 - [shard single responsibility](#shard-single-responsibility)
 
 ### Format and compile terms
 
+- [check](#check)
 - [GFM](#gfm)
 - [Authored GFM](#authored-gfm)
 - [ignoreGuides](#ignoreguides)
@@ -1283,7 +1285,7 @@ Verification: agentskills.io validation (`pnpm skill:validate` / skills-ref) in 
 
 ## Skill
 
-An overloaded term that usually refers to an **Agent Skill** — a portable package of agent instructions (like `SKILL.md`) that hosts discover and load.
+An overloaded term that usually refers to an **Agent Skill** — a portable package of agent instructions (like `SKILL.md`) that hosts discover and load. Industry 101: [Agent Skills](https://agentskills.io).
 
 When discussing MDCP, "skill" specifically refers to the MDCP documentation system guardrails shipped via the [Agent Skills](#agent-skills) protocol.
 
@@ -1321,6 +1323,16 @@ Optional local with/without-skill agent grading via vendored [skill-creator](.ag
 
 <!-- mdcp-shard: end docs/glossary/live-skill-eval.md -->
 
+<!-- mdcp-shard: start docs/glossary/shard.md -->
+
+## shard
+
+A **shard** is a small Markdown file that owns one topic. In MDCP, authors edit shards; `compile` stitches them into published outputs (for example a README). Shards are the source of truth — do not hand-edit generated files.
+
+Think “one concern per file” so people and agents can load only what the task needs. Related: [shard single responsibility](#shard-single-responsibility). Deeper model: [Overview](docs/features/overview.md).
+
+<!-- mdcp-shard: end docs/glossary/shard.md -->
+
 <!-- mdcp-shard: start docs/glossary/idea-mitosis.md -->
 
 ## idea mitosis
@@ -1342,6 +1354,16 @@ See [Shard single responsibility and idea mitosis](docs/features/protocol/shard-
 See [Shard single responsibility and idea mitosis](docs/features/protocol/shard-srp-and-mitosis.md) and [idea mitosis](#idea-mitosis).
 
 <!-- mdcp-shard: end docs/glossary/shard-single-responsibility.md -->
+
+<!-- mdcp-shard: start docs/glossary/check.md -->
+
+## check
+
+**`mdcp check`** is MDCP’s validation gate. It compiles docs, refreshes [refs](#refs), and fails when orphans, broken links, or configured linters disagree with the shards — locally or in CI.
+
+Use it before you trust a merge. Command details: [CLI consumer guide](docs/client-cli/index.md).
+
+<!-- mdcp-shard: end docs/glossary/check.md -->
 
 <!-- mdcp-shard: start docs/glossary/gfm.md -->
 

@@ -1,6 +1,6 @@
 # Skill
 
-An overloaded term that usually refers to an **Agent Skill** — a portable package of agent instructions (like `SKILL.md`) that hosts discover and load.
+An overloaded term that usually refers to an **Agent Skill** — a portable package of agent instructions (like `SKILL.md`) that hosts discover and load. Industry 101: [Agent Skills](https://agentskills.io).
 
 When discussing MDCP, "skill" specifically refers to the MDCP documentation system guardrails shipped via the [Agent Skills](./agent-skills.md) protocol.
 
