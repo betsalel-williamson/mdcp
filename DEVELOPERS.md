@@ -237,7 +237,7 @@ Use **one** mutually exclusive GitHub label so the board and `gh issue list` sta
 2. **Labels** — Maintainers or coding agents apply the matching `priority:*` label when triaging (GitHub forms cannot map a dropdown to a label automatically). Replace any previous `priority:*` label so only one remains.
 3. **What to work on next** — Prefer open issues labeled `priority:P0`, then `P1`. Skip `priority:defer` until the gate in the issue body is met.
 
-Issue templates live under `.github/ISSUE_TEMPLATE/`. Adoption stories do not require a priority dropdown (qualitative evidence, not a delivery backlog item).
+Issue templates live under `.github/ISSUE_TEMPLATE/` (bug report, feedback, adoption story, extension proposal). Adoption stories do not require a priority dropdown (qualitative evidence, not a delivery backlog item). Extension proposals use the priority dropdown and the `enhancement` type label; maintainers usually also apply `protocol`. Pull requests use `.github/PULL_REQUEST_TEMPLATE.md`, which asks for protocol/skill version when the change touches those surfaces.
 
 #### Other labels (apply on intake)
 
@@ -680,11 +680,11 @@ When changing skill instructions:
 | `pnpm skill:validate` | Frontmatter fence lint + [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
 | `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                                         |
 
-`pnpm skill:validate` runs in local `pnpm check`, PR CI, and during **`pnpm release:main`** after skill version sync (hard fail before the release commit / publish). It is not a [live skill eval](docs/glossary/live-skill-eval.md).
+`pnpm skill:validate` runs in local `pnpm check`, PR CI, and during **`pnpm release:main`** after skill version sync (hard fail before the release commit / publish). It is not a [live skill eval](#live-skill-eval).
 
 ### Live skill evals (optional, local)
 
-Qualitative with/without-skill grading is documented in [Live skill evals](#live-skill-evals) (suite inventory, layout contract, tooling). The glossary term is [live skill eval](docs/glossary/live-skill-eval.md). That loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
+Qualitative with/without-skill grading is documented in [Live skill evals](#live-skill-evals) (suite inventory, layout contract, tooling). The glossary term is [live skill eval](#live-skill-eval). That loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
 
 ### Acceptance criteria
 
@@ -1076,7 +1076,7 @@ Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/
 
 ### Why this is necessary
 
-GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip `` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](docs/glossary/redos.md) class of denial-of-service risk.
+GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip `` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](#redos) class of denial-of-service risk.
 
 Even when everyday docs never hit the pathological case, the open alerts block a clean security dashboard, and the same regex shapes were copied across compile, refs, links, and xref lint. Fixing call sites one-by-one without a shared parse path invites the class to return.
 
@@ -1086,7 +1086,7 @@ Phase A introduces shared **linear** helpers for:
 
 - recognizing and demoting ATX headings
 - stripping Pandoc-style `` markers (including optional preceding whitespace when cleaning compiled output)
-- producing plain heading text for [heading slug](docs/glossary/heading-slug.md) generation
+- producing plain heading text for [heading slug](#heading-slug) generation
 
 Public package APIs keep their existing names; call sites delegate to the helpers. Duration-budget regression tests exercise the known CodeQL pump classes so a future regex reintroduction fails CI.
 
@@ -1110,7 +1110,7 @@ Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example 
 
 Maintainer guide for tracking **GitHub Actions security posture** in this public OSS monorepo. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); dependency and release triage stays in [Security-incident triage](#security-incident-triage). This shard is the audit trail for CI workflow and repository settings against the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html).
 
-Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](docs/glossary/redos.md)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
+Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](#redos)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
 
 ### Status vocabulary
 
@@ -1295,9 +1295,9 @@ Do not confuse "skill" with human abilities or general AI capabilities. In this 
 
 ## MDCP
 
-**MarkDown Context Protocol** — a **documentation system** delivered as an [Agent Skill](#agent-skills) and lightweight toolchain. It helps teams who care about durable docs distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays reviewable in git, maintainable as ideas keep arriving, and readable one shard at a time by people and coding agents.
+**MarkDown Context Protocol** — a **documentation system** delivered as an [Agent Skill](#agent-skills) and lightweight toolchain. It helps teams who care about durable docs distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays reviewable in git (the V1 transport), maintainable as ideas keep arriving, and readable one shard at a time by people and agents.
 
-MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
+MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the system or process exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
 
 The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements that shared context layer alongside the skill’s behavioral guardrails.
 

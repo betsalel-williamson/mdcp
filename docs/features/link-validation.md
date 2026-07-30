@@ -53,6 +53,8 @@ Publish-relative rewrite and publish-only lint are complementary: rewrite fixes 
 | Shard    | `lintLinks` / author time | Unresolved `.md` paths; same-shard `#fragment` vs demoted heading slugs            |
 | Compiled | After assemble            | `#fragment` vs `buildSlugRegistry`; relative file paths from output file directory |
 
+Compiled-phase checks run **after** cross-guide, publish-relative, and intra-guide rewrite. Co-compiled transitive targets (shards in `linkedSectionFiles` outside `guideDir`) are expected to rewrite to in-document `#slug` / `#fragment` via the guide link index and same-output preference — see [Cross-guide link rewriting](../client-core/compile-hooks/cross-guide-links.md#transitive-section-discovery). Validation treats remaining raw `../file.md` (or `./file.md`) to those co-compiled paths as broken when publish-only policy requires a compiled target.
+
 ## Check pipeline
 
 ```text
@@ -146,7 +148,8 @@ link: docs/client-cli/consumer-migration.md:42: dead anchor "#missing-slug" (slu
 - Shard dead same-doc `#fragment`
 - Compiled dead anchor after demotion
 - Compiled dead path after publish-relative link rewrite
-- Manifest-first guide link index — transitive guide does not overwrite manifest owner
+- Manifest-first guide link index — transitive guide does not overwrite manifest owner; index includes every `linkedSectionFiles` path for the compiling guide
+- Co-compiled transitive targets rewrite before compiled validation (same-output `#slug` / `#fragment`)
 - Cross-guide publish link rewrites to `guides.md#slug`, not same-doc `#slug`
 - `mdcp check` / `mdcp compile` exit **1** on broken links by default
 - `--warn-broken-links` exits **0** with `link-warn:` diagnostics
