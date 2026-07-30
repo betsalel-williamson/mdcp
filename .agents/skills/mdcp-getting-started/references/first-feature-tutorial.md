@@ -10,7 +10,8 @@ skill’s Process contract.
    - **novice** — default **yes**
    - **expert** — may skip
 2. If **skip**: brief handoff to day-to-day helpers (branch before edit applies
-   before that helper’s first edit), then run [Closing CTA](#closing-cta) once.
+   before that helper’s first edit; human “go” on a stay-on-main plan still
+   requires correcting the delivery path first), then run [Closing CTA](#closing-cta) once.
 3. If **yes**, ask **EXAMPLE_MODE**:
    - **recommended** — use [`hello-greeting`](#recommended-example-hello-greeting)
    - **bring-your-own** — user names FEATURE (and PERSONA if different); keep

@@ -70,7 +70,7 @@ Collect these via intake (or from the conversation if already stated):
 ### Step 2: Branch and Value Focus
 
 1. Explicitly define the **end-user value** this change brings — what outcome the user must achieve, and which friction (extra steps, unclear decisions, dead ends) this work removes. Start from the user’s steps to get there, not from how screens or controls look.
-2. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. Create the feature branch named in the plan from updated `main` before client shards, UI code, or tests. Verify with `git branch --show-current` (or equivalent) before the first edit. One branch per issue — do not mix unrelated UX work.
+2. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. An approved plan, verbal “go”, demo deadline, or leadership instruction that endorses staying on `main`/`master` does **NOT** override this rule. If the approved plan omitted a feature branch or said stay on main: **correct the delivery path first** — create/switch to the short-lived feature branch tied to `WORK_ITEM`, then edit; optionally revise the plan’s branch field; do not implement the stay-on-main path. Create the feature branch named in the plan from updated `main` before client shards, UI code, or tests. Verify with `git branch --show-current` (or equivalent) before the first edit. One branch per issue — do not mix unrelated UX work.
 
 ### Step 3: Design workflows (docs first)
 
@@ -88,3 +88,17 @@ Collect these via intake (or from the conversation if already stated):
 1. Run this repo's test and documentation validation commands until they pass (discover from developer docs or package scripts).
 2. Record journey and (if any) interface changes per this repo's release and communication conventions. DO NOT detail any old behavior that no longer works in our docs. That belongs in our changeset.
 3. Submit work for review and link `WORK_ITEM`.
+
+## Common Mistakes
+
+| Excuse                                                | Reality                                                                                                                        |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| “Plan was already approved / human said go”           | Approval does not authorize edits on `main`/`master`. Correct the delivery path first — branch tied to `WORK_ITEM`, then edit. |
+| “Stay on main for a 10-minute demo / optional polish” | Short-lived branches and PR review are the delivery loop, not optional polish.                                                 |
+| “Tiny one-line edit isn’t worth a branch”             | One branch per issue; verify with `git branch --show-current` before the first edit.                                           |
+
+## Red Flags — STOP
+
+- Approved stay-on-main plan
+- Human said “go” while `git branch` is `main`/`master`
+- Dirty tree on main with “just finish”
