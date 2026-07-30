@@ -44,6 +44,8 @@ npm view @bwilliamson/mdcp-presets version
 
 **Important Security Requirement:** The `release.yml` workflow is bound to the `release` GitHub Environment. Maintainers **must** configure Environment protection rules (required reviewers) in GitHub Settings → Environments → release. This ensures that no release can be published without manual approval.
 
+After switching release triggers from `v*` tags to **push to `main`**, re-confirm each package’s Trusted Publisher still points at workflow filename `release.yml` (npm binds by filename, not by event type — still verify in the npm UI after the workflow change).
+
 Option A — npm website (easiest):
 
 1. Open each package → **Settings** → **Trusted Publisher** → **GitHub Actions**

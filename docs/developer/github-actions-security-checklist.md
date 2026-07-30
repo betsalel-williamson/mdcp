@@ -2,41 +2,41 @@
 
 This checklist tracks our compliance with the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html). See [GitHub Actions security posture](./github-actions-security.md) for vocabulary and re-review guidance. All open risks are tracked under epic [#173](https://github.com/betsalel-williamson/mdcp/issues/173).
 
-| OWASP Topic                             | Status                       | Notes                                                                                |
-| --------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------ |
-| **Pipeline Governance**                 |                              |                                                                                      |
-| Treat CI/CD as critical production code | `reviewed (2026-07-27)`      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173. |
-| **Authentication & Authorization**      |                              |                                                                                      |
-| Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`      | Repo default is read-only.                                                           |
-| Workflow-level `permissions: {}`        | `reviewed (2026-07-27)`      | Empty top-level on ci/gitleaks/release; job-scoped writes.                           |
-| `persist-credentials: false`            | `reviewed (2026-07-27)`      | Set on all `actions/checkout` steps.                                                 |
-| Eliminate static credentials            | `reviewed (2026-07-27)`      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.              |
-| OIDC for cloud providers                | `reviewed (2026-07-27)`      | Used for npm Trusted Publishing.                                                     |
-| Secure handling of static credentials   | `not a concern (2026-07-27)` | No static credentials remain in workflows.                                           |
-| Secrets: inherit                        | `not a concern (2026-07-27)` | Not used.                                                                            |
-| Mask sensitive data                     | `reviewed (2026-07-27)`      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                     |
-| **Workflows & Execution**               |                              |                                                                                      |
-| Pin actions to commit SHA               | `reviewed (2026-07-27)`      | All third-party actions pinned to full commit SHAs with tag comments in workflows.   |
-| Third-party actions caution             | `reviewed (2026-07-27)`      | Documented current set.                                                              |
-| Sanitize untrusted context / input      | `reviewed (2026-07-27)`      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.            |
-| `pull_request_target` trigger           | `not a concern (2026-07-27)` | Not used.                                                                            |
-| `workflow_run` trigger                  | `not a concern (2026-07-27)` | Not used.                                                                            |
-| `issue_comment` trigger                 | `not a concern (2026-07-27)` | Not used.                                                                            |
-| Curated shared workflows                | `not a concern (2026-07-27)` | Single-repo monorepo; no centralized shared-workflows repository.                    |
-| Multi-repo shared workflows             | `not a concern (2026-07-27)` | Not used.                                                                            |
-| **Runners & Environments**              |                              |                                                                                      |
-| Self-hosted runners                     | `not a concern (2026-07-27)` | Using `ubuntu-latest` GitHub-hosted runners.                                         |
-| Runner groups                           | `not a concern (2026-07-27)` | Not applicable to GitHub-hosted runners.                                             |
-| Egress monitoring                       | `reviewed (2026-07-27)`      | Harden-Runner in audit mode only (not block).                                        |
-| Environment required reviewers          | `reviewed (2026-07-27)`      | Bound to `release` env; required reviewers are maintainer ops.                       |
-| **Code & Supply Chain**                 |                              |                                                                                      |
-| Branch protection baseline              | `reviewed (2026-07-27)`      | Main branch protected with PR and status checks.                                     |
-| Require approval for external           | `reviewed (2026-07-30)`      | CODEOWNERS on `main`; `require_code_owner_reviews` + 1 approving review enabled.     |
-| Dependabot for Actions                  | `reviewed (2026-07-27)`      | Configured for weekly updates.                                                       |
-| Dependabot cooldown                     | `reviewed (2026-07-27)`      | Explicit 7-day cooldown on `npm` and `github-actions`.                               |
-| Artifact / cache poisoning              | `reviewed (2026-07-27)`      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                       |
-| Secret scanning                         | `reviewed (2026-07-27)`      | Gitleaks workflow is active.                                                         |
-| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`      | CodeQL (`javascript-typescript` + `actions`) + Zizmor; Zizmor fails on findings.     |
-| AI-in-CI                                | `not a concern (2026-07-27)` | No AI assistants used in CI.                                                         |
-| **Incident Response**                   |                              |                                                                                      |
-| Incident response plan                  | `reviewed (2026-07-27)`      | Covered in `SECURITY.md` and triage docs.                                            |
+| OWASP Topic                             | Status                       | Notes                                                                                                               |
+| --------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Pipeline Governance**                 |                              |                                                                                                                     |
+| Treat CI/CD as critical production code | `reviewed (2026-07-27)`      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173.                                |
+| **Authentication & Authorization**      |                              |                                                                                                                     |
+| Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`      | Repo default is read-only.                                                                                          |
+| Workflow-level `permissions: {}`        | `reviewed (2026-07-27)`      | Empty top-level on ci/gitleaks/release; job-scoped writes.                                                          |
+| `persist-credentials: false`            | `reviewed (2026-07-30)`      | Set on all `actions/checkout` steps (release passes token only to changesets/action).                               |
+| Eliminate static credentials            | `reviewed (2026-07-27)`      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.                                             |
+| OIDC for cloud providers                | `reviewed (2026-07-30)`      | Trusted Publishing on `release.yml` (push to `main` + `workflow_dispatch`; re-bind npm trust after trigger change). |
+| Secure handling of static credentials   | `not a concern (2026-07-27)` | No static credentials remain in workflows.                                                                          |
+| Secrets: inherit                        | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| Mask sensitive data                     | `reviewed (2026-07-27)`      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                                                    |
+| **Workflows & Execution**               |                              |                                                                                                                     |
+| Pin actions to commit SHA               | `reviewed (2026-07-27)`      | All third-party actions pinned to full commit SHAs with tag comments in workflows.                                  |
+| Third-party actions caution             | `reviewed (2026-07-27)`      | Documented current set.                                                                                             |
+| Sanitize untrusted context / input      | `reviewed (2026-07-27)`      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.                                           |
+| `pull_request_target` trigger           | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| `workflow_run` trigger                  | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| `issue_comment` trigger                 | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| Curated shared workflows                | `not a concern (2026-07-27)` | Single-repo monorepo; no centralized shared-workflows repository.                                                   |
+| Multi-repo shared workflows             | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| **Runners & Environments**              |                              |                                                                                                                     |
+| Self-hosted runners                     | `not a concern (2026-07-27)` | Using `ubuntu-latest` GitHub-hosted runners.                                                                        |
+| Runner groups                           | `not a concern (2026-07-27)` | Not applicable to GitHub-hosted runners.                                                                            |
+| Egress monitoring                       | `reviewed (2026-07-27)`      | Harden-Runner in audit mode only (not block).                                                                       |
+| Environment required reviewers          | `reviewed (2026-07-27)`      | Bound to `release` env; required reviewers are maintainer ops.                                                      |
+| **Code & Supply Chain**                 |                              |                                                                                                                     |
+| Branch protection baseline              | `reviewed (2026-07-27)`      | Main branch protected with PR and status checks.                                                                    |
+| Require approval for external           | `reviewed (2026-07-30)`      | CODEOWNERS on `main`; `require_code_owner_reviews` + 1 approving review enabled.                                    |
+| Dependabot for Actions                  | `reviewed (2026-07-27)`      | Configured for weekly updates.                                                                                      |
+| Dependabot cooldown                     | `reviewed (2026-07-27)`      | Explicit 7-day cooldown on `npm` and `github-actions`.                                                              |
+| Artifact / cache poisoning              | `reviewed (2026-07-27)`      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                                                      |
+| Secret scanning                         | `reviewed (2026-07-27)`      | Gitleaks workflow is active.                                                                                        |
+| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`      | CodeQL (`javascript-typescript` + `actions`) + Zizmor; Zizmor fails on findings.                                    |
+| AI-in-CI                                | `not a concern (2026-07-27)` | No AI assistants used in CI.                                                                                        |
+| **Incident Response**                   |                              |                                                                                                                     |
+| Incident response plan                  | `reviewed (2026-07-27)`      | Covered in `SECURITY.md` and triage docs.                                                                           |

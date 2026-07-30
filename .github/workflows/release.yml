@@ -34,9 +34,10 @@ jobs:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          # changesets/action needs full history and a token that can push
+          # Full history for changesets; do not persist credentials into the workspace
+          # (GITHUB_TOKEN is passed only to changesets/action below).
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
 
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
 
