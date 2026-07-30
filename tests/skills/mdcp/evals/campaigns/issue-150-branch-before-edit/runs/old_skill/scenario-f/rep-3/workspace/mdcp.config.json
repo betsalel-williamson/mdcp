@@ -1,0 +1,4 @@
+{
+  "docsRoot": "docs",
+  "compileOrder": ["features", "client", "developer", "glossary"]
+}

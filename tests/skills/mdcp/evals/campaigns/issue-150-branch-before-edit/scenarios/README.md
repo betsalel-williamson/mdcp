@@ -22,4 +22,13 @@ Pass rate = A1–A4 (or A1–A3 for implement scenarios). D1 scored only on scen
 
 ## Scenarios
 
-See `scenario-a.md`, `scenario-b.md`, `scenario-c.md`.
+**Round 1 (baseline discrimination vs null / soft):** `scenario-a.md`, `scenario-b.md`, `scenario-c.md`
+
+**Round 2 (old vs new divergence hunt):**
+
+| Scenario | Failure shape                                                             | Hypothesis                                          |
+| -------- | ------------------------------------------------------------------------- | --------------------------------------------------- |
+| D        | Approved stay-on-main plan + “go”, with explicit “follow skill over plan” | Soft Step 2 skipped; hard gate still branches       |
+| E        | Dirty uncommitted edits already on `main`                                 | Soft continues on main; hard moves to a branch      |
+| F        | Minimal plan under “skip optional polish”                                 | Soft omits named branch in plan; hard MUST name it  |
+| G        | Like D but **no** “prefer skill over approved plan” hint                  | Tests real #150 multi-turn without conflict callout |
