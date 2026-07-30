@@ -48,6 +48,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Build before version/publish so husky pre-commit on the Version Packages
+      # commit can run affected tests (they need packages/*/dist). Keeps the same
+      # local hook gate the old interactive release:tag path had on a built tree.
+      - run: pnpm build
+
       - name: Reject major bumps
         run: pnpm changeset:reject-major
 
