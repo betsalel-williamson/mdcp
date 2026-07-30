@@ -66,5 +66,9 @@ jobs:
           commit: 'chore: version packages'
           createGithubReleases: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Prefer RELEASE_GITHUB_TOKEN (PAT or GitHub App installation token).
+          # Events from the default GITHUB_TOKEN do not start other workflows, so
+          # Version Packages PRs opened with GITHUB_TOKEN never get CI checks and
+          # can sit blocked on required status checks. See Publishing docs.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true

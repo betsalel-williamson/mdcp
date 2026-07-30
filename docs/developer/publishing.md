@@ -72,6 +72,28 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **push to
 3. Merge that PR (after environment approval on the release job if configured).
 4. CI runs `pnpm release:publish` for bumped public packages.
 
+**Actions must be allowed to open PRs.** In **Settings → Actions → General → Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**. Without that, `changesets/action` fails with `GitHub Actions is not permitted to create or approve pull requests` even when the job has `pull-requests: write`.
+
+Optional API check / set (repo admin `gh` auth):
+
+```bash
+gh api repos/betsalel-williamson/mdcp/actions/permissions/workflow
+
+gh api -X PUT repos/betsalel-williamson/mdcp/actions/permissions/workflow \
+  -f default_workflow_permissions=read \
+  -F can_approve_pull_request_reviews=true
+```
+
+(`can_approve_pull_request_reviews=true` is the API flag for that checkbox; keep default workflow permissions **read** and rely on per-job `permissions:` in `release.yml`.)
+
+**Version Packages PRs need `RELEASE_GITHUB_TOKEN` so CI runs.** Events created with the default Actions `GITHUB_TOKEN` do **not** start other workflows. A Version Packages PR opened with that token never gets Check / CodeQL / gitleaks, and required status checks wait forever.
+
+1. Create a fine-grained PAT (or classic `repo` PAT) as the maintainer, with **Contents** and **Pull requests** read/write on this repo.
+2. Store it as repository secret **`RELEASE_GITHUB_TOKEN`** (Settings → Secrets and variables → Actions).
+3. `release.yml` uses `secrets.RELEASE_GITHUB_TOKEN` when set (falls back to `GITHUB_TOKEN`).
+
+Until that secret exists, review the Version Packages bump diff and merge with **admin bypass**. The release job already ran `pnpm build` + husky before opening the PR.
+
 ## Trusted Publishing notes
 
 - Repository: `betsalel-williamson/mdcp`, workflow: `release.yml`
