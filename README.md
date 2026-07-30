@@ -57,95 +57,63 @@ The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout
 
 ## MDCP 101
 
-A five-minute mental model for first-time adopters. Edit **shards** (small Markdown files), compile them into publish outputs, and validate with `mdcp check` — never hand-edit generated READMEs. For the full model, see [Overview](docs/features/overview.md).
+MDCP is a **human + AI documentation habit** for technical work: you and your agent keep durable intent in small Markdown files in git, instead of only in chat history.
 
-### Sharded structure
+### The problem
 
-Language-agnostic shards sit in audience tiers. Compile stitches them into the outputs readers and agents consume.
+Agents forget. Chat threads disappear. Giant READMEs and dump files overwhelm both humans and model context. Next week's session cannot reliably reuse yesterday's decisions.
 
-```mermaid
-flowchart TB
-  subgraph tiers["Guide tiers (Code Repository Archetype)"]
-    features["features/ — capabilities and contracts"]
-    client["client/ — end-user value and usage"]
-    developer["developer/ — contributor workflows"]
-    glossary["glossary/ — shared terms"]
-  end
+### How you work together
 
-  subgraph toolchain["MDCP toolchain"]
-    config["mdcp.config.json"]
-    cli["mdcp compile / check"]
-  end
+1. **You** decide what must stay true (product intent, constraints, glossary).
+2. **The agent** drafts or updates small **shards** (one topic per file) _before_ coding.
+3. **You** review those shards in PRs — you do not need to be a Markdown expert on day one.
+4. **`mdcp check`** (locally or in CI) proves links and compile still work.
 
-  subgraph outputs["Publish outputs"]
-    readme["README.md"]
-    developers["DEVELOPERS.md"]
-    pkg["package READMEs"]
-  end
-
-  features --> cli
-  client --> cli
-  developer --> cli
-  glossary --> cli
-  config --> cli
-  cli --> readme
-  cli --> developers
-  cli --> pkg
-```
-
-### Init workflow
-
-Bootstrap the Agent Skill, then let `/mdcp` wire the docs tree before your first feature.
+#### Prompt loop
 
 ```mermaid
 flowchart LR
-  install["npx skills add … --skill mdcp"] --> bootstrap["/mdcp help me get started"]
-  bootstrap --> layout["Config + guide layout"]
-  layout --> first["Optional first feature"]
-  first --> check["mdcp check"]
+  you["You: paste or /mdcp …"] --> agent["Agent: shards + config"]
+  agent --> review["You: review in git/PR"]
+  review --> gate["mdcp check / CI"]
 ```
 
-### Extensions layer
+**In an Agent Skills host** (Cursor, Claude Code, Copilot with skills, and similar):
 
-Keep the portable skill generic. Put project-specific guidance in repo shards or extensions — do not hand-edit vendored skill files.
+```text
+/mdcp help me get started
+```
+
+Or paste that line after installing the skill (`npx skills add betsalel-williamson/mdcp --skill mdcp` — see Get started above).
+
+**In a chat-only tool** (ChatGPT, Gemini web, no repo agent): do **not** install the toolchain yet. Keep notes in your project folder if you have one, or wait until you use an agent that can edit a git repo. Read [Overview](docs/features/overview.md) and [Vision](docs/features/protocol/00-vision-and-roadmap.md) first.
+
+**Automation / CI:** the Agent Skill tells agents _when_ to touch docs; the CLI runs `compile` / `check` in scripts and pipelines.
+
+### Are you ready?
+
+| Start now                                         | Wait                                    |
+| ------------------------------------------------- | --------------------------------------- |
+| Git repo + an agent that can edit files           | Chat-only coding with no project folder |
+| Docs or decisions already sprawling (or about to) | One-off toy you will not reopen         |
+| Willing to review doc changes, not only code      | No interest in durable docs beyond chat |
+
+You feel the benefit on the **second session** — when prior decisions are still findable — not on the first install.
+
+### What's in the box
 
 ```mermaid
 flowchart TB
-  subgraph core["Protocol core"]
-    skill["Agent Skill mdcp"]
-    packages["CLI + core packages"]
-  end
-
-  subgraph repo["Your repository"]
-    shards["features / client / developer / glossary"]
-    ext["docs/extensions/ or complementary skills"]
-  end
-
-  skill --> shards
-  packages --> shards
-  shards --> ext
+  skill["Agent Skill — how agents work with docs"] --> shards["Shards — small Markdown topics in git"]
+  shards --> check["mdcp check — validation gate"]
 ```
 
-### Problems and solutions
+- **Skill** — instructions your agent follows (`/mdcp`, helpers).
+- **Shards** — source of truth; compiled READMEs are generated — do not hand-edit them.
+- **Check** — keeps the docs system honest as it grows.
 
-```mermaid
-flowchart LR
-  subgraph problems["Common pain"]
-    mono["Monolith README"]
-    dump["mdcp.v*.llms.txt dump"]
-    chat["Intent only in chat"]
-  end
-
-  subgraph solutions["MDCP response"]
-    shards2["Small validated shards"]
-    agentskill["Agent Skill workflows"]
-    gate["mdcp check in CI"]
-  end
-
-  mono --> shards2
-  dump --> agentskill
-  chat --> gate
-```
+Deeper model: [Overview](docs/features/overview.md). Install path: [Get started](#get-started).
 
 <!-- mdcp-shard: end docs/repo-readme/mdcp-101.md -->
 
