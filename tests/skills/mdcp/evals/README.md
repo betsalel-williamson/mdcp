@@ -34,5 +34,9 @@ Fixtures and prompts for the optional [skill-creator](../../../.agents/skills/sk
 5. Grade both arms against the same assertion list; aggregate; open the viewer.
 6. Eval 10 (`eval-10-atomic-commit-groups`) uses **with_skill** vs **old_skill**
    (snapshot of `skills/mdcp` from `main` before Atomic commit groups QA).
+7. Evals 11–13 (`srp-overloaded`, `length-only`, `two-level-review`) discriminate
+   shard SRP / idea mitosis / two-level review. Compare **with_skill** (PR skill)
+   vs **old_skill** (`main` snapshot). Published go/no-go summaries live under
+   `tests/skills/mdcp/evals/results/` when maintainers run a decision campaign.
 
 Child suites: [`mdcp-getting-started`](../../mdcp-getting-started/evals/README.md), [`mdcp-doc-only`](../../mdcp-doc-only/evals/README.md), [`mdcp-design-architecture`](../../mdcp-design-architecture/evals/README.md), [`mdcp-feature-level`](../../mdcp-feature-level/evals/README.md), [`mdcp-ux`](../../mdcp-ux/evals/README.md). Maintainer index: [`docs/developer/live-skill-evals.md`](../../../../docs/developer/live-skill-evals.md).

@@ -217,6 +217,95 @@
           "description": "Stops after the plan and waits for human review; does not edit fixture docs or packages before approval"
         }
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "SHIP TONIGHT. Leadership wants export docs fixed in one pass and says keep everything about export in ONE feature file so agents find it faster — do not over-engineer. The srp-overloaded fixture has docs/features/export-capability.md mixing end-user how-to, architecture, and temporary discovery notes. Using the MDCP parent skill, make the docs durable and correct. Time pressure is real: prefer minimal churn.",
+      "expected_output": "Applies mitosis/SRP: end-user how-to moves to client (or a how-to shard), feature shard keeps architecture/capability only, temporary discovery/tickets removed from durable docs. Updates guide indexes and cross-links. Does not obey the 'one file forever' pressure when audiences/jobs conflict.",
+      "files": [
+        "evals/files/srp-overloaded/mdcp.config.json",
+        "evals/files/srp-overloaded/docs/features/index.md",
+        "evals/files/srp-overloaded/docs/features/export-capability.md",
+        "evals/files/srp-overloaded/docs/client/index.md",
+        "evals/files/srp-overloaded/docs/client/export-results.md"
+      ],
+      "assertions": [
+        {
+          "name": "splits_mixed_audiences",
+          "description": "Does not leave end-user how-to and architecture as co-equal sections in one durable feature shard"
+        },
+        {
+          "name": "client_holds_howto",
+          "description": "End-user export how-to lives under docs/client/ (export-results or equivalent)"
+        },
+        {
+          "name": "removes_temp_discovery",
+          "description": "Removes temporary discovery/tickets/dual-write notes from durable shards"
+        },
+        {
+          "name": "updates_indexes_or_links",
+          "description": "Updates guide index and/or cross-links after any split"
+        },
+        {
+          "name": "resists_one_file_pressure",
+          "description": "Does not keep a multi-audience monolith solely because leadership asked for one file"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "This compile-pipeline feature shard is TOO LONG for agents. Split it into many tiny files NOW so each section is its own shard. Leadership says length is the problem — do not debate philosophy. Using the MDCP parent skill on the length-only fixture, fix docs/features/compile-pipeline.md.",
+      "expected_output": "Does NOT split solely because the file is long when audience/job/concern remain single. May tighten wording in place. If it reorganizes, responsibility stays one concern; no fake mitosis for section headings alone.",
+      "files": [
+        "evals/files/length-only/mdcp.config.json",
+        "evals/files/length-only/docs/features/index.md",
+        "evals/files/length-only/docs/features/compile-pipeline.md"
+      ],
+      "assertions": [
+        {
+          "name": "no_length_only_split",
+          "description": "Does not split the shard into many files solely because of length when responsibility is still single"
+        },
+        {
+          "name": "keeps_single_concern",
+          "description": "Resulting feature docs still present one compile-pipeline concern (not fragmented heading dumps)"
+        },
+        {
+          "name": "states_or_implies_mitosis_rule",
+          "description": "Transcript/plan acknowledges split-when-responsibility-multiplies (not length) OR clearly refuses length-only split"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "URGENT merge in 10 minutes. Features says digests are daily; client settings still say weekly — fix the client shard only so the PR is tiny. Leadership explicitly says SKIP any comprehensive guide review / cross-guide consistency pass — isolation fix only. Using the MDCP parent skill on the two-level-review fixture, resolve the contradiction.",
+      "expected_output": "Corrects the drift so client and features agree on digest cadence. Performs (or explicitly records) two-level review: isolation on the changed shard plus comprehensive check against related guides. Does not honor skip-comprehensive-review pressure when guides disagree.",
+      "files": [
+        "evals/files/two-level-review/mdcp.config.json",
+        "evals/files/two-level-review/docs/features/index.md",
+        "evals/files/two-level-review/docs/features/notifications.md",
+        "evals/files/two-level-review/docs/client/index.md",
+        "evals/files/two-level-review/docs/client/notification-settings.md",
+        "evals/files/two-level-review/docs/developer/index.md"
+      ],
+      "assertions": [
+        {
+          "name": "resolves_cadence_drift",
+          "description": "Client and features agree on digest cadence after the change (no daily vs weekly contradiction)"
+        },
+        {
+          "name": "checks_related_guides",
+          "description": "Reads or reviews related feature/client shards — not only the single file leadership named"
+        },
+        {
+          "name": "resists_skip_comprehensive",
+          "description": "Does not skip comprehensive/guide-agreement review solely because leadership asked to skip it"
+        },
+        {
+          "name": "records_two_level_or_equivalent",
+          "description": "Plan/transcript shows isolation review plus comprehensive/guide agreement (named two-level or equivalent behavior)"
+        }
+      ]
     }
   ]
 }
