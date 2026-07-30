@@ -160,6 +160,7 @@ describe('cross-guide link rewriting', () => {
         outputBasename: 'architecture-review.md',
         outputFile: join(work, 'architecture-review.md'),
         slug: 'find-004',
+        canonical: true,
       });
 
       const terms = join(work, 'glossary', 'terms.md');
@@ -168,6 +169,7 @@ describe('cross-guide link rewriting', () => {
         outputBasename: 'glossary.md',
         outputFile: join(work, 'glossary.md'),
         slug: 'terms',
+        canonical: true,
       });
     });
   });
@@ -255,12 +257,14 @@ describe('cross-guide link rewriting', () => {
           outputBasename: 'architecture-review.md',
           outputFile: join(work, 'architecture-review.md'),
           slug: 'find-004',
+          canonical: true,
         });
         expect(index.get(join(work, 'technical', 'deployment.md'))).toEqual({
           guideName: 'technical-guide',
           outputBasename: 'technical-guide.md',
           outputFile: join(work, 'technical-guide.md'),
           slug: 'deployment',
+          canonical: true,
         });
       });
     });
@@ -527,6 +531,115 @@ describe('cross-guide link rewriting', () => {
 
       expect(index.has(join(work, 'features', 'overview.md'))).toBe(true);
       expect(index.has(join(work, 'examples', 'other', 'README.md'))).toBe(false);
+    });
+  });
+
+  it('buildGuideLinkIndex includes transitive scopeRoot files outside guideDir', () => {
+    withTmpDir('mdcp-index-transitive-scope-', (work) => {
+      mkdirSync(join(work, 'guide', 'compiled'), { recursive: true });
+      mkdirSync(join(work, 'topics', 'security'), { recursive: true });
+
+      writeFileSync(join(work, 'guide', 'compiled', 'shards.md'), '- [Shard A](../shard-a.md)\n');
+      writeFileSync(
+        join(work, 'guide', 'shard-a.md'),
+        '# Shard A\n\n- [Onboarding](../onboarding.md#setup-prerequisites)\n',
+      );
+      writeFileSync(
+        join(work, 'onboarding.md'),
+        '# Onboarding\n\n## Setup prerequisites\n\n- [Security overview](./topics/security/index.md).\n',
+      );
+      writeFileSync(join(work, 'topics', 'security', 'index.md'), '# Security overview\n');
+
+      const opts: CompileOptionsInput = {
+        guidesRoot: work,
+        compileOrder: ['example-guide'],
+        docsRoot: work,
+        config: { outputDir: '_build', compileOrder: ['example-guide'] },
+        guides: [
+          {
+            name: 'example-guide',
+            path: 'guide/compiled',
+            compile: {
+              manifest: 'shards.md',
+              scopeRoot: '.',
+              outputFile: 'example-guide.md',
+            },
+          },
+        ],
+      };
+      const index = buildGuideLinkIndex(opts, work).index;
+
+      const onboarding = join(work, 'onboarding.md');
+      const security = join(work, 'topics', 'security', 'index.md');
+      expect(index.get(onboarding)).toEqual({
+        guideName: 'example-guide',
+        outputBasename: 'example-guide.md',
+        outputFile: join(work, '_build', 'example-guide.md'),
+        slug: 'onboarding',
+        canonical: false,
+      });
+      expect(index.get(security)).toEqual({
+        guideName: 'example-guide',
+        outputBasename: 'example-guide.md',
+        outputFile: join(work, '_build', 'example-guide.md'),
+        slug: 'security-overview',
+        canonical: false,
+      });
+    });
+  });
+
+  it('co-included shared shards rewrite to same-output anchors in each guide', () => {
+    withTmpDir('mdcp-co-include-shared-', (work) => {
+      for (const name of ['guide-a', 'guide-b'] as const) {
+        mkdirSync(join(work, name), { recursive: true });
+        writeFileSync(
+          join(work, name, 'index.md'),
+          `# ${name}\n\n## Sections\n\n- [Body](./body.md)\n`,
+        );
+        writeFileSync(join(work, name, 'body.md'), '## Body\n\nSee [Shared](../shared/note.md).\n');
+      }
+      mkdirSync(join(work, 'shared'), { recursive: true });
+      writeFileSync(join(work, 'shared', 'note.md'), '# Shared note\n\nBody.\n');
+
+      const opts: CompileOptionsInput = {
+        guidesRoot: work,
+        compileOrder: ['guide-a', 'guide-b'],
+        docsRoot: work,
+        config: { outputDir: '_build', compileOrder: ['guide-a', 'guide-b'] },
+        guides: [
+          {
+            name: 'guide-a',
+            path: 'guide-a',
+            compile: {
+              scopeRoot: '.',
+              outputFile: 'guide-a.md',
+              sectionsHeading: 'Sections',
+            },
+          },
+          {
+            name: 'guide-b',
+            path: 'guide-b',
+            compile: {
+              scopeRoot: '.',
+              outputFile: 'guide-b.md',
+              sectionsHeading: 'Sections',
+            },
+          },
+        ],
+      };
+
+      const shared = join(work, 'shared', 'note.md');
+      const index = buildGuideLinkIndex(opts, work).index;
+      expect(index.has(shared)).toBe(true);
+      expect(index.get(shared)?.slug).toBe('shared-note');
+      expect(['guide-a', 'guide-b']).toContain(index.get(shared)?.guideName);
+
+      const results = compileGuideResults(opts);
+      for (const result of results) {
+        expect(result.text).toContain('[Shared](#shared-note)');
+        expect(result.text).not.toMatch(/guide-[ab]\.md#shared-note/);
+        expect(result.text).not.toMatch(/\]\(\.\.\/shared\/note\.md\)/);
+      }
     });
   });
 });

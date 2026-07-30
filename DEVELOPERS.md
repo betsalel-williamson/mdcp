@@ -680,11 +680,11 @@ When changing skill instructions:
 | `pnpm skill:validate` | Frontmatter fence lint + [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
 | `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                                         |
 
-`pnpm skill:validate` runs in local `pnpm check`, PR CI, and during **`pnpm release:main`** after skill version sync (hard fail before the release commit / publish). It is not a [live skill eval](docs/glossary/live-skill-eval.md).
+`pnpm skill:validate` runs in local `pnpm check`, PR CI, and during **`pnpm release:main`** after skill version sync (hard fail before the release commit / publish). It is not a [live skill eval](#live-skill-eval).
 
 ### Live skill evals (optional, local)
 
-Qualitative with/without-skill grading is documented in [Live skill evals](#live-skill-evals) (suite inventory, layout contract, tooling). The glossary term is [live skill eval](docs/glossary/live-skill-eval.md). That loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
+Qualitative with/without-skill grading is documented in [Live skill evals](#live-skill-evals) (suite inventory, layout contract, tooling). The glossary term is [live skill eval](#live-skill-eval). That loop is local-only — do **not** require Claude CLI or `skill-creator` in CI.
 
 ### Acceptance criteria
 
@@ -1076,7 +1076,7 @@ Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/
 
 ### Why this is necessary
 
-GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip `` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](docs/glossary/redos.md) class of denial-of-service risk.
+GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip `` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](#redos) class of denial-of-service risk.
 
 Even when everyday docs never hit the pathological case, the open alerts block a clean security dashboard, and the same regex shapes were copied across compile, refs, links, and xref lint. Fixing call sites one-by-one without a shared parse path invites the class to return.
 
@@ -1086,7 +1086,7 @@ Phase A introduces shared **linear** helpers for:
 
 - recognizing and demoting ATX headings
 - stripping Pandoc-style `` markers (including optional preceding whitespace when cleaning compiled output)
-- producing plain heading text for [heading slug](docs/glossary/heading-slug.md) generation
+- producing plain heading text for [heading slug](#heading-slug) generation
 
 Public package APIs keep their existing names; call sites delegate to the helpers. Duration-budget regression tests exercise the known CodeQL pump classes so a future regex reintroduction fails CI.
 
@@ -1110,7 +1110,7 @@ Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example 
 
 Maintainer guide for tracking **GitHub Actions security posture** in this public OSS monorepo. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); dependency and release triage stays in [Security-incident triage](#security-incident-triage). This shard is the audit trail for CI workflow and repository settings against the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html).
 
-Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](docs/glossary/redos.md)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
+Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](#redos)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
 
 ### Status vocabulary
 

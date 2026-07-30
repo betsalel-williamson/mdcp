@@ -8,12 +8,12 @@ Multi-output consumer repos compile separate monoliths (for example `glossary.md
 
 At compile time, MDCP:
 
-1. Builds a **guide link index** from every guide in `compileOrder` — each manifest-listed shard maps to its compiled `{guideName, outputBasename, slug}` (slug from the demoted first heading, same rules as intra-guide rewrite), plus shards linked transitively from section bodies
+1. Builds a **guide link index** from every guide in `compileOrder` — each path in that guide's `linkedSectionFiles` (manifest plus transitive inline `.md` links) maps to its compiled `{guideName, outputBasename, slug}` (slug from the demoted first heading, same rules as intra-guide rewrite)
 2. Rewrites **cross-guide** `.md` links per shard (using the shard path for relative resolution) before sections are stitched
 3. Rewrites **publish-relative** `../` file links per shard when the guide has `compile.outputFile` — see [Publish-relative link rewriting](./publish-relative-links.md)
 4. Rewrites **same-guide** section links per shard (intra-guide pass with `sourceFile`), then again on the assembled body (intra-guide pass scoped to `guideDir`)
 
-Cross-guide handles indexed markdown between guides. Publish-relative rebases remaining file paths for outputs outside the shard tree (no manual path config). Intra-guide handles same-guide section targets. These are **assembly-time passes**, not compile hooks.
+Cross-guide handles indexed markdown between guides and co-compiled transitive targets. Publish-relative rebases remaining file paths for outputs outside the shard tree (no manual path config). Intra-guide handles same-guide section targets. These are **assembly-time passes**, not compile hooks.
 
 ## Cross-guide link matching
 
@@ -58,7 +58,27 @@ Links that must step **up and out** of the shard directory still require **`../`
 
 ### Transitive section discovery
 
-Manifest listing and the guide link index include shards reachable via transitive markdown `.md` links within the guide tree (`linkedSectionFiles`). To mention a path for readers **without** pulling it into the compile graph, use a backtick path (`` `topic/section-b.md` ``) instead of a markdown link — inline code is not scanned for transitive inclusion or link rewrite.
+For each compiling guide, `linkedSectionFiles` is the manifest closure plus every shard reachable by walking **inline** markdown `.md` links from those files within `guideDir` and `compile.scopeRoot` (when set). The **guide link index** indexes **every** path in that set — including shards outside `guideDir` (not only paths under `guideDir` or `glossary/`).
+
+**Ownership** when the same absolute path appears for more than one guide (first match wins):
+
+1. Manifest owner — the guide that lists the shard in its manifest
+2. Path under `guideDir` — the guide whose directory contains the shard
+3. Compiling guide — the guide whose transitive walk included the shard
+
+### What the walk follows
+
+| Authoring form                                                | Transitive inclusion                         |
+| ------------------------------------------------------------- | -------------------------------------------- |
+| Inline link `[label](path.md)` or `[label](path.md#fragment)` | **Yes** — followed into `linkedSectionFiles` |
+| Reference-style `[label][ref]` with `[ref]: path.md`          | **No** — not followed for inclusion          |
+| Backtick path `` `path.md` ``                                 | **No** — inline code is not scanned          |
+
+Authors who need a readable path **without** pulling the target into the compile graph can use a reference-style link or a backtick path. Reference-style and backticks skip transitive inclusion; backticks also skip link rewrite.
+
+### Default `_build` outputs and transitive targets
+
+With the default `outputDir` (`_build`), `./` and `../` links to transitively included shards outside `guideDir` rewrite through the guide link index and [same-output preference](#same-compiled-output-preference). Compiled `_build` output does **not** leave those co-compiled targets as raw `../file.md`.
 
 ## Cross-guide resolution
 
@@ -69,11 +89,21 @@ Path lookup order (relative to the **current shard** directory):
 3. `compile.scopeRoot` when set on the compiling guide
 4. `process.cwd()` and its parent
 
-When the resolved absolute path is in the guide link index:
+### Same compiled output preference
+
+When a `./` or `../` link resolves to a path present in the **assembling guide's** `slugByPath` map (the shard is co-compiled or transitively included in **this** output), cross-guide rewrite emits `#slug` or `#fragment` for that same document when:
+
+- the index has no entry, or
+- the index owner is the assembling guide, or
+- the index owner is another guide but ownership is **non-canonical** (transitive `scopeRoot` inclusion only — not a manifest listing and not under that owner's `guideDir`)
+
+Canonical ownership (manifest or path under `guideDir`) still wins for cross-output targets. Example: a glossary hub that transitively reaches a finding under `review/` keeps `architecture-review.md#find-004` even if the finding body was also pulled into the glossary compile graph. Multi-guide repos that only co-include a shared shard outside every `guideDir` keep in-document `#anchor` targets in each assembling output.
+
+When the resolved absolute path is in the guide link index (and same-output preference does not already apply):
 
 | Case                                             | Rewritten target                                                        |
 | ------------------------------------------------ | ----------------------------------------------------------------------- |
-| Same compiled output as the compiling guide      | `#slug` or `#fragment` when the link includes a fragment                |
+| Same compiled output as the assembling guide     | `#slug` or `#fragment` when the link includes a fragment                |
 | Different compiled output (`compile.outputFile`) | `{outputBasename}#slug` (for example `architecture-review.md#find-004`) |
 | Monolith output (no per-guide `outputFile`)      | `#slug`                                                                 |
 | Target guide in `ignoreGuides`                   | **unchanged** — keep source `.md` path (link to shard, not monolith)    |
