@@ -40,6 +40,11 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [Atomic commit groups](#atomic-commit-groups)
 - [live skill eval](#live-skill-eval)
 
+### Documentation structure
+
+- [idea mitosis](#idea-mitosis)
+- [shard single responsibility](#shard-single-responsibility)
+
 ### Format and compile terms
 
 - [GFM](#gfm)
@@ -561,7 +566,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 
 ### Comprehensive review when guides are involved
 
-This is the guide-specific application of the [two-level review](docs/features/agent-skill.md#quality-assurance-qa-principles) QA principle (**future-looking:** the published parent skill does not yet include this bullet, so agents will not enforce it from the skill until that source is updated). Review at two levels:
+This is the guide-specific application of the [two-level review](docs/features/agent-skill.md#quality-assurance-qa-principles) QA principle (also [shard single responsibility and idea mitosis](docs/features/protocol/shard-srp-and-mitosis.md)). Review at two levels:
 
 1. **In isolation** — review each changed idea or shard on its own for local correctness.
 2. **Comprehensively** — review it against the other ideas, as a whole. This high-level pass catches duplication and surfaces organization improvements (shards to merge, split, or relocate), and — when a change touches a guide (a doc shard, a skill, or code whose behavior a guide documents) — drift between what a guide promises and what the change actually does.
@@ -1434,6 +1439,28 @@ Part of parent `mdcp` [QA Principles](docs/features/agent-skill.md#quality-assur
 Optional local with/without-skill agent grading via vendored [skill-creator](.agents/skills/skill-creator/SKILL.md). Maintainer home: [Live skill evals](#live-skill-evals). Never a CI gate in this repository — contrast with `pnpm skill:validate` (skills-ref) in CI.
 
 <!-- mdcp-shard: end docs/glossary/live-skill-eval.md -->
+
+<!-- mdcp-shard: start docs/glossary/idea-mitosis.md -->
+
+## idea mitosis
+
+**Idea mitosis** is splitting a documentation shard when it grows a second responsibility — a second audience, job (explain vs how-to vs look-up), or independent concern — or when reading the file alone misleads. After a split, update the guide index and cross-link the daughter shards.
+
+Do not split only because a file is long. Prefer one primary concern per shard.
+
+See [Shard single responsibility and idea mitosis](docs/features/protocol/shard-srp-and-mitosis.md).
+
+<!-- mdcp-shard: end docs/glossary/idea-mitosis.md -->
+
+<!-- mdcp-shard: start docs/glossary/shard-single-responsibility.md -->
+
+## shard single responsibility
+
+**Shard single responsibility** means each durable documentation shard owns one primary concern, for one audience tier, serving one job (explain, instruct how-to, or define/look up — not several). A shard should have one main reason to change.
+
+See [Shard single responsibility and idea mitosis](docs/features/protocol/shard-srp-and-mitosis.md) and [idea mitosis](#idea-mitosis).
+
+<!-- mdcp-shard: end docs/glossary/shard-single-responsibility.md -->
 
 <!-- mdcp-shard: start docs/glossary/gfm.md -->
 

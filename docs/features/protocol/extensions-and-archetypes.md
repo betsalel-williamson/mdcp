@@ -59,6 +59,8 @@ Published and community extensions live as complementary skills under `skills/md
 
 Built-in subagents (such as the `mdcp` feature and doc-only subagents) resolve via the skills directory your host discovers. Each Agent Skill is an isolated, independent entity.
 
+Marketing, sales, and similar go-to-market documentation **MAY** follow the same [shard single responsibility](./shard-srp-and-mitosis.md) rules under other guide families or complementary skills. They are **not** part of the default Code Repository Archetype.
+
 ## Archetypes ("Battery Types")
 
 An **archetype** (or "battery type") is a documented bundle: guide layout, glossary seeds, optional prompts, and extension pointers for one project class. The goal is to enforce useful structure for human/AI collaboration.

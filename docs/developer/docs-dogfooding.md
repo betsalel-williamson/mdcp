@@ -48,7 +48,7 @@ The **features** compile (`docs/_build/guides.md`) is for reading through the st
 
 ## Comprehensive review when guides are involved
 
-This is the guide-specific application of the [two-level review](../features/agent-skill.md#quality-assurance-qa-principles) QA principle (**future-looking:** the published parent skill does not yet include this bullet, so agents will not enforce it from the skill until that source is updated). Review at two levels:
+This is the guide-specific application of the [two-level review](../features/agent-skill.md#quality-assurance-qa-principles) QA principle (also [shard single responsibility and idea mitosis](../features/protocol/shard-srp-and-mitosis.md)). Review at two levels:
 
 1. **In isolation** — review each changed idea or shard on its own for local correctness.
 2. **Comprehensively** — review it against the other ideas, as a whole. This high-level pass catches duplication and surfaces organization improvements (shards to merge, split, or relocate), and — when a change touches a guide (a doc shard, a skill, or code whose behavior a guide documents) — drift between what a guide promises and what the change actually does.

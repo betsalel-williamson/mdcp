@@ -17,6 +17,11 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [Atomic commit groups](./atomic-commit-groups.md)
 - [live skill eval](./live-skill-eval.md)
 
+## Documentation structure
+
+- [idea mitosis](./idea-mitosis.md)
+- [shard single responsibility](./shard-single-responsibility.md)
+
 ## Format and compile terms
 
 - [GFM](./gfm.md)

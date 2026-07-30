@@ -30,6 +30,8 @@ Product documentation for **what mdcp is designed to do** — the problems it so
     - [Alternatives and adoption](./protocol/02-alternatives-and-adoption.md)
     - [Benefit claims and evidence](./protocol/benefit-claims-and-evidence.md)
     - [Usage model](./protocol/usage-model.md)
+    - [Shard single responsibility and idea mitosis](./protocol/shard-srp-and-mitosis.md)
+    - [Acknowledgments](./protocol/acknowledgments.md)
     - [Performance goals and review](./protocol/performance.md)
     - [MDCP 1.0 spec (draft)](./protocol/mdcp-1.0-spec.md)
     - [Agent task subagents](./protocol/agent-task-prompts.md)
