@@ -1260,8 +1260,8 @@ Optional automation (requires admin `gh` auth):
 
 ```bash
 gh api -X PATCH repos/betsalel-williamson/mdcp/branches/main/protection/required_pull_request_reviews \
-  -f require_code_owner_reviews=true \
-  -f required_approving_review_count=1
+  -F require_code_owner_reviews=true \
+  -F required_approving_review_count=1
 ```
 
 Verify after enabling:
