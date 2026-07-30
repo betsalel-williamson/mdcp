@@ -63,3 +63,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
+          # Version commit only bumps package.json / CHANGELOG / skill metadata.
+          # Husky pre-commit would run vitest related without a prior build and fail
+          # looking for packages/*/dist (gitignored). Feature PRs already ran CI.
+          HUSKY: 0
