@@ -60,6 +60,11 @@ under `skills/` stay eval-free (`npx skills` / `pnpm skill:validate` only touch
 Each suite README holds operational run steps and discrimination notes. This
 shard is the maintainer index.
 
+Committed writing-skills campaign evidence (for example issue #150
+branch-before-edit RED/GREEN) lives under
+[`tests/skills/mdcp/evals/campaigns/`](../../tests/skills/mdcp/evals/campaigns/)
+when maintainers need durable artifacts beyond gitignored `*-workspace/` runs.
+
 ## Layout contract
 
 Shared shape for helper suites:

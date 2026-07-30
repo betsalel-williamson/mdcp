@@ -36,3 +36,6 @@ Fixtures and prompts for the optional [skill-creator](../../../.agents/skills/sk
    (snapshot of `skills/mdcp` from `main` before Atomic commit groups QA).
 
 Child suites: [`mdcp-getting-started`](../../mdcp-getting-started/evals/README.md), [`mdcp-doc-only`](../../mdcp-doc-only/evals/README.md), [`mdcp-design-architecture`](../../mdcp-design-architecture/evals/README.md), [`mdcp-feature-level`](../../mdcp-feature-level/evals/README.md), [`mdcp-ux`](../../mdcp-ux/evals/README.md). Maintainer index: [`docs/developer/live-skill-evals.md`](../../../../docs/developer/live-skill-evals.md).
+
+Committed campaign evidence (writing-skills RED/GREEN for issue #150):
+[`campaigns/issue-150-branch-before-edit/`](./campaigns/issue-150-branch-before-edit/README.md).
