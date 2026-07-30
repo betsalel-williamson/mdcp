@@ -863,7 +863,9 @@ There is **no calendar cadence** and **no Version Packages PR**. Releases are **
 
 1. Contributors add a changeset with each PR that affects a published package or skill.
 2. Merging that PR to `main` runs the [release workflow](.github/workflows/release.yml) (`pnpm release:main`).
-3. After the **Release plan** job posts pending changesets to the run summary, approve the **`release` environment**. CI then **sequentially**: applies changesets → syncs skill `metadata.version` → builds (so husky can run) → commits `chore: release` → **pushes to `main`** → publishes public packages to npm → creates GitHub Releases (including skill carriers) → pushes tags.
+3. After the **Release plan** job posts pending changesets (and any **missing GitHub Releases**) to the run summary, approve the **`release` environment**. CI then **sequentially**: applies changesets → syncs skill `metadata.version` → builds (so husky can run) → commits `chore: release` → **pushes to `main`** → publishes public packages to npm → **pushes tags** → creates GitHub Releases (including skill carriers).
+
+If a prior run versioned/published but failed before tags/Releases finished, the next Release plan detects **missing** `name@version` git tags and/or GitHub Releases and the release job **heals** them without bumping versions again (tag + `gh release create … --target` at the commit that last changed that package’s `package.json`).
 
 **Agent Skills** live under `skills/` as the install surface (`npx skills add`). Version carriers and CHANGELOGs live under **`packages/skill-<id>/`** only — never under `skills/` (those files would pollute agent context on install). `pnpm release:main` syncs the carrier version into `skills/<id>/SKILL.md` `metadata.version`. Feature PRs must add a changeset targeting `@bwilliamson/skill-<id>` and must **not** hand-bump `metadata.version`. See [Agent Skill](#agent-skill-development).
 
@@ -963,9 +965,9 @@ Before approving the **`release` environment**, open the **Release plan** job su
 ### Routine releases (one step)
 
 1. Merge feature PRs that include changesets to `main`.
-2. Open the Release workflow run → read the **Release plan** job summary (pending changesets).
+2. Open the Release workflow run → read the **Release plan** job summary (pending changesets and/or missing GitHub Releases).
 3. Approve the **`release` environment** deployment.
-4. CI runs **`pnpm release:main`**: version → sync skill frontmatter → build → commit → **push to `main`** → `changeset publish` → GitHub Releases (npm packages **and** skill carriers) → push tags.
+4. CI runs **`pnpm release:main`**: with pending changesets — version → sync skill frontmatter → build → commit → **push to `main`** → `changeset publish` → **push tags** → GitHub Releases (npm packages **and** skill carriers). With no changesets but missing tags/Releases — create those git tags and Releases idempotently at each package’s version-bump commit (`--target`).
 
 There is no separate Version Packages PR.
 
