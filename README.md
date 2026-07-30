@@ -57,7 +57,7 @@ The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout
 
 ## MDCP 101
 
-MDCP is a **human + AI documentation habit** for technical work: you and your agent keep durable intent in small Markdown files in git, instead of only in chat history.
+[MDCP](docs/glossary/mdcp.md) is a **human + AI documentation habit** for technical work: you and your agent keep durable intent in small Markdown files in git, instead of only in chat history.
 
 ### The problem
 
@@ -66,8 +66,8 @@ Agents forget. Chat threads disappear. Giant READMEs and dump files overwhelm bo
 ### How you work together
 
 1. **You** decide what must stay true (product intent, constraints, glossary).
-2. **The agent** drafts or updates small **shards** (one topic per file) _before_ coding.
-3. **You** review those shards in PRs — you do not need to be a Markdown expert on day one.
+2. **The agent** drafts or updates small **[shards](docs/features/overview.md)** (one topic per file) _before_ coding.
+3. **You** review those shards in pull requests (PRs) — you do not need to be a Markdown expert on day one.
 4. **`mdcp check`** (locally or in CI) proves links and compile still work.
 
 #### Prompt loop
@@ -79,17 +79,17 @@ flowchart LR
   review --> gate["mdcp check / CI"]
 ```
 
-**In an Agent Skills host** (Cursor, Claude Code, Copilot with skills, and similar):
+**In an [Agent Skills](https://agentskills.io) host** (Cursor, Claude Code, Copilot with skills, and similar):
 
 ```text
 /mdcp help me get started
 ```
 
-Or paste that line after installing the skill (`npx skills add betsalel-williamson/mdcp --skill mdcp` — see Get started above).
+Or paste that line after installing the skill (`npx skills add betsalel-williamson/mdcp --skill mdcp` via the [`skills` CLI](https://www.skills.sh/docs/cli) — see [Get started](#get-started)).
 
-**In a chat-only tool** (ChatGPT, Gemini web, no repo agent): do **not** install the toolchain yet. Keep notes in your project folder if you have one, or wait until you use an agent that can edit a git repo. Read [Overview](docs/features/overview.md) and [Vision](docs/features/protocol/00-vision-and-roadmap.md) first.
+**In a chat-only tool** (ChatGPT, Gemini web, no repo agent): do **not** install the toolchain yet. Keep notes in your project folder if you have one, or wait until you use an agent that can edit a git repo. Read [Overview](docs/features/overview.md) and [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md) first.
 
-**Automation / CI:** the Agent Skill tells agents _when_ to touch docs; the CLI runs `compile` / `check` in scripts and pipelines.
+**Automation / CI:** the [Agent Skill](docs/features/agent-skill.md) tells agents _when_ to touch docs; the [CLI](docs/client-cli/index.md) runs `compile` / `check` in scripts and pipelines ([The Toolchain](#the-toolchain)).
 
 ### Are you ready?
 
@@ -109,9 +109,9 @@ flowchart TB
   shards --> check["mdcp check — validation gate"]
 ```
 
-- **Skill** — instructions your agent follows (`/mdcp`, helpers).
-- **Shards** — source of truth; compiled READMEs are generated — do not hand-edit them.
-- **Check** — keeps the docs system honest as it grows.
+- **[Skill](docs/glossary/skill.md)** — instructions your agent follows (`/mdcp`, helpers).
+- **[Shards](docs/features/overview.md)** — source of truth; compiled READMEs are generated — do not hand-edit them.
+- **[Check](docs/client-cli/index.md)** — keeps the docs system honest as it grows.
 
 Deeper model: [Overview](docs/features/overview.md). Install path: [Get started](#get-started).
 
