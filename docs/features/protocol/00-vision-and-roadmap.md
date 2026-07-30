@@ -1,6 +1,6 @@
 # Vision and roadmap
 
-MDCP (**MarkDown Context Protocol**) is an [Agent Skill](../../glossary/agent-skills.md) and repo-local practice for **system context** — intent, design, and terminology in Markdown shards, with compile and check so the same docs serve people and agents. Think of [OpenAPI](https://www.openapis.org/) as a useful analogy for _contracts_, not as claiming MDCP is an industry standards body.
+MDCP (**MarkDown Context Protocol**) is an [Agent Skill](../../glossary/agent-skills.md) and practice for **system context** — intent, design, and terminology in Markdown shards, with compile and check so the same docs serve people and agents. Think of [OpenAPI](https://www.openapis.org/) as a useful analogy for _contracts_, not as claiming MDCP is an industry standards body.
 
 ## Problem
 

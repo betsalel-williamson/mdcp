@@ -37,7 +37,7 @@ Content domain is **orthogonal** to transport. The [Code Repository Archetype](.
 
 ## OpenAPI analogy
 
-OpenAPI defines HTTP API contracts. MDCP defines **documentation context contracts** for a repo: shard layout, compile invariants, and the refs registry. The analogy is about clear contracts — MDCP itself is positioned as an Agent Skill and toolchain, not an industry “standard” to join.
+OpenAPI defines HTTP API contracts. MDCP defines **documentation context contracts** for a shard tree: shard layout, compile invariants, and the refs registry. The analogy is about clear contracts — MDCP itself is positioned as an Agent Skill and toolchain, not an industry “standard” to join.
 
 ## Normative core vs reference implementation
 
