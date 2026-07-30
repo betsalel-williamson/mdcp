@@ -155,6 +155,7 @@ export function assembleGuide(guideDir: string, options: AssembleGuideOptions = 
         currentOutputBasename: options.outputBasename,
         currentOutputFile: options.outputFile,
         linkIndex: options.linkIndex,
+        slugByPath,
         ignoreGuides: options.ignoreGuides,
       });
     }

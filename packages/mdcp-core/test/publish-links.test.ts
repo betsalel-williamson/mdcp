@@ -290,4 +290,49 @@ describe('publish link rewriting', () => {
       expect(guideText).not.toContain('assets/diagram.md)');
     });
   });
+
+  it('e2e #69: transitive out-of-guideDir shards rewrite under outputDir _build', () => {
+    withTmpDir('mdcp-issue-69-transitive-', (work) => {
+      mkdirSync(join(work, 'guide', 'compiled'), { recursive: true });
+      mkdirSync(join(work, 'topics', 'security'), { recursive: true });
+
+      writeFileSync(join(work, 'guide', 'compiled', 'shards.md'), '- [Shard A](../shard-a.md)\n');
+      writeFileSync(
+        join(work, 'guide', 'shard-a.md'),
+        '# Shard A\n\n- [Onboarding](../onboarding.md#setup-prerequisites)\n',
+      );
+      writeFileSync(
+        join(work, 'onboarding.md'),
+        '# Onboarding\n\n## Setup prerequisites\n\n- **Security docs**: [Security overview](./topics/security/index.md).\n',
+      );
+      writeFileSync(join(work, 'topics', 'security', 'index.md'), '# Security overview\n');
+
+      const results = compileGuideResults({
+        guidesRoot: work,
+        compileOrder: ['example-guide'],
+        docsRoot: work,
+        config: {
+          outputDir: '_build',
+          compileOrder: ['example-guide'],
+        },
+        guides: [
+          {
+            name: 'example-guide',
+            path: 'guide/compiled',
+            compile: {
+              manifest: 'shards.md',
+              scopeRoot: '.',
+              outputFile: 'example-guide.md',
+            },
+          },
+        ],
+      });
+
+      const text = results.find((r) => r.name === 'example-guide')!.text;
+      expect(text).toContain('[Onboarding](#setup-prerequisites)');
+      expect(text).toContain('[Security overview](#security-overview)');
+      expect(text).not.toMatch(/onboarding\.md\)/);
+      expect(text).not.toMatch(/topics\/security\/index\.md\)/);
+    });
+  });
 });

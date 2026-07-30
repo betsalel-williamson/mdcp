@@ -194,6 +194,12 @@ export interface CrossGuideLinkRewriteOptions {
   /** Absolute path to the guide output being assembled. */
   currentOutputFile?: string;
   linkIndex: GuideLinkIndex;
+  /**
+   * Slugs for shards co-compiled into the current output. When a link resolves to a
+   * path in this map, rewrite to an in-document `#anchor` even if the shared index
+   * attributes the shard to another guide (multi-guide transitive co-inclusion).
+   */
+  slugByPath?: Map<string, string>;
   /** Guide names whose shards keep source `.md` paths instead of monolith `#slug` targets. */
   ignoreGuides?: string[];
   searchRoots?: string[];
@@ -216,6 +222,26 @@ function resolveIndexedMarkdownLink(
   if (!resolved) return null;
 
   const entry = options.linkIndex.get(resolved);
+  const sameOutputSlug = options.slugByPath?.get(resolved);
+  // Prefer in-document anchors for co-compiled shards unless another guide has
+  // canonical (manifest / guideDir) ownership — those keep cross-output targets.
+  const preferSameOutput =
+    sameOutputSlug !== undefined &&
+    (!entry || entry.guideName === options.currentGuideName || entry.canonical === false);
+  if (preferSameOutput) {
+    const anchor = fragment ? fragment.slice(1) : sameOutputSlug;
+    return {
+      entry: {
+        guideName: options.currentGuideName ?? '',
+        outputBasename: options.currentOutputBasename ?? '',
+        outputFile: options.currentOutputFile ?? '',
+        slug: sameOutputSlug,
+        canonical: false,
+      },
+      anchor,
+    };
+  }
+
   if (!entry) return null;
 
   const anchor = fragment ? fragment.slice(1) : entry.slug;

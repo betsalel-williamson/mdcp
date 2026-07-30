@@ -69,7 +69,7 @@ Use **one** mutually exclusive GitHub label so the board and `gh issue list` sta
 2. **Labels** — Maintainers or coding agents apply the matching `priority:*` label when triaging (GitHub forms cannot map a dropdown to a label automatically). Replace any previous `priority:*` label so only one remains.
 3. **What to work on next** — Prefer open issues labeled `priority:P0`, then `P1`. Skip `priority:defer` until the gate in the issue body is met.
 
-Issue templates live under `.github/ISSUE_TEMPLATE/`. Adoption stories do not require a priority dropdown (qualitative evidence, not a delivery backlog item).
+Issue templates live under `.github/ISSUE_TEMPLATE/` (bug report, feedback, adoption story, extension proposal). Adoption stories do not require a priority dropdown (qualitative evidence, not a delivery backlog item). Extension proposals use the priority dropdown and the `enhancement` type label; maintainers usually also apply `protocol`. Pull requests use `.github/PULL_REQUEST_TEMPLATE.md`, which asks for protocol/skill version when the change touches those surfaces.
 
 ### Other labels (apply on intake)
 
