@@ -64,7 +64,7 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 - **Update as you go:** Continuously update documentation as work progresses.
 - **Small batches / one focused feature:** Prefer one shippable slice per branch or session. Oversized requests produce tangled diffs and half-updated docs; split the request (and the shards) before coding so each change stays reviewable. Pair with [Atomic commit groups](../glossary/atomic-commit-groups.md) when the plan has more than one logical change.
 - **Atomic commit groups:** Before waiting for human review / “go”, coding and multi-concern plans MUST include numbered commit groups. Each group: id/name, one concern, exact files, and the intended conventional commit subject. After approval: implement and `git commit` one group at a time; do not squash unrelated concerns into one commit. Why: reviewable diffs, one concern per commit, and it matches small batches. Day-to-day helpers that produce plans require this section in Step 1 ([Helper Skills](./protocol/agent-task-prompts.md)).
-- **Branch before edit:** Before editing any tracked files for a `WORK_ITEM`, create the intended short-lived feature branch from updated `main` (or the repo’s integration branch). Plans MUST name that branch and link `WORK_ITEM` before waiting for human review / “go”. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. Verify with `git branch --show-current` (or equivalent) before the first edit. Why: short-lived branches and PR review are the delivery loop, not optional polish. Day-to-day helpers that produce plans require this in Step 1 ([Helper Skills](./protocol/agent-task-prompts.md)).
+- **Branch before edit:** Before editing any tracked files for a `WORK_ITEM`, create the intended short-lived feature branch from updated `main` (or the repo’s integration branch). Plans MUST name that branch and link `WORK_ITEM` before waiting for human review / “go”. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. Verify with `git branch --show-current` (or equivalent) before the first edit. An approved plan, verbal “go”, demo deadline, or leadership instruction that endorses staying on `main`/`master` does **NOT** authorize tracked-file edits on the integration branch. If the approved plan omitted a feature branch or said stay on main: **correct the delivery path first** — create/switch to a short-lived feature branch tied to `WORK_ITEM`, then edit; optionally revise the plan’s branch field; do not implement the stay-on-main path. Why: short-lived branches and PR review are the delivery loop, not optional polish. Day-to-day helpers that produce plans require this in Step 1 ([Helper Skills](./protocol/agent-task-prompts.md)).
 - **Current docs only:** Shards must describe the product **as it works now**. When behavior or guidance changes, remove superseded or stale text from durable docs — do not leave “old way” sections for archaeology. Git history preserves prior wording; consumer notice of breaking or removed behavior belongs in the **changeset** (folded into package CHANGELOGs at release), not in feature/client/developer shards. Never link durable shards or ADRs to pending `.changeset/*.md` files — those notes are temporary.
 - **Capture ambiguity:** Identify ambiguous terms or language and write down the clarified details into specific shards.
 - **[Shard single responsibility](../glossary/shard-single-responsibility.md):** Each durable shard has one primary concern, for one audience tier, serving one job (explain **or** instruct how-to **or** define/look up — not several). If you cannot state that responsibility in one sentence, split or narrow the shard before shipping it. Depth: [Shard single responsibility and idea mitosis](./protocol/shard-srp-and-mitosis.md).
@@ -74,6 +74,20 @@ When applying MDCP, you must act as a complementary partner to other skills and 
 - **No code in docs:** Never include implementation code or examples in the documentation shards; code belongs in the codebase.
 - **No temp info:** Do not record temporary project information, tickets, incident logs, or migration backlogs and planning in the durable documentation. That information belongs in issue tracking and project planning tools. Pending `.changeset/*.md` files are temporary release notes — write them for the release pipeline; do not link them from ADRs or other durable docs.
 - **Record planning locations:** Make sure to record where planning documents and architectural decisions are placed.
+
+### Branch before edit — common mistakes
+
+| Excuse                                                | Reality                                                                                                                        |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| “Plan was already approved / human said go”           | Approval does not authorize edits on `main`/`master`. Correct the delivery path first — branch tied to `WORK_ITEM`, then edit. |
+| “Stay on main for a 10-minute demo / optional polish” | Short-lived branches and PR review are the delivery loop, not optional polish.                                                 |
+| “Tiny one-line edit isn’t worth a branch”             | One branch per issue; verify with `git branch --show-current` before the first edit.                                           |
+
+### Branch before edit — red flags
+
+- Approved stay-on-main plan
+- Human said “go” while `git branch` is `main`/`master`
+- Dirty tree on main with “just finish”
 
 ## Ecosystem publication
 

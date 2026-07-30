@@ -23,17 +23,17 @@ instead of living only in chat or a thousand-line wiki page.
 
 See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the plan-field contract.
 
-| Obligation                  | As-built expectation                                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Capture architecture intent | Draft system diagrams, API/data contracts, and boundaries as shards under `docs/features/`              |
-| Atomic commit groups        | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval      |
-| Branch before edit          | Plan names branch + `WORK_ITEM` before “go”; branch from `main`; NEVER edit/commit on `main`/`master`   |
-| Land durable decisions      | Record accepted choices as ADRs under `docs/features/adr/` when the repo uses that layout               |
-| Keep docs sharded           | Prefer **one primary concern per shard**; update feature/ADR `index.md` so new shards are discoverable  |
-| Brownfield hygiene          | Split or retire legacy architecture monoliths; remove superseded planning from durable design shards    |
-| Stay design-doc scoped      | No product/CLI/TypeScript implementation, no unit tests as delivery, no primary `docs/client/` work     |
-| Glossary hygiene            | Follow the shared glossary obligation; define non-universal design jargon per the inclusion bar         |
-| Parent QA                   | Current intended architecture only; no large implementation dumps; run repo `mdcp check` / docs scripts |
+| Obligation                  | As-built expectation                                                                                                                                                                      |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Capture architecture intent | Draft system diagrams, API/data contracts, and boundaries as shards under `docs/features/`                                                                                                |
+| Atomic commit groups        | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval                                                                                        |
+| Branch before edit          | Plan names branch + `WORK_ITEM` before “go”; branch from `main`; NEVER edit/commit on `main`/`master`; approved stay-on-main plan or “go” does NOT override — correct delivery path first |
+| Land durable decisions      | Record accepted choices as ADRs under `docs/features/adr/` when the repo uses that layout                                                                                                 |
+| Keep docs sharded           | Prefer **one primary concern per shard**; update feature/ADR `index.md` so new shards are discoverable                                                                                    |
+| Brownfield hygiene          | Split or retire legacy architecture monoliths; remove superseded planning from durable design shards                                                                                      |
+| Stay design-doc scoped      | No product/CLI/TypeScript implementation, no unit tests as delivery, no primary `docs/client/` work                                                                                       |
+| Glossary hygiene            | Follow the shared glossary obligation; define non-universal design jargon per the inclusion bar                                                                                           |
+| Parent QA                   | Current intended architecture only; no large implementation dumps; run repo `mdcp check` / docs scripts                                                                                   |
 
 Intake is the same as other work-item helpers: `WORK_ITEM` and
 `WORK_ITEM_LOOKUP` before branching or editing.

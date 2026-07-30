@@ -33,9 +33,13 @@ Day-to-day helpers that produce a plan (`mdcp-feature-level`, `mdcp-doc-only`, `
 
 ## Branch before edit (plan + session obligation)
 
-Plans **MUST** name the intended short-lived feature branch and link `WORK_ITEM` before waiting for human review / “go”. Before editing any tracked files for a `WORK_ITEM`, create that branch from updated `main` (the repo integration branch). NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. Verify with `git branch --show-current` (or equivalent) before the first edit.
+Plans **MUST** name the intended short-lived feature branch and link `WORK_ITEM` before waiting for human review / “go”. Before editing any tracked files for a `WORK_ITEM`, create that branch from updated `main` (the repo integration branch). NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. Verify with `git branch --show-current` (or equivalent) before the first edit. An approved plan, verbal “go”, demo deadline, or leadership instruction that endorses staying on `main`/`master` does **NOT** authorize tracked-file edits on the integration branch. If the approved plan omitted a feature branch or said stay on main: **correct the delivery path first** — create/switch to a short-lived feature branch tied to `WORK_ITEM`, then edit; optionally revise the plan’s branch field; do not implement the stay-on-main path.
 
 Why: short-lived branches and PR review are the delivery loop, not optional polish (parent [QA Principles](../agent-skill.md#quality-assurance-qa-principles)).
+
+**Common mistakes:** “Plan was already approved / human said go” — approval does not authorize edits on `main`/`master`; correct the delivery path first. “Stay on main for a 10-minute demo / optional polish” — branches and PR review are the delivery loop. “Tiny one-line edit isn’t worth a branch” — one branch per issue; verify with `git branch --show-current` before the first edit.
+
+**Red flags:** approved stay-on-main plan; human said “go” while `git branch` is `main`/`master`; dirty tree on main with “just finish”.
 
 Day-to-day helpers that produce a plan (`mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`) **MUST** require this in Step 1. Bootstrap scaffold (`mdcp-getting-started` steps 1–6) stays out of scope; when the optional first-feature tutorial runs, each phase follows the matching day-to-day helper (including branch-before-edit).
 

@@ -79,8 +79,14 @@ These habits keep docs trustworthy while the product keeps changing:
   before waiting for human review / “go”. NEVER modify tracked files, commit
   session work, or leave uncommitted edits while the current branch is `main`
   or `master`. Verify with `git branch --show-current` (or equivalent) before
-  the first edit. Why: short-lived branches and PR review are the delivery
-  loop, not optional polish.
+  the first edit. An approved plan, verbal “go”, demo deadline, or leadership
+  instruction that endorses staying on `main`/`master` does **NOT** authorize
+  tracked-file edits on the integration branch. If the approved plan omitted a
+  feature branch or said stay on main: **correct the delivery path first** —
+  create/switch to a short-lived feature branch tied to `WORK_ITEM`, then edit;
+  optionally revise the plan’s branch field; do not implement the stay-on-main
+  path. Why: short-lived branches and PR review are the delivery loop, not
+  optional polish.
 - **Current docs only:** Shards must describe the product **as it works now**.
   When behavior or guidance changes, remove superseded or stale text from
   durable docs — do not leave “old way” sections for archaeology. Git history
@@ -122,6 +128,20 @@ These habits keep docs trustworthy while the product keeps changing:
 - **Record planning locations:** Record where planning documents and
   architectural decisions live so agents can find them without stuffing plans
   into durable product shards.
+
+### Branch before edit — common mistakes
+
+| Excuse                                                | Reality                                                                                                                        |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| “Plan was already approved / human said go”           | Approval does not authorize edits on `main`/`master`. Correct the delivery path first — branch tied to `WORK_ITEM`, then edit. |
+| “Stay on main for a 10-minute demo / optional polish” | Short-lived branches and PR review are the delivery loop, not optional polish.                                                 |
+| “Tiny one-line edit isn’t worth a branch”             | One branch per issue; verify with `git branch --show-current` before the first edit.                                           |
+
+### Branch before edit — red flags
+
+- Approved stay-on-main plan
+- Human said “go” while `git branch` is `main`/`master`
+- Dirty tree on main with “just finish”
 
 ## What belongs where
 

@@ -23,17 +23,17 @@ durable docs so search stays trustworthy.
 
 See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the plan-field contract.
 
-| Obligation             | As-built expectation                                                                                    |
-| ---------------------- | ------------------------------------------------------------------------------------------------------- |
-| Work-item intake       | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                  |
-| Atomic commit groups   | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval      |
-| Branch before edit     | Plan names branch + `WORK_ITEM` before “go”; branch from `main`; NEVER edit/commit on `main`/`master`   |
-| Docs-only branch       | One documentation scope per branch; revise `docs/features/`, `docs/client/`, and/or `docs/developer/`   |
-| Contracts not samples  | Put intent, contracts, and acceptance in shards — not implementation dumps or product source paths      |
-| Glossary hygiene       | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                |
-| Indexes and validation | Update guide `index.md` files; run `mdcp check` (do not hand-edit compile output or `refs.json`)        |
-| Current docs only      | Remove superseded workflows, planning backlogs, and pending `.changeset/*.md` links from durable shards |
-| Hard scope boundary    | No `src/` edits, unit tests, or “just fix the code too” — defer code work to feature-level              |
+| Obligation             | As-built expectation                                                                                                                                                                      |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Work-item intake       | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                                                                                                    |
+| Atomic commit groups   | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval                                                                                        |
+| Branch before edit     | Plan names branch + `WORK_ITEM` before “go”; branch from `main`; NEVER edit/commit on `main`/`master`; approved stay-on-main plan or “go” does NOT override — correct delivery path first |
+| Docs-only branch       | One documentation scope per branch; revise `docs/features/`, `docs/client/`, and/or `docs/developer/`                                                                                     |
+| Contracts not samples  | Put intent, contracts, and acceptance in shards — not implementation dumps or product source paths                                                                                        |
+| Glossary hygiene       | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                                                                                                  |
+| Indexes and validation | Update guide `index.md` files; run `mdcp check` (do not hand-edit compile output or `refs.json`)                                                                                          |
+| Current docs only      | Remove superseded workflows, planning backlogs, and pending `.changeset/*.md` links from durable shards                                                                                   |
+| Hard scope boundary    | No `src/` edits, unit tests, or “just fix the code too” — defer code work to feature-level                                                                                                |
 
 Intake is the same as other work-item helpers: `WORK_ITEM` and
 `WORK_ITEM_LOOKUP` before branching or editing.
