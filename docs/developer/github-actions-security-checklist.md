@@ -31,7 +31,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Environment required reviewers          | `reviewed (2026-07-27)`      | Bound to `release` env; required reviewers are maintainer ops.                       |
 | **Code & Supply Chain**                 |                              |                                                                                      |
 | Branch protection baseline              | `reviewed (2026-07-27)`      | Main branch protected with PR and status checks.                                     |
-| Require approval for external           | `reviewed (2026-07-27)`      | CODEOWNERS added; require-code-owner reviews are maintainer ops.                     |
+| Require approval for external           | `reviewed (2026-07-30)`      | CODEOWNERS on `main`; `require_code_owner_reviews` + 1 approving review enabled.     |
 | Dependabot for Actions                  | `reviewed (2026-07-27)`      | Configured for weekly updates.                                                       |
 | Dependabot cooldown                     | `reviewed (2026-07-27)`      | Explicit 7-day cooldown on `npm` and `github-actions`.                               |
 | Artifact / cache poisoning              | `reviewed (2026-07-27)`      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                       |
