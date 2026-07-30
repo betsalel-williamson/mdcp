@@ -87,6 +87,15 @@ These habits keep docs trustworthy while the product keeps changing:
   optionally revise the plan’s branch field; do not implement the stay-on-main
   path. Why: short-lived branches and PR review are the delivery loop, not
   optional polish.
+- **Explicit user override:** When the human partner gives an **explicit
+  informed override** — they clearly state work on `main`/`master` **knowing**
+  it skips the short-lived branch + PR loop (e.g. “I knowingly override
+  branch-before-edit”, “work on main anyway — I mean it”, “skip MDCP branching
+  for this WORK_ITEM”) — acknowledge once that you are stepping back from
+  branch-before-edit per their instruction, then proceed on the integration
+  branch; do not re-litigate each edit. Still follow other MDCP QA unless they
+  also override those. Ambiguous “go” / “stay on main for speed” is **NOT** an
+  override.
 - **Current docs only:** Shards must describe the product **as it works now**.
   When behavior or guidance changes, remove superseded or stale text from
   durable docs — do not leave “old way” sections for archaeology. Git history
@@ -136,12 +145,15 @@ These habits keep docs trustworthy while the product keeps changing:
 | “Plan was already approved / human said go”           | Approval does not authorize edits on `main`/`master`. Correct the delivery path first — branch tied to `WORK_ITEM`, then edit. |
 | “Stay on main for a 10-minute demo / optional polish” | Short-lived branches and PR review are the delivery loop, not optional polish.                                                 |
 | “Tiny one-line edit isn’t worth a branch”             | One branch per issue; verify with `git branch --show-current` before the first edit.                                           |
+| “User insisted” without override language             | Not an override — correct the delivery path first unless they gave explicit informed override language.                        |
+| Explicit informed override                            | Step back — acknowledge once, proceed on integration branch; do not re-litigate.                                               |
 
 ### Branch before edit — red flags
 
 - Approved stay-on-main plan
 - Human said “go” while `git branch` is `main`/`master`
 - Dirty tree on main with “just finish”
+- “User insisted” on main without explicit informed override language
 
 ## What belongs where
 

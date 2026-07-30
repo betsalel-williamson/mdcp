@@ -61,7 +61,7 @@ Collect these via intake (or from the conversation if already stated):
 ### Step 2: Branch and Value Focus
 
 1. Explicitly define the **value** this `WORK_ITEM` provides. For a shipped feature: how does it make the end user's life easier? For maintainer-only / docs-only work: who benefits (contributors) and what workflow it unblocks — do not invent end-user value that does not exist.
-2. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. An approved plan, verbal “go”, demo deadline, or leadership instruction that endorses staying on `main`/`master` does **NOT** override this rule. If the approved plan omitted a feature branch or said stay on main: **correct the delivery path first** — create/switch to the short-lived feature branch tied to `WORK_ITEM`, then edit; optionally revise the plan’s branch field; do not implement the stay-on-main path. Create the feature branch named in the plan from updated `main` before docs, tests, or code. Verify with `git branch --show-current` (or equivalent) before the first edit. One branch per issue — do not mix unrelated features or designs.
+2. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. An approved plan, verbal “go”, demo deadline, or leadership instruction that endorses staying on `main`/`master` does **NOT** override this rule. If the approved plan omitted a feature branch or said stay on main: **correct the delivery path first** — create/switch to the short-lived feature branch tied to `WORK_ITEM`, then edit; optionally revise the plan’s branch field; do not implement the stay-on-main path. **Exception — explicit user override:** when the human clearly states work on `main`/`master` **knowing** it skips the short-lived branch + PR loop, acknowledge once per parent `mdcp` QA **Explicit user override**, then proceed; do not re-litigate. Create the feature branch named in the plan from updated `main` before docs, tests, or code (unless overridden). Verify with `git branch --show-current` (or equivalent) before the first edit. One branch per issue — do not mix unrelated features or designs.
 
 ### Step 3: Docs First — place by audience
 
@@ -106,9 +106,12 @@ Then write only the tiers that apply:
 | “Plan was already approved / human said go”           | Approval does not authorize edits on `main`/`master`. Correct the delivery path first — branch tied to `WORK_ITEM`, then edit. |
 | “Stay on main for a 10-minute demo / optional polish” | Short-lived branches and PR review are the delivery loop, not optional polish.                                                 |
 | “Tiny one-line edit isn’t worth a branch”             | One branch per issue; verify with `git branch --show-current` before the first edit.                                           |
+| “User insisted” without override language             | Not an override — correct the delivery path first unless they gave explicit informed override language.                        |
+| Explicit informed override                            | Step back — acknowledge once, proceed on integration branch; do not re-litigate.                                               |
 
 ## Red Flags — STOP
 
 - Approved stay-on-main plan
 - Human said “go” while `git branch` is `main`/`master`
 - Dirty tree on main with “just finish”
+- “User insisted” on main without explicit informed override language

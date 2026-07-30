@@ -25,18 +25,18 @@ product development stays anchored on what the end user must accomplish.
 
 See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the plan-field contract.
 
-| Obligation                  | As-built expectation                                                                                                                                                                      |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Work-item intake            | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                                                                                                    |
-| Atomic commit groups        | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval                                                                                        |
-| Branch before edit          | Plan names branch + `WORK_ITEM` before “go”; branch from `main`; NEVER edit/commit on `main`/`master`; approved stay-on-main plan or “go” does NOT override — correct delivery path first |
-| One UX scope                | Branch from updated `main` for a single UX issue; do not mix unrelated UX work                                                                                                            |
-| User-centric value first    | State the end-user outcome and friction to remove before designing steps or UI                                                                                                            |
-| Map processes and workflows | Document the ideal journey under `docs/client/` — steps to accomplish X, decision points, failure/recovery paths                                                                          |
-| Interface when it serves UX | Implement or revise UI only as needed to support the documented workflow, using this repo’s existing patterns                                                                             |
-| Glossary hygiene            | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                                                                                                  |
-| Align as-built docs         | Update client-guide shards to match the shipped experience; remove superseded journey or UI references                                                                                    |
-| Validate and wrap-up        | Run repo tests + docs validation; release notes per repo conventions; link `WORK_ITEM`                                                                                                    |
+| Obligation                  | As-built expectation                                                                                                                                                                   |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Work-item intake            | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                                                                                                 |
+| Atomic commit groups        | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval                                                                                     |
+| Branch before edit          | Plan: branch + `WORK_ITEM` before go; NEVER on `main`/`master`; stay-on-main/go does NOT override — correct first; explicit override → acknowledge once, proceed on integration branch |
+| One UX scope                | Branch from updated `main` for a single UX issue; do not mix unrelated UX work                                                                                                         |
+| User-centric value first    | State the end-user outcome and friction to remove before designing steps or UI                                                                                                         |
+| Map processes and workflows | Document the ideal journey under `docs/client/` — steps to accomplish X, decision points, failure/recovery paths                                                                       |
+| Interface when it serves UX | Implement or revise UI only as needed to support the documented workflow, using this repo’s existing patterns                                                                          |
+| Glossary hygiene            | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                                                                                               |
+| Align as-built docs         | Update client-guide shards to match the shipped experience; remove superseded journey or UI references                                                                                 |
+| Validate and wrap-up        | Run repo tests + docs validation; release notes per repo conventions; link `WORK_ITEM`                                                                                                 |
 
 Intake is the same as other work-item helpers: `WORK_ITEM` and
 `WORK_ITEM_LOOKUP` before branching or editing.

@@ -23,18 +23,18 @@ of drifting in chat-only designs.
 
 See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the plan-field contract.
 
-| Obligation            | As-built expectation                                                                                                                                                                      |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Work-item intake      | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                                                                                                    |
-| Atomic commit groups  | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval                                                                                        |
-| Branch before edit    | Plan names branch + `WORK_ITEM` before “go”; branch from `main`; NEVER edit/commit on `main`/`master`; approved stay-on-main plan or “go” does NOT override — correct delivery path first |
-| One focused branch    | Branch from updated `main` for a single issue; do not mix unrelated features                                                                                                              |
-| Place by audience     | User-facing work → `docs/features/` + `docs/client/`; maintainer-only → `docs/developer/` only                                                                                            |
-| Docs first            | Update guide shards and indexes before product code; put contracts in shards, not implementation dumps                                                                                    |
-| Glossary hygiene      | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                                                                                                  |
-| TDD when code changes | Write failing tests first where the repo uses tests, then implement, then refactor; skip TDD when docs-only                                                                               |
-| Current docs only     | Align shards to as-built behavior; no superseded-workflow archaeology in durable docs                                                                                                     |
-| Validate and wrap-up  | Run repo tests + `mdcp check`; changeset/release notes per repo conventions; link `WORK_ITEM`                                                                                             |
+| Obligation            | As-built expectation                                                                                                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Work-item intake      | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                                                                                                 |
+| Atomic commit groups  | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval                                                                                     |
+| Branch before edit    | Plan: branch + `WORK_ITEM` before go; NEVER on `main`/`master`; stay-on-main/go does NOT override — correct first; explicit override → acknowledge once, proceed on integration branch |
+| One focused branch    | Branch from updated `main` for a single issue; do not mix unrelated features                                                                                                           |
+| Place by audience     | User-facing work → `docs/features/` + `docs/client/`; maintainer-only → `docs/developer/` only                                                                                         |
+| Docs first            | Update guide shards and indexes before product code; put contracts in shards, not implementation dumps                                                                                 |
+| Glossary hygiene      | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                                                                                               |
+| TDD when code changes | Write failing tests first where the repo uses tests, then implement, then refactor; skip TDD when docs-only                                                                            |
+| Current docs only     | Align shards to as-built behavior; no superseded-workflow archaeology in durable docs                                                                                                  |
+| Validate and wrap-up  | Run repo tests + `mdcp check`; changeset/release notes per repo conventions; link `WORK_ITEM`                                                                                          |
 
 Intake is the same as other work-item helpers: `WORK_ITEM` and
 `WORK_ITEM_LOOKUP` before branching or editing.
