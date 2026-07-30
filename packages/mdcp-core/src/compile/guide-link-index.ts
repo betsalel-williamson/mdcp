@@ -15,6 +15,13 @@ export interface GuideLinkEntry {
   /** Absolute path to the guide's compiled output file. */
   outputFile: string;
   slug: string;
+  /**
+   * True when ownership comes from a manifest listing or a path under the owner's
+   * guideDir. False for shards only pulled in via transitive `scopeRoot` links —
+   * those may be co-compiled into multiple outputs and should prefer same-output
+   * `#anchor` rewrite when present in the assembling guide's slug map.
+   */
+  canonical: boolean;
 }
 
 /** Absolute shard path → compiled output target. */
@@ -25,18 +32,6 @@ export interface BuildGuideLinkIndexResult {
   shardCache: ShardCache;
   /** Memoized linkedSectionFiles per guide options key. */
   linkedFilesByGuide: Map<string, string[]>;
-}
-
-function isIndexableShardPath(
-  filePath: string,
-  guideDirs: Map<string, string>,
-  compileOrder: string[],
-  guidesRoot: string,
-): boolean {
-  const abs = resolve(filePath);
-  const glossaryDir = resolve(guidesRoot, 'glossary');
-  if (abs === glossaryDir || abs.startsWith(`${glossaryDir}/`)) return true;
-  return guideForShardPath(abs, guideDirs, compileOrder) !== undefined;
 }
 
 function resolveGuideDir(
@@ -174,29 +169,29 @@ export function buildGuideLinkIndex(
     );
 
     for (const filePath of files) {
-      if (!isIndexableShardPath(filePath, guideDirs, options.compileOrder, options.guidesRoot)) {
-        continue;
-      }
-      const slug = slugByPath.get(resolve(filePath));
+      // Index every path from linkedSectionFiles (manifest + transitive inline .md
+      // links under guideDir / scopeRoot), including shards outside guideDir.
+      const absPath = resolve(filePath);
+      const slug = slugByPath.get(absPath);
       if (!slug) continue;
 
       const owner = resolveShardOwner(
-        filePath,
+        absPath,
         name,
         manifestOwners,
         guideDirs,
         options.compileOrder,
       );
-      const existing = index.get(filePath);
+      const existing = index.get(absPath);
       if (
         existing &&
         ownerPriority(
-          filePath,
+          absPath,
           existing.guideName,
           manifestOwners,
           guideDirs,
           options.compileOrder,
-        ) >= ownerPriority(filePath, owner, manifestOwners, guideDirs, options.compileOrder)
+        ) >= ownerPriority(absPath, owner, manifestOwners, guideDirs, options.compileOrder)
       ) {
         continue;
       }
@@ -210,11 +205,13 @@ export function buildGuideLinkIndex(
         options.compileOrder.length,
         cwd,
       );
-      index.set(filePath, {
+      index.set(absPath, {
         guideName: owner,
         outputBasename: basename(outputFile),
         outputFile,
         slug,
+        canonical:
+          ownerPriority(absPath, owner, manifestOwners, guideDirs, options.compileOrder) >= 2,
       });
     }
   }
