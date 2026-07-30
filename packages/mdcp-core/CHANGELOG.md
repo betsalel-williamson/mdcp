@@ -1,5 +1,11 @@
 # @bwilliamson/mdcp-core
 
+## 0.7.1
+
+### Patch Changes
+
+- 7fb748f: Bare sibling `.md` links from shards outside the guide directory now rewrite to in-document anchors during compile. Parent-traversal (`../`) links are left unchanged for cross-guide and `ignoreGuides` handling.
+
 ## 0.7.0
 
 ### Minor Changes
