@@ -19,11 +19,13 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 
 ## Documentation structure
 
+- [shard](./shard.md)
 - [idea mitosis](./idea-mitosis.md)
 - [shard single responsibility](./shard-single-responsibility.md)
 
 ## Format and compile terms
 
+- [check](./check.md)
 - [GFM](./gfm.md)
 - [Authored GFM](./authored-gfm.md)
 - [ignoreGuides](./ignore-guides.md)

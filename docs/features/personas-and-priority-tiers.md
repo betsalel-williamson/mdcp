@@ -38,7 +38,7 @@ Reference: [`docs/repo-readme/`](../repo-readme/index.md) → `README.md`.
 - What this tool is (one-liner + vision link for evaluators), then [WIIFM](../glossary/wiifm.md); four archetypes max
 - WIIFM table does not replace the vision shard for Champions
 - Dual equal get-started paths (A/B); Champion eval path in get-started; routing explains fit, not priority
-- Want to know more = archetype link hub; no mermaid on landing output
+- Want to know more = archetype link hub; keep landing scannable — Mermaid only in the short **MDCP 101** section (not elsewhere on the landing)
 
 ## Tool operator personas
 

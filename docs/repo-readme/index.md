@@ -4,6 +4,7 @@
   - [What this tool is](./what-this-tool-is.md)
   - [Get started](./get-started.md)
   - [Why use MDCP?](./about.md)
+  - [MDCP 101](./mdcp-101.md)
   - [The Toolchain](./the-toolchain.md)
   - [Learn more](./learn-more.md)
   - [This repository](./this-repository.md)
