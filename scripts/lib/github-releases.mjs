@@ -37,7 +37,43 @@ export function releaseTag(name, version) {
 }
 
 /**
- * Packages whose current `name@version` is not in the set of existing release tags.
+ * Parse `git ls-remote --tags` output into a set of tag names (peeled ^{} lines skipped).
+ * @param {string} lsRemoteOutput
+ * @returns {Set<string>}
+ */
+export function parseGitLsRemoteTags(lsRemoteOutput) {
+  const tags = new Set();
+  for (const line of lsRemoteOutput.split('\n')) {
+    const ref = line.split(/[\t ]+/).pop();
+    if (!ref || !ref.startsWith('refs/tags/')) continue;
+    if (ref.endsWith('^{}')) continue;
+    tags.add(ref.slice('refs/tags/'.length));
+  }
+  return tags;
+}
+
+/**
+ * Packages whose current `name@version` lacks a GitHub Release and/or a git tag.
+ * @param {Iterable<WorkspacePackage>} packages
+ * @param {ReadonlySet<string>} existingReleaseTags
+ * @param {ReadonlySet<string>} existingGitTags
+ * @returns {{ pkg: WorkspacePackage, missingRelease: boolean, missingTag: boolean }[]}
+ */
+export function packagesNeedingReleaseHeal(packages, existingReleaseTags, existingGitTags) {
+  const needing = [];
+  for (const pkg of packages) {
+    const tag = releaseTag(pkg.name, pkg.version);
+    const missingRelease = !existingReleaseTags.has(tag);
+    const missingTag = !existingGitTags.has(tag);
+    if (missingRelease || missingTag) {
+      needing.push({ pkg, missingRelease, missingTag });
+    }
+  }
+  return needing.sort((a, b) => a.pkg.name.localeCompare(b.pkg.name));
+}
+
+/**
+ * Packages whose current `name@version` is not in the set of existing GitHub Release tags.
  * @param {Iterable<WorkspacePackage>} packages
  * @param {ReadonlySet<string>} existingReleaseTags
  * @returns {WorkspacePackage[]}
@@ -63,4 +99,9 @@ export function releaseNotesForPackage(root, pkg) {
     changelogNotesForVersion(join(root, 'packages', pkg.dir, 'CHANGELOG.md'), pkg.version) ||
     `Release ${tag}`
   );
+}
+
+/** Path relative to repo root for a package's package.json. */
+export function packageJsonRelPath(pkg) {
+  return join('packages', pkg.dir, 'package.json');
 }

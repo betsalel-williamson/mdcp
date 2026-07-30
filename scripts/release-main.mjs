@@ -8,8 +8,10 @@
  * GitHub Releases so `gh release create` can resolve them; create also
  * passes `--target` so a fresh checkout can heal missing releases.
  *
- * With no pending changesets, ensures GitHub Releases exist for every
- * current workspace package version (idempotent heal after partial failure).
+ * With no pending changesets, ensures git tags + GitHub Releases exist for
+ * every current workspace package version (idempotent heal after partial
+ * failure). Tags point at the commit that last changed that package.json
+ * (the version bump commit), not necessarily HEAD.
  *
  * Requires RELEASE_GITHUB_TOKEN (fine-grained maintainer PAT).
  */
@@ -19,7 +21,9 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { findMajorBumps, pendingChangesetFiles } from './lib/changeset-bumps.mjs';
 import {
-  packagesMissingGithubReleases,
+  packageJsonRelPath,
+  packagesNeedingReleaseHeal,
+  parseGitLsRemoteTags,
   readWorkspacePackages,
   releaseNotesForPackage,
   releaseTag,
@@ -59,6 +63,56 @@ function listExistingReleaseTags() {
   return new Set(rows.map((r) => r.tagName));
 }
 
+function listRemoteGitTags() {
+  return parseGitLsRemoteTags(capture('git ls-remote --tags origin'));
+}
+
+/** Commit that last changed this package's package.json (version bump / release). */
+function resolvePackageVersionCommit(pkg) {
+  const rel = packageJsonRelPath(pkg).replace(/\\/g, '/');
+  const sha = capture(`git rev-list -1 HEAD -- "${rel}"`);
+  if (!sha) {
+    throw new Error(`No git history for ${rel}`);
+  }
+  return sha;
+}
+
+function ensureGitTag(tag, target) {
+  let localSha = '';
+  try {
+    localSha = capture(`git rev-list -1 "refs/tags/${tag}"`);
+  } catch {
+    // tag missing locally
+  }
+  if (localSha && localSha !== target) {
+    console.log(
+      `Tag ${tag} exists locally at ${localSha}, expected ${target} — leaving local tag; pushing if needed`,
+    );
+  } else if (!localSha) {
+    run(`git tag "${tag}" "${target}"`);
+  } else {
+    console.log(`Tag ${tag} already at ${target} locally`);
+  }
+
+  try {
+    const remote = capture(`git ls-remote --tags origin "refs/tags/${tag}"`);
+    const remoteSha = remote.split(/[\t ]+/)[0] || '';
+    if (remoteSha === target) {
+      console.log(`Tag ${tag} already on origin at ${target}`);
+      return;
+    }
+    if (remoteSha && remoteSha !== target) {
+      console.log(
+        `Tag ${tag} on origin at ${remoteSha}, expected ${target} — not moving a published tag`,
+      );
+      return;
+    }
+  } catch {
+    // treat as missing on remote
+  }
+  run(`git push origin "refs/tags/${tag}"`);
+}
+
 function createGithubRelease(tag, notes, target) {
   const tmp = join(root, '.tmp-release-notes.md');
   writeFileSync(tmp, `${notes}\n`);
@@ -69,7 +123,7 @@ function createGithubRelease(tag, notes, target) {
       console.log(`GitHub Release ${tag} already exists — updating notes`);
       run(`gh release edit "${tag}" --notes-file .tmp-release-notes.md`, { env });
     } catch {
-      // --target lets create work when the tag is not on the remote yet (heal / race).
+      // --target creates the tag on GitHub when missing; prefer matching the version commit.
       run(
         `gh release create "${tag}" --title "${tag}" --notes-file .tmp-release-notes.md --target "${target}"`,
         { env },
@@ -84,21 +138,35 @@ function createGithubRelease(tag, notes, target) {
   }
 }
 
-function ensureGithubReleases(packages) {
+/**
+ * Ensure git tags + GitHub Releases for the given packages at each package's
+ * version-bump commit (not necessarily HEAD).
+ * @param {import('./lib/github-releases.mjs').WorkspacePackage[]} packages
+ * @param {{ ensureTag?: boolean, ensureRelease?: boolean }} [opts]
+ */
+function ensureReleaseArtifacts(packages, opts = {}) {
+  const ensureTag = opts.ensureTag !== false;
+  const ensureRelease = opts.ensureRelease !== false;
   if (packages.length === 0) {
-    console.log('No GitHub Releases to create or update.');
+    console.log('No release artifacts to create or update.');
     return;
   }
-  const target = dryRun ? 'HEAD' : capture('git rev-parse HEAD');
-  console.log(`Ensuring GitHub Releases (${packages.length}) at target ${target}:`);
+  console.log(`Ensuring release artifacts (${packages.length}):`);
   for (const pkg of packages) {
     const tag = releaseTag(pkg.name, pkg.version);
+    const target = dryRun ? 'HEAD' : resolvePackageVersionCommit(pkg);
     const notes = releaseNotesForPackage(root, pkg);
     if (dryRun) {
-      console.log(`would ensure GitHub Release ${tag}`);
+      console.log(`would ensure tag+release ${tag} at ${target}`);
       continue;
     }
-    createGithubRelease(tag, notes, target);
+    console.log(`  ${tag} → ${target}`);
+    if (ensureTag) {
+      ensureGitTag(tag, target);
+    }
+    if (ensureRelease) {
+      createGithubRelease(tag, notes, target);
+    }
   }
 }
 
@@ -129,30 +197,37 @@ if (!ghToken && !dryRun) {
 }
 
 if (pending.length === 0) {
-  console.log('No pending changesets — checking for missing GitHub Releases.');
+  console.log('No pending changesets — checking for missing git tags / GitHub Releases.');
   if (dryRun) {
-    console.log('dry-run: would heal any missing GitHub Releases for current package versions.');
+    console.log('dry-run: would heal any missing tags/Releases for current package versions.');
     process.exit(0);
   }
   configureGitIdentityAndRemote(ghToken);
   const packages = [...readWorkspacePackages(root).values()];
-  const missing = packagesMissingGithubReleases(packages, listExistingReleaseTags());
-  if (missing.length === 0) {
+  const needing = packagesNeedingReleaseHeal(
+    packages,
+    listExistingReleaseTags(),
+    listRemoteGitTags(),
+  );
+  if (needing.length === 0) {
     console.log('Nothing to version, publish, or heal.');
     process.exit(0);
   }
   console.log(
-    `Healing missing GitHub Releases (${missing.length}): ${missing
-      .map((p) => releaseTag(p.name, p.version))
+    `Healing missing release artifacts (${needing.length}): ${needing
+      .map((row) => {
+        const tag = releaseTag(row.pkg.name, row.pkg.version);
+        const parts = [];
+        if (row.missingTag) parts.push('tag');
+        if (row.missingRelease) parts.push('release');
+        return `${tag}[${parts.join('+')}]`;
+      })
       .join(', ')}`,
   );
-  ensureGithubReleases(missing);
-  // Best-effort: push any local tags (e.g. left from a prior partial run on this runner).
-  try {
-    run('git push origin --tags');
-  } catch {
-    console.log('git push --tags skipped or failed (tags may already exist via --target).');
-  }
+  ensureReleaseArtifacts(
+    needing.map((row) => row.pkg),
+    { ensureTag: true, ensureRelease: true },
+  );
   console.log('Release heal complete.');
   process.exit(0);
 }
@@ -209,9 +284,9 @@ run('pnpm exec changeset publish');
 // Push tags before GitHub Releases so create can resolve them when present.
 run('git push origin --tags');
 
-ensureGithubReleases(bumped);
+// Ensure Releases (and any missing tags) at this release commit.
+ensureReleaseArtifacts(bumped);
 
-// Catch any tags created during release create (--target) or left local.
 run('git push origin --tags');
 
 console.log('Release complete.');
