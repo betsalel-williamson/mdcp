@@ -1,6 +1,6 @@
 # Vision and roadmap
 
-MDCP (**MarkDown Context Protocol**) is an [Agent Skill](../../glossary/agent-skills.md) and repo-local practice for **system context** — intent, design, and terminology in Markdown shards, with compile and check so the same docs serve people and coding agents. Think of [OpenAPI](https://www.openapis.org/) as a useful analogy for _contracts_, not as claiming MDCP is an industry standards body.
+MDCP (**MarkDown Context Protocol**) is an [Agent Skill](../../glossary/agent-skills.md) and practice for **system context** — intent, design, and terminology in Markdown shards, with compile and check so the same docs serve people and agents. Think of [OpenAPI](https://www.openapis.org/) as a useful analogy for _contracts_, not as claiming MDCP is an industry standards body.
 
 ## Problem
 
@@ -10,25 +10,25 @@ MDCP does not magically erase documentation debt. It helps head it off by puttin
 
 ## Principles
 
-| Principle                      | Implication                                                                                              |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| High level over implementation | Shards hold plan, constraints, acceptance criteria; code holds how                                       |
-| Glossary as first-class        | Domain terms and legacy disambiguation live in dedicated shards                                          |
-| Document before build/migrate  | Capture context in shards before greenfield work or migrations                                           |
-| Granular, safe context         | Read one shard; compiled monolith only when a broader read is intentional                                |
-| Direct value only              | Ship capabilities that close a unique gap                                                                |
-| Skill + open toolchain         | Delivered as an Agent Skill; CLI/`mdcp-core` implement compile and check without locking you into a host |
-| Extensions over core           | `docs/extensions/` locally; shared packs in complementary skills                                         |
+| Principle                      | Implication                                                                                                      |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| High level over implementation | Shards hold plan, constraints, acceptance criteria; implementation and procedures live in code or source systems |
+| Glossary as first-class        | Domain terms and legacy disambiguation live in dedicated shards                                                  |
+| Document before build/migrate  | Capture context in shards before greenfield work or migrations                                                   |
+| Granular, safe context         | Read one shard; compiled monolith only when a broader read is intentional                                        |
+| Direct value only              | Ship capabilities that close a unique gap                                                                        |
+| Skill + open toolchain         | Delivered as an Agent Skill; CLI/`mdcp-core` implement compile and check without locking you into a host         |
+| Extensions over core           | `docs/extensions/` locally; shared packs in complementary skills                                                 |
 
 Filter for new capabilities: [Direct value bar](../design-constraints/direct-value-bar.md).
 
 ## Phased delivery
 
-| Phase  | Surface                                                                                            | Access model                  |
-| ------ | -------------------------------------------------------------------------------------------------- | ----------------------------- |
-| **V1** | **Agent Skills** pack (`skills/mdcp` via `npx skills add`) + `mdcp compile`/`check` + task helpers | Repo access (SSH, clone, IDE) |
-| **V2** | MDCP MCP server (shard read, glossary search)                                                      | Repo access                   |
-| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                      | Opt-in publish                |
+| Phase  | Surface                                                                                            | Access model                                                                                              |
+| ------ | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **V1** | **Agent Skills** pack (`skills/mdcp` via `npx skills add`) + `mdcp compile`/`check` + task helpers | **V1 transport:** repo access (git clone, SSH, IDE) — delivery surface for shards, not the content domain |
+| **V2** | MDCP MCP server (shard read, glossary search)                                                      | Repo access                                                                                               |
+| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                      | Opt-in publish                                                                                            |
 
 ```text
   V1 authoring     shards → compile → check → Agent Skill (/mdcp)
@@ -39,6 +39,8 @@ Filter for new capabilities: [Direct value bar](../design-constraints/direct-val
 ```
 
 **V1 phase ≠ semver 1.0.** Roadmap phase names describe delivery surfaces; npm stability promises align at npm **1.0.0** — not during open alpha.
+
+Later phases (MCP, hosted API) are alternate **delivery** surfaces; they do not redefine the documentation domain.
 
 ## Positioning
 
