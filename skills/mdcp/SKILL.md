@@ -73,6 +73,14 @@ These habits keep docs trustworthy while the product keeps changing:
   subject. After approval: implement and `git commit` one group at a time; do
   not squash unrelated concerns into one commit. Why: reviewable diffs, one
   concern per commit, and it matches small batches.
+- **Branch before edit:** Before editing any tracked files for a `WORK_ITEM`,
+  create the intended short-lived feature branch from updated `main` (or the
+  repo’s integration branch). Plans MUST name that branch and link `WORK_ITEM`
+  before waiting for human review / “go”. NEVER modify tracked files, commit
+  session work, or leave uncommitted edits while the current branch is `main`
+  or `master`. Verify with `git branch --show-current` (or equivalent) before
+  the first edit. Why: short-lived branches and PR review are the delivery
+  loop, not optional polish.
 - **Current docs only:** Shards must describe the product **as it works now**.
   When behavior or guidance changes, remove superseded or stale text from
   durable docs — do not leave “old way” sections for archaeology. Git history
