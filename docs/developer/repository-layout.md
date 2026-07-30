@@ -6,7 +6,7 @@ mdcp/
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── skills/                 # Publishable Agent Skills source (skills.sh layout)
-│   ├── mdcp/               # Parent skill (public consumer entrypoint)
+│   ├── mdcp/               # Parent skill + private @bwilliamson/skill-mdcp carrier
 │   ├── mdcp-*/             # Helper skills (listed in skills.sh.json when release-ready)
 │   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; not in skills.sh.json)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
@@ -31,6 +31,6 @@ mdcp/
 
 ## Published packages
 
-All three npm packages share one version (fixed versioning via Changesets). Each ships `dist/` and a generated or hand-authored `README.md` in its tarball.
+Each npm package and each Agent Skill versions independently via Changesets. npm packages ship `dist/` and a generated or hand-authored `README.md` in the tarball. Skills use private `@bwilliamson/skill-*` workspace carriers (not published to npm).
 
 `mdcp-presets` README is hand-authored for now. Root `README.md`, CLI, and core READMEs are **compiled** from `docs/repo-readme/`, `docs/client-cli/`, and `docs/client-core/` shards.

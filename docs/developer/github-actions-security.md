@@ -49,21 +49,19 @@ After CODEOWNERS is on `main`, a repo admin enables review enforcement:
 3. Set **Required approving reviews** to at least **1**.
 4. Keep **Dismiss stale pull request approvals when new commits are pushed** enabled (already on as of 2026-07-27).
 
-As of the #182 audit, `main` had status checks required but `require_code_owner_reviews` was **false** and `required_approving_review_count` was **0**. Those toggles are repository settings and are not changed by this PR.
-
-Optional automation (requires admin `gh` auth):
-
-```bash
-gh api -X PATCH repos/betsalel-williamson/mdcp/branches/main/protection/required_pull_request_reviews \
-  -f require_code_owner_reviews=true \
-  -f required_approving_review_count=1
-```
-
-Verify after enabling:
+As of **2026-07-30**, `main` has `require_code_owner_reviews: true` and `required_approving_review_count: 1` (enabled after the #182 CODEOWNERS landing). Re-verify after any branch-protection edits:
 
 ```bash
 gh api repos/betsalel-williamson/mdcp/branches/main/protection \
   --jq '.required_pull_request_reviews | {require_code_owner_reviews, required_approving_review_count}'
+```
+
+To set or repair those toggles (requires admin `gh` auth):
+
+```bash
+gh api -X PATCH repos/betsalel-williamson/mdcp/branches/main/protection/required_pull_request_reviews \
+  -F require_code_owner_reviews=true \
+  -F required_approving_review_count=1
 ```
 
 Fork PRs from outside collaborators still run CI under the base-repo policy; code-owner review ensures `@betsalel-williamson` approves changes to owned paths before merge.

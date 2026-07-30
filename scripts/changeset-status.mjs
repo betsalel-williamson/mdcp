@@ -118,8 +118,9 @@ if (skillChanges.length > 0) {
     } else {
       console.error(
         'skills/ changed without a pending changeset.\n' +
-          'Add one with `pnpm changeset` (typically bump @bwilliamson/mdcp-cli) and describe the skill change.\n' +
-          'Do not hand-edit skills/*/SKILL.md metadata.version — release:tag syncs versions.',
+          'Add one with `pnpm changeset` targeting the skill carrier package\n' +
+          '(@bwilliamson/skill-<id>, e.g. @bwilliamson/skill-mdcp) and describe the skill change.\n' +
+          'Do not hand-edit skills/*/SKILL.md metadata.version — release:version syncs from package.json.',
       );
       exitCode = 1;
     }

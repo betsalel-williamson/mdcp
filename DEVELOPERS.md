@@ -414,7 +414,7 @@ mdcp/
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── skills/                 # Publishable Agent Skills source (skills.sh layout)
-│   ├── mdcp/               # Parent skill (public consumer entrypoint)
+│   ├── mdcp/               # Parent skill + private @bwilliamson/skill-mdcp carrier
 │   ├── mdcp-*/             # Helper skills (listed in skills.sh.json when release-ready)
 │   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; not in skills.sh.json)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
@@ -439,7 +439,7 @@ mdcp/
 
 ### Published packages
 
-All three npm packages share one version (fixed versioning via Changesets). Each ships `dist/` and a generated or hand-authored `README.md` in its tarball.
+Each npm package and each Agent Skill versions independently via Changesets. npm packages ship `dist/` and a generated or hand-authored `README.md` in the tarball. Skills use private `@bwilliamson/skill-*` workspace carriers (not published to npm).
 
 `mdcp-presets` README is hand-authored for now. Root `README.md`, CLI, and core READMEs are **compiled** from `docs/repo-readme/`, `docs/client-cli/`, and `docs/client-core/` shards.
 
@@ -679,7 +679,7 @@ When changing skill instructions:
 | `pnpm skill:validate` | Frontmatter fence lint + [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
 | `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                                         |
 
-`pnpm skill:validate` runs in local `pnpm check`, PR CI, **`pnpm release:tag` after skill version sync** (hard fail before commit/tag), and the tag [release workflow](.github/workflows/release.yml) before npm publish. It is not a [live skill eval](docs/glossary/live-skill-eval.md).
+`pnpm skill:validate` runs in local `pnpm check`, PR CI, **`pnpm release:version` after skill version sync** (hard fail before the Version Packages commit), and the [release workflow](.github/workflows/release.yml) before npm publish. It is not a [live skill eval](docs/glossary/live-skill-eval.md).
 
 ### Live skill evals (optional, local)
 
@@ -704,7 +704,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 
 Complementary `skills/mdcp-arch-*` packs remain WIP (`metadata.internal: true`) — keep them off consumer get-started copy **and** out of [`skills.sh.json`](skills.sh.json) until ready to release. Maintainers can install them with `INSTALL_INTERNAL_SKILLS=1`.
 
-There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](#versioning-and-releases). Do not hand-edit those versions in feature PRs; add a changeset when `skills/` changes so release notes capture the work.
+There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Version Packages syncs `metadata.version` on each bumped skill from its private carrier `package.json` — see [Versioning and releases](#versioning-and-releases). Do not hand-edit those versions in feature PRs; add a changeset targeting `@bwilliamson/skill-<id>` when `skills/<id>/` changes so release notes capture the work.
 
 Documented consumer install path: your agent's skills directory ([Supported Agents](https://github.com/vercel-labs/skills#supported-agents)). Avoid Cursor-only or Marketplace-only packaging for this work.
 
@@ -845,42 +845,43 @@ Helper intake and write obligations stay in
 
 ## Versioning and releases
 
-mdcp uses [Semantic Versioning 2.0.0](https://semver.org/) and [Changesets](https://github.com/changesets/changesets) for predictable npm releases. All three published packages share one version number.
+mdcp uses [Semantic Versioning 2.0.0](https://semver.org/) and [Changesets](https://github.com/changesets/changesets) for predictable releases. **Each npm package and each Agent Skill versions independently** — a changeset only bumps the items it lists.
 
-| Package      | npm name                    |
-| ------------ | --------------------------- |
-| CLI          | `@bwilliamson/mdcp-cli`     |
-| Core library | `@bwilliamson/mdcp-core`    |
-| Lint presets | `@bwilliamson/mdcp-presets` |
+| Item         | Identifier                          | Published to                  |
+| ------------ | ----------------------------------- | ----------------------------- |
+| CLI          | `@bwilliamson/mdcp-cli`             | npm                           |
+| Core library | `@bwilliamson/mdcp-core`            | npm                           |
+| Lint presets | `@bwilliamson/mdcp-presets`         | npm                           |
+| Agent Skill  | `@bwilliamson/skill-<id>` (private) | Git (`skills/<id>/`; not npm) |
 
-Fixed versioning is configured in [`.changeset/config.json`](.changeset/config.json) — bump one, bump all.
+Independent versioning is configured in [`.changeset/config.json`](.changeset/config.json) (`fixed` is empty). Dependents of a bumped workspace package still get a **patch** internal dependency update (`updateInternalDependencies`).
 
 ### Release schedule (lightweight)
 
-There is **no calendar cadence**. Releases are **event-driven**:
+There is **no calendar cadence**. Releases are **event-driven on `main`**:
 
-1. Contributors add a changeset with each PR that affects published behavior.
-2. Changes accumulate on `main`.
-3. When ready, a maintainer runs **`pnpm release:tag:push`** to version, tag, and push.
-4. CI publishes to npm when the **`v*`** tag lands on GitHub.
+1. Contributors add a changeset with each PR that affects a published package or skill.
+2. Merging the feature PR to `main` runs the [release workflow](.github/workflows/release.yml).
+3. If pending changesets exist, CI opens or updates a **Version Packages** PR (applies bumps, changelogs, and skill frontmatter sync).
+4. Merging that Version Packages PR to `main` publishes any public packages that were bumped (`pnpm release:publish`) and creates GitHub Releases for them.
 
-**Agent Skills** live under `skills/` (not npm). They ship from Git via `npx skills add` into each host's skills directory (this monorepo dogfoods under `.agents/skills/` via `pnpm skill:update`). On each release, `pnpm release:tag` sets every `skills/*/SKILL.md` `metadata.version` to match the tag (other frontmatter such as `metadata.internal` is preserved). Feature PRs that change `skills/` must add a changeset and must **not** hand-bump those versions. See [Agent Skill](#agent-skill-development).
+**Agent Skills** live under `skills/` (not npm). Each skill has a private workspace `package.json` (`@bwilliamson/skill-<id>`) that Changesets versions. After `changeset version`, `pnpm release:version` syncs that version into `skills/<id>/SKILL.md` `metadata.version` (other frontmatter such as `metadata.internal` is preserved). Feature PRs that change a skill must add a changeset targeting **that skill package** and must **not** hand-bump `metadata.version`. See [Agent Skill](#agent-skill-development).
 
-Typical rhythm for an active dev project: **a few releases per month**, batched when there is something worth shipping — not on a fixed weekly/monthly schedule.
+Typical rhythm for an active project: **ship when something is worth releasing** — often soon after the Version Packages PR is green — not on a fixed weekly/monthly schedule.
 
 ### Pre-1.0 policy (`0.x.y`)
 
 The project is **pre-1.0** (open alpha). Until **1.0.0**, there is **no API stability guarantee** — exported library APIs, CLI commands and flags, `mdcp.config.json` schema, and compile output shape may change in any `0.x.y` release without a semver-major bump. Agent Skills (`npx skills add`) are the supported agent delivery path.
 
-Treat versions as:
+**Major bumps are disabled** in pending changesets until maintainers explicitly open majors / 1.0. CI runs `pnpm changeset:reject-major`. Use:
 
-| Bump                     | When                                                                                | Examples                                                 |
-| ------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| **patch**                | Bug fixes, internal refactors with no intended API change                           | compile heading fix, orphan check false positive         |
-| **minor**                | New commands, config fields, hooks, or behavior additions                           | new `mdcp` subcommand, new compile hook, new preset rule |
-| **major** (within `0.x`) | Breaking CLI flags, config schema removals, output format changes consumers rely on | rename config key, change compiled heading rules         |
+| Bump      | When                                                                               | Examples                                                |
+| --------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| **patch** | Bug fixes, internal refactors with no intended API change                          | compile heading fix, orphan check false positive        |
+| **minor** | New commands, config fields, hooks, behavior additions, **or breaking-within-0.x** | new subcommand; rename config key (still minor pre-1.0) |
+| **build** | Republish without API change (`0.1.0-build.1`, …) via `pnpm release:build`         | registry metadata / CI-only republish                   |
 
-At **1.0.0**, semver applies strictly: breaking changes require a major bump. Graduate when core mechanics survive real-world adoption without breaking changes for several months.
+At **1.0.0**, semver applies strictly: breaking changes require a major bump (and the reject-major gate is lifted). Graduate when core mechanics survive real-world adoption without breaking changes for several months.
 
 #### Community feedback
 
@@ -892,31 +893,32 @@ At **1.0.0**, semver applies strictly: breaking changes require a major bump. Gr
 
 Use this for every cut. Do not accumulate one-off milestone checklists in this shard.
 
-1. On clean `main`, confirm pending `.changeset/*.md` files cover package changes since the last tag.
+1. Confirm pending `.changeset/*.md` files name only the packages/skills that should bump (no drive-by majors).
 2. **Skills policy:** parent `mdcp` remains the consumer entrypoint. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` and **out** of [`skills.sh.json`](skills.sh.json) until intentionally published. List parent + release-ready helpers in the **Documentation system** grouping (see [Agent Skill development — skills.sh.json](#skillsshjson-repo-page-layout)).
-3. Preflight: `pnpm skill:validate && pnpm check` (or at least `pnpm docs:check` when only docs/skills changed).
-4. In a real TTY: `pnpm release:tag:push` — select bump (patch / minor / major / build), type `vX.Y.Z`, answer `yes`. Agents and CI cannot run this script.
-5. The script applies changesets, bumps package versions and changelogs, syncs `skills/*/SKILL.md` `metadata.version`, then **must** run `pnpm skill:validate` (hard fail if invalid — including broken YAML fences like `---name:`). Only after that succeeds does it commit `chore: release vX.Y.Z`, tag, and (with `--push`) push `main` + the tag.
-6. Verify CI [release workflow](.github/workflows/release.yml): it runs `pnpm skill:validate` again before npm publish, then publishes all three packages and creates the GitHub Release for `vX.Y.Z`.
-7. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
+3. Merge feature pull requests to `main`. Wait for the **Version Packages** PR from the release workflow.
+4. Review that PR: only intended packages/skills bumped; skill `metadata.version` matches carrier `package.json`; `pnpm skill:validate` already ran in `release:version`.
+5. Merge the Version Packages PR. CI publishes bumped public packages (npm OIDC) and creates GitHub Releases. Private skill carriers are versioned in git only.
+6. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
 
-Preview without writes: `pnpm release:tag --dry-run`.
+**Build republish** (no changeset): `pnpm release:build --packages mdcp-cli --skills mdcp` then commit and tag/publish as needed (or use `workflow_dispatch` on the release workflow after pushing the bump).
+
+Preview versioning locally: `pnpm release:version` on a throwaway branch (consumes changesets).
 
 ### Durable docs vs pending changesets
 
-Pending files under `.changeset/*.md` (other than `README.md`) are **temporary**: `pnpm release:tag` consumes them into package `CHANGELOG.md` files and deletes them. Do **not** link ADRs, feature, client, or developer narrative shards to those pending files. Point consumers at package CHANGELOGs or GitHub Releases instead. Linking `.changeset/config.json` or `.changeset/README.md` from developer release docs is fine — those are stable tooling references. `pnpm docs:check` runs `docs:lint:changeset-links` to enforce this.
+Pending files under `.changeset/*.md` (other than `README.md`) are **temporary**: the Version Packages step consumes them into package/skill `CHANGELOG.md` files and deletes them. Do **not** link ADRs, feature, client, or developer narrative shards to those pending files. Point consumers at package CHANGELOGs or GitHub Releases instead. Linking `.changeset/config.json` or `.changeset/README.md` from developer release docs is fine — those are stable tooling references. `pnpm docs:check` runs `docs:lint:changeset-links` to enforce this.
 
 ### When to add a changeset
 
 Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR changes:
 
-- `packages/mdcp-core/src/**`
-- `packages/mdcp-cli/src/**`
-- `packages/mdcp-presets/*.jsonc`
-- Published package `package.json` metadata consumers depend on
-- **`skills/**`** — consumer-facing Agent Skill packs (helpers, parent skill, install/guidance that ships via `npx skills add`)
+- `packages/mdcp-core/src/**` → bump `@bwilliamson/mdcp-core`
+- `packages/mdcp-cli/src/**` → bump `@bwilliamson/mdcp-cli`
+- `packages/mdcp-presets/*.jsonc` → bump `@bwilliamson/mdcp-presets`
+- Published package `package.json` metadata consumers depend on → that package
+- **`skills/<id>/**`** → bump `@bwilliamson/skill-<id>` (and only other packages if their published behavior also changed)
 
-**Do not hand-edit** `skills/*/SKILL.md` `metadata.version` in feature PRs. `pnpm release:tag` sets every skill’s `metadata.version` in lockstep with the npm/git tag. Describe skill work in a changeset (usually against `@bwilliamson/mdcp-cli`) so the note lands in the package CHANGELOG at release.
+**Do not hand-edit** `skills/*/SKILL.md` `metadata.version` or skill `package.json` `version` in feature PRs. `pnpm release:version` owns those fields.
 
 **Skip a changeset** for:
 
@@ -925,7 +927,7 @@ Run `pnpm changeset` and commit the generated file under `.changeset/` when a PR
 - `devDependencies` bumps in root or `packages/*/package.json` (including `@types/*`) when no other package fields or sources change
 - Typo fixes in package READMEs with no behavior change (maintainer discretion)
 
-CI on pull requests runs `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed. Package-level `devDependencies`-only bumps are treated as tooling and do not fail the check.
+CI on pull requests runs `pnpm changeset:reject-major` and `pnpm changeset:status` to catch missing changesets when **package sources** or **`skills/`** changed. Package-level `devDependencies`-only bumps are treated as tooling and do not fail the check.
 
 ### Dependabot
 
@@ -938,52 +940,34 @@ Dependabot does not add changesets. **Non-dev dependency bumps need a human** �
 
 ### Bump selection guide
 
-When **adding** a changeset in a PR, pick the bump that best describes your change (the maintainer confirms the final bump at release):
+When **adding** a changeset in a PR, pick the bump for **each** affected package/skill:
 
-| Your change                                                                 | Suggested bump         |
-| --------------------------------------------------------------------------- | ---------------------- |
-| Fixes incorrect output or validation                                        | **patch**              |
-| Adds optional config or a new non-breaking command                          | **minor**              |
-| Removes or renames config, changes compile output shape, drops Node support | **major**              |
-| Republish without API change (CI, tooling, registry metadata)               | **build** (at release) |
+| Your change                                                                 | Suggested bump                      |
+| --------------------------------------------------------------------------- | ----------------------------------- |
+| Fixes incorrect output or validation                                        | **patch**                           |
+| Adds optional config or a new non-breaking command                          | **minor**                           |
+| Removes or renames config, changes compile output shape, drops Node support | **minor** (pre-1.0; majors blocked) |
+| Republish without API change (CI, tooling, registry metadata)               | **build** via `pnpm release:build`  |
 
-At release, `pnpm release:tag` lets the maintainer choose **patch / minor / major / build** and requires typing the version plus an explicit `yes` — non-interactive tools cannot release.
+#### Automated (after Version Packages merges to main)
 
-#### Bump types (chosen at release time)
-
-| Choice | Bump      | Use for                                                  |
-| ------ | --------- | -------------------------------------------------------- |
-| 1      | **patch** | Bug fixes, no intended API change                        |
-| 2      | **minor** | New features, backward compatible                        |
-| 3      | **major** | Breaking CLI, config, or compile output                  |
-| 4      | **build** | Republish same API (`0.1.0-build.1`, `0.1.0-build.2`, …) |
-
-#### Human confirmation gate
-
-1. Select bump type `1`–`4`
-2. Type the exact tag (e.g. `vX.Y.Z`) to confirm
-3. Answer `yes` to “Do you really want to do this?”
-
-Without a TTY, the script exits immediately.
-
-#### Automated (after tag push)
-
-1. CI checks out the tagged commit.
-2. `pnpm build` then `pnpm changeset publish` with npm provenance (OIDC).
-3. GitHub Release is created with generated release notes.
+1. CI checks out `main` with the version commit.
+2. `pnpm release:publish` builds, validates skills, then `changeset publish` with npm provenance (OIDC).
+3. GitHub Releases are created for published public packages.
 
 First-time npm Trusted Publishing and local fallback: [Publishing](#publishing).
 
 ### Changelogs
 
-Changesets writes per-package `CHANGELOG.md` files under `packages/*/` when you run `pnpm release:tag` (via `changeset version`). Consumers can read:
+Changesets writes per-package `CHANGELOG.md` files under `packages/*/` and `skills/*/` when the Version Packages PR runs (`changeset version`). Consumers can read:
 
-- GitHub Releases (summary from the action)
-- `packages/mdcp-cli/CHANGELOG.md` (and core/presets) on the tag
+- GitHub Releases (for npm packages)
+- `packages/mdcp-cli/CHANGELOG.md` (and core/presets) on the release commit
+- `skills/<id>/CHANGELOG.md` for skill-only notes
 
 ### Supported versions
 
-Security fixes target the **latest minor** on npm. See [SECURITY.md](SECURITY.md) for the supported-versions table — update that table when cutting a new minor line. After a security patch ships, follow [Security-incident triage](#security-incident-triage) when deciding whether to `npm deprecate` (or rarely unpublish) a bad version.
+Security fixes target the **latest minor** of each affected package on npm. See [SECURITY.md](SECURITY.md) for the supported-versions table — update that table when cutting a new minor line. After a security patch ships, follow [Security-incident triage](#security-incident-triage) when deciding whether to `npm deprecate` (or rarely unpublish) a bad version.
 
 ### Related docs
 
@@ -998,7 +982,7 @@ Security fixes target the **latest minor** on npm. See [SECURITY.md](SECURITY.md
 
 ## Publishing
 
-Packages: `@bwilliamson/mdcp-core`, `@bwilliamson/mdcp-cli`, `@bwilliamson/mdcp-presets` (fixed versioning via Changesets)
+Packages: `@bwilliamson/mdcp-core`, `@bwilliamson/mdcp-cli`, `@bwilliamson/mdcp-presets` (independent versioning via Changesets). Agent Skills use private `@bwilliamson/skill-*` carriers and are **not** published to npm.
 
 ### Prerequisites
 
@@ -1027,7 +1011,7 @@ npm login                    # log in as bwilliamson; complete 2FA when prompted
 cd /path/to/mdcp
 pnpm install
 pnpm build
-pnpm changeset publish       # publishes all three @bwilliamson/mdcp-* packages at 0.1.0
+pnpm changeset publish       # publishes public @bwilliamson/mdcp-* packages that need publishing
 ```
 
 Verify:
@@ -1041,6 +1025,8 @@ npm view @bwilliamson/mdcp-presets version
 #### Step 2 — Configure Trusted Publishing (after packages exist)
 
 **Important Security Requirement:** The `release.yml` workflow is bound to the `release` GitHub Environment. Maintainers **must** configure Environment protection rules (required reviewers) in GitHub Settings → Environments → release. This ensures that no release can be published without manual approval.
+
+After switching release triggers from `v*` tags to **push to `main`**, re-confirm each package’s Trusted Publisher still points at workflow filename `release.yml` (npm binds by filename, not by event type — still verify in the npm UI after the workflow change).
 
 Option A — npm website (easiest):
 
@@ -1061,15 +1047,12 @@ npm trust github @bwilliamson/mdcp-presets --file release.yml --repo betsalel-wi
 
 #### Step 3 — Future releases via CI
 
-Tag a release from an **interactive terminal** on `main`; CI publishes when the tag is pushed:
+Trusted Publishing must reference workflow **`release.yml`** (trigger: **push to `main`** and `workflow_dispatch`). See [Versioning and releases](#versioning-and-releases).
 
-```bash
-pnpm release:tag:push
-```
-
-You will choose patch / minor / major / build and confirm by typing the version. Agents and CI cannot run this script.
-
-Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` tags**). See [Versioning and releases](#versioning-and-releases).
+1. Merge feature PRs that include changesets to `main`.
+2. CI opens or updates the **Version Packages** PR.
+3. Merge that PR (after environment approval on the release job if configured).
+4. CI runs `pnpm release:publish` for bumped public packages.
 
 ### Trusted Publishing notes
 
@@ -1079,12 +1062,12 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` ta
 
 ### Routine releases
 
-For every cut after Trusted Publishing is configured, follow the **Release checklist** in [Versioning and releases](#versioning-and-releases) (`pnpm release:tag:push` on clean `main`). That checklist covers skills version sync, skills.sh telemetry, and npm verification.
+For every cut after Trusted Publishing is configured, follow the **Release checklist** in [Versioning and releases](#versioning-and-releases) (Version Packages PR on `main`). That checklist covers independent package/skill bumps, skills version sync, skills.sh telemetry, and npm verification.
 
-Preview locally:
+Local versioning (consumes changesets — use a throwaway branch):
 
 ```bash
-pnpm release:tag --dry-run
+pnpm release:version
 ```
 
 Manual fallback (publish from your machine, not CI):
@@ -1092,13 +1075,12 @@ Manual fallback (publish from your machine, not CI):
 ```bash
 pnpm run check
 pnpm changeset
-pnpm changeset version
+pnpm release:version
 git add . && git commit -m "chore: version packages"
-pnpm build
-pnpm changeset publish
+pnpm release:publish
 ```
 
-Changesets config: [`.changeset/config.json`](.changeset/config.json) — all three packages version together.
+Changesets config: [`.changeset/config.json`](.changeset/config.json) — packages and skills version independently.
 
 ### Install surfaces
 
@@ -1274,21 +1256,19 @@ After CODEOWNERS is on `main`, a repo admin enables review enforcement:
 3. Set **Required approving reviews** to at least **1**.
 4. Keep **Dismiss stale pull request approvals when new commits are pushed** enabled (already on as of 2026-07-27).
 
-As of the #182 audit, `main` had status checks required but `require_code_owner_reviews` was **false** and `required_approving_review_count` was **0**. Those toggles are repository settings and are not changed by this PR.
-
-Optional automation (requires admin `gh` auth):
-
-```bash
-gh api -X PATCH repos/betsalel-williamson/mdcp/branches/main/protection/required_pull_request_reviews \
-  -f require_code_owner_reviews=true \
-  -f required_approving_review_count=1
-```
-
-Verify after enabling:
+As of **2026-07-30**, `main` has `require_code_owner_reviews: true` and `required_approving_review_count: 1` (enabled after the #182 CODEOWNERS landing). Re-verify after any branch-protection edits:
 
 ```bash
 gh api repos/betsalel-williamson/mdcp/branches/main/protection \
   --jq '.required_pull_request_reviews | {require_code_owner_reviews, required_approving_review_count}'
+```
+
+To set or repair those toggles (requires admin `gh` auth):
+
+```bash
+gh api -X PATCH repos/betsalel-williamson/mdcp/branches/main/protection/required_pull_request_reviews \
+  -F require_code_owner_reviews=true \
+  -F required_approving_review_count=1
 ```
 
 Fork PRs from outside collaborators still run CI under the base-repo policy; code-owner review ensures `@betsalel-williamson` approves changes to owned paths before merge.
@@ -1315,44 +1295,44 @@ We run **CodeQL** and **Zizmor** on push and pull request:
 
 This checklist tracks our compliance with the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html). See [GitHub Actions security posture](#github-actions-security-posture) for vocabulary and re-review guidance. All open risks are tracked under epic [#173](https://github.com/betsalel-williamson/mdcp/issues/173).
 
-| OWASP Topic                             | Status                       | Notes                                                                                |
-| --------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------ |
-| **Pipeline Governance**                 |                              |                                                                                      |
-| Treat CI/CD as critical production code | `reviewed (2026-07-27)`      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173. |
-| **Authentication & Authorization**      |                              |                                                                                      |
-| Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`      | Repo default is read-only.                                                           |
-| Workflow-level `permissions: {}`        | `reviewed (2026-07-27)`      | Empty top-level on ci/gitleaks/release; job-scoped writes.                           |
-| `persist-credentials: false`            | `reviewed (2026-07-27)`      | Set on all `actions/checkout` steps.                                                 |
-| Eliminate static credentials            | `reviewed (2026-07-27)`      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.              |
-| OIDC for cloud providers                | `reviewed (2026-07-27)`      | Used for npm Trusted Publishing.                                                     |
-| Secure handling of static credentials   | `not a concern (2026-07-27)` | No static credentials remain in workflows.                                           |
-| Secrets: inherit                        | `not a concern (2026-07-27)` | Not used.                                                                            |
-| Mask sensitive data                     | `reviewed (2026-07-27)`      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                     |
-| **Workflows & Execution**               |                              |                                                                                      |
-| Pin actions to commit SHA               | `reviewed (2026-07-27)`      | All third-party actions pinned to full commit SHAs with tag comments in workflows.   |
-| Third-party actions caution             | `reviewed (2026-07-27)`      | Documented current set.                                                              |
-| Sanitize untrusted context / input      | `reviewed (2026-07-27)`      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.            |
-| `pull_request_target` trigger           | `not a concern (2026-07-27)` | Not used.                                                                            |
-| `workflow_run` trigger                  | `not a concern (2026-07-27)` | Not used.                                                                            |
-| `issue_comment` trigger                 | `not a concern (2026-07-27)` | Not used.                                                                            |
-| Curated shared workflows                | `not a concern (2026-07-27)` | Single-repo monorepo; no centralized shared-workflows repository.                    |
-| Multi-repo shared workflows             | `not a concern (2026-07-27)` | Not used.                                                                            |
-| **Runners & Environments**              |                              |                                                                                      |
-| Self-hosted runners                     | `not a concern (2026-07-27)` | Using `ubuntu-latest` GitHub-hosted runners.                                         |
-| Runner groups                           | `not a concern (2026-07-27)` | Not applicable to GitHub-hosted runners.                                             |
-| Egress monitoring                       | `reviewed (2026-07-27)`      | Harden-Runner in audit mode only (not block).                                        |
-| Environment required reviewers          | `reviewed (2026-07-27)`      | Bound to `release` env; required reviewers are maintainer ops.                       |
-| **Code & Supply Chain**                 |                              |                                                                                      |
-| Branch protection baseline              | `reviewed (2026-07-27)`      | Main branch protected with PR and status checks.                                     |
-| Require approval for external           | `reviewed (2026-07-27)`      | CODEOWNERS added; require-code-owner reviews are maintainer ops.                     |
-| Dependabot for Actions                  | `reviewed (2026-07-27)`      | Configured for weekly updates.                                                       |
-| Dependabot cooldown                     | `reviewed (2026-07-27)`      | Explicit 7-day cooldown on `npm` and `github-actions`.                               |
-| Artifact / cache poisoning              | `reviewed (2026-07-27)`      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                       |
-| Secret scanning                         | `reviewed (2026-07-27)`      | Gitleaks workflow is active.                                                         |
-| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`      | CodeQL (`javascript-typescript` + `actions`) + Zizmor; Zizmor fails on findings.     |
-| AI-in-CI                                | `not a concern (2026-07-27)` | No AI assistants used in CI.                                                         |
-| **Incident Response**                   |                              |                                                                                      |
-| Incident response plan                  | `reviewed (2026-07-27)`      | Covered in `SECURITY.md` and triage docs.                                            |
+| OWASP Topic                             | Status                       | Notes                                                                                                               |
+| --------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Pipeline Governance**                 |                              |                                                                                                                     |
+| Treat CI/CD as critical production code | `reviewed (2026-07-27)`      | Security posture docs, full `pnpm run check` gate, and checklist tracked under #173.                                |
+| **Authentication & Authorization**      |                              |                                                                                                                     |
+| Default `GITHUB_TOKEN` permissions      | `reviewed (2026-07-27)`      | Repo default is read-only.                                                                                          |
+| Workflow-level `permissions: {}`        | `reviewed (2026-07-27)`      | Empty top-level on ci/gitleaks/release; job-scoped writes.                                                          |
+| `persist-credentials: false`            | `reviewed (2026-07-30)`      | Set on all `actions/checkout` steps (release passes token only to changesets/action).                               |
+| Eliminate static credentials            | `reviewed (2026-07-27)`      | No PATs or static cloud keys; npm publish uses OIDC Trusted Publishing.                                             |
+| OIDC for cloud providers                | `reviewed (2026-07-30)`      | Trusted Publishing on `release.yml` (push to `main` + `workflow_dispatch`; re-bind npm trust after trigger change). |
+| Secure handling of static credentials   | `not a concern (2026-07-27)` | No static credentials remain in workflows.                                                                          |
+| Secrets: inherit                        | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| Mask sensitive data                     | `reviewed (2026-07-27)`      | GitHub auto-masks secrets; gitleaks enforces pre-merge scanning.                                                    |
+| **Workflows & Execution**               |                              |                                                                                                                     |
+| Pin actions to commit SHA               | `reviewed (2026-07-27)`      | All third-party actions pinned to full commit SHAs with tag comments in workflows.                                  |
+| Third-party actions caution             | `reviewed (2026-07-27)`      | Documented current set.                                                                                             |
+| Sanitize untrusted context / input      | `reviewed (2026-07-27)`      | Workflow contexts passed via env vars; no PR title/body in `run:` blocks.                                           |
+| `pull_request_target` trigger           | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| `workflow_run` trigger                  | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| `issue_comment` trigger                 | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| Curated shared workflows                | `not a concern (2026-07-27)` | Single-repo monorepo; no centralized shared-workflows repository.                                                   |
+| Multi-repo shared workflows             | `not a concern (2026-07-27)` | Not used.                                                                                                           |
+| **Runners & Environments**              |                              |                                                                                                                     |
+| Self-hosted runners                     | `not a concern (2026-07-27)` | Using `ubuntu-latest` GitHub-hosted runners.                                                                        |
+| Runner groups                           | `not a concern (2026-07-27)` | Not applicable to GitHub-hosted runners.                                                                            |
+| Egress monitoring                       | `reviewed (2026-07-27)`      | Harden-Runner in audit mode only (not block).                                                                       |
+| Environment required reviewers          | `reviewed (2026-07-27)`      | Bound to `release` env; required reviewers are maintainer ops.                                                      |
+| **Code & Supply Chain**                 |                              |                                                                                                                     |
+| Branch protection baseline              | `reviewed (2026-07-27)`      | Main branch protected with PR and status checks.                                                                    |
+| Require approval for external           | `reviewed (2026-07-30)`      | CODEOWNERS on `main`; `require_code_owner_reviews` + 1 approving review enabled.                                    |
+| Dependabot for Actions                  | `reviewed (2026-07-27)`      | Configured for weekly updates.                                                                                      |
+| Dependabot cooldown                     | `reviewed (2026-07-27)`      | Explicit 7-day cooldown on `npm` and `github-actions`.                                                              |
+| Artifact / cache poisoning              | `reviewed (2026-07-27)`      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                                                      |
+| Secret scanning                         | `reviewed (2026-07-27)`      | Gitleaks workflow is active.                                                                                        |
+| Static analysis (CodeQL/Zizmor)         | `reviewed (2026-07-27)`      | CodeQL (`javascript-typescript` + `actions`) + Zizmor; Zizmor fails on findings.                                    |
+| AI-in-CI                                | `not a concern (2026-07-27)` | No AI assistants used in CI.                                                                                        |
+| **Incident Response**                   |                              |                                                                                                                     |
+| Incident response plan                  | `reviewed (2026-07-27)`      | Covered in `SECURITY.md` and triage docs.                                                                           |
 
 <!-- mdcp-shard: end docs/developer/github-actions-security-checklist.md -->
 

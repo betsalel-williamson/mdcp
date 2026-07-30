@@ -1,6 +1,6 @@
 # Publishing
 
-Packages: `@bwilliamson/mdcp-core`, `@bwilliamson/mdcp-cli`, `@bwilliamson/mdcp-presets` (fixed versioning via Changesets)
+Packages: `@bwilliamson/mdcp-core`, `@bwilliamson/mdcp-cli`, `@bwilliamson/mdcp-presets` (independent versioning via Changesets). Agent Skills use private `@bwilliamson/skill-*` carriers and are **not** published to npm.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ npm login                    # log in as bwilliamson; complete 2FA when prompted
 cd /path/to/mdcp
 pnpm install
 pnpm build
-pnpm changeset publish       # publishes all three @bwilliamson/mdcp-* packages at 0.1.0
+pnpm changeset publish       # publishes public @bwilliamson/mdcp-* packages that need publishing
 ```
 
 Verify:
@@ -43,6 +43,8 @@ npm view @bwilliamson/mdcp-presets version
 ### Step 2 — Configure Trusted Publishing (after packages exist)
 
 **Important Security Requirement:** The `release.yml` workflow is bound to the `release` GitHub Environment. Maintainers **must** configure Environment protection rules (required reviewers) in GitHub Settings → Environments → release. This ensures that no release can be published without manual approval.
+
+After switching release triggers from `v*` tags to **push to `main`**, re-confirm each package’s Trusted Publisher still points at workflow filename `release.yml` (npm binds by filename, not by event type — still verify in the npm UI after the workflow change).
 
 Option A — npm website (easiest):
 
@@ -63,15 +65,12 @@ npm trust github @bwilliamson/mdcp-presets --file release.yml --repo betsalel-wi
 
 ### Step 3 — Future releases via CI
 
-Tag a release from an **interactive terminal** on `main`; CI publishes when the tag is pushed:
+Trusted Publishing must reference workflow **`release.yml`** (trigger: **push to `main`** and `workflow_dispatch`). See [Versioning and releases](./versioning-and-releases.md).
 
-```bash
-pnpm release:tag:push
-```
-
-You will choose patch / minor / major / build and confirm by typing the version. Agents and CI cannot run this script.
-
-Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` tags**). See [Versioning and releases](./versioning-and-releases.md).
+1. Merge feature PRs that include changesets to `main`.
+2. CI opens or updates the **Version Packages** PR.
+3. Merge that PR (after environment approval on the release job if configured).
+4. CI runs `pnpm release:publish` for bumped public packages.
 
 ## Trusted Publishing notes
 
@@ -81,12 +80,12 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **`v*` ta
 
 ## Routine releases
 
-For every cut after Trusted Publishing is configured, follow the **Release checklist** in [Versioning and releases](./versioning-and-releases.md) (`pnpm release:tag:push` on clean `main`). That checklist covers skills version sync, skills.sh telemetry, and npm verification.
+For every cut after Trusted Publishing is configured, follow the **Release checklist** in [Versioning and releases](./versioning-and-releases.md) (Version Packages PR on `main`). That checklist covers independent package/skill bumps, skills version sync, skills.sh telemetry, and npm verification.
 
-Preview locally:
+Local versioning (consumes changesets — use a throwaway branch):
 
 ```bash
-pnpm release:tag --dry-run
+pnpm release:version
 ```
 
 Manual fallback (publish from your machine, not CI):
@@ -94,13 +93,12 @@ Manual fallback (publish from your machine, not CI):
 ```bash
 pnpm run check
 pnpm changeset
-pnpm changeset version
+pnpm release:version
 git add . && git commit -m "chore: version packages"
-pnpm build
-pnpm changeset publish
+pnpm release:publish
 ```
 
-Changesets config: [`.changeset/config.json`](../../.changeset/config.json) — all three packages version together.
+Changesets config: [`.changeset/config.json`](../../.changeset/config.json) — packages and skills version independently.
 
 ## Install surfaces
 
