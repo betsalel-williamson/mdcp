@@ -36,11 +36,14 @@ Or paste that line after installing the skill (`npx skills add betsalel-williams
 
 ## Are you ready?
 
-| Start now                                         | Wait                                    |
-| ------------------------------------------------- | --------------------------------------- |
-| Git repo + an agent that can edit files           | Chat-only coding with no project folder |
-| Docs or decisions already sprawling (or about to) | One-off toy you will not reopen         |
-| Willing to review doc changes, not only code      | No interest in durable docs beyond chat |
+| Scenario                                          | Ready?    |
+| ------------------------------------------------- | --------- |
+| Git repo + an agent that can edit files           | Start now |
+| Docs or decisions already sprawling (or about to) | Start now |
+| Willing to review doc changes, not only code      | Start now |
+| Chat-only coding with no project folder           | Wait      |
+| One-off toy you will not reopen                   | Wait      |
+| No interest in durable docs beyond chat           | Wait      |
 
 You feel the benefit on the **second session** — when prior decisions are still findable — not on the first install.
 
