@@ -10,7 +10,7 @@
 
 **mdcp** is a **documentation system** delivered as an [Agent Skill](https://agentskills.io) plus a small compile/check toolchain. It is for people who know good docs compound — and that unvalidated monolith READMEs get expensive as product ideas keep arriving.
 
-Instead of dumping every mind map, architecture note, and spec into one file that overwhelms both humans and LLM context windows, MDCP keeps that intent in small, validated Markdown **shards** (for example `docs/features/my-feature.md`). Agents learn to read **one shard at a time**, update docs before coding, and run checks in CI — so documentation stays findable and trustworthy as the system grows. Discover and install via [skills.sh](https://skills.sh/betsalel-williamson/mdcp).
+Instead of dumping every mind map, architecture note, and spec into one file that overwhelms both humans and LLM context windows, MDCP keeps that intent in small, validated Markdown **shards** — for example `docs/features/my-feature.md`, `docs/procedures/line-changeover.md`, `docs/equipment/press-manual.md`, or `docs/training/onboarding-module.md`. Agents learn to read **one shard at a time**, update shards before changing the system (software, procedures, or training), and run checks in CI — so documentation stays findable and trustworthy as the system grows. Discover and install via [skills.sh](https://skills.sh/betsalel-williamson/mdcp).
 
 <!-- mdcp-shard: end docs/repo-readme/what-this-tool-is.md -->
 
@@ -36,7 +36,7 @@ Then start a bootstrap session:
 /mdcp help me get started
 ```
 
-The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout, and validation. After bootstrap, it can walk an optional **first feature** through design → feature → UX → doc-only (recommended example or your own). Once the pipeline exists, agents proactively look up shard context, compile documentation, and validate references before writing code.
+The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout, and validation. After bootstrap, it can walk an optional **first feature** through design → feature → UX → doc-only (recommended example or your own). Once the pipeline exists, agents proactively look up shard context, compile documentation, and validate references before changing the system or implementing.
 
 <!-- mdcp-shard: end docs/repo-readme/get-started.md -->
 
@@ -46,7 +46,7 @@ The agent asks for `FEATURE` and `PERSONA`, then helps wire config, guide layout
 
 - **Built for documentation-system thinkers:** Puts durable intent (specs, design notes, glossaries) in the repo where it compounds — not only in chat history or slide decks.
 - **Lower maintenance as ideas keep coming:** One topic per shard means new features extend the docs tree instead of bloating a monolith you no longer trust.
-- **Docs-as-code for agents:** Coding agents update shards before implementing, so “what we meant” stays reviewable in git alongside the change.
+- **Docs-as-code for agents:** Agents update shards before implementing, so “what we meant” stays reviewable in git — the V1 transport — alongside the change.
 - **Smaller, safer context loads:** People and LLMs read the section that matches the task — not the whole guide every turn.
 - **Validation gate:** `mdcp check` keeps cross-links and refs trustworthy in CI when the docs system grows.
 - **Portable skill:** Works in Cursor, GitHub Copilot, Claude Code, and other hosts that support [Agent Skills](https://agentskills.io).

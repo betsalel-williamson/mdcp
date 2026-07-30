@@ -1295,9 +1295,9 @@ Do not confuse "skill" with human abilities or general AI capabilities. In this 
 
 ## MDCP
 
-**MarkDown Context Protocol** — a **documentation system** delivered as an [Agent Skill](#agent-skills) and lightweight toolchain. It helps teams who care about durable docs distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays reviewable in git, maintainable as ideas keep arriving, and readable one shard at a time by people and coding agents.
+**MarkDown Context Protocol** — a **documentation system** delivered as an [Agent Skill](#agent-skills) and lightweight toolchain. It helps teams who care about durable docs distill mind maps, architecture notes, specs, and product ideas into small Markdown **shards** so intent stays reviewable in git (the V1 transport), maintainable as ideas keep arriving, and readable one shard at a time by people and agents.
 
-MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the software exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
+MDCP is not a magic bullet for documentation debt. It is a practice and skill that puts system context where it compounds — tracing why the system or process exists, how to use it, and what value it delivers — for a team of one or a full product, engineering, and marketing org.
 
 The CLI (`compile`, `check`, and [refs](#refs) registry maintenance) implements that shared context layer alongside the skill’s behavioral guardrails.
 
