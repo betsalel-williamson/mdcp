@@ -87,7 +87,7 @@ flowchart LR
 
 Or paste that line after installing the skill (`npx skills add betsalel-williamson/mdcp --skill mdcp` via the [`skills` CLI](https://www.skills.sh/docs/cli) — see [Get started](#get-started)).
 
-**In a chat-only tool** (ChatGPT, Gemini web, no repo agent): do **not** install the toolchain yet. Keep notes in your project folder if you have one, or wait until you use an agent that can edit a git repo. Read [Overview](docs/features/overview.md) and [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md) first.
+**In a chat-only tool** (ChatGPT, Gemini web, no repo agent): do **not** install the toolchain yet. Keep notes in your project folder if you have one, or wait until you use an agent that can [edit a git repo](https://github.com/git-guides). Read [Overview](docs/features/overview.md) and [Vision and roadmap](docs/features/protocol/00-vision-and-roadmap.md) first.
 
 **Automation / CI:** the [Agent Skill](docs/features/agent-skill.md) tells agents _when_ to touch docs; the [CLI](docs/client-cli/index.md) runs `compile` / `check` in scripts and pipelines ([The Toolchain](#the-toolchain)).
 
