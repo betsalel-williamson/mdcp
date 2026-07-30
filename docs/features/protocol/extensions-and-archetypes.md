@@ -65,7 +65,7 @@ An **archetype** (or "battery type") is a documented bundle: guide layout, gloss
 
 The default MDCP installation provides the **Code Repository Archetype** (`features/`, `client/`, `developer/`, `glossary/`). This is the "batteries-included" pack for software engineering that keeps developer workflows out of client usage and separates high-level feature specs from low-level code.
 
-Because the underlying MDCP engine (`mdcp compile`, `mdcp check`) is domain-agnostic, teams can define alternative archetypes for other documentation systems (e.g. Legal Operations, HR Policies) that use completely different guide tiers.
+Because the underlying MDCP engine (`mdcp compile`, `mdcp check`) is domain-agnostic, teams can define alternative archetypes for other documentation systems — for example factory SOPs, equipment manuals, training curricula, Legal Operations, or HR Policies — that use completely different guide tiers.
 
 Current public archetypes:
 
