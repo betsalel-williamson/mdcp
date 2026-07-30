@@ -72,3 +72,4 @@ examples/sample-guides/_build/
 # OS
 .DS_Store
 
+.tmp-release-notes.md

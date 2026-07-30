@@ -120,7 +120,7 @@ if (skillChanges.length > 0) {
         'skills/ changed without a pending changeset.\n' +
           'Add one with `pnpm changeset` targeting the skill carrier package\n' +
           '(@bwilliamson/skill-<id>, e.g. @bwilliamson/skill-mdcp) and describe the skill change.\n' +
-          'Do not hand-edit skills/*/SKILL.md metadata.version — release:version syncs from package.json.',
+          'Do not hand-edit skills/*/SKILL.md metadata.version — release:main syncs from packages/skill-<id>/package.json.',
       );
       exitCode = 1;
     }

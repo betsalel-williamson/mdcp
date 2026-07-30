@@ -1,0 +1,6 @@
+{
+  "name": "@bwilliamson/skill-mdcp-arch-product-docs-site",
+  "version": "0.7.1",
+  "private": true,
+  "description": "Version carrier for skills/mdcp-arch-product-docs-site (private; CHANGELOG + GitHub Releases; syncs version to SKILL.md). Not published to npm."
+}

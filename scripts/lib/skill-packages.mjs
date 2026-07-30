@@ -1,11 +1,13 @@
 /**
- * Skill version carriers: private workspace packages under skills/<id>/
- * whose package.json version is the source of truth for SKILL.md metadata.version.
+ * Skill version carriers live under packages/skill-<id>/ (private workspace
+ * packages). skills/<id>/ stays installable Agent Skill content only — no
+ * package.json or CHANGELOG there (those pollute npx skills add context).
  */
 import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 export const SKILL_PACKAGE_SCOPE = '@bwilliamson/skill-';
+export const SKILL_CARRIER_DIR_PREFIX = 'skill-';
 
 export function skillPackageName(skillId) {
   return `${SKILL_PACKAGE_SCOPE}${skillId}`;
@@ -16,6 +18,31 @@ export function skillIdFromPackageName(name) {
   return name.slice(SKILL_PACKAGE_SCOPE.length);
 }
 
+export function skillCarrierDirName(skillId) {
+  return `${SKILL_CARRIER_DIR_PREFIX}${skillId}`;
+}
+
+export function skillIdFromCarrierDirName(dirName) {
+  if (!dirName.startsWith(SKILL_CARRIER_DIR_PREFIX)) return null;
+  return dirName.slice(SKILL_CARRIER_DIR_PREFIX.length);
+}
+
+export function skillCarrierPackageJsonPath(root, skillId) {
+  return join(root, 'packages', skillCarrierDirName(skillId), 'package.json');
+}
+
+/** Skill ids that have a carrier under packages/skill-<id>/. */
+export function listSkillCarrierIds(root) {
+  const packagesDir = join(root, 'packages');
+  if (!existsSync(packagesDir)) return [];
+  return readdirSync(packagesDir, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => skillIdFromCarrierDirName(e.name))
+    .filter((id) => id && existsSync(skillCarrierPackageJsonPath(root, id)))
+    .sort();
+}
+
+/** Skill pack dirs under skills/ that contain SKILL.md (install surface). */
 export function listSkillDirs(root) {
   const skillsDir = join(root, 'skills');
   if (!existsSync(skillsDir)) return [];
@@ -57,4 +84,17 @@ export function setSkillMdVersion(skillPath, version) {
 export function readPackageVersion(packageJsonPath) {
   const json = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
   return json.version;
+}
+
+/** Extract the ## version section body from a package CHANGELOG.md. */
+export function changelogNotesForVersion(changelogPath, version) {
+  if (!existsSync(changelogPath)) return '';
+  const content = readFileSync(changelogPath, 'utf-8');
+  const header = `## ${version}`;
+  const start = content.indexOf(header);
+  if (start === -1) return '';
+  const after = content.slice(start + header.length);
+  const next = after.search(/\n## /);
+  const section = (next === -1 ? after : after.slice(0, next)).trim();
+  return section;
 }

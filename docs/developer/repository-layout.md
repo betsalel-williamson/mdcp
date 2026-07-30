@@ -5,17 +5,18 @@ mdcp/
 ├── CODE_OF_CONDUCT.md      # Contributor Covenant (committed)
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
-├── skills/                 # Publishable Agent Skills source (skills.sh layout)
-│   ├── mdcp/               # Parent skill + private @bwilliamson/skill-mdcp carrier
-│   ├── mdcp-*/             # Helper skills (listed in skills.sh.json when release-ready)
-│   └── mdcp-arch-*/        # WIP archetypes (metadata.internal; not in skills.sh.json)
+├── skills/                 # Agent Skills install surface only (npx skills add)
+│   ├── mdcp/               # Parent skill (no package.json / CHANGELOG here)
+│   ├── mdcp-*/             # Helper skills
+│   └── mdcp-arch-*/        # WIP archetypes (metadata.internal)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
-├── skills.sh.json          # skills.sh repo page: release-ready packs in Documentation system
-├── .agents/skills/         # Vendor-managed dogfood installs (refresh via pnpm skill:update; do not hand-edit) + skill-creator (committed)
+├── skills.sh.json          # skills.sh repo page layout
+├── .agents/skills/         # Dogfood installs (pnpm skill:update) + skill-creator
 ├── packages/
-│   ├── mdcp-core/          # @bwilliamson/mdcp-core — compile, refs, validation library
-│   ├── mdcp-cli/           # @bwilliamson/mdcp-cli — `mdcp` CLI binary
-│   └── mdcp-presets/       # @bwilliamson/mdcp-presets — markdownlint starter configs
+│   ├── mdcp-core/          # @bwilliamson/mdcp-core
+│   ├── mdcp-cli/           # @bwilliamson/mdcp-cli
+│   ├── mdcp-presets/       # @bwilliamson/mdcp-presets
+│   └── skill-*/            # Private @bwilliamson/skill-* version carriers + CHANGELOGs
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
 │   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)
 │   ├── features/           # Tool capabilities → docs/_build/guides.md (local review, gitignored)
@@ -31,6 +32,6 @@ mdcp/
 
 ## Published packages
 
-Each npm package and each Agent Skill versions independently via Changesets. npm packages ship `dist/` and a generated or hand-authored `README.md` in the tarball. Skills use private `@bwilliamson/skill-*` workspace carriers (not published to npm).
+Each npm package and each Agent Skill versions independently via Changesets. npm packages ship `dist/` and READMEs. Skill **carriers** live under `packages/skill-*` (private; GitHub Releases + CHANGELOG). The `skills/` tree is install content only.
 
 `mdcp-presets` README is hand-authored for now. Root `README.md`, CLI, and core READMEs are **compiled** from `docs/repo-readme/`, `docs/client-cli/`, and `docs/client-core/` shards.
