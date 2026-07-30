@@ -1,0 +1,138 @@
+name: Extension proposal
+description: Propose a shared archetype, formatting pack, pointer profile, or complementary skill
+title: '[Extension] '
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose an extension that stays out of protocol core — see [Extensions and archetypes](https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/protocol/extensions-and-archetypes.md).
+
+        Local-only packs under `docs/extensions/` need no upstream issue. Use this form when you want shared guidance or an upstream complementary skill.
+
+        Maintainers apply a matching `priority:*` label from your selection below (and usually `protocol`), then finish [new issue intake](https://github.com/betsalel-williamson/mdcp/blob/main/docs/developer/agent-work-item-tracking.md#new-issue-intake-required).
+
+  - type: dropdown
+    id: extension-kind
+    attributes:
+      label: Extension kind
+      description: See kinds in Extensions and archetypes.
+      options:
+        - Archetype
+        - Formatting pack
+        - Pointer profile
+        - Other complementary skill
+    validations:
+      required: true
+
+  - type: input
+    id: proposed-id
+    attributes:
+      label: Proposed id / prefix
+      description: e.g. mdcp-arch-legal-ops, mdcp-format-mkdocs
+      placeholder: mdcp-arch-…
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Value-add priority
+      description: How much adopter or product value does this represent if we act on it?
+      options:
+        - P0 — user-facing blocker or broken core path (compile / check / refs)
+        - P1 — high near-term value
+        - P2 — important backlog
+        - P3 — nice-to-have / low urgency
+        - Defer — parked on an explicit gate
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-audience
+    attributes:
+      label: Problem and audience
+      description: Project class and why the default Code Repository Archetype (or existing packs) falls short.
+    validations:
+      required: true
+
+  - type: textarea
+    id: when-to-use
+    attributes:
+      label: When to use
+      description: Trigger conditions for agents/humans choosing this extension.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-layout
+    attributes:
+      label: Proposed layout
+      description: Guide tiers, glossary seeds, or docs/extensions/ overlays you have in mind.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: check-compat
+    attributes:
+      label: Check compatibility
+      description: Optional extensions must not break core validation when disabled.
+      options:
+        - label: Does not break `mdcp check` when the extension is disabled
+          required: true
+        - label: Composes on top of conforming layouts (does not fork the parent skill for one-off advice)
+          required: true
+
+  - type: dropdown
+    id: delivery-intent
+    attributes:
+      label: Delivery intent
+      options:
+        - Upstream complementary skill
+        - Keep local docs/extensions/ (FYI / design discussion)
+        - Unsure
+    validations:
+      required: true
+
+  - type: input
+    id: protocol-version
+    attributes:
+      label: Target protocolVersion
+      description: Four-part protocol version this extension claims to support
+      placeholder: '0.5.0.0'
+    validations:
+      required: true
+
+  - type: input
+    id: parent-skill-version
+    attributes:
+      label: Parent skill version tested (optional)
+      description: From skills/mdcp SKILL.md metadata.version
+      placeholder: '0.7.2'
+    validations:
+      required: false
+
+  - type: input
+    id: mdcp-version
+    attributes:
+      label: mdcp-cli version (optional)
+      placeholder: '0.7.1'
+    validations:
+      required: false
+
+  - type: textarea
+    id: security-notes
+    attributes:
+      label: Security / trust notes (optional)
+      description: Third-party skill trust, permissions, or why this should stay local.
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance-sketch
+    attributes:
+      label: Acceptance sketch
+      description: What "done" looks like (naming, dogfood layout, check still green, catalog status).
+    validations:
+      required: true
