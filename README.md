@@ -66,7 +66,7 @@ Agents forget. Chat threads disappear. Giant READMEs and dump files overwhelm bo
 ### How you work together
 
 1. **You** decide what must stay true (product intent, constraints, glossary).
-2. **The agent** drafts or updates small **[shards](docs/features/overview.md)** (one topic per file) _before_ coding.
+2. **The agent** drafts or updates small **[shards](docs/glossary/shard.md)** (one topic per file) _before_ coding.
 3. **You** review those shards in pull requests (PRs) — you do not need to be a Markdown expert on day one.
 4. **`mdcp check`** (locally or in CI) proves links and compile still work.
 
@@ -112,9 +112,9 @@ flowchart TB
   shards --> check["mdcp check — validation gate"]
 ```
 
-- **[Skill](docs/glossary/skill.md)** — instructions your agent follows (`/mdcp`, helpers).
-- **[Shards](docs/features/overview.md)** — source of truth; compiled READMEs are generated — do not hand-edit them.
-- **[Check](docs/client-cli/index.md)** — keeps the docs system honest as it grows.
+- **[Skill](https://agentskills.io)** ([MDCP sense](docs/glossary/skill.md)) — instructions your agent follows (`/mdcp`, helpers).
+- **[Shards](docs/glossary/shard.md)** — source of truth; compiled READMEs are generated — do not hand-edit them.
+- **[Check](docs/glossary/check.md)** — keeps the docs system honest as it grows.
 
 Deeper model: [Overview](docs/features/overview.md). Install path: [Get started](#get-started).
 
