@@ -895,7 +895,7 @@ Use this for every cut. Do not accumulate one-off milestone checklists in this s
 
 1. Confirm pending `.changeset/*.md` files name only the packages/skills that should bump (no drive-by majors).
 2. **Skills policy:** parent `mdcp` remains the consumer entrypoint. Keep complementary `skills/mdcp-arch-*` skills as `metadata.internal: true` and **out** of [`skills.sh.json`](skills.sh.json) until intentionally published. List parent + release-ready helpers in the **Documentation system** grouping (see [Agent Skill development — skills.sh.json](#skillsshjson-repo-page-layout)).
-3. Merge feature pull requests to `main`. Wait for the **Version Packages** PR from the release workflow.
+3. Merge feature pull requests to `main`. Wait for the **Version Packages** PR from the release workflow. If Release fails with _GitHub Actions is not permitted to create or approve pull requests_, enable that checkbox under **Settings → Actions → General → Workflow permissions** (see [Publishing](#publishing)).
 4. Review that PR: only intended packages/skills bumped; skill `metadata.version` matches carrier `package.json`; `pnpm skill:validate` already ran in `release:version`.
 5. Merge the Version Packages PR. CI publishes bumped public packages (npm OIDC) and creates GitHub Releases. Private skill carriers are versioned in git only. The release job runs `pnpm build` before versioning so husky pre-commit still runs on the bot version commit (same protection as a local built tree).
 6. **skills.sh:** there is no registry submit. Listing at [skills.sh/betsalel-williamson/mdcp](https://skills.sh/betsalel-williamson/mdcp) comes from anonymous install telemetry. If the page is missing or stale after a skill-facing release, run `npx skills add betsalel-williamson/mdcp --skill mdcp` without `DISABLE_TELEMETRY=1`. Maintainers can list internal skills with `INSTALL_INTERNAL_SKILLS=1`.
@@ -1053,6 +1053,20 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **push to
 2. CI opens or updates the **Version Packages** PR.
 3. Merge that PR (after environment approval on the release job if configured).
 4. CI runs `pnpm release:publish` for bumped public packages.
+
+**Actions must be allowed to open PRs.** In **Settings → Actions → General → Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**. Without that, `changesets/action` fails with `GitHub Actions is not permitted to create or approve pull requests` even when the job has `pull-requests: write`. The workflow still cannot approve its own PRs in a way that satisfies required reviews — you merge the Version Packages PR yourself.
+
+Optional API check / set (repo admin `gh` auth):
+
+```bash
+gh api repos/betsalel-williamson/mdcp/actions/permissions/workflow
+
+gh api -X PUT repos/betsalel-williamson/mdcp/actions/permissions/workflow \
+  -f default_workflow_permissions=read \
+  -F can_approve_pull_request_reviews=true
+```
+
+(`can_approve_pull_request_reviews=true` is the API flag for that checkbox; keep default workflow permissions **read** and rely on per-job `permissions:` in `release.yml`.)
 
 ### Trusted Publishing notes
 

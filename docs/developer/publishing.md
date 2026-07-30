@@ -72,6 +72,20 @@ Trusted Publishing must reference workflow **`release.yml`** (trigger: **push to
 3. Merge that PR (after environment approval on the release job if configured).
 4. CI runs `pnpm release:publish` for bumped public packages.
 
+**Actions must be allowed to open PRs.** In **Settings → Actions → General → Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**. Without that, `changesets/action` fails with `GitHub Actions is not permitted to create or approve pull requests` even when the job has `pull-requests: write`. The workflow still cannot approve its own PRs in a way that satisfies required reviews — you merge the Version Packages PR yourself.
+
+Optional API check / set (repo admin `gh` auth):
+
+```bash
+gh api repos/betsalel-williamson/mdcp/actions/permissions/workflow
+
+gh api -X PUT repos/betsalel-williamson/mdcp/actions/permissions/workflow \
+  -f default_workflow_permissions=read \
+  -F can_approve_pull_request_reviews=true
+```
+
+(`can_approve_pull_request_reviews=true` is the API flag for that checkbox; keep default workflow permissions **read** and rely on per-job `permissions:` in `release.yml`.)
+
 ## Trusted Publishing notes
 
 - Repository: `betsalel-williamson/mdcp`, workflow: `release.yml`
