@@ -1,5 +1,11 @@
 # @bwilliamson/skill-mdcp-arch-product-docs-site
 
+## 0.7.2
+
+### Patch Changes
+
+- d60f90d: Move skill version carriers and CHANGELOGs to packages/skill-* so npx skills add installs stay free of release metadata; publish skill notes on GitHub Releases in the same single-step main release job as npm packages.
+
 ## 0.7.1
 
 ### Patch Changes

@@ -15,7 +15,7 @@ compatibility: >-
 metadata:
   author: betsalel-williamson
   internal: true
-  version: '0.7.1'
+  version: '0.7.2'
   openclaw:
     category: 'documentation'
 ---
