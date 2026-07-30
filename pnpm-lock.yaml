@@ -123,23 +123,23 @@ importers:
 
   packages/mdcp-presets: {}
 
-  skills/mdcp: {}
+  packages/skill-mdcp: {}
 
-  skills/mdcp-arch-gtm: {}
+  packages/skill-mdcp-arch-gtm: {}
 
-  skills/mdcp-arch-oss-library: {}
+  packages/skill-mdcp-arch-oss-library: {}
 
-  skills/mdcp-arch-product-docs-site: {}
+  packages/skill-mdcp-arch-product-docs-site: {}
 
-  skills/mdcp-design-architecture: {}
+  packages/skill-mdcp-design-architecture: {}
 
-  skills/mdcp-doc-only: {}
+  packages/skill-mdcp-doc-only: {}
 
-  skills/mdcp-feature-level: {}
+  packages/skill-mdcp-feature-level: {}
 
-  skills/mdcp-getting-started: {}
+  packages/skill-mdcp-getting-started: {}
 
-  skills/mdcp-ux: {}
+  packages/skill-mdcp-ux: {}
 
 packages:
 

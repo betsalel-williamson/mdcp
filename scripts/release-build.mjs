@@ -68,7 +68,7 @@ for (const name of packages) {
 }
 
 for (const id of skills) {
-  const rel = `skills/${id}/package.json`;
+  const rel = `packages/skill-${id}/package.json`;
   const prev = JSON.parse(readFileSync(join(root, rel), 'utf-8')).version;
   const next = bumpBuild(prev);
   updatePackageJson(rel, next);

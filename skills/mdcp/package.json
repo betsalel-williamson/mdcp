@@ -1,6 +1,0 @@
-{
-  "name": "@bwilliamson/skill-mdcp",
-  "version": "0.7.1",
-  "private": true,
-  "description": "Version carrier for skills/mdcp (not published to npm; syncs to SKILL.md metadata.version)"
-}

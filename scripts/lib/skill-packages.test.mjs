@@ -6,14 +6,18 @@ import { describe, it } from 'node:test';
 import {
   skillPackageName,
   skillIdFromPackageName,
+  skillCarrierDirName,
   setSkillMdVersion,
   listSkillDirs,
+  listSkillCarrierIds,
+  skillCarrierPackageJsonPath,
+  changelogNotesForVersion,
 } from './skill-packages.mjs';
 
 describe('skill-packages', () => {
-  it('maps skill ids to scoped private package names', () => {
+  it('maps skill ids to scoped private package names and carrier dirs', () => {
     assert.equal(skillPackageName('mdcp'), '@bwilliamson/skill-mdcp');
-    assert.equal(skillPackageName('mdcp-ux'), '@bwilliamson/skill-mdcp-ux');
+    assert.equal(skillCarrierDirName('mdcp-ux'), 'skill-mdcp-ux');
     assert.equal(skillIdFromPackageName('@bwilliamson/skill-mdcp-ux'), 'mdcp-ux');
     assert.equal(skillIdFromPackageName('@bwilliamson/mdcp-cli'), null);
   });
@@ -42,12 +46,43 @@ metadata:
     assert.equal(setSkillMdVersion(skillPath, '0.8.1'), false);
   });
 
-  it('lists skill directories that contain SKILL.md', () => {
+  it('lists skill dirs and carrier packages separately', () => {
     const root = mkdtempSync(join(tmpdir(), 'skills-root-'));
     mkdirSync(join(root, 'skills', 'alpha'), { recursive: true });
-    mkdirSync(join(root, 'skills', 'beta'), { recursive: true });
+    mkdirSync(join(root, 'packages', 'skill-alpha'), { recursive: true });
     writeFileSync(join(root, 'skills', 'alpha', 'SKILL.md'), '---\nname: a\n---\n');
-    writeFileSync(join(root, 'skills', 'beta', 'README.md'), 'nope');
+    writeFileSync(
+      join(root, 'packages', 'skill-alpha', 'package.json'),
+      JSON.stringify({ name: '@bwilliamson/skill-alpha', version: '1.0.0', private: true }),
+    );
     assert.deepEqual(listSkillDirs(root), ['alpha']);
+    assert.deepEqual(listSkillCarrierIds(root), ['alpha']);
+    assert.equal(
+      skillCarrierPackageJsonPath(root, 'alpha'),
+      join(root, 'packages', 'skill-alpha', 'package.json'),
+    );
+  });
+
+  it('extracts changelog notes for a version', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cl-'));
+    const path = join(dir, 'CHANGELOG.md');
+    writeFileSync(
+      path,
+      `# pkg
+
+## 0.2.0
+
+### Minor Changes
+
+- new thing
+
+## 0.1.0
+
+- old
+`,
+    );
+    assert.match(changelogNotesForVersion(path, '0.2.0'), /new thing/);
+    assert.doesNotMatch(changelogNotesForVersion(path, '0.2.0'), /old/);
+    assert.equal(changelogNotesForVersion(path, '9.9.9'), '');
   });
 });
