@@ -27,7 +27,7 @@ Agent Skills give:
 - **Format:** `SKILL.md` per the [Agent Skills](https://agentskills.io) open standard (progressive disclosure: lean activation body; depth in `references/` and `scripts/`).
 - **Upstream path:** [`skills/mdcp/SKILL.md`](../../skills/mdcp/SKILL.md).
 - **Install path:** your agent's skills directory after `npx skills add` (not one universal folder — the CLI maps each host to its own tree; see [Supported Agents](https://github.com/vercel-labs/skills#supported-agents)).
-- **Frontmatter:** `license`, `compatibility` (Node.js 18+ / `@bwilliamson/mdcp-cli`), and `metadata.version` (lockstep with npm/git tags). WIP complementary skills also set `metadata.internal: true` so they stay off default skills CLI discovery until ready.
+- **Frontmatter:** `license`, `compatibility` (Node.js 18+ / `@bwilliamson/mdcp-cli`), and `metadata.version` (independent per skill; synced from the skill’s private carrier package at release). WIP complementary skills also set `metadata.internal: true` so they stay off default skills CLI discovery until ready.
 
 Skill `scripts/` are thin wrappers into the CLI — see [`skills/mdcp/references/cli-and-scripts.md`](../../skills/mdcp/references/cli-and-scripts.md) for what **compile** (build docs), **check** (validate the tree), and **refs** (cross-link registry) mean.
 
@@ -38,7 +38,7 @@ Agent Skills use a **vendoring** approach: skill files live in the project and a
 1. **Commit to Git:** When you run `npx skills add`, the skill's files are copied into your agent's skills directory and tracked in your own source control.
 2. **Docs-as-code Evolution:** The skill version is tied to the commit in your repository. Agent instruction changes are reviewable in Pull Requests alongside the code or configuration changes they support.
 3. **Upgrading:** To upgrade a skill, re-run `npx skills add` (or manually copy the updated folder), review the resulting `git diff`, and commit the changes.
-4. **Authoring/Maintainer Versioning:** Upstream skills live under `skills/` and evolve on `main`, tagged alongside npm package releases. `pnpm release:tag` sets `metadata.version` on every `skills/*/SKILL.md` to match the tag (preserves `metadata.internal`). Consumers can point `npx skills add` to specific tags if necessary.
+4. **Authoring/Maintainer Versioning:** Upstream skills live under `skills/` and evolve on `main`. Each skill versions independently via Changesets (`@bwilliamson/skill-<id>`). `pnpm release:version` syncs that carrier version into `metadata.version` on the matching `SKILL.md` (preserves `metadata.internal`). Consumers can point `npx skills add` to specific commits or tags if necessary.
 
 ## Install surfaces
 

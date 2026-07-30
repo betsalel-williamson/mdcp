@@ -1,5 +1,6 @@
 packages:
   - 'packages/*'
+  - 'skills/*'
 
 # pnpm supply-chain (2026 best practice)
 minimumReleaseAge: 10080

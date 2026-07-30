@@ -123,6 +123,24 @@ importers:
 
   packages/mdcp-presets: {}
 
+  skills/mdcp: {}
+
+  skills/mdcp-arch-gtm: {}
+
+  skills/mdcp-arch-oss-library: {}
+
+  skills/mdcp-arch-product-docs-site: {}
+
+  skills/mdcp-design-architecture: {}
+
+  skills/mdcp-doc-only: {}
+
+  skills/mdcp-feature-level: {}
+
+  skills/mdcp-getting-started: {}
+
+  skills/mdcp-ux: {}
+
 packages:
 
   '@antfu/install-pkg@1.1.0':

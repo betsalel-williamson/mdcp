@@ -49,7 +49,7 @@ When changing skill instructions:
 | `pnpm skill:validate` | Frontmatter fence lint + [skills-ref](https://agentskills.io/specification) validate on all skills under `skills/` |
 | `pnpm docs:check`     | Docs compile + lint gate after shard edits                                                                         |
 
-`pnpm skill:validate` runs in local `pnpm check`, PR CI, **`pnpm release:tag` after skill version sync** (hard fail before commit/tag), and the tag [release workflow](../../.github/workflows/release.yml) before npm publish. It is not a [live skill eval](../glossary/live-skill-eval.md).
+`pnpm skill:validate` runs in local `pnpm check`, PR CI, **`pnpm release:version` after skill version sync** (hard fail before the Version Packages commit), and the [release workflow](../../.github/workflows/release.yml) before npm publish. It is not a [live skill eval](../glossary/live-skill-eval.md).
 
 ## Live skill evals (optional, local)
 
@@ -74,7 +74,7 @@ npx skills add betsalel-williamson/mdcp --skill mdcp
 
 Complementary `skills/mdcp-arch-*` packs remain WIP (`metadata.internal: true`) — keep them off consumer get-started copy **and** out of [`skills.sh.json`](../../skills.sh.json) until ready to release. Maintainers can install them with `INSTALL_INTERNAL_SKILLS=1`.
 
-There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Release tagging syncs `metadata.version` on all skills under `skills/` — see [Versioning and releases](./versioning-and-releases.md). Do not hand-edit those versions in feature PRs; add a changeset when `skills/` changes so release notes capture the work.
+There is no skills.sh submit API. The [repo page](https://skills.sh/betsalel-williamson/mdcp) appears from install telemetry after consumers (or maintainers) run an install without `DISABLE_TELEMETRY=1`. Version Packages syncs `metadata.version` on each bumped skill from its private carrier `package.json` — see [Versioning and releases](./versioning-and-releases.md). Do not hand-edit those versions in feature PRs; add a changeset targeting `@bwilliamson/skill-<id>` when `skills/<id>/` changes so release notes capture the work.
 
 Documented consumer install path: your agent's skills directory ([Supported Agents](https://github.com/vercel-labs/skills#supported-agents)). Avoid Cursor-only or Marketplace-only packaging for this work.
 
