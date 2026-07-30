@@ -41,7 +41,7 @@ before handing off to normal delivery.
 | First-feature tutorial      | After bootstrap, offer walkthrough (default yes for novice); resolve `EXAMPLE_MODE`; run helper phases in order                    |
 | EXAMPLE_MODE                | **recommended** (`hello-greeting`) or **bring-your-own** (user FEATURE / PERSONA; one small slice)                                 |
 | Closing CTA                 | Star, review/feedback, share; explore [dora.dev/ai](https://dora.dev/ai/); join [dora.community/join](https://dora.community/join) |
-| Hand off when tutorial skip | State next steps for feature-level, doc-only, design-architecture, or UX                                                           |
+| Hand off when tutorial skip | State next steps for feature-level, doc-only, design-architecture, or UX — including branch-before-edit before tracked-file edits  |
 
 ## What this helper is not
 
@@ -52,9 +52,9 @@ before handing off to normal delivery.
 - **Architecture-as-shards / ADR drafting alone** — use
   [mdcp-design-architecture](./mdcp-design-architecture.md).
 - **End-user / client journey design alone** — use [mdcp-ux](./mdcp-ux.md).
-- **Code TDD rituals, [Atomic commit groups](../../../glossary/atomic-commit-groups.md), or local engineering process during bootstrap scaffold** —
+- **Code TDD rituals, [Atomic commit groups](../../../glossary/atomic-commit-groups.md), branch-before-edit, or local engineering process during bootstrap scaffold** —
   out of scope for scaffold; when the first-feature tutorial runs, each phase
-  follows the matching day-to-day helper (including commit groups in plans).
+  follows the matching day-to-day helper (including commit groups and branch-before-edit in plans).
 - **Inventing the inclusion bar without the end user** — the bar is project
   judgment recorded with the people who own the docs, not a one-size-fits-all list.
 - **Auto-running all four helpers without user pauses** — phases require “go”

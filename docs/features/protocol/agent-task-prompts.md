@@ -31,6 +31,14 @@ Why: reviewable diffs, one concern per commit, and it matches small batches (par
 
 Day-to-day helpers that produce a plan (`mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`) **MUST** require this section in Step 1. Bootstrap scaffold (`mdcp-getting-started` steps 1–6) stays out of scope for commit grouping; when the optional first-feature tutorial runs, each phase follows the matching day-to-day helper (including commit groups).
 
+## Branch before edit (plan + session obligation)
+
+Plans **MUST** name the intended short-lived feature branch and link `WORK_ITEM` before waiting for human review / “go”. Before editing any tracked files for a `WORK_ITEM`, create that branch from updated `main` (the repo integration branch). NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. Verify with `git branch --show-current` (or equivalent) before the first edit.
+
+Why: short-lived branches and PR review are the delivery loop, not optional polish (parent [QA Principles](../agent-skill.md#quality-assurance-qa-principles)).
+
+Day-to-day helpers that produce a plan (`mdcp-feature-level`, `mdcp-doc-only`, `mdcp-design-architecture`, `mdcp-ux`) **MUST** require this in Step 1. Bootstrap scaffold (`mdcp-getting-started` steps 1–6) stays out of scope; when the optional first-feature tutorial runs, each phase follows the matching day-to-day helper (including branch-before-edit).
+
 ## Standard helper skills
 
 | Helper Skill                                                               | Role                               | Primary guides                       |
@@ -88,8 +96,8 @@ When using [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md)
 (detail: [Feature-level helper](./skills/mdcp-feature-level.md)):
 
 1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
-2. Outline the plan with [Atomic commit groups](../../glossary/atomic-commit-groups.md) before “go”
-3. Branch from updated `main` for `WORK_ITEM`
+2. Outline the plan with [Atomic commit groups](../../glossary/atomic-commit-groups.md), the intended feature branch name, and `WORK_ITEM` before “go”
+3. Create that branch from updated `main`; verify with `git branch --show-current` before the first edit — NEVER edit on `main`/`master`
 4. Load issue via `WORK_ITEM_LOOKUP`
 5. **Docs first** — update `features/` and `client/` shards; update each guide `index.md`
 6. **TDD** — implement against documented acceptance criteria (one commit group at a time after approval)
@@ -102,8 +110,8 @@ When using [mdcp-design-architecture](../../skills/mdcp-design-architecture/SKIL
 (detail: [Design-architecture helper](./skills/mdcp-design-architecture.md)):
 
 1. Complete intake (`WORK_ITEM`, `WORK_ITEM_LOOKUP`)
-2. Outline the plan with [Atomic commit groups](../../glossary/atomic-commit-groups.md) before “go”
-3. Branch from updated `main` for `WORK_ITEM`
+2. Outline the plan with [Atomic commit groups](../../glossary/atomic-commit-groups.md), the intended feature branch name, and `WORK_ITEM` before “go”
+3. Create that branch from updated `main`; verify with `git branch --show-current` before the first edit — NEVER edit on `main`/`master`
 4. Draft or split architecture intent under `docs/features/` (and ADRs under `docs/features/adr/` when appropriate); update indexes
 5. Retire superseded design text from durable shards; leave product code and client guides to other helpers
 6. **Validate** — `mdcp check` (and repo docs validation)

@@ -27,6 +27,7 @@ See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the pl
 | ---------------------- | ------------------------------------------------------------------------------------------------------- |
 | Work-item intake       | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                  |
 | Atomic commit groups   | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval      |
+| Branch before edit     | Plan names branch + `WORK_ITEM` before “go”; branch from `main`; NEVER edit/commit on `main`/`master`   |
 | Docs-only branch       | One documentation scope per branch; revise `docs/features/`, `docs/client/`, and/or `docs/developer/`   |
 | Contracts not samples  | Put intent, contracts, and acceptance in shards — not implementation dumps or product source paths      |
 | Glossary hygiene       | Follow the shared glossary obligation; define non-universal jargon per the inclusion bar                |

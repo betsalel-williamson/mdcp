@@ -29,6 +29,7 @@ See [Atomic commit groups](../../../glossary/atomic-commit-groups.md) for the pl
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Work-item intake            | Ask for `WORK_ITEM` and `WORK_ITEM_LOOKUP` before branching or editing                                           |
 | Atomic commit groups        | Include numbered Atomic commit groups in the plan before “go”; one commit per group after approval               |
+| Branch before edit          | Plan names branch + `WORK_ITEM` before “go”; branch from `main`; NEVER edit/commit on `main`/`master`            |
 | One UX scope                | Branch from updated `main` for a single UX issue; do not mix unrelated UX work                                   |
 | User-centric value first    | State the end-user outcome and friction to remove before designing steps or UI                                   |
 | Map processes and workflows | Document the ideal journey under `docs/client/` — steps to accomplish X, decision points, failure/recovery paths |

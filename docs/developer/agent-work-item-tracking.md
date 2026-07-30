@@ -196,7 +196,7 @@ If none of the above apply, inspect enabled MCP tool descriptors or run `gh --he
 Integration branch=main (pull before branching)
 Feature branches=descriptive (e.g. feature/issue-29-default-compile-hooks)
 One branch per WORK_ITEM=do not mix unrelated features, designs, or doc scopes in one PR
-Branch before work=create the feature branch before shards, tests, or code
+Branch before edit=plans MUST name the intended short-lived feature branch and link WORK_ITEM before “go”; create that branch from updated main before any tracked-file edit; NEVER modify tracked files, commit session work, or leave uncommitted edits on main/master; verify with git branch --show-current before the first edit
 Commits=conventional; one concern per commit ([Atomic commit groups](../glossary/atomic-commit-groups.md))
 Atomic commit groups=coding and multi-concern plans MUST list numbered groups before “go” (id/name, one concern, exact files, conventional commit subject); after approval, `git commit` one group at a time — do not squash unrelated concerns
 Release notes=changeset in .changeset/ for published package changes (temporary until versioned into CHANGELOGs)
@@ -210,7 +210,7 @@ Parent skill QA and day-to-day helpers encode the same rule so plan-only agents 
 ## Workflow best practices
 
 1. **Load scope** — fetch WORK_ITEM (title, body, acceptance criteria) before planning or editing.
-2. **Branch first** — `git checkout main`, pull, then `git checkout -b feature/...` tied to the issue. Never start on `main`.
+2. **Branch before edit** — plans MUST name the feature branch and link `WORK_ITEM` before “go”. Before the first tracked-file edit: pull updated `main`, create that branch, and verify with `git branch --show-current`. NEVER modify tracked files, commit session work, or leave uncommitted edits while on `main` or `master`.
 3. **Stay focused** — one feature or design at a time. Treat acceptance criteria as the boundary unless WORK_ITEM explicitly expands scope.
 4. **Plan Atomic commit groups** — before waiting for human review / implementation, include numbered commit groups for multi-concern work (see [Git and delivery](#git-and-delivery)). After approval, land one group per commit.
 5. **Docs describe now** — update shards to match as-built behavior. Do not document superseded workflows in `docs/features/` or `docs/client/`; record consumer notice in the changeset (lands in package CHANGELOGs). Never link durable shards or ADRs to pending `.changeset/*.md` files.
