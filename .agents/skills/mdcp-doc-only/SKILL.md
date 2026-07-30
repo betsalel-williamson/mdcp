@@ -10,7 +10,7 @@ compatibility: >-
   Requires Node.js 18+ and the mdcp-cli installed globally or locally.
 metadata:
   author: betsalel-williamson
-  version: '0.5.0'
+  version: '0.7.2'
   openclaw:
     category: 'documentation'
     requires:
@@ -61,12 +61,13 @@ Collect these via intake (or from the conversation if already stated):
 1. Follow `WORK_ITEM_LOOKUP`. Inspect the repository for scope, acceptance criteria, validation commands, and delivery conventions before editing.
 2. Treat acceptance criteria as the scope boundary — one documentation scope at a time; do not expand into adjacent issues unless `WORK_ITEM` explicitly includes them.
 3. Outline steps from `WORK_ITEM` and repo context. Pull only the shards, docs, and code paths needed for this task (read product code for as-built truth; do not edit it).
-4. Before waiting for human review, include an **Atomic commit groups** section in the plan per parent `mdcp` QA (id/name, one concern, exact files, conventional commit subject). After approval, commit one group at a time.
+4. Before waiting for human review / “go”, include an **Atomic commit groups** section in the plan per parent `mdcp` QA (id/name, one concern, exact files, conventional commit subject). After approval, commit one group at a time.
+5. Before waiting for human review / “go”, name the intended short-lived feature branch and link `WORK_ITEM` in the plan per parent `mdcp` QA **Branch before edit**.
 
 ### Step 2: Branch and Value Focus
 
 1. Explicitly define the **end-user value** this documentation brings — how does it help the user understand or use the product? Keep this value front and center while writing.
-2. Create a feature branch for this `WORK_ITEM` from updated `main` before editing shards. One branch per issue — do not mix unrelated doc work.
+2. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. Create the feature branch named in the plan from updated `main` before editing shards. Verify with `git branch --show-current` (or equivalent) before the first edit. One branch per issue — do not mix unrelated doc work.
 
 ### Step 3: Revise and Write
 

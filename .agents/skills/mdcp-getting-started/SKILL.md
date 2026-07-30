@@ -10,7 +10,7 @@ compatibility: >-
   Requires Node.js 18+ and the mdcp-cli installed globally or locally.
 metadata:
   author: betsalel-williamson
-  version: '0.5.0'
+  version: '0.7.2'
   openclaw:
     category: 'documentation'
     requires:
@@ -36,8 +36,9 @@ Documentation Architect: bootstrap config, guide layout, and initial shards;
 then orchestrate an optional first-feature tutorial (design → feature → UX →
 doc-only). Adapt teaching depth to **EXPERIENCE**.
 
-**Bootstrap out of scope:** inventing TDD rituals or atomic commit grouping
-during scaffold only — day-to-day helpers own those when the tutorial runs.
+**Bootstrap out of scope:** inventing TDD rituals, atomic commit grouping, or
+branch-before-edit rituals during scaffold only — day-to-day helpers own those
+when the tutorial runs.
 
 ## Intake (ask before editing)
 
@@ -118,11 +119,15 @@ Follow [references/first-feature-tutorial.md](references/first-feature-tutorial.
 
 1. Offer the walkthrough (`RUN_FIRST_FEATURE_TUTORIAL`).
 2. Resolve `EXAMPLE_MODE` (recommended `hello-greeting` or bring-your-own).
-3. Run phases in order, loading each helper’s Process:
+3. Before phase 1 edits, create the tutorial feature branch from updated `main`
+   and verify with `git branch --show-current` — NEVER edit tracked files on
+   `main`/`master` during the tutorial.
+4. Run phases in order, loading each helper’s Process:
    design-architecture → feature-level → ux → doc-only.
-4. Pause for “go” between phases; `mdcp check` before advancing.
-5. Deliver the [Closing CTA](references/first-feature-tutorial.md#closing-cta)
+5. Pause for “go” between phases; `mdcp check` before advancing.
+6. Deliver the [Closing CTA](references/first-feature-tutorial.md#closing-cta)
    (star, review, share, DORA capabilities, [dora.community/join](https://dora.community/join)).
 
-If the user skips the tutorial, hand off to the matching day-to-day helper and
-still offer the Closing CTA briefly.
+If the user skips the tutorial, hand off to the matching day-to-day helper
+(branch before edit applies before that helper’s first edit) and still offer
+the Closing CTA briefly.

@@ -2,34 +2,34 @@
   "version": 1,
   "skills": {
     "mdcp": {
-      "source": "/Users/saul/Repos/mdcp",
+      "source": "/workspace",
       "sourceType": "local",
-      "computedHash": "3a93255d239d3e0f5055c3511860ea556f0f16c2b7c5f4eab3ff2451c7d30c07"
+      "computedHash": "f03b85c6af94c2512c9508b9d97e0f98bad31df65a4da95ea09b8484b5966cb4"
     },
     "mdcp-design-architecture": {
-      "source": "/Users/saul/Repos/mdcp",
+      "source": "/workspace",
       "sourceType": "local",
-      "computedHash": "8295ac07d4601a4292253569892adbbf82221d5e0fbfcee232658e451129c1df"
+      "computedHash": "4a0561f6a624708004379dc8c8b4ff226494d46acfd6d0061a4d53333ac44197"
     },
     "mdcp-doc-only": {
-      "source": "/Users/saul/Repos/mdcp",
+      "source": "/workspace",
       "sourceType": "local",
-      "computedHash": "1f0ad48957b99c836d77185fe8b04a3fb746758078360c406abfbd4b2e25d2ca"
+      "computedHash": "f752576b3b27a1b53b810b4c9614a657a8d257c7478a170fd59e329977297683"
     },
     "mdcp-feature-level": {
-      "source": "/Users/saul/Repos/mdcp",
+      "source": "/workspace",
       "sourceType": "local",
-      "computedHash": "69ec5b42243bd4694c50c8e0a890759ceb69fb19dfdb44f3b4abb3b18e1e1abf"
+      "computedHash": "5622c2473cf5699ce2d03edec2c416bddc9bb5f671dca9783fc4b8301f5cfc73"
     },
     "mdcp-getting-started": {
-      "source": "/Users/saul/Repos/mdcp",
+      "source": "/workspace",
       "sourceType": "local",
-      "computedHash": "993ec8ed7766af9b404794e859320cc2b9cd3403ceea16be89dd71499242bd70"
+      "computedHash": "9e8c85cee811d86772c2dfad99bd295e0e19494153d33665498a544b952670c5"
     },
     "mdcp-ux": {
-      "source": "/Users/saul/Repos/mdcp",
+      "source": "/workspace",
       "sourceType": "local",
-      "computedHash": "3b417736c5f627f72bd2373c82658e9767e09f3283c645b518fa440eed6d20d1"
+      "computedHash": "26a186df0c5aa230d3b17b5d7b5b80ca3974982f17fea2d71db4c557d4d9b0e3"
     },
     "skill-creator": {
       "source": "anthropics/skills",

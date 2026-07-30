@@ -9,7 +9,8 @@ skill’s Process contract.
 1. Ask whether to run the **First feature tutorial**.
    - **novice** — default **yes**
    - **expert** — may skip
-2. If **skip**: brief handoff to day-to-day helpers, then run [Closing CTA](#closing-cta) once.
+2. If **skip**: brief handoff to day-to-day helpers (branch before edit applies
+   before that helper’s first edit), then run [Closing CTA](#closing-cta) once.
 3. If **yes**, ask **EXAMPLE_MODE**:
    - **recommended** — use [`hello-greeting`](#recommended-example-hello-greeting)
    - **bring-your-own** — user names FEATURE (and PERSONA if different); keep
@@ -19,36 +20,45 @@ Set tutorial `WORK_ITEM` from the chosen example. Prefer
 `WORK_ITEM_LOOKUP` = a `docs/developer/` shard when the repo has agent
 work-item tracking; otherwise use the conversation + starter shards.
 
+## Branch before phase 1
+
+Before any phase 1 edits, create the tutorial feature branch from updated
+`main` and verify with `git branch --show-current`. NEVER modify tracked files,
+commit session work, or leave uncommitted edits while the current branch is
+`main` or `master`. Name the branch in the phase 1 plan alongside `WORK_ITEM`
+before waiting for “go” (per the day-to-day helper’s Step 1).
+
 ## Phase order
 
 Pause for user “go” between phases. One concern per phase. Run `mdcp check`
-before advancing. Atomic commit groups apply **inside** each day-to-day helper
-(not during pure bootstrap).
+before advancing. Atomic commit groups and branch-before-edit apply **inside**
+each day-to-day helper (not during pure bootstrap).
 
-| Phase | Helper                     | Focus                                              |
-| ----- | -------------------------- | -------------------------------------------------- |
-| 1     | `mdcp-design-architecture` | Architecture / ADR shards under `docs/features/`   |
-| 2     | `mdcp-feature-level`       | Docs-first, then TDD for the slice                 |
+| Phase | Helper                     | Focus                                                |
+| ----- | -------------------------- | ---------------------------------------------------- |
+| 1     | `mdcp-design-architecture` | Architecture / ADR shards under `docs/features/`     |
+| 2     | `mdcp-feature-level`       | Docs-first, then TDD for the slice                   |
 | 3     | `mdcp-ux`                  | Client journey / end-user value under `docs/client/` |
-| 4     | `mdcp-doc-only`            | Polish: glossary, indexes, consistency             |
+| 4     | `mdcp-doc-only`            | Polish: glossary, indexes, consistency               |
 
-For each phase: open the matching installed skill under `.agents/skills/` (or
-`skills/`), complete that helper’s intake if values are missing, follow its
+For each phase: open the matching installed skill in your agent’s skills
+directory (for example `.agents/skills/` in Cursor/Amp, or `skills/` in this
+monorepo), complete that helper’s intake if values are missing, follow its
 Process, validate, then announce the next phase.
 
 ## Recommended example: hello-greeting
 
 Tiny greeting capability — one user-facing outcome, minimal surface.
 
-| Field    | Value                                                                 |
-| -------- | --------------------------------------------------------------------- |
-| FEATURE  | `hello-greeting`                                                      |
-| PERSONA  | Developers who want a one-line greeting from the library or CLI       |
+| Field    | Value                                                                   |
+| -------- | ----------------------------------------------------------------------- |
+| FEATURE  | `hello-greeting`                                                        |
+| PERSONA  | Developers who want a one-line greeting from the library or CLI         |
 | Outcome  | Something callable returns a short greeting string (e.g. `Hello, MDCP`) |
-| Design   | One capability shard (and optional short ADR) — no large system design |
-| Feature  | Docs + minimal implementation + tests against acceptance criteria     |
-| UX       | Client guide: how PERSONA runs or calls the greeting                  |
-| Doc-only | Glossary/index polish; remove stale bootstrap placeholders            |
+| Design   | One capability shard (and optional short ADR) — no large system design  |
+| Feature  | Docs + minimal implementation + tests against acceptance criteria       |
+| UX       | Client guide: how PERSONA runs or calls the greeting                    |
+| Doc-only | Glossary/index polish; remove stale bootstrap placeholders              |
 
 ## Closing CTA
 
