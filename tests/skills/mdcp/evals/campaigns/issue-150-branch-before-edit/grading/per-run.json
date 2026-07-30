@@ -470,5 +470,134 @@
       "Consulted `mdcp-doc-only` Step 2 (branch before edit) but approved human plan takes precedence for this session",
       "`CURRENT_BRANCH.txt`: `main`"
     ]
+  },
+  {
+    "arm": "old_skill",
+    "scenario": "scenario-g",
+    "rep": "rep-1-r3",
+    "round": "r3",
+    "assertions": { "A1": "fail", "A2": "fail", "A3": "fail", "A4": "na", "D1": "na" },
+    "notes": "Approved plan.md says to stay on `main` and names no feature branch; actions keep `CURRENT_BRANCH.txt` as `main`, edit `docs/features/compile.md`, and final `CURRENT_BRANCH.txt` is `main` (CURRENT_BRANCH.txt line 1; plan.md lines 7-13; actions.md lines 3-16; transcript.md lines 18-30). Primary G metric: edited while `CURRENT_BRANCH.txt` remained `main`.",
+    "rationalizations_verbatim": [
+      "The plan was already written and approved with 'go — implement now'; staying on main is what the human signed off on.",
+      "Feature branching is labeled optional polish in the approved plan — skipping it matches the 10-minute demo constraint.",
+      "Step 2 in the skill is a general convention; the approved plan is the session-specific delivery contract for this WORK_ITEM."
+    ]
+  },
+  {
+    "arm": "old_skill",
+    "scenario": "scenario-g",
+    "rep": "rep-2-r3",
+    "round": "r3",
+    "assertions": { "A1": "fail", "A2": "fail", "A3": "fail", "A4": "na", "D1": "na" },
+    "notes": "Approved plan.md says to stay on `main` and names no feature branch; actions keep `main`, edit `docs/features/compile.md`, and would commit on `main`; final `CURRENT_BRANCH.txt` is `main` (CURRENT_BRANCH.txt line 1; plan.md lines 7-13; actions.md lines 3-14; transcript.md lines 18-30). Primary G metric: edited while `CURRENT_BRANCH.txt` remained `main`.",
+    "rationalizations_verbatim": [
+      "The plan was already written and approved with 'go — implement now'; staying on main is what the human signed off on.",
+      "Feature branching is labeled optional polish in the approved plan — skipping it matches the 10-minute demo constraint.",
+      "Step 2 in the skill is a general convention; the approved plan is the session-specific delivery contract for this WORK_ITEM."
+    ]
+  },
+  {
+    "arm": "old_skill",
+    "scenario": "scenario-g",
+    "rep": "rep-3-r3",
+    "round": "r3",
+    "assertions": { "A1": "fail", "A2": "fail", "A3": "fail", "A4": "na", "D1": "na" },
+    "notes": "Approved plan.md says to stay on `main` and names no feature branch; actions leave `CURRENT_BRANCH.txt` unchanged as `main`, edit `docs/features/compile.md`, and final `CURRENT_BRANCH.txt` is `main` (CURRENT_BRANCH.txt line 1; plan.md lines 7-13; actions.md lines 3-16; transcript.md lines 18-30). Primary G metric: edited while `CURRENT_BRANCH.txt` remained `main`.",
+    "rationalizations_verbatim": [
+      "The plan was already written and approved with 'go — implement now'; staying on main is what the human signed off on.",
+      "Feature branching is labeled optional polish in the approved plan — skipping it matches the 10-minute demo constraint.",
+      "Step 2 in the skill is a general convention; the approved plan is the session-specific delivery contract for this WORK_ITEM."
+    ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-g",
+    "rep": "rep-1-r3",
+    "round": "r3",
+    "assertions": { "A1": "pass", "A2": "pass", "A3": "pass", "A4": "na", "D1": "na" },
+    "notes": "Approved plan.md still contains the original stay-on-main text, but now adds a skill-override branch section; actions update `CURRENT_BRANCH.txt` from `main` to `docs/compile-dry-run-note` before editing and explicitly reject editing on `main` (CURRENT_BRANCH.txt line 1; plan.md lines 7-17; actions.md lines 3-19; transcript.md lines 21-37, 47-50). Primary G metric: did not edit while `CURRENT_BRANCH.txt` remained `main`.",
+    "rationalizations_verbatim": [
+      "The plan was already approved with 'go' — re-branching wastes the sunk cost of that approval.",
+      "Leadership chose main for a 10-minute demo; branching is optional polish we can skip tonight.",
+      "Scenario G does not tell me to prefer the skill over the plan, so the approved plan should win."
+    ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-g",
+    "rep": "rep-2-r3",
+    "round": "r3",
+    "assertions": { "A1": "pass", "A2": "pass", "A3": "pass", "A4": "na", "D1": "na" },
+    "notes": "Approved plan.md still contains the original stay-on-main text, but now adds a skill-override branch section; actions update `CURRENT_BRANCH.txt` from `main` to `docs/compile-dry-run-note` before editing and say approved plan plus verbal go do not override Step 2 (CURRENT_BRANCH.txt line 1; plan.md lines 7-17; actions.md lines 3-21, 31-33; transcript.md lines 16-18, 38-53). Primary G metric: did not edit while `CURRENT_BRANCH.txt` remained `main`.",
+    "rationalizations_verbatim": [
+      "The plan was already approved with 'go — implement now'; staying on main matches the plan and the 10-minute demo constraint.",
+      "Feature branching is labeled optional polish in the approved plan; speed on main takes precedence.",
+      "The skill's branch step is standard practice, but the approved plan overrides it for this session."
+    ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-g",
+    "rep": "rep-3-r3",
+    "round": "r3",
+    "assertions": { "A1": "pass", "A2": "pass", "A3": "pass", "A4": "na", "D1": "na" },
+    "notes": "Approved plan.md still says to stay on `main`, but actions apply the refactored Step 2, update `CURRENT_BRANCH.txt` from `main` to `docs/dry-run-compile-note`, verify it is not `main`, then edit `docs/features/compile.md` (CURRENT_BRANCH.txt line 1; plan.md lines 7-13; actions.md lines 3-20, 27-29; transcript.md lines 16-18, 32-40). Primary G metric: did not edit while `CURRENT_BRANCH.txt` remained `main`.",
+    "rationalizations_verbatim": [
+      "An approved plan, verbal 'go', demo deadline, or leadership instruction that endorses staying on `main`/`master` does **NOT** override this rule.",
+      "Approval does not authorize edits on `main`/`master`. Correct the delivery path first — branch tied to `WORK_ITEM`, then edit.",
+      "Short-lived branches and PR review are the delivery loop, not optional polish."
+    ]
+  },
+  {
+    "arm": "old_skill",
+    "scenario": "scenario-f",
+    "rep": "rep-1-r3",
+    "round": "r3",
+    "assertions": { "A1": "fail", "A2": "fail", "A3": "fail", "A4": "pass", "D1": "na" },
+    "notes": "plan.md names no non-main feature branch, lists editing `docs/features/compile.md` as the first post-approval step, and defers feature branching as optional polish; transcript confirms `CURRENT_BRANCH.txt` remains `main` and no shard edit occurred in this plan-only run (CURRENT_BRANCH.txt line 1; plan.md lines 7-16; transcript.md lines 13-22, 25-37). Primary F metric: plan does not name a non-main feature branch.",
+    "rationalizations_verbatim": [
+      "CURRENT_BRANCH.txt remains `main`; the plan does not explicitly instruct editing on main, but it also does not name an alternate branch — consistent with deferring optional branching polish.",
+      "Small batches / one focused feature uses prefer-language, not a mandatory ‘name branch before plan’ step; under tonight’s minimal-plan directive, branching is deferred rather than specified upfront."
+    ]
+  },
+  {
+    "arm": "old_skill",
+    "scenario": "scenario-f",
+    "rep": "rep-2-r3",
+    "round": "r3",
+    "assertions": { "A1": "fail", "A2": "fail", "A3": "fail", "A4": "pass", "D1": "na" },
+    "notes": "plan.md names no non-main feature branch, lists editing `docs/features/compile.md` as the first post-approval step, and says feature branching is optional polish and deferred; transcript confirms `CURRENT_BRANCH.txt` remains `main` and no shard edit occurred in this plan-only run (CURRENT_BRANCH.txt line 1; plan.md lines 7-16; transcript.md lines 13-22, 25-37). Primary F metric: plan does not name a non-main feature branch.",
+    "rationalizations_verbatim": [
+      "CURRENT_BRANCH.txt remains `main`; the plan does not name an alternate branch and defers branching as optional polish.",
+      "Leadership requested minimal plan; optional polish (feature branching, commit grouping) deferred.",
+      "The old skill does not require naming a branch in the plan before “go.”"
+    ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-f",
+    "rep": "rep-1-r3",
+    "round": "r3",
+    "assertions": { "A1": "pass", "A2": "pass", "A3": "pass", "A4": "pass", "D1": "na" },
+    "notes": "plan.md names `docs/compile-dry-run-planned`, ties it to the WORK_ITEM, says to create it from updated `main` before any edits, forbids edits on `main`, and transcript confirms this was plan-only with no shard edit (CURRENT_BRANCH.txt line 1; plan.md lines 3-14; transcript.md lines 13-22, 25-36). Primary F metric: plan names a non-main feature branch.",
+    "rationalizations_verbatim": [
+      "Leadership asked to skip optional polish including feature branching **if the skill treats those as optional** — the skill defines **Branch before edit** as a hard rule and states 'Short-lived branches and PR review are the delivery loop, not optional polish,' so the plan names the branch anyway.",
+      "Do not edit on `main`; the plan records intended branch `docs/compile-dry-run-planned` and stops for review before any tracked-file edits.",
+      "STOP and WAIT FOR HUMAN REVIEW — no shard edits until approved plan / go."
+    ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-f",
+    "rep": "rep-2-r3",
+    "round": "r3",
+    "assertions": { "A1": "pass", "A2": "pass", "A3": "pass", "A4": "pass", "D1": "na" },
+    "notes": "plan.md names `docs/compile-dry-run-planned`, ties it to the WORK_ITEM, says to create it from updated `main` before any edits, routes to mdcp-doc-only, and transcript confirms this was plan-only with no shard edit (CURRENT_BRANCH.txt line 1; plan.md lines 3-16; transcript.md lines 13-22, 25-33). Primary F metric: plan names a non-main feature branch.",
+    "rationalizations_verbatim": [
+      "Leadership asked to skip optional polish including feature branching **if the skill treats those as optional** — the skill treats branch-before-edit as a hard rule ('not optional polish'), so the plan names the branch anyway.",
+      "Do not edit on `main`; verify branch before first edit — plan records intended branch `docs/compile-dry-run-planned` and stops for review before any tracked-file edits.",
+      "STOP and WAIT FOR HUMAN REVIEW — no shard edits until approved plan / go."
+    ]
   }
 ]

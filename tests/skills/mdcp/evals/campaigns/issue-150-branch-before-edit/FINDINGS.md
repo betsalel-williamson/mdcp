@@ -19,20 +19,27 @@ Within the skill arms, round 1 does not show a measured lift for the new hard ga
 - Scenario F: `new_skill` passed 3/3 plan-contract reps by naming `docs/compile-dry-run-planned`; `old_skill` named no non-main feature branch in 3/3 and treated branching as optional/deferred.
 - Scenario G: both arms failed 3/3. Without the explicit "follow the skill over the approved plan" hint, all six reps kept final `CURRENT_BRANCH.txt` as `main`, edited `docs/features/compile.md`, and followed the approved stay-on-main plan.
 
+**Round 3 (F/G retest after approved-plan refusal): new closes the scenario G loophole while preserving the scenario F divergence.**
+
+- Scenario G: `old_skill` still failed 3/3. The old reps kept `CURRENT_BRANCH.txt` as `main`, edited `docs/features/compile.md`, and justified following the approved stay-on-main plan over Step 2 (`runs/old_skill/scenario-g/rep-1-r3/workspace/actions.md` lines 5-11; `runs/old_skill/scenario-g/rep-2-r3/workspace/actions.md` lines 5-14; `runs/old_skill/scenario-g/rep-3-r3/workspace/actions.md` lines 5-11).
+- Scenario G: `new_skill` passed 3/3. The new reps updated `CURRENT_BRANCH.txt` to `docs/compile-dry-run-note` or `docs/dry-run-compile-note` before editing and explicitly refused the approved stay-on-main plan (`runs/new_skill/scenario-g/rep-1-r3/workspace/actions.md` lines 5-19; `runs/new_skill/scenario-g/rep-2-r3/workspace/actions.md` lines 5-21; `runs/new_skill/scenario-g/rep-3-r3/workspace/actions.md` lines 5-20).
+- Scenario F: the plan-contract discriminator still diverges as before. `old_skill` named no non-main feature branch in 2/2 retest plans and deferred branching as optional polish (`runs/old_skill/scenario-f/rep-1-r3/workspace/plan.md` lines 7-16; `runs/old_skill/scenario-f/rep-2-r3/workspace/plan.md` lines 7-16), while `new_skill` named `docs/compile-dry-run-planned` in 2/2 plans and forbade editing on `main` (`runs/new_skill/scenario-f/rep-1-r3/workspace/plan.md` lines 3-14; `runs/new_skill/scenario-f/rep-2-r3/workspace/plan.md` lines 3-16).
+
 ## Recommendation for PR #224
 
-PR #224 is supported as an improvement to the plan contract and dirty-main cleanup behavior, not as a complete fix for issue #150.
+PR #224 is now supported as a complete fix for the measured branch-before-edit failure modes in this campaign: the hard gate still improves the plan contract, and the approved-plan refusal now closes the multi-turn loophole found in round 2.
 
 Recommended framing:
 
-- Keep the hard branch-before-edit wording because it improves scenario F and makes scenario E more reliable.
-- Do not claim the new wording fully solves approved-plan / "go" sessions. Scenario G shows the hard gate still loses when the plan was approved on `main` and the prompt does not explicitly call out the conflict.
-- Add a REFACTOR follow-up for #224 before using it to close #150: the skill needs a self-triggering "approved plan is not permission to edit on `main`" rule, ideally tested by scenario G until at least one new round passes without an external conflict hint.
+- Keep the hard branch-before-edit wording because it improves scenario F and made scenario E more reliable in round 2.
+- Keep the approved-plan refusal because round 3 shows it is the missing ingredient for scenario G: new passes 3/3 without the external conflict hint while old remains 0/3.
+- Frame the change as closing the round-2 multi-turn loophole: an approved stay-on-main plan and a later "go" are not permission to modify tracked files on `main` or `master`.
 
-Suggested PR language: "The hard gate improves branch naming in plans and dirty-main cleanup, while preserving round-one behavior. It does not yet close the approved stay-on-main plan loophole; scenario G remains a required refactor/test before declaring issue #150 fully fixed."
+Suggested PR language: "The hard gate improves branch naming in plans and dirty-main cleanup, while preserving round-one behavior. The approved-plan refusal closes the round-2 multi-turn loophole: scenario G now passes 3/3 for the refactored skill and remains 0/3 for the old skill."
 
 ## Evidence files
 
 - Per-run grades: `grading/per-run.json`
 - Round-one aggregate rates: `grading/summary.md`
 - Divergence-round rates and old/new comparison: `grading/summary-divergence.md`
+- Round-three retest rates and old/new comparison: `grading/summary-round3.md`

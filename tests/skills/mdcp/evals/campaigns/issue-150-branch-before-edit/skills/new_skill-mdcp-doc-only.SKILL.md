@@ -67,7 +67,7 @@ Collect these via intake (or from the conversation if already stated):
 ### Step 2: Branch and Value Focus
 
 1. Explicitly define the **end-user value** this documentation brings — how does it help the user understand or use the product? Keep this value front and center while writing.
-2. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. Create the feature branch named in the plan from updated `main` before editing shards. Verify with `git branch --show-current` (or equivalent) before the first edit. One branch per issue — do not mix unrelated doc work.
+2. NEVER modify tracked files, commit session work, or leave uncommitted edits while the current branch is `main` or `master`. An approved plan, verbal “go”, demo deadline, or leadership instruction that endorses staying on `main`/`master` does **NOT** override this rule. If the approved plan omitted a feature branch or said stay on main: **correct the delivery path first** — create/switch to the short-lived feature branch tied to `WORK_ITEM`, then edit; optionally revise the plan’s branch field; do not implement the stay-on-main path. Create the feature branch named in the plan from updated `main` before editing shards. Verify with `git branch --show-current` (or equivalent) before the first edit. One branch per issue — do not mix unrelated doc work.
 
 ### Step 3: Revise and Write
 
@@ -90,13 +90,16 @@ Collect these via intake (or from the conversation if already stated):
 
 ## Common Mistakes
 
-| Excuse                                                | Reality                                                                                                 |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| “It’ll be faster if I fix the code too”               | Docs-only scope stays docs-only. Defer code/tests to `mdcp-feature-level`.                              |
-| “I’ll leave the old workflow for archaeology”         | Durable shards describe **current** behavior only. Git history keeps the old text.                      |
-| “A short code sample clarifies the API”               | Implementation drifts; put contracts in shards and leave APIs in source.                                |
-| “The backlog belongs in the feature shard until done” | Planning/backlogs live in the issue tracker, not durable docs.                                          |
-| “Everyone knows what that acronym means”              | Apply the project inclusion bar; define terms that belong in `docs/glossary/` and link from the guides. |
+| Excuse                                                | Reality                                                                                                                        |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| “It’ll be faster if I fix the code too”               | Docs-only scope stays docs-only. Defer code/tests to `mdcp-feature-level`.                                                     |
+| “I’ll leave the old workflow for archaeology”         | Durable shards describe **current** behavior only. Git history keeps the old text.                                             |
+| “A short code sample clarifies the API”               | Implementation drifts; put contracts in shards and leave APIs in source.                                                       |
+| “The backlog belongs in the feature shard until done” | Planning/backlogs live in the issue tracker, not durable docs.                                                                 |
+| “Everyone knows what that acronym means”              | Apply the project inclusion bar; define terms that belong in `docs/glossary/` and link from the guides.                        |
+| “Plan was already approved / human said go”           | Approval does not authorize edits on `main`/`master`. Correct the delivery path first — branch tied to `WORK_ITEM`, then edit. |
+| “Stay on main for a 10-minute demo / optional polish” | Short-lived branches and PR review are the delivery loop, not optional polish.                                                 |
+| “Tiny one-line edit isn’t worth a branch”             | One branch per issue; verify with `git branch --show-current` before the first edit.                                           |
 
 ## Red Flags — STOP
 
@@ -105,3 +108,6 @@ Collect these via intake (or from the conversation if already stated):
 - Linking durable docs to pending `.changeset/*.md` files
 - Hand-editing generated compile output instead of fixing shards and re-running `mdcp check`
 - Shipping durable shards that introduce jargon or acronyms without glossary entries
+- Approved stay-on-main plan
+- Human said “go” while `git branch` is `main`/`master`
+- Dirty tree on main with “just finish”
