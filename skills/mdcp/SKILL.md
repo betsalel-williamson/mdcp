@@ -82,9 +82,25 @@ These habits keep docs trustworthy while the product keeps changing:
   pending `.changeset/*.md` files — those notes are temporary.
 - **Capture ambiguity:** Identify ambiguous terms or language and write the
   clarified details into specific shards.
+- **Shard single responsibility:** Each durable shard has one primary concern,
+  for one audience tier, serving one job (explain **or** instruct how-to **or**
+  define/look up — not several). If you cannot state that responsibility in one
+  sentence, split or narrow the shard before shipping it. Depth:
+  [references/shard-responsibility.md](references/shard-responsibility.md).
+- **Idea mitosis:** When a shard grows a second audience, job, or concern —
+  or reading it alone misleads — **split** it, update the guide index, and
+  cross-link. Do not split only because a file is long. Unsettled discovery
+  and time-bound notes do not share a file with durable current truth.
 - **Break it down:** Organize information into the smallest useful pieces
   (shards) so agents can load one shard at a time instead of drowning in
-  monoliths.
+  monoliths. Prefer mitosis over mini-monoliths.
+- **Two-level review:** Review each changed idea or shard **in isolation** for
+  local correctness and single responsibility. Then review it
+  **comprehensively** against related shards and guides — flag duplication,
+  better splits/merges/relocations, and drift between what guides promise and
+  what the change does. When a change touches a guide (a shard, a skill, or
+  code whose behavior a guide documents), the review is complete only when the
+  change and its guides agree.
 - **No code in docs:** Put intent, contracts, and acceptance criteria in
   shards — not implementation. Code samples and internals drift; the codebase
   is the source of truth for how something is built. This matches
@@ -112,9 +128,9 @@ The default MDCP structure acts as the "batteries-included" **Code Repository Ar
 | `docs/developer/` | How to work on the repo — setup, layout, validation, skill development, live skill evals | Product capability narrative or end-user tutorials                            |
 | `docs/glossary/`  | Shared terms and disambiguation                                                          | General code snippets                                                         |
 
-**Placement test:** If only contributors to this repo need the shard, put it in `docs/developer/`. If consumers of the product need it, use `docs/features/` or `docs/client/`. The same topic may span tiers (for example Agent Skill product delivery vs maintainer live evals).
+**Placement test:** If only contributors to this repo need the shard, put it in `docs/developer/`. If consumers of the product need it, use `docs/features/` or `docs/client/`. The same topic may span tiers (for example Agent Skill product delivery vs maintainer live evals). Placement is one axis of **shard single responsibility**; if consumer and contributor needs collide in one file, use idea mitosis.
 
-_(Note: The MDCP engine itself is domain-agnostic. Non-code projects can define entirely different guide tiers/archetypes while still using the same compile and validation checks.)_
+_(Note: The MDCP engine itself is domain-agnostic. Non-code projects can define entirely different guide tiers/archetypes while still using the same compile and validation checks. Lineage for external frameworks: [references/acknowledgments.md](references/acknowledgments.md).)_
 
 ## Authoring rules
 
