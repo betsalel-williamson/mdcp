@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * Single-step release on main: version → sync skills → build → commit →
- * publish npm + tag skill carriers → GitHub Releases → push.
+ * push to main → publish npm + tags → GitHub Releases.
  *
- * No Version Packages PR. No-ops when there are no pending changesets.
+ * Push happens before npm publish so a failed push cannot leave registry
+ * packages without the matching commit on main.
  *
- * Requires RELEASE_GITHUB_TOKEN (maintainer PAT) in CI to push to protected
- * main and create releases; GITHUB_TOKEN alone usually cannot.
+ * Requires RELEASE_GITHUB_TOKEN (fine-grained maintainer PAT). No-ops when
+ * there are no pending changesets.
  */
 import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs';
@@ -34,7 +35,8 @@ function capture(cmd, opts = {}) {
 }
 
 function token() {
-  return process.env.RELEASE_GITHUB_TOKEN || process.env.GITHUB_TOKEN || '';
+  // Do not fall back to GITHUB_TOKEN — push to protected main needs a PAT/App token.
+  return process.env.RELEASE_GITHUB_TOKEN || '';
 }
 
 function readWorkspaceVersions() {
@@ -103,13 +105,19 @@ if (majors.length > 0) {
 
 console.log(`Pending changesets (${pending.length}): ${pending.join(', ')}`);
 
+const ghToken = token();
+if (!ghToken && !dryRun) {
+  console.error(
+    'RELEASE_GITHUB_TOKEN is required (fine-grained PAT with Contents write on this repo).',
+  );
+  process.exit(1);
+}
+
 const before = readWorkspaceVersions();
 
 run('pnpm exec changeset version');
 run('node scripts/sync-skill-versions.mjs');
 run('pnpm skill:validate');
-
-// Build before commit so husky pre-commit (vitest related) finds dist/.
 run('pnpm build');
 
 const after = readWorkspaceVersions();
@@ -136,14 +144,6 @@ for (const b of bumped) {
   console.log(`  ${b.name}@${b.version}${b.private ? ' (skill carrier)' : ''}`);
 }
 
-const ghToken = token();
-if (!ghToken && !dryRun) {
-  console.error(
-    'RELEASE_GITHUB_TOKEN (or GITHUB_TOKEN) is required to push the release commit/tags and create GitHub Releases.',
-  );
-  process.exit(1);
-}
-
 if (!dryRun) {
   const repo = capture('gh repo view --json nameWithOwner -q .nameWithOwner', {
     env: { ...process.env, GH_TOKEN: ghToken, GITHUB_TOKEN: ghToken },
@@ -157,6 +157,10 @@ if (!dryRun) {
 
 run('git add -A');
 run('git commit -m "chore: release"');
+
+// Push the release commit to main BEFORE npm publish so a failed push cannot
+// leave packages on the registry without the matching commit on main.
+run('git push origin HEAD:main');
 
 run('pnpm audit --audit-level=high');
 run('pnpm exec changeset publish');
@@ -174,6 +178,7 @@ for (const b of bumped) {
   createGithubRelease(tag, notes);
 }
 
-run('git push origin HEAD:main --follow-tags');
+// Ensure any tags created by changeset publish are on the remote.
+run('git push origin --tags');
 
 console.log('Release complete.');

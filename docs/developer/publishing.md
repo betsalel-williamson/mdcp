@@ -6,7 +6,7 @@ Packages: `@bwilliamson/mdcp-core`, `@bwilliamson/mdcp-cli`, `@bwilliamson/mdcp-
 
 - npm account **`bwilliamson`** with access to publish `@bwilliamson/*`
 - **2FA enabled** on npm (auth-and-writes)
-- Repository secret **`RELEASE_GITHUB_TOKEN`** — maintainer PAT with permission to push to `main` and create releases (Contents + metadata). Required for the single-step release job.
+- Repository secret **`RELEASE_GITHUB_TOKEN`** — **fine-grained** maintainer PAT with **Contents: Read and write** on this repo only (create commits/tags/releases). Prefer fine-grained over classic `repo`. Required for the single-step release job; do not use a broad classic PAT if avoidable.
 - `pnpm install` at repo root
 
 ## First-time publish (chicken-and-egg)
@@ -25,17 +25,21 @@ Also enable **Settings → Actions → General → Workflow permissions → Allo
 
 ### `RELEASE_GITHUB_TOKEN`
 
-1. Create a fine-grained PAT (or classic `repo` PAT) for the maintainer.
-2. Grant Contents read/write (push commits/tags, create releases).
+1. Create a **fine-grained** PAT as the maintainer (avoid classic `repo` unless necessary).
+2. Repository access: this repo only. Permissions: **Contents** read/write (commits, tags, releases).
 3. Store as repository secret **`RELEASE_GITHUB_TOKEN`**.
+4. Rotate when maintainers change or on a schedule.
 
-Without it, `pnpm release:main` cannot push the release commit to protected `main` or create GitHub Releases reliably.
+Without it, the Release job fails before versioning (hard requirement).
+
+Before approving the **`release` environment**, open the **Release plan** job summary on the same workflow run and review pending `.changeset` files (release notes / bump intent).
 
 ## Routine releases (one step)
 
 1. Merge feature PRs that include changesets to `main`.
-2. Approve the **`release` environment** when the Release workflow waits.
-3. CI runs **`pnpm release:main`**: version → sync skill frontmatter → build → commit → `changeset publish` → GitHub Releases (npm packages **and** skill carriers) → push.
+2. Open the Release workflow run → read the **Release plan** job summary (pending changesets).
+3. Approve the **`release` environment** deployment.
+4. CI runs **`pnpm release:main`**: version → sync skill frontmatter → build → commit → **push to `main`** → `changeset publish` → GitHub Releases (npm packages **and** skill carriers) → push tags.
 
 There is no separate Version Packages PR.
 

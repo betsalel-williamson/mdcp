@@ -17,7 +17,7 @@ There is **no calendar cadence** and **no Version Packages PR**. Releases are **
 
 1. Contributors add a changeset with each PR that affects a published package or skill.
 2. Merging that PR to `main` runs the [release workflow](../../.github/workflows/release.yml) (`pnpm release:main`).
-3. After `release` environment approval, CI **sequentially**: applies changesets → syncs skill `metadata.version` → builds (so husky can run) → commits `chore: release` → publishes public packages to npm → creates GitHub Releases (including skill carriers) → pushes commit + tags.
+3. After the **Release plan** job posts pending changesets to the run summary, approve the **`release` environment**. CI then **sequentially**: applies changesets → syncs skill `metadata.version` → builds (so husky can run) → commits `chore: release` → **pushes to `main`** → publishes public packages to npm → creates GitHub Releases (including skill carriers) → pushes tags.
 
 **Agent Skills** live under `skills/` as the install surface (`npx skills add`). Version carriers and CHANGELOGs live under **`packages/skill-<id>/`** only — never under `skills/` (those files would pollute agent context on install). `pnpm release:main` syncs the carrier version into `skills/<id>/SKILL.md` `metadata.version`. Feature PRs must add a changeset targeting `@bwilliamson/skill-<id>` and must **not** hand-bump `metadata.version`. See [Agent Skill](./agent-skill.md).
 
