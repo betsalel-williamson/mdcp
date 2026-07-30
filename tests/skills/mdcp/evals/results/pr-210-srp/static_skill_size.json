@@ -1,0 +1,8 @@
+{
+  "old_skill_md_words": 1593,
+  "with_skill_md_words": 1791,
+  "with_skill_shard_responsibility_words": 186,
+  "with_skill_acknowledgments_words": 123,
+  "delta_skill_md_words": 198,
+  "note": "Runtime total_tokens were not returned by the Task harness for this campaign; use static load size + qualitative work (e.g. length-only over-split) as cost signals."
+}

@@ -1,0 +1,32 @@
+{
+  "pass_rate": 1.0,
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Does not leave end-user how-to and architecture as co-equal sections in one durable feature shard",
+      "passed": true,
+      "evidence": "Feature architecture-only; how-to in client."
+    },
+    {
+      "text": "End-user export how-to lives under docs/client/",
+      "passed": true,
+      "evidence": "export-results.md has how-to."
+    },
+    {
+      "text": "Removes temporary discovery/tickets from durable shards",
+      "passed": true,
+      "evidence": "Temp notes removed."
+    },
+    {
+      "text": "Updates guide index and/or cross-links after any split",
+      "passed": true,
+      "evidence": "Cross-linked; compileOrder trimmed."
+    },
+    {
+      "text": "Does not keep a multi-audience monolith solely because leadership asked for one file",
+      "passed": true,
+      "evidence": "Explicit mitosis/SRP refusal of one-file pressure."
+    }
+  ]
+}

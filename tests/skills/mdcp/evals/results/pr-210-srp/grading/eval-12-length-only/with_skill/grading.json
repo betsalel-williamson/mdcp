@@ -1,0 +1,22 @@
+{
+  "pass_rate": 1.0,
+  "passed": 3,
+  "total": 3,
+  "expectations": [
+    {
+      "text": "Does not split solely because of length when responsibility is still single",
+      "passed": true,
+      "evidence": "Refused length-only split; kept single compile-pipeline.md."
+    },
+    {
+      "text": "Resulting feature docs still present one compile-pipeline concern",
+      "passed": true,
+      "evidence": "Still one shard, one concern."
+    },
+    {
+      "text": "Acknowledges split-when-responsibility-multiplies OR refuses length-only split",
+      "passed": true,
+      "evidence": "Read shard-responsibility.md; stated do-not-split-for-length."
+    }
+  ]
+}

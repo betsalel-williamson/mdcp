@@ -1,0 +1,132 @@
+{
+  "metadata": {
+    "skill_name": "mdcp",
+    "timestamp": "2026-07-30T06:40:40.310223Z",
+    "evals_run": [11, 12, 13],
+    "notes": "PR #210 before/after: with_skill = shard SRP/mitosis/two-level; old_skill = main. Runtime tokens/time unavailable from Task harness.",
+    "static_skill_size": {
+      "old_skill_md_words": 1593,
+      "with_skill_md_words": 1791,
+      "with_skill_shard_responsibility_words": 186,
+      "with_skill_acknowledgments_words": 123,
+      "delta_skill_md_words": 198,
+      "note": "Runtime total_tokens were not returned by the Task harness for this campaign; use static load size + qualitative work (e.g. length-only over-split) as cost signals."
+    }
+  },
+  "evals": [
+    {
+      "eval_id": 11,
+      "eval_name": "eval-11-srp-overloaded",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "total": 5,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": []
+      }
+    },
+    {
+      "eval_id": 11,
+      "eval_name": "eval-11-srp-overloaded",
+      "configuration": "old_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "total": 5,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": []
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "eval-12-length-only",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "total": 3,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": []
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "eval-12-length-only",
+      "configuration": "old_skill",
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "total": 3,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": []
+      }
+    },
+    {
+      "eval_id": 13,
+      "eval_name": "eval-13-two-level-review",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": []
+      }
+    },
+    {
+      "eval_id": 13,
+      "eval_name": "eval-13-two-level-review",
+      "configuration": "old_skill",
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": []
+      }
+    }
+  ],
+  "summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0
+      },
+      "time_seconds": {
+        "mean": null,
+        "stddev": null
+      },
+      "tokens": {
+        "mean": null,
+        "stddev": null
+      }
+    },
+    "old_skill": {
+      "pass_rate": {
+        "mean": 0.5,
+        "stddev": 0
+      },
+      "time_seconds": {
+        "mean": null,
+        "stddev": null
+      },
+      "tokens": {
+        "mean": null,
+        "stddev": null
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.50 absolute mean",
+      "tokens": "n/a (harness)",
+      "time_seconds": "n/a (harness)",
+      "static_skill_md_words": "+198 words in SKILL.md (~257 tokens rough)"
+    }
+  }
+}

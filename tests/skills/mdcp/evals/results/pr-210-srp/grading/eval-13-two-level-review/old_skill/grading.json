@@ -1,0 +1,27 @@
+{
+  "pass_rate": 0.5,
+  "passed": 2,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Client and features agree on digest cadence after the change",
+      "passed": true,
+      "evidence": "Both daily after client edit."
+    },
+    {
+      "text": "Reads or reviews related feature/client shards",
+      "passed": true,
+      "evidence": "Read features to choose daily; still edited client only."
+    },
+    {
+      "text": "Does not skip comprehensive/guide-agreement review solely because leadership asked",
+      "passed": false,
+      "evidence": "Transcript: skipped comprehensive review per leadership; old skill has no two-level obligation."
+    },
+    {
+      "text": "Shows isolation plus comprehensive/guide agreement",
+      "passed": false,
+      "evidence": "Explicitly isolation-only; no comprehensive pass recorded as required."
+    }
+  ]
+}

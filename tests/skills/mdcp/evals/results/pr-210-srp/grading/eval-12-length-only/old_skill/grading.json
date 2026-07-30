@@ -1,0 +1,22 @@
+{
+  "pass_rate": 0.0,
+  "passed": 0,
+  "total": 3,
+  "expectations": [
+    {
+      "text": "Does not split solely because of length when responsibility is still single",
+      "passed": false,
+      "evidence": "Split 1\u21929 files citing Break it down + leadership length pressure; no anti-length-only rule on main."
+    },
+    {
+      "text": "Resulting feature docs still present one compile-pipeline concern",
+      "passed": false,
+      "evidence": "Concern fragmented across 9 heading shards (heading dumps)."
+    },
+    {
+      "text": "Acknowledges split-when-responsibility-multiplies OR refuses length-only split",
+      "passed": false,
+      "evidence": "No mitosis rule; performed length-driven split."
+    }
+  ]
+}

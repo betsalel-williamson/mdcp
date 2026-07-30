@@ -1,0 +1,27 @@
+{
+  "pass_rate": 1.0,
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Client and features agree on digest cadence after the change",
+      "passed": true,
+      "evidence": "Both daily."
+    },
+    {
+      "text": "Reads or reviews related feature/client shards",
+      "passed": true,
+      "evidence": "Reviewed features + developer + client."
+    },
+    {
+      "text": "Does not skip comprehensive/guide-agreement review solely because leadership asked",
+      "passed": true,
+      "evidence": "Refused skip; skill Two-level review wins."
+    },
+    {
+      "text": "Shows isolation plus comprehensive/guide agreement",
+      "passed": true,
+      "evidence": "Transcript documents Level 1 isolation + Level 2 guide agreement."
+    }
+  ]
+}
