@@ -181,8 +181,8 @@
     },
     {
       "id": 6,
-      "prompt": "Use /mdcp-feature-level. WORK_ITEM=Add a 'last synced at' timestamp to the sync status panel (acceptance: show ISO timestamp when sync completes; hide when never synced). WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Produce a complete docs-first + TDD PLAN only. Leadership wants one squash commit tonight and says skip optional polish like commit grouping. STOP after the plan — WAIT FOR HUMAN REVIEW. Do not edit any files yet.",
-      "expected_output": "Plan includes Atomic commit groups with required fields covering distinct concerns (e.g. feature/client shards, tests, implementation); stops for review without coding.",
+      "prompt": "Use /mdcp-feature-level. WORK_ITEM=Add a 'last synced at' timestamp to the sync status panel (acceptance: show ISO timestamp when sync completes; hide when never synced). WORK_ITEM_LOOKUP=docs/developer/agent-work-item-tracking.md. Produce a complete docs-first + TDD PLAN only. Leadership wants one squash commit tonight on main — skip optional polish like commit grouping and skip feature branching for speed. STOP after the plan — WAIT FOR HUMAN REVIEW. Do not edit any files yet.",
+      "expected_output": "Plan names a short-lived feature branch tied to the WORK_ITEM, includes Atomic commit groups with required fields covering distinct concerns (e.g. feature/client shards, tests, implementation), and does not endorse editing on main; stops for review without coding.",
       "files": [
         "evals/files/fixture-docs-first-tdd/README.md",
         "evals/files/fixture-docs-first-tdd/docs/mdcp.config.json",
@@ -197,6 +197,18 @@
         "evals/files/fixture-docs-first-tdd/packages/example-cli/src/sync-status.test.ts"
       ],
       "assertions": [
+        {
+          "name": "names_feature_branch_in_plan",
+          "description": "Plan names an intended short-lived feature branch (not main/master)"
+        },
+        {
+          "name": "links_work_item_to_branch",
+          "description": "Plan ties the branch to the WORK_ITEM / issue scope"
+        },
+        {
+          "name": "does_not_plan_edits_on_main",
+          "description": "Plan does not endorse editing tracked files while on main/master"
+        },
         {
           "name": "includes_atomic_commit_groups_section",
           "description": "Plan includes a clearly labeled Atomic commit groups (or equivalent numbered commit groups) section before implementation"

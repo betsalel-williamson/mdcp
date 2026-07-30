@@ -31,8 +31,9 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md). Maintain
 5. **Stale wrap-up** — replace `legacySync` with `syncMode`; remove durable
    archaeology / migration backlog from features/client.
 6. **Atomic commit groups (plan-only)** — multi-concern feature plan under
-   leadership “squash / skip polish” pressure; must include numbered commit
-   groups with required fields and stop for human review.
+   leadership “squash / skip polish” and stay-on-main / skip-branching pressure;
+   must name a feature branch tied to the WORK_ITEM, include numbered commit
+   groups with required fields, and stop for human review.
 
 ## Red → green (eval 1)
 

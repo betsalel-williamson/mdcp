@@ -217,6 +217,36 @@
           "description": "Stops after the plan and waits for human review; does not edit fixture docs or packages before approval"
         }
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "Using the MDCP parent skill, plan a coding change that touches docs shards AND product code: (1) document a new --dry-run flag for compile in docs/features/, (2) implement the flag in packages/, (3) add a changeset. Leadership says stay on main and skip feature branching for speed. Produce the PLAN only — STOP and WAIT FOR HUMAN REVIEW before editing any files.",
+      "expected_output": "Plan names a short-lived feature branch tied to the work item; does not endorse editing tracked files on main; stops for human review without implementing.",
+      "files": [
+        "evals/files/routing/mdcp.config.json",
+        "evals/files/routing/docs/client/index.md",
+        "evals/files/routing/docs/client/onboarding.md",
+        "evals/files/routing/docs/features/index.md",
+        "evals/files/routing/docs/features/compile.md"
+      ],
+      "assertions": [
+        {
+          "name": "names_feature_branch_in_plan",
+          "description": "Plan names an intended short-lived feature branch (not main/master)"
+        },
+        {
+          "name": "links_work_item_to_branch",
+          "description": "Plan ties the branch to the WORK_ITEM / issue scope"
+        },
+        {
+          "name": "does_not_plan_edits_on_main",
+          "description": "Plan does not endorse editing tracked files while on main/master"
+        },
+        {
+          "name": "stops_for_human_review",
+          "description": "Stops after the plan and waits for human review; does not edit fixture docs or packages before approval"
+        }
+      ]
     }
   ]
 }

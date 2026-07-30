@@ -16,7 +16,7 @@ Parent suite: [`tests/skills/mdcp/evals/`](../../mdcp/evals/README.md).
 1. **Author/refactor shards** — feature docs + index + `mdcp check`; no product code
 2. **Temptation to code** — fix stale client docs while refusing a bait bugfix/unit test
 3. **Stale cleanup** — remove migration backlog / superseded workflow from durable shards
-4. **Atomic commit groups (plan-only)** — multi-tier docs plan under “squash / skip polish” pressure; must include numbered commit groups and stop for review
+4. **Atomic commit groups (plan-only)** — multi-tier docs plan under “squash / skip polish” and stay-on-main / skip-branching pressure; must name a feature branch tied to the WORK_ITEM, include numbered commit groups, and stop for review
 
 ## Discrimination notes (iteration-1)
 
