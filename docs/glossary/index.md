@@ -28,7 +28,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [cross-link](./cross-link.md)
 - [standalone guide](./standalone-guide.md)
 - [coverage](./coverage.md)
-- [docs coverage evaluation](./docs-coverage-evaluation.md)
 - [ReDoS](./redos.md)
 
 ## Adoption and messaging

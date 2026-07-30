@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import cac from 'cac';
-import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -15,13 +14,9 @@ import {
   xrefScanDirs,
   checkOrphansForGuides,
   computeCoverage,
-  evaluateDocCoverage,
-  docCoverageExitCode,
-  normalizeChangedPath,
   effectiveGuideOutputFile,
   resolveUnderOutputDir,
   type CoverageOptions,
-  type DocCoverageMode,
   genRefsFromCompiled,
   checkRefsRegistry,
   resolveRefsPath,
@@ -558,105 +553,6 @@ cli
         process.exit(1);
       }
       console.log('mdcp check passed');
-    },
-  );
-
-cli
-  .command('evaluate-doc-coverage', 'Diff-aware docs coverage verdict for automations (JSON)')
-  .option('--changed <path>', 'Repo-relative changed path (repeatable)')
-  .option('--paths-file <path>', 'File of changed paths, one per line (`-` = stdin)')
-  .option('--git', 'Collect changed paths via git diff against --base')
-  .option('--base <ref>', 'Base ref for --git', { default: 'origin/main' })
-  .option('--mode <mode>', 'advisory (default) or gate', { default: 'advisory' })
-  .action(
-    (
-      opts: GlobalOpts & {
-        changed?: string | string[];
-        pathsFile?: string;
-        git?: boolean;
-        base?: string;
-        mode?: string;
-      },
-    ) => {
-      const modeRaw = (opts.mode ?? 'advisory').toLowerCase();
-      if (modeRaw !== 'advisory' && modeRaw !== 'gate') {
-        console.error('mdcp evaluate-doc-coverage: --mode must be advisory or gate');
-        process.exit(1);
-      }
-      const mode = modeRaw as DocCoverageMode;
-
-      const paths: string[] = [];
-      // cac keeps only the last repeated flag; collect every --changed from argv.
-      for (let i = 0; i < process.argv.length; i++) {
-        const arg = process.argv[i];
-        if (arg === '--changed' && process.argv[i + 1] && !process.argv[i + 1]!.startsWith('-')) {
-          paths.push(process.argv[i + 1]!);
-          i++;
-        } else if (arg.startsWith('--changed=')) {
-          paths.push(arg.slice('--changed='.length));
-        }
-      }
-      const changedOpt = opts.changed;
-      if (paths.length === 0) {
-        if (typeof changedOpt === 'string') paths.push(changedOpt);
-        else if (Array.isArray(changedOpt)) paths.push(...changedOpt);
-      }
-
-      if (opts.pathsFile) {
-        let body: string;
-        if (opts.pathsFile === '-') {
-          body = readFileSync(0, 'utf-8');
-        } else {
-          if (!existsSync(opts.pathsFile)) {
-            console.error(`mdcp evaluate-doc-coverage: paths file not found: ${opts.pathsFile}`);
-            process.exit(1);
-          }
-          body = readFileSync(opts.pathsFile, 'utf-8');
-        }
-        for (const line of body.split(/\r?\n/)) {
-          const t = line.trim();
-          if (t && !t.startsWith('#')) paths.push(t);
-        }
-      }
-
-      if (opts.git) {
-        const base = opts.base ?? 'origin/main';
-        try {
-          const out = execFileSync(
-            'git',
-            ['diff', '--name-only', '--diff-filter=ACMR', `${base}...HEAD`],
-            { encoding: 'utf-8', cwd: process.cwd() },
-          );
-          for (const line of out.split(/\r?\n/)) {
-            const t = line.trim();
-            if (t) paths.push(t);
-          }
-        } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : String(e);
-          console.error(`mdcp evaluate-doc-coverage: git diff failed (${msg})`);
-          process.exit(1);
-        }
-      }
-
-      const normalized = paths.map(normalizeChangedPath).filter(Boolean);
-      if (normalized.length === 0) {
-        console.error(
-          'mdcp evaluate-doc-coverage: provide --changed, --paths-file, and/or --git with at least one path',
-        );
-        process.exit(1);
-      }
-
-      // Resolve docs root relative to invocation dir for path classification.
-      const docsRootOpt = opts.docsRoot ?? 'docs';
-      const result = evaluateDocCoverage({
-        changedPaths: normalized,
-        docsRoot: docsRootOpt,
-        repoRoot: process.cwd(),
-        mode,
-      });
-
-      console.log(JSON.stringify(result, null, 2));
-      process.exit(docCoverageExitCode(result));
     },
   );
 

@@ -58,24 +58,7 @@ CLI authoring rules: [Cross-links and refs — heading slugs](../client-cli/cros
 
 ## Validation
 
-| Export                  | Purpose                                           |
-| ----------------------- | ------------------------------------------------- |
-| `checkOrphansForGuides` | Detect unlinked or missing shard files            |
-| `lintXrefs`             | Chapter-style cross-reference detection           |
-| `computeCoverage`       | Inventory which markdown files guides account for |
-| `evaluateDocCoverage`   | Diff-aware docs coverage verdict for automations  |
-
-### `evaluateDocCoverage(options)`
-
-Given repo-relative changed paths, infer which MDCP guide surfaces the change needs and whether matching docs paths already appear in the change set. Returns JSON-serializable `{ status, mode, docSurfaces, candidateShards, reasons, questions, … }`. See [Docs coverage evaluation](../features/doc-coverage-evaluation.md).
-
-```typescript
-import { evaluateDocCoverage } from '@bwilliamson/mdcp-core';
-
-const result = evaluateDocCoverage({
-  changedPaths: ['packages/mdcp-cli/src/cli.ts'],
-  docsRoot: 'docs',
-  mode: 'advisory',
-});
-// result.status === 'missing_docs'
-```
+| Export                  | Purpose                                 |
+| ----------------------- | --------------------------------------- |
+| `checkOrphansForGuides` | Detect unlinked or missing shard files  |
+| `lintXrefs`             | Chapter-style cross-reference detection |

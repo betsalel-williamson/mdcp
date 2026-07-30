@@ -8,21 +8,14 @@ Agents should load the parent **Agent Skill** (`/mdcp`, installed in your agent'
 
 ## Actors and obligations
 
-| Actor                    | Reads                                 | Writes            | Must run                                                                       |
-| ------------------------ | ------------------------------------- | ----------------- | ------------------------------------------------------------------------------ |
-| Author (human/agent)     | shards, Agent Skill                   | shards, manifest  | `check` before PR                                                              |
-| CI                       | config                                | —                 | `check --require-lint` when peers configured; optional `evaluate-doc-coverage` |
-| Automation adapter       | changed paths, evaluator JSON         | comments / checks | gather paths → `evaluate-doc-coverage` → route by `status`                     |
-| Agent (context consumer) | Agent Skill, single shards (`rg`/IDE) | —                 | —                                                                              |
-| Maintainer               | skill pack + conformance              | protocol shards   | `docs:check:repo`                                                              |
+| Actor                    | Reads                                 | Writes           | Must run                                     |
+| ------------------------ | ------------------------------------- | ---------------- | -------------------------------------------- |
+| Author (human/agent)     | shards, Agent Skill                   | shards, manifest | `check` before PR                            |
+| CI                       | config                                | —                | `check --require-lint` when peers configured |
+| Agent (context consumer) | Agent Skill, single shards (`rg`/IDE) | —                | —                                            |
+| Maintainer               | skill pack + conformance              | protocol shards  | `docs:check:repo`                            |
 
 **Shards are source of truth; compiled files are generated.**
-
-## Docs coverage evaluation (automation)
-
-When a PR or push changes product code, contributor tooling, or packaging without matching shards, hosts run [docs coverage evaluation](../doc-coverage-evaluation.md) (`mdcp evaluate-doc-coverage`). The evaluator is the portable contract; Cursor Automations, GitHub Actions, and other systems are thin adapters that supply paths and render the JSON verdict (`covered`, `missing_docs`, or `needs_clarification`).
-
-Start in **advisory** mode; enable **gate** mode when heuristics fit the repo. On `needs_clarification`, surface the evaluator's `questions` to a human before inventing doc scope — then hand off to the [doc-only helper](./skills/mdcp-doc-only.md) when authoring is needed.
 
 ## Adoption paths
 
@@ -45,7 +38,6 @@ Above plus three-tier shards (`features` / `client` / `developer`), helper skill
 | MCP host              | MCP reads compiled artifacts; MDCP validates authoring       |
 | Static site generator | MDCP for in-repo agent context; site may use compiled subset |
 | Cursor rules          | Host behavior in rules; product truth in MDCP shards         |
-| Host automations      | Adapter gathers diffs; CLI evaluator owns taxonomy + verdict |
 
 ## Query preference order
 

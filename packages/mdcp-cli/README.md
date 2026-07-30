@@ -88,20 +88,6 @@ mdcp check --config docs/mdcp.config.json --docs-root docs
 
 `--config` is resolved from where you run the command; `--docs-root` sets the docs root. Details: [Config essentials](#--config-vs---docs-root).
 
-### Automation integration
-
-Wire host automations (CI, Cursor, other agents) to the CLI evaluator — not to a host-specific prompt that reimplements MDCP taxonomy:
-
-```bash
-mdcp evaluate-doc-coverage \
-  --git --base origin/main \
-  --mode advisory \
-  --config docs/mdcp.config.json \
-  --docs-root docs
-```
-
-Stdout is JSON (`status`, `docSurfaces`, `candidateShards`, `reasons`, `questions`). Start in **advisory** mode; use **gate** when you want the check to fail on `missing_docs` or `needs_clarification`. Full adapter guide: [Evaluate doc coverage](#evaluate-doc-coverage). Capability contract: [Docs coverage evaluation](../../docs/features/doc-coverage-evaluation.md).
-
 Global options (apply to every command):
 
 | Option                | Default            | Purpose                                                                          |
@@ -380,17 +366,16 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 
 ### Command summary
 
-| Command                      | When you need it                                                                                      |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `mdcp compile`               | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default)    |
-| `mdcp check`                 | Full gate: orphans → compile → refs → links → xrefs; optional peer linters; non-fatal coverage report |
-| `mdcp evaluate-doc-coverage` | Diff-aware docs coverage verdict for automations (JSON; advisory or gate)                             |
-| `mdcp shard`                 | Split a monolith into shards (requires `config.source`)                                               |
-| `mdcp refs-list`             | List heading slugs from `refs.json` as JSON                                                           |
-| `mdcp lint`                  | markdownlint-cli2 on shards and compiled output (peer, if installed)                                  |
-| `mdcp prose`                 | Vale prose lint (peer, if installed)                                                                  |
-| `mdcp links`                 | markdown-link-check on compiled output (peer, if installed)                                           |
-| `mdcp fix`                   | Prettier + markdownlint `--fix` (install peers in host repo first)                                    |
+| Command          | When you need it                                                                                      |
+| ---------------- | ----------------------------------------------------------------------------------------------------- |
+| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default)    |
+| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters; non-fatal coverage report |
+| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                               |
+| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                           |
+| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                                  |
+| `mdcp prose`     | Vale prose lint (peer, if installed)                                                                  |
+| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                           |
+| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                    |
 
 ### Refs subcommands
 
@@ -455,92 +440,6 @@ Standalone files are register-only: compile never rewrites or emits them, but th
 Do not list a compiled guide's output (a generated file such as `README.md` or `DEVELOPERS.md`) in `standaloneGuides`. Those outputs are already captured as guide output targets and are never flagged as uncaptured, so they stay out of the standalone set.
 
 <!-- mdcp-shard: end ../../docs/client-cli/coverage.md -->
-
-<!-- mdcp-shard: start ../../docs/client-cli/evaluate-doc-coverage.md -->
-
-## Evaluate doc coverage
-
-Decide whether a change set has adequate MDCP shard coverage. Hosts (CI, Cursor Automations, other agents) call this command instead of re-implementing MDCP guide taxonomy in prompts.
-
-This is **not** the inventory [coverage scan](#coverage-in-check) inside `mdcp check`. That scan asks whether markdown files are registered. This command asks whether **changed work** needs new or updated shards.
-
-### Command
-
-```bash
-# Explicit paths (repeatable)
-mdcp evaluate-doc-coverage \
-  --config docs/mdcp.config.json \
-  --docs-root docs \
-  --changed packages/mdcp-cli/src/cli.ts \
-  --changed docs/features/overview.md
-
-# Paths from a file (one path per line)
-mdcp evaluate-doc-coverage --paths-file /tmp/changed.txt --config docs/mdcp.config.json --docs-root docs
-
-# Paths from git (merge-base with --base, default origin/main)
-mdcp evaluate-doc-coverage --git --base origin/main --config docs/mdcp.config.json --docs-root docs
-
-# Fail CI when docs are missing or clarification is required
-mdcp evaluate-doc-coverage --git --mode gate --config docs/mdcp.config.json --docs-root docs
-```
-
-| Option                | Default            | Purpose                                                        |
-| --------------------- | ------------------ | -------------------------------------------------------------- |
-| `--changed <path>`    | —                  | Repo-relative changed path (repeatable)                        |
-| `--paths-file <path>` | —                  | File of paths, one per line (`-` = stdin)                      |
-| `--git`               | off                | Collect paths via `git diff` against `--base`                  |
-| `--base <ref>`        | `origin/main`      | Base ref for `--git`                                           |
-| `--mode <mode>`       | `advisory`         | `advisory` (always exit 0 on verdict) or `gate` (fail on gaps) |
-| `-c, --config`        | `mdcp.config.json` | Standard config option                                         |
-| `--docs-root`         | cwd                | Docs root for guide trees                                      |
-
-Stdout is always JSON (pretty-printed). See [Docs coverage evaluation](../../docs/features/doc-coverage-evaluation.md) for the schema and inference rules.
-
-### Exit codes
-
-| Mode       | `covered` | `missing_docs` / `needs_clarification` | CLI / git errors |
-| ---------- | --------- | -------------------------------------- | ---------------- |
-| `advisory` | `0`       | `0`                                    | `1`              |
-| `gate`     | `0`       | `1`                                    | `1`              |
-
-### Automation integration
-
-1. Collect changed paths in the host (git diff, PR file list, or agent context).
-2. Run `mdcp evaluate-doc-coverage` with those paths (or `--git`).
-3. Branch on `status`:
-   - `covered` — continue; optionally still run `mdcp check`.
-   - `missing_docs` — open a docs task / comment with `candidateShards` and `reasons`, or invoke the doc-only skill with that scope.
-   - `needs_clarification` — ask `questions` (interactive) or post them on the PR (CI). Do not invent answers.
-
-#### Minimal CI (advisory)
-
-```yaml
-- name: Evaluate MDCP doc coverage
-  run: |
-    pnpm exec mdcp evaluate-doc-coverage \
-      --git --base origin/main \
-      --mode advisory \
-      --config docs/mdcp.config.json \
-      --docs-root docs > doc-coverage.json
-    cat doc-coverage.json
-```
-
-#### Gate mode
-
-Same command with `--mode gate`. Treat exit `1` as a required check once heuristics are trusted.
-
-#### Cursor and other agent hosts
-
-Keep the automation thin: gather paths → call the CLI → render JSON. Use the [doc-only helper](../../docs/features/protocol/skills/mdcp-doc-only.md) only after evaluation (and after HIL answers when needed). Do not encode guide-surface rules in the host prompt.
-
-### Related
-
-- [Docs coverage evaluation](../../docs/features/doc-coverage-evaluation.md)
-- [Agent integration](#agent-integration)
-- [Commands reference](#commands-reference)
-- [Coverage in check](#coverage-in-check)
-
-<!-- mdcp-shard: end ../../docs/client-cli/evaluate-doc-coverage.md -->
 
 <!-- mdcp-shard: start ../../docs/client-cli/compile-refs-registry.md -->
 
@@ -768,10 +667,7 @@ Wire **`@bwilliamson/mdcp-cli`** into CI or coding agents with npm scripts. This
 ```bash
 mdcp check --require-lint
 mdcp refs-list
-mdcp evaluate-doc-coverage --git --mode advisory --config docs/mdcp.config.json --docs-root docs
 ```
-
-Use `evaluate-doc-coverage` in PR automations to detect missing shards before merge. Keep the host thin: collect paths, run the CLI, route on `status`. Details: [Evaluate doc coverage](#evaluate-doc-coverage).
 
 ### Related packages
 

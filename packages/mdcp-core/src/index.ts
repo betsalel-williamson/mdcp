@@ -115,19 +115,6 @@ export {
 export { checkOrphansForGuides, type OrphanIssue, type GuideDirEntry } from './validate/orphans.js';
 export { computeCoverage, type CoverageResult, type CoverageOptions } from './validate/coverage.js';
 export {
-  evaluateDocCoverage,
-  docCoverageExitCode,
-  normalizeChangedPath,
-  type DocSurface,
-  type DocCoverageStatus,
-  type DocCoverageMode,
-  type DocCoverageConfidence,
-  type DocCoverageReason,
-  type DocCoverageQuestion,
-  type DocCoverageResult,
-  type EvaluateDocCoverageOptions,
-} from './validate/doc-coverage.js';
-export {
   abbreviateProtocolVersion,
   expandProtocolVersion,
   parseLlmsIndexFilename,

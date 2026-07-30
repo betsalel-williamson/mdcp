@@ -51,7 +51,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [cross-link](#cross-link)
 - [standalone guide](#standalone-guide)
 - [coverage](#coverage)
-- [docs coverage evaluation](#docs-coverage-evaluation)
 - [ReDoS](#redos)
 
 ### Adoption and messaging
@@ -589,34 +588,6 @@ Prefer host search then read one shard under `docs/`. Compiled monoliths under `
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
 
 <!-- mdcp-shard: end docs/developer/docs-dogfooding.md -->
-
-<!-- mdcp-shard: start docs/developer/docs-coverage-evaluation.md -->
-
-## Docs coverage evaluation (dogfood)
-
-This repository dogfoods [docs coverage evaluation](docs/features/doc-coverage-evaluation.md) as a portable automation contract. Hosts call the CLI; they do not re-encode guide taxonomy in prompts.
-
-### Rollout sequence (this repo)
-
-1. **Advisory** — run `mdcp evaluate-doc-coverage --git --mode advisory` on PRs (or locally) and inspect JSON. Do not block merges yet.
-2. **Tune** — adjust ignore patterns and path heuristics if false positives appear for this monorepo layout.
-3. **Gate** — switch automations to `--mode gate` so `missing_docs` and `needs_clarification` fail the check.
-4. **Author** — on gaps, hand off to `/mdcp-doc-only` after any HIL answers.
-
-Example:
-
-```bash
-pnpm build
-node packages/mdcp-cli/dist/cli.js evaluate-doc-coverage \
-  --git --base origin/main \
-  --mode advisory \
-  --config docs/mdcp.config.json \
-  --docs-root docs
-```
-
-Consumer-facing command docs: [Evaluate doc coverage](./packages/mdcp-cli/README.md#evaluate-doc-coverage).
-
-<!-- mdcp-shard: end docs/developer/docs-coverage-evaluation.md -->
 
 <!-- mdcp-shard: start docs/developer/markdown-formatting.md -->
 
@@ -1566,18 +1537,6 @@ The coverage scan walks the repository for markdown files, skips vendored paths,
 See [Documentation coverage scan](docs/features/coverage-scan.md).
 
 <!-- mdcp-shard: end docs/glossary/coverage.md -->
-
-<!-- mdcp-shard: start docs/glossary/docs-coverage-evaluation.md -->
-
-## docs coverage evaluation
-
-**Docs coverage evaluation** decides whether a set of changed files is accompanied by adequate MDCP guide shards (`features`, `client`, `developer`, `glossary`). Automations call `mdcp evaluate-doc-coverage` / `evaluateDocCoverage` for a machine-readable verdict (`covered`, `missing_docs`, or `needs_clarification`).
-
-Do not confuse this with [coverage](#coverage) (the inventory scan of which markdown files guides account for).
-
-See [Docs coverage evaluation](docs/features/doc-coverage-evaluation.md).
-
-<!-- mdcp-shard: end docs/glossary/docs-coverage-evaluation.md -->
 
 <!-- mdcp-shard: start docs/glossary/redos.md -->
 
