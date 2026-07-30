@@ -37,9 +37,9 @@ Before approving the **`release` environment**, open the **Release plan** job su
 ## Routine releases (one step)
 
 1. Merge feature PRs that include changesets to `main`.
-2. Open the Release workflow run → read the **Release plan** job summary (pending changesets).
+2. Open the Release workflow run → read the **Release plan** job summary (pending changesets and/or missing GitHub Releases).
 3. Approve the **`release` environment** deployment.
-4. CI runs **`pnpm release:main`**: version → sync skill frontmatter → build → commit → **push to `main`** → `changeset publish` → GitHub Releases (npm packages **and** skill carriers) → push tags.
+4. CI runs **`pnpm release:main`**: with pending changesets — version → sync skill frontmatter → build → commit → **push to `main`** → `changeset publish` → **push tags** → GitHub Releases (npm packages **and** skill carriers). With no changesets but missing Releases — create those Releases idempotently (`--target`).
 
 There is no separate Version Packages PR.
 

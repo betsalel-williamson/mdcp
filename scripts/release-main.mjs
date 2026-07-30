@@ -1,24 +1,29 @@
 #!/usr/bin/env node
 /**
  * Single-step release on main: version → sync skills → build → commit →
- * push to main → publish npm + tags → GitHub Releases.
+ * push to main → publish npm → push tags → GitHub Releases.
  *
  * Push happens before npm publish so a failed push cannot leave registry
- * packages without the matching commit on main.
+ * packages without the matching commit on main. Tags are pushed before
+ * GitHub Releases so `gh release create` can resolve them; create also
+ * passes `--target` so a fresh checkout can heal missing releases.
  *
- * Requires RELEASE_GITHUB_TOKEN (fine-grained maintainer PAT). No-ops when
- * there are no pending changesets.
+ * With no pending changesets, ensures GitHub Releases exist for every
+ * current workspace package version (idempotent heal after partial failure).
+ *
+ * Requires RELEASE_GITHUB_TOKEN (fine-grained maintainer PAT).
  */
 import { execSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs';
+import { writeFileSync, unlinkSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { findMajorBumps, pendingChangesetFiles } from './lib/changeset-bumps.mjs';
 import {
-  changelogNotesForVersion,
-  skillCarrierDirName,
-  skillIdFromPackageName,
-} from './lib/skill-packages.mjs';
+  packagesMissingGithubReleases,
+  readWorkspacePackages,
+  releaseNotesForPackage,
+  releaseTag,
+} from './lib/github-releases.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dryRun = process.argv.includes('--dry-run');
@@ -39,44 +44,36 @@ function token() {
   return process.env.RELEASE_GITHUB_TOKEN || '';
 }
 
-function readWorkspaceVersions() {
-  const versions = new Map();
-  const packagesDir = join(root, 'packages');
-  for (const name of readdirSync(packagesDir)) {
-    const pkgPath = join(packagesDir, name, 'package.json');
-    if (!existsSync(pkgPath)) continue;
-    const json = JSON.parse(readFileSync(pkgPath, 'utf-8'));
-    if (json.name && json.version) {
-      versions.set(json.name, { version: json.version, dir: name, private: Boolean(json.private) });
-    }
-  }
-  return versions;
+function ghEnv() {
+  const t = token();
+  return {
+    ...process.env,
+    GH_TOKEN: t,
+    GITHUB_TOKEN: t,
+  };
 }
 
-function packageDirForName(name, dirHint) {
-  if (dirHint) return dirHint;
-  const id = skillIdFromPackageName(name);
-  if (id) return skillCarrierDirName(id);
-  return name.replace(/^@bwilliamson\//, '');
+function listExistingReleaseTags() {
+  const raw = capture('gh release list --limit 1000 --json tagName', { env: ghEnv() });
+  const rows = JSON.parse(raw);
+  return new Set(rows.map((r) => r.tagName));
 }
 
-function createGithubRelease(tag, notes) {
+function createGithubRelease(tag, notes, target) {
   const tmp = join(root, '.tmp-release-notes.md');
   writeFileSync(tmp, `${notes}\n`);
-  const env = {
-    ...process.env,
-    GH_TOKEN: token(),
-    GITHUB_TOKEN: token(),
-  };
+  const env = ghEnv();
   try {
     try {
       capture(`gh release view "${tag}"`, { env });
       console.log(`GitHub Release ${tag} already exists — updating notes`);
       run(`gh release edit "${tag}" --notes-file .tmp-release-notes.md`, { env });
     } catch {
-      run(`gh release create "${tag}" --title "${tag}" --notes-file .tmp-release-notes.md`, {
-        env,
-      });
+      // --target lets create work when the tag is not on the remote yet (heal / race).
+      run(
+        `gh release create "${tag}" --title "${tag}" --notes-file .tmp-release-notes.md --target "${target}"`,
+        { env },
+      );
     }
   } finally {
     try {
@@ -87,10 +84,76 @@ function createGithubRelease(tag, notes) {
   }
 }
 
+function ensureGithubReleases(packages) {
+  if (packages.length === 0) {
+    console.log('No GitHub Releases to create or update.');
+    return;
+  }
+  const target = dryRun ? 'HEAD' : capture('git rev-parse HEAD');
+  console.log(`Ensuring GitHub Releases (${packages.length}) at target ${target}:`);
+  for (const pkg of packages) {
+    const tag = releaseTag(pkg.name, pkg.version);
+    const notes = releaseNotesForPackage(root, pkg);
+    if (dryRun) {
+      console.log(`would ensure GitHub Release ${tag}`);
+      continue;
+    }
+    createGithubRelease(tag, notes, target);
+  }
+}
+
+function configureGitIdentityAndRemote(ghToken) {
+  if (dryRun) return;
+  const repo = capture('gh repo view --json nameWithOwner -q .nameWithOwner', {
+    env: { ...process.env, GH_TOKEN: ghToken, GITHUB_TOKEN: ghToken },
+  });
+  execSync(`git remote set-url origin https://x-access-token:${ghToken}@github.com/${repo}.git`, {
+    cwd: root,
+    stdio: 'ignore',
+  });
+  console.log('> git remote set-url origin (token redacted)');
+  // Runners have no git identity; required before commit (local to this clone).
+  run('git config user.name "github-actions[bot]"');
+  run('git config user.email "41898282+github-actions[bot]@users.noreply.github.com"');
+}
+
 const changesetDir = join(root, '.changeset');
 const pending = pendingChangesetFiles(changesetDir);
+const ghToken = token();
+
+if (!ghToken && !dryRun) {
+  console.error(
+    'RELEASE_GITHUB_TOKEN is required (fine-grained PAT with Contents write on this repo).',
+  );
+  process.exit(1);
+}
+
 if (pending.length === 0) {
-  console.log('No pending changesets — nothing to version or publish.');
+  console.log('No pending changesets — checking for missing GitHub Releases.');
+  if (dryRun) {
+    console.log('dry-run: would heal any missing GitHub Releases for current package versions.');
+    process.exit(0);
+  }
+  configureGitIdentityAndRemote(ghToken);
+  const packages = [...readWorkspacePackages(root).values()];
+  const missing = packagesMissingGithubReleases(packages, listExistingReleaseTags());
+  if (missing.length === 0) {
+    console.log('Nothing to version, publish, or heal.');
+    process.exit(0);
+  }
+  console.log(
+    `Healing missing GitHub Releases (${missing.length}): ${missing
+      .map((p) => releaseTag(p.name, p.version))
+      .join(', ')}`,
+  );
+  ensureGithubReleases(missing);
+  // Best-effort: push any local tags (e.g. left from a prior partial run on this runner).
+  try {
+    run('git push origin --tags');
+  } catch {
+    console.log('git push --tags skipped or failed (tags may already exist via --target).');
+  }
+  console.log('Release heal complete.');
   process.exit(0);
 }
 
@@ -105,32 +168,19 @@ if (majors.length > 0) {
 
 console.log(`Pending changesets (${pending.length}): ${pending.join(', ')}`);
 
-const ghToken = token();
-if (!ghToken && !dryRun) {
-  console.error(
-    'RELEASE_GITHUB_TOKEN is required (fine-grained PAT with Contents write on this repo).',
-  );
-  process.exit(1);
-}
-
-const before = readWorkspaceVersions();
+const before = readWorkspacePackages(root);
 
 run('pnpm exec changeset version');
 run('node scripts/sync-skill-versions.mjs');
 run('pnpm skill:validate');
 run('pnpm build');
 
-const after = readWorkspaceVersions();
+const after = readWorkspacePackages(root);
 const bumped = [];
 for (const [name, next] of after) {
   const prev = before.get(name);
   if (!prev || prev.version !== next.version) {
-    bumped.push({
-      name,
-      version: next.version,
-      dir: next.dir,
-      private: next.private,
-    });
+    bumped.push(next);
   }
 }
 
@@ -141,23 +191,11 @@ if (bumped.length === 0) {
 
 console.log('Bumped:');
 for (const b of bumped) {
-  console.log(`  ${b.name}@${b.version}${b.private ? ' (skill carrier)' : ''}`);
+  console.log(`  ${releaseTag(b.name, b.version)}${b.private ? ' (skill carrier)' : ''}`);
 }
 
-if (!dryRun) {
-  const repo = capture('gh repo view --json nameWithOwner -q .nameWithOwner', {
-    env: { ...process.env, GH_TOKEN: ghToken, GITHUB_TOKEN: ghToken },
-  });
-  execSync(`git remote set-url origin https://x-access-token:${ghToken}@github.com/${repo}.git`, {
-    cwd: root,
-    stdio: 'ignore',
-  });
-  console.log('> git remote set-url origin (token redacted)');
-}
+configureGitIdentityAndRemote(ghToken);
 
-// Runners have no git identity; required before commit (local to this clone).
-run('git config user.name "github-actions[bot]"');
-run('git config user.email "41898282+github-actions[bot]@users.noreply.github.com"');
 run('git add -A');
 run('git commit -m "chore: release"');
 
@@ -168,20 +206,12 @@ run('git push origin HEAD:main');
 run('pnpm audit --audit-level=high');
 run('pnpm exec changeset publish');
 
-for (const b of bumped) {
-  const tag = `${b.name}@${b.version}`;
-  const dir = packageDirForName(b.name, b.dir);
-  const notes =
-    changelogNotesForVersion(join(root, 'packages', dir, 'CHANGELOG.md'), b.version) ||
-    `Release ${tag}`;
-  if (dryRun) {
-    console.log(`would create GitHub Release ${tag}`);
-    continue;
-  }
-  createGithubRelease(tag, notes);
-}
+// Push tags before GitHub Releases so create can resolve them when present.
+run('git push origin --tags');
 
-// Ensure any tags created by changeset publish are on the remote.
+ensureGithubReleases(bumped);
+
+// Catch any tags created during release create (--target) or left local.
 run('git push origin --tags');
 
 console.log('Release complete.');

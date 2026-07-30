@@ -26,6 +26,7 @@ jobs:
       contents: read
     outputs:
       has_changesets: ${{ steps.detect.outputs.has_changesets }}
+      has_missing_releases: ${{ steps.missing.outputs.has_missing_releases }}
     steps:
       - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
@@ -51,7 +52,7 @@ jobs:
           mapfile -t files < <(find .changeset -maxdepth 1 -type f -name '*.md' ! -name 'README.md' ! -name '_*' | sort)
           if [ "${#files[@]}" -eq 0 ]; then
             echo "has_changesets=false" >> "$GITHUB_OUTPUT"
-            echo "No pending changesets — release job will no-op." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "No pending changesets." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           echo "has_changesets=true" >> "$GITHUB_OUTPUT"
@@ -71,10 +72,17 @@ jobs:
           } | tee -a "$GITHUB_STEP_SUMMARY"
           pnpm changeset:reject-major
 
+      - name: Detect missing GitHub Releases
+        id: missing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/detect-missing-github-releases.mjs
+
   release:
     name: Version and publish
     needs: plan
-    if: needs.plan.outputs.has_changesets == 'true'
+    if: needs.plan.outputs.has_changesets == 'true' || needs.plan.outputs.has_missing_releases == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write # Release commit, tags, GitHub Releases (via RELEASE_GITHUB_TOKEN for push)
