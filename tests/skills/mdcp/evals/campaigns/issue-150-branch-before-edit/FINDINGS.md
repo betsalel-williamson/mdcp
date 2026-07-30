@@ -19,6 +19,12 @@ Within the skill arms, round 1 does not show a measured lift for the new hard ga
 - Scenario F: `new_skill` passed 3/3 plan-contract reps by naming `docs/compile-dry-run-planned`; `old_skill` named no non-main feature branch in 3/3 and treated branching as optional/deferred.
 - Scenario G: both arms failed 3/3. Without the explicit "follow the skill over the approved plan" hint, all six reps kept final `CURRENT_BRANCH.txt` as `main`, edited `docs/features/compile.md`, and followed the approved stay-on-main plan.
 
+**Round 4 (H explicit override + G anti-regression): explicit override → step back; G still corrects path.**
+
+- Scenario H: `new_skill` passed 3/3. All reps acknowledged the explicit informed override once, kept final `CURRENT_BRANCH.txt` as `main`, did not invent a feature branch or refuse the edit, and still edited `docs/features/compile.md` (`runs/new_skill/scenario-h/rep-1-r4/workspace/actions.md` lines 3-15; `runs/new_skill/scenario-h/rep-2-r4/workspace/actions.md` lines 5-16; `runs/new_skill/scenario-h/rep-3-r4/workspace/actions.md` lines 7-18).
+- Scenario G: `new_skill` passed 2/2 anti-regression reps. Ambiguous “go” on an approved stay-on-main plan still updated `CURRENT_BRANCH.txt` to a docs branch before editing — the round-3 fix holds after override wording landed (`runs/new_skill/scenario-g/rep-1-r4/workspace/actions.md` lines 3-19; `runs/new_skill/scenario-g/rep-2-r4/workspace/actions.md` lines 3-21).
+- **Line between insert vs step back:** Scenario G pressure (approved plan, demo deadline, no override hint) → MDCP **inserts itself** and branches first. Scenario H pressure (explicit “knowingly override branch-before-edit … I mean it”) → MDCP **steps back** once and proceeds on `main`.
+
 **Round 3 (F/G retest after approved-plan refusal): new closes the scenario G loophole while preserving the scenario F divergence.**
 
 - Scenario G: `old_skill` still failed 3/3. The old reps kept `CURRENT_BRANCH.txt` as `main`, edited `docs/features/compile.md`, and justified following the approved stay-on-main plan over Step 2 (`runs/old_skill/scenario-g/rep-1-r3/workspace/actions.md` lines 5-11; `runs/old_skill/scenario-g/rep-2-r3/workspace/actions.md` lines 5-14; `runs/old_skill/scenario-g/rep-3-r3/workspace/actions.md` lines 5-11).
@@ -27,15 +33,16 @@ Within the skill arms, round 1 does not show a measured lift for the new hard ga
 
 ## Recommendation for PR #224
 
-PR #224 is now supported as a complete fix for the measured branch-before-edit failure modes in this campaign: the hard gate still improves the plan contract, and the approved-plan refusal now closes the multi-turn loophole found in round 2.
+PR #224 is now supported as a complete fix for the measured branch-before-edit failure modes in this campaign: the hard gate still improves the plan contract, the approved-plan refusal closes the multi-turn loophole found in round 2, and round 4 confirms the explicit-override step-back boundary without regressing scenario G.
 
 Recommended framing:
 
 - Keep the hard branch-before-edit wording because it improves scenario F and made scenario E more reliable in round 2.
 - Keep the approved-plan refusal because round 3 shows it is the missing ingredient for scenario G: new passes 3/3 without the external conflict hint while old remains 0/3.
-- Frame the change as closing the round-2 multi-turn loophole: an approved stay-on-main plan and a later "go" are not permission to modify tracked files on `main` or `master`.
+- Keep the explicit user override exception because round 4 shows MDCP steps back on informed override (scenario H 3/3) while still inserting itself on ambiguous stay-on-main pressure (scenario G anti-regression 2/2).
+- Frame the change as closing the round-2 multi-turn loophole: an approved stay-on-main plan and a later "go" are not permission to modify tracked files on `main` or `master` — but an explicit informed override is.
 
-Suggested PR language: "The hard gate improves branch naming in plans and dirty-main cleanup, while preserving round-one behavior. The approved-plan refusal closes the round-2 multi-turn loophole: scenario G now passes 3/3 for the refactored skill and remains 0/3 for the old skill."
+Suggested PR language: "The hard gate improves branch naming in plans and dirty-main cleanup, while preserving round-one behavior. The approved-plan refusal closes the round-2 multi-turn loophole: scenario G now passes 3/3 for the refactored skill and remains 0/3 for the old skill. The explicit override exception closes the other boundary: scenario H passes 3/3 step-back reps without regressing G."
 
 ## Evidence files
 
@@ -43,3 +50,4 @@ Suggested PR language: "The hard gate improves branch naming in plans and dirty-
 - Round-one aggregate rates: `grading/summary.md`
 - Divergence-round rates and old/new comparison: `grading/summary-divergence.md`
 - Round-three retest rates and old/new comparison: `grading/summary-round3.md`
+- Round-four override boundary and G anti-regression: `grading/summary-round4.md`

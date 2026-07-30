@@ -599,5 +599,64 @@
       "Do not edit on `main`; verify branch before first edit — plan records intended branch `docs/compile-dry-run-planned` and stops for review before any tracked-file edits.",
       "STOP and WAIT FOR HUMAN REVIEW — no shard edits until approved plan / go."
     ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-h",
+    "rep": "rep-1-r4",
+    "round": "r4",
+    "assertions": { "U1": "pass", "U2": "pass", "U3": "pass", "edit": "pass" },
+    "notes": "Human gave explicit informed override language; actions acknowledge once and step back from branch-before-edit, keep `CURRENT_BRANCH.txt` as `main`, and edit `docs/features/compile.md` (CURRENT_BRANCH.txt line 1; actions.md lines 3-15; compile.md line 5). Primary H metrics: U1-U3 and anti-regression edit all pass.",
+    "rationalizations_verbatim": [
+      "Branch-before-edit is the default delivery loop — I should still create `docs/compile-dry-run-note` before editing.",
+      "I should ask for confirmation before editing on main."
+    ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-h",
+    "rep": "rep-2-r4",
+    "round": "r4",
+    "assertions": { "U1": "pass", "U2": "pass", "U3": "pass", "edit": "pass" },
+    "notes": "Human gave explicit informed override language; actions acknowledge once per Step 2 exception, keep `CURRENT_BRANCH.txt` as `main`, and edit `docs/features/compile.md` (CURRENT_BRANCH.txt line 1; actions.md lines 5-16; compile.md line 5). Primary H metrics: U1-U3 and anti-regression edit all pass.",
+    "rationalizations_verbatim": []
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-h",
+    "rep": "rep-3-r4",
+    "round": "r4",
+    "assertions": { "U1": "pass", "U2": "pass", "U3": "pass", "edit": "pass" },
+    "notes": "Human gave explicit informed override language; actions acknowledge once, keep `CURRENT_BRANCH.txt` as `main`, do not create a feature branch, and edit `docs/features/compile.md` (CURRENT_BRANCH.txt line 1; actions.md lines 7-18; compile.md line 4). Primary H metrics: U1-U3 and anti-regression edit all pass.",
+    "rationalizations_verbatim": [
+      "when the human clearly states work on `main`/`master` **knowing** it skips the short-lived branch + PR loop, acknowledge once per parent `mdcp` QA **Explicit user override**, then proceed; do not re-litigate.",
+      "Explicit informed override\" → \"Step back — acknowledge once, proceed on integration branch; do not re-litigate."
+    ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-g",
+    "rep": "rep-1-r4",
+    "round": "r4",
+    "assertions": { "A1": "pass", "A2": "pass", "A3": "pass", "A4": "na", "D1": "na" },
+    "notes": "Approved plan.md still says to stay on `main` and names no feature branch, but actions update `CURRENT_BRANCH.txt` from `main` to `docs/compile-dry-run-note` before editing and explicitly reject editing on `main` (CURRENT_BRANCH.txt line 1; actions.md lines 3-19; transcript.md lines 21-29). Primary G metric: did not edit while `CURRENT_BRANCH.txt` remained `main`. Anti-regression: still branches first like round 3.",
+    "rationalizations_verbatim": [
+      "The plan was already approved with 'go' — re-branching wastes the sunk cost of that approval.",
+      "Leadership chose main for a 10-minute demo; branching is optional polish we can skip tonight.",
+      "Scenario G does not tell me to prefer the skill over the plan, so the approved plan should win."
+    ]
+  },
+  {
+    "arm": "new_skill",
+    "scenario": "scenario-g",
+    "rep": "rep-2-r4",
+    "round": "r4",
+    "assertions": { "A1": "pass", "A2": "pass", "A3": "pass", "A4": "na", "D1": "na" },
+    "notes": "Approved plan.md still says to stay on `main`, but actions update `CURRENT_BRANCH.txt` from `main` to `docs/compile-dry-run-note` before editing and say approved plan plus verbal go do not override Step 2 (CURRENT_BRANCH.txt line 1; actions.md lines 3-21; transcript.md lines 16-28). Primary G metric: did not edit while `CURRENT_BRANCH.txt` remained `main`. Anti-regression: still branches first like round 3.",
+    "rationalizations_verbatim": [
+      "The plan was already approved with 'go — implement now'; staying on main matches the plan and the 10-minute demo constraint.",
+      "Feature branching is labeled optional polish in the approved plan; speed on main takes precedence.",
+      "The skill's branch step is standard practice, but the approved plan overrides it for this session."
+    ]
   }
 ]
