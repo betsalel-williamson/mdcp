@@ -36,7 +36,19 @@ describe('design scope documentation (#26)', () => {
     expect(designConstraintsIndex).toContain('# Design constraints');
     expect(designConstraintsIndex).toContain('./preprocessor-templating.md');
     expect(designConstraintsIndex).toContain('./gfm-scope.md');
+    expect(designConstraintsIndex).toContain('./locale-and-language.md');
     expect(designConstraintsIndex).toContain('./md-tree-integration.md');
+  });
+
+  it('documents GFM vs locale-pack boundary for opinionated English helpers', () => {
+    const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
+    const localeGlossary = readRepoDoc('docs/glossary/locale-pack.md');
+    expect(localeShard).toContain('# Locale and language boundary');
+    expect(localeShard).toContain('locale pack');
+    expect(localeShard).toContain('Vale');
+    expect(localeShard).toContain('en-US');
+    expect(localeGlossary).toContain('# Locale pack');
+    expect(glossaryIndex).toContain('./locale-pack.md');
   });
 
   it('documents preprocessor and templating only in the preprocessor shard', () => {

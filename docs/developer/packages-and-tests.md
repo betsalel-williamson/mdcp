@@ -9,13 +9,14 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | Config schema      | `src/config/`                 |
 | Compile / assemble | `src/compile/`                |
 | Markdown helpers   | `src/markdown/`               |
+| Locale packs       | `src/locale/`                 |
 | Refs / slugs       | `src/refs/`                   |
 | Validation         | `src/validate/`, `src/xrefs/` |
 | Shard (split)      | `src/shard/`                  |
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared heading and `{#id}` helpers live under `src/markdown/` — see [Safe markdown parsing](./safe-markdown-parsing.md) for why.
+Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/` — see [Safe markdown parsing](./safe-markdown-parsing.md) for why. Those helpers are **GFM / structure** only. Opinionated US-English (and future locale) wording lives under `src/locale/` — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test

@@ -51,6 +51,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [check](#check)
 - [GFM](#gfm)
 - [Authored GFM](#authored-gfm)
+- [locale pack](#locale-pack)
 - [ignoreGuides](#ignoreguides)
 - [refs](#refs)
 - [refs registry](#refs-registry)
@@ -461,13 +462,14 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Config schema      | `src/config/`                 |
 | Compile / assemble | `src/compile/`                |
 | Markdown helpers   | `src/markdown/`               |
+| Locale packs       | `src/locale/`                 |
 | Refs / slugs       | `src/refs/`                   |
 | Validation         | `src/validate/`, `src/xrefs/` |
 | Shard (split)      | `src/shard/`                  |
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared heading and `` helpers live under `src/markdown/` — see [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers) for why.
+Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/` — see [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers) for why. Those helpers are **GFM / structure** only. Opinionated US-English (and future locale) wording lives under `src/locale/` — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -1382,6 +1384,18 @@ Use it before you trust a merge. Command details: [CLI consumer guide](docs/clie
 Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; read [Preprocessor / templating (out of scope)](docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 <!-- mdcp-shard: end docs/glossary/authored-gfm.md -->
+
+<!-- mdcp-shard: start docs/glossary/locale-pack.md -->
+
+## Locale pack
+
+A **locale pack** is MDCP’s bundle of natural-language strings and patterns for opinionated linting and compiled prose (for example US-English `See` / `Chapter` cross-ref cues, `BROKEN LINK` markers, and insert captions like `Table 1. …`).
+
+It is **not** [GFM](#gfm) structure. Format parsing and link/slug mechanics stay locale-agnostic; they call into a pack when wording or language-specific patterns are required. Peer [Vale](https://vale.sh/) styles play the same role for host prose lint — separate from markdownlint’s Markdown rules.
+
+See [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+
+<!-- mdcp-shard: end docs/glossary/locale-pack.md -->
 
 <!-- mdcp-shard: start docs/glossary/ignore-guides.md -->
 

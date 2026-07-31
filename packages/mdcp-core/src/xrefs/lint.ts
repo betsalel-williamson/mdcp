@@ -1,13 +1,9 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { getLocalePack, type LocalePack } from '../locale/index.js';
 import { isAtxHeading } from '../markdown/index.js';
 
 const LINK_RE = /\[([^\]]*)\]\([^)]*\)/g;
-const CH_REF_RE =
-  /\b(?:Ch\.?\s*\d+(?:\s*[–—-]\s*[^|.\n]+)?|Chapter\s+\d+(?:\s*[–—-]\s*[^|.\n]+)?)\b/gi;
-const SEE_CHAPTER_RE = /\bSee\s+Chapter\s+\d+\b/gi;
-const SEE_CAPITAL_UNLINKED_RE = /\bSee\s+(?!your\s)(?!\[)\w/;
-const SEE_LOWERCASE_UNLINKED_RE = /(?<=[(,])\s*see\s+(?!\[)\w/;
 
 const SKIP_FILES = new Set(['index.md']);
 const SKIP_PREFIXES = ['table-of-contents'];
@@ -21,10 +17,11 @@ function shouldSkip(filename: string): boolean {
   return SKIP_PREFIXES.some((p) => filename.startsWith(p));
 }
 
-function lintFile(path: string, root: string): string[] {
+function lintFile(path: string, root: string, locale: LocalePack): string[] {
   const issues: string[] = [];
   const rel = path.replace(root + '/', '').replace(root + '\\', '');
   const text = readFileSync(path, 'utf-8');
+  const { xrefs } = locale;
   let inFence = false;
 
   for (let num = 0; num < text.split('\n').length; num++) {
@@ -38,21 +35,21 @@ function lintFile(path: string, root: string): string[] {
     if (isAtxHeading(stripped)) continue;
 
     const plain = stripLinks(line);
-    for (const m of plain.matchAll(CH_REF_RE)) {
-      issues.push(`${rel}:${num + 1}: bare cross-ref: ${JSON.stringify(m[0])}`);
+    for (const m of plain.matchAll(xrefs.chapterRef)) {
+      issues.push(`${rel}:${num + 1}: ${xrefs.bareCrossRefMessage(m[0])}`);
     }
-    for (const m of line.matchAll(SEE_CHAPTER_RE)) {
+    for (const m of line.matchAll(xrefs.seeChapter)) {
       if (!LINK_RE.test(line)) {
-        issues.push(`${rel}:${num + 1}: unlinked: ${JSON.stringify(m[0])}`);
+        issues.push(`${rel}:${num + 1}: ${xrefs.unlinkedMessage(m[0])}`);
       }
     }
-    if (line.includes('| See |')) continue;
-    if (/\b[Ss]ee\s+\[/.test(line)) continue;
-    if (SEE_CAPITAL_UNLINKED_RE.test(line)) {
-      issues.push(`${rel}:${num + 1}: unlinked See reference`);
+    if (line.includes(xrefs.seeTableCell)) continue;
+    if (xrefs.seeLinked.test(line)) continue;
+    if (xrefs.seeCapitalUnlinked.test(line)) {
+      issues.push(`${rel}:${num + 1}: ${xrefs.unlinkedSeeCapitalMessage}`);
     }
-    if (SEE_LOWERCASE_UNLINKED_RE.test(line)) {
-      issues.push(`${rel}:${num + 1}: unlinked see reference`);
+    if (xrefs.seeLowercaseUnlinked.test(line)) {
+      issues.push(`${rel}:${num + 1}: ${xrefs.unlinkedSeeLowercaseMessage}`);
     }
   }
   return issues;
@@ -71,12 +68,12 @@ function collectMdFiles(dir: string): string[] {
   return out;
 }
 
-export function lintXrefs(scanRoots: string[]): string[] {
+export function lintXrefs(scanRoots: string[], locale: LocalePack = getLocalePack()): string[] {
   const issues: string[] = [];
   for (const root of scanRoots) {
     try {
       for (const file of collectMdFiles(root)) {
-        issues.push(...lintFile(file, root));
+        issues.push(...lintFile(file, root, locale));
       }
     } catch {
       // skip missing dirs

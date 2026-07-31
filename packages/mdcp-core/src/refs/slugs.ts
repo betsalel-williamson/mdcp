@@ -1,4 +1,5 @@
 import GithubSlugger, { slug as githubSlug } from 'github-slugger';
+import { getLocalePack, type LocalePack } from '../locale/index.js';
 import { parseAtxHeading, stripPandocAnchors, headingTitlePlain } from '../markdown/index.js';
 
 /**
@@ -30,11 +31,9 @@ export interface RefsRegistry {
   slugs: Record<string, string>;
 }
 
-const CHAPTER_KEY_RE = /^([A-Z]{2,4})\s+Chapter\s+(\d+)/i;
-
-function semanticKey(title: string, guide: string): string | null {
-  const m = title.match(CHAPTER_KEY_RE);
-  if (m) return `${m[1].toLowerCase()}.ch${m[2]}`;
+function semanticKey(title: string, guide: string, locale: LocalePack): string | null {
+  const chapter = locale.chapterKeyFromTitle(title);
+  if (chapter) return `${chapter.prefix.toLowerCase()}.ch${chapter.number}`;
   const safe = title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -46,6 +45,7 @@ function semanticKey(title: string, guide: string): string | null {
 export function buildSlugRegistry(
   compiledText: string,
   sourceMap?: Map<string, string>,
+  locale: LocalePack = getLocalePack(),
 ): RefsRegistry {
   const slugger = new GithubSlugger();
   const headings: HeadingEntry[] = [];
@@ -69,7 +69,7 @@ export function buildSlugRegistry(
 
     const slug = slugger.slug(headingTextToPlain(rawTitle));
 
-    const key = semanticKey(rawTitle, currentGuide);
+    const key = semanticKey(rawTitle, currentGuide, locale);
     const sourceFile = sourceMap?.get(slug) ?? null;
 
     headings.push({

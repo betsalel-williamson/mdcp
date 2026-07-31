@@ -514,8 +514,8 @@ These commands use tools installed in **your** repo (not bundled with mdcp):
 
 | Command      | Peer tool                       | Purpose                                                                   |
 | ------------ | ------------------------------- | ------------------------------------------------------------------------- |
-| `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output                                           |
-| `mdcp prose` | `vale` (install separately)     | Prose style lint                                                          |
+| `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output (GFM / Markdown structure)                |
+| `mdcp prose` | `vale` (install separately)     | Prose style lint (locale packs; Microsoft style = US English)             |
 | `mdcp links` | `markdown-link-check`           | Optional HTTP URL checks (peer; not built-in internal link validation)    |
 | `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no config paths) |
 

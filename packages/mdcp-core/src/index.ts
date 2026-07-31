@@ -123,3 +123,13 @@ export {
 } from './export/protocol-version.js';
 export { findPeerBinary, runPeer, type PeerTool } from './peers/resolve.js';
 export { shardFromMonolith, runMdTree, type ShardGuideMapping } from './shard/orchestrator.js';
+export {
+  getLocalePack,
+  listLocalePackIds,
+  DEFAULT_LOCALE_ID,
+  enUS,
+  type LocalePack,
+  type LocaleXrefPatterns,
+  type LocaleBrokenLinkCopy,
+  type LocaleInsertCopy,
+} from './locale/index.js';
