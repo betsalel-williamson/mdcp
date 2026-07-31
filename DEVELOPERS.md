@@ -1074,7 +1074,7 @@ Never unpublish a version that other packages or consumers legitimately depend o
 
 ## Safe markdown parsing (heading and anchor helpers)
 
-Maintainer note for why `mdcp-core` centralizes ATX heading and Pandoc-style `` handling in shared helpers instead of ad-hoc regular expressions.
+Maintainer note for why `mdcp-core` centralizes ATX heading and Pandoc-style `` handling in shared helpers instead of ad-hoc regular expressions, and how remaining package regexes were audited for [ReDoS](#redos) risk.
 
 Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
 
@@ -1096,15 +1096,54 @@ Public package APIs keep their existing names; call sites delegate to the helper
 
 See [Packages and tests](#packages-and-tests) for where the helper module lives under `mdcp-core`.
 
-### What Phase B covers
+### Phase B inventory (remaining regexes)
 
-Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example chapter xref lint and code-evidence patterns). Those stay out of the Phase A release gate. Rewrite or keep case-by-case; do not block shipping Phase A on a full regex purge.
+Phase B inventories every remaining regex in `packages/mdcp-core/src/` after Phase A. Decision rule: **keep** when the shape is clearly linear (anchored literals, single character-class stars without overlapping suffixes, fixed alternations); **rewrite** when the shape is polynomial-adjacent (`\s*` / overlapping optional groups next to digits, or the same class CodeQL already flagged); **dismiss** when a conservative static checker flags a standard markdown-link idiom that stays empirically linear and rewriting would churn call sites without clearing a known alert class.
+
+Duration-budget tests cover rewritten paths. Link extract/rewrite patterns stay as regexes with the dismissals below — not a full parser purge.
+
+#### Rewritten (linear scanners)
+
+| Location                         | Former risk shape                                    | Disposition                                        |
+| -------------------------------- | ---------------------------------------------------- | -------------------------------------------------- |
+| `xrefs/lint.ts` chapter refs     | `\s*` plus optional dash-title with a stop-set class | Imperative `Ch.` / `Chapter` scanner               |
+| `xrefs/lint.ts` unlinked `see`   | `\s*` after lookbehind                               | Imperative scan after `(` / `,`                    |
+| `compile/hooks/code-evidence.ts` | `LINE_RANGE_RE` optional `L`/`lines?` + `\s*` + alts | Imperative `lineRangeFromText`                     |
+| `compile/headings.ts` About H1   | `^#\s+About…\s*$` (safe but heading-regex sprawl)    | `parseAtxHeading` + case-insensitive title compare |
+
+#### Kept (clearly linear)
+
+| Location                         | Pattern role                   | Rationale                                       |
+| -------------------------------- | ------------------------------ | ----------------------------------------------- |
+| `compile/headings.ts` `FENCE_RE` | Fence open/close markers       | Anchored; `` `{3,}` `` / `~{3,}` then remainder |
+| `refs/slugs.ts` `CHAPTER_KEY_RE` | `XX Chapter N` keys            | Anchored; fixed letters + spaces + digits       |
+| `refs/slugs.ts` slug cleanup     | `[^a-z0-9]+`, trim dashes      | Single character-class replace                  |
+| `export/protocol-version.ts`     | `mdcp.v…llms.txt` filenames    | Anchored filename; `[\d.]+` is linear           |
+| `compile/section-slug.ts`        | `FIND-N.md`, `.md` suffix      | Anchored / suffix only                          |
+| `compile/section-manifest.ts`    | Dynamic `##` sections heading  | Escaped literal; anchored `^##\s+…\s*$`         |
+| `links/validate.ts`              | `https?://`, `.md` suffix      | Anchored / suffix                               |
+| `compile/assemble.ts`            | Collapse `\n{3,}`              | Bounded quantifier on one character             |
+| `shard/orchestrator.ts`          | Demote leading H1 marker       | Fixed two-character `#` + space prefix          |
+| Misc adornment / path trims      | Bold stars, inline ticks, `./` | Literal or single-class                         |
+
+#### Dismissed (link idioms — keep regex)
+
+| Location                                        | Pattern role                      | Rationale                                                                                       |
+| ----------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `links/extract.ts` `MD_LINK_RE`                 | Non-image `[label](target)`       | Standard GFM link extract; character-class stars; line-scoped; empirically linear at 40k+ chars |
+| `xrefs/lint.ts` / `code-evidence.ts` link strip | `[…](…)` strip/match              | Same class as above; simpler `[^)]*` form already passes conservative checkers                  |
+| `compile/section-manifest.ts` file/slug links   | Manifest `.md` / `#slug` links    | Same link idiom; used on small manifests                                                        |
+| `compile/publish-links.ts` rewrite REs          | Intra/cross-guide / publish paths | Nested lookarounds + `.md` suffix; conservative checkers may flag; V8 timings stay linear       |
+| `compile/hooks/inline-inserts.ts`               | Insert-library link match         | Same as publish-links; library-dir alternation is fixed                                         |
+
+These dismissals are intentional: Phase B does **not** replace every regex with parsers. If CodeQL later opens `js/polynomial-redos` on a dismissed site, treat that alert as a new fix ticket (same TDD pattern as Phase A).
 
 ### Authoring implications
 
 - Prefer the shared helpers for new heading or `` logic; do not add new polynomial-risk regexes for those jobs.
+- Prefer imperative scanners when adding chapter-ref or line-range style matchers (optional whitespace next to digits or overlapping alternatives).
 - Explicit `` markers in shards remain supported; stripping and slug behavior stay aligned with prior golden tests for normal content.
-- After merge to the default branch, confirm CodeQL alerts for this class close on the next scan of `main`.
+- After merge to the default branch, confirm CodeQL alerts for the heading/anchor class stay closed on the next scan of `main`.
 
 <!-- mdcp-shard: end docs/developer/safe-markdown-parsing.md -->
 
@@ -1476,7 +1515,7 @@ See [Documentation coverage scan](docs/features/coverage-scan.md).
 
 **ReDoS** (Regular expression Denial of Service) is when a regular expression takes far too long on certain inputs — often because overlapping or unbounded quantifiers force the engine to explore many matching paths. Attackers (or accidental pathological strings) can stall a process that runs the pattern on untrusted or library-controlled text.
 
-In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
+In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. A follow-up audit rewrote polynomial-adjacent chapter-ref and line-range scanners and recorded keep/dismiss decisions for remaining regexes. See [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
 
 <!-- mdcp-shard: end docs/glossary/redos.md -->
 
