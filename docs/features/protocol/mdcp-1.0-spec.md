@@ -2,7 +2,7 @@
 
 Normative specification for the MarkDown Context Protocol. Parent: [GitHub #48](https://github.com/betsalel-williamson/mdcp/issues/48).
 
-> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before npm **1.0.0**. Agent entrypoint is the parent **Agent Skill** (`/mdcp`).
+> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before calling the specification final. Protocol versioning is independent of package semver. Agent entrypoint is the parent **Agent Skill** (`/mdcp`).
 
 ## 1. Introduction
 

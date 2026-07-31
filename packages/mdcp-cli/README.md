@@ -51,7 +51,7 @@ npm install -g @bwilliamson/mdcp-cli
 
 ### Stability
 
-**Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. CLI commands, flags, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read package changelogs before upgrading.
+**Pre-1.0:** Until this package reaches **1.0.0**, there is **no API stability guarantee**. CLI commands, flags, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read the package changelog before upgrading.
 
 #### Get involved
 

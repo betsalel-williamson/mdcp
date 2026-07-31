@@ -44,7 +44,7 @@ The CLI (`@bwilliamson/mdcp-cli`) depends on this package. Install `@bwilliamson
 
 ### Stability
 
-**Pre-1.0:** There is **no API stability guarantee** until **1.0.0**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read package changelogs before upgrading.
+**Pre-1.0:** Until this package reaches **1.0.0**, there is **no API stability guarantee**. Exported functions, types, `mdcp.config.json` schema, and compile output may change in any `0.x.y` release. Read the package changelog before upgrading.
 
 <!-- mdcp-shard: end ../../docs/client-core/overview.md -->
 
