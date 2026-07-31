@@ -1100,7 +1100,7 @@ See [Packages and tests](#packages-and-tests) for where the helper module lives 
 
 Phase B inventories every remaining regex in `packages/mdcp-core/src/` after Phase A. Decision rule: **keep** when the shape is clearly linear (anchored literals, single character-class stars without overlapping suffixes, fixed alternations); **rewrite** when the shape is polynomial-adjacent (`\s*` / overlapping optional groups next to digits, or the same class CodeQL already flagged); **dismiss** when a conservative static checker flags a standard markdown-link idiom that stays empirically linear and rewriting would churn call sites without clearing a known alert class.
 
-Duration-budget tests cover rewritten paths. Link extract/rewrite patterns stay as regexes with the dismissals below — not a full parser purge.
+Duration-budget tests cover rewritten paths. Link extract/rewrite patterns stay as regexes with the dismissals below — not a full parser purge. Alternatives such as ripgrep, Peggy, or Rust for these scanners are declined for now; see [ADR 0005](docs/features/adr/0005-keep-ts-scanners-over-rg-peggy-rust.md).
 
 #### Rewritten (linear scanners)
 
