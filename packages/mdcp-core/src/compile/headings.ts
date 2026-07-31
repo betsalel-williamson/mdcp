@@ -85,15 +85,18 @@ export function demoteExceptFirstH1(text: string): string {
   return body;
 }
 
-const ABOUT_H1_RE = /^#\s+About this guide\s*$/i;
+const ABOUT_TITLE = 'about this guide';
 
 export function stripAboutThisGuideHeading(text: string): string {
   const lines = text.split('\n');
   let i = 0;
   while (i < lines.length && !lines[i].trim()) i++;
-  if (i < lines.length && ABOUT_H1_RE.test(lines[i].trim())) {
-    i++;
-    while (i < lines.length && !lines[i].trim()) i++;
+  if (i < lines.length) {
+    const parsed = parseAtxHeading(lines[i].trim());
+    if (parsed?.level === 1 && parsed.title.trim().toLowerCase() === ABOUT_TITLE) {
+      i++;
+      while (i < lines.length && !lines[i].trim()) i++;
+    }
   }
   const body = lines.slice(i).join('\n').trim();
   return body ? body + '\n\n' : '';
