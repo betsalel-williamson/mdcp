@@ -469,7 +469,7 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/` — see [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers) for why. Those helpers are **GFM / structure** only. Compile-time wording lives under `src/locale/`; durable prose static analysis belongs in Vale styles — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+Shared GFM / ATX structural helpers live under `src/markdown/`: heading parsing, slug input cleanup, and compile cleanup for legacy explicit-id markers such as `stripAnchors`. They are structural helpers, not a first-class Pandoc-id authoring path. Compile-time wording lives under `src/locale/`; durable prose and unlinked-reference static analysis belongs in Vale styles, including the `MDCP` style in `@bwilliamson/mdcp-presets` — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test

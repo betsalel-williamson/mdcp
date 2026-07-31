@@ -60,7 +60,7 @@ Detect shards not in manifest or missing files.
 
 ## Chapter-cue prose lint (Vale)
 
-Bare `Ch. N` and unlinked chapter-style references are prose cues handled by the `MDCP` Vale style in `@bwilliamson/mdcp-presets` — see [Locale and language boundary](./design-constraints/locale-and-language.md).
+Unlinked chapter/section cues — `See Chapter...`, `See Section...`, bare `Ch. N`, `Section N`, and similar prose references — are en-US static analysis handled by the `MDCP` Vale style in `@bwilliamson/mdcp-presets`. Authors should use GFM links, for example `See [Section 2](./other.md#section-2)`. Other languages need their own Vale styles and `.vale.ini` sections. This is not the same as core link validation: Vale asks prose mentions to become links; [Link validation](./link-validation.md) checks that authored `.md` paths and `#anchor` fragments resolve. See [Locale and language boundary](./design-constraints/locale-and-language.md).
 
 ## Coverage scan (P1.5)
 

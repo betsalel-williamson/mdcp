@@ -74,6 +74,7 @@
     "CODE_OF_CONDUCT.md",
     "SECURITY.md",
     "docs/skills.md",
+    "docs/vale-local/README.md",
     "packages/mdcp-presets/README.md",
     "skills/**/*.md"
   ],

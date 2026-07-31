@@ -25,6 +25,7 @@ describe('design scope documentation (#26)', () => {
   const preprocessorShard = readRepoDoc(PREPROCESSOR_SHARD);
   const gfmScopeShard = readRepoDoc('docs/features/design-constraints/gfm-scope.md');
   const featureCatalog = readRepoDoc('docs/features/feature-catalog.md');
+  const packagesAndTests = readRepoDoc('docs/developer/packages-and-tests.md');
   const compileHooks = readRepoDoc('docs/client-core/compile-hooks/index.md');
   const glossaryIndex = readRepoDoc('docs/glossary/index.md');
 
@@ -56,6 +57,24 @@ describe('design scope documentation (#26)', () => {
     expect(localeGlossary).toContain('style packages');
     expect(localeGlossary).not.toContain('transitional');
     expect(glossaryIndex).toContain('./locale-pack.md');
+  });
+
+  it('keeps markdown helpers scoped to GFM structure and Vale xref prose', () => {
+    const docsValeConfig = readRepoDoc('docs/.vale.ini');
+    const sampleValeConfig = readRepoDoc('examples/sample-guides/.vale.ini');
+    expect(packagesAndTests).toContain(
+      'Shared GFM / ATX structural helpers live under `src/markdown/`',
+    );
+    expect(packagesAndTests).toContain('unlinked-reference static analysis belongs in Vale');
+    expect(packagesAndTests).toContain('@bwilliamson/mdcp-presets');
+    expect(packagesAndTests).not.toContain(
+      'Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/`',
+    );
+    expect(featureCatalog).toContain('Unlinked chapter/section cues');
+    expect(featureCatalog).toContain('See [Section 2](./other.md#section-2)');
+    expect(featureCatalog).toContain('not the same as core link validation');
+    expect(docsValeConfig).toContain('MDCP-Xref');
+    expect(sampleValeConfig).toContain('MDCP-Xref');
   });
 
   it('documents preprocessor and templating only in the preprocessor shard', () => {

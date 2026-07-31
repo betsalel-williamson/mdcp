@@ -1,0 +1,4 @@
+{
+  "vale_version": ">=3.0.0",
+  "description": "mdcp dogfood-only GFM cross-reference reminders. Reusable en-US xref rules live in @bwilliamson/mdcp-presets MDCP."
+}
