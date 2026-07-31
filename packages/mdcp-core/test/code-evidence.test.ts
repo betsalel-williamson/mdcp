@@ -41,9 +41,17 @@ describe('codeEvidence — line range detection', () => {
   it('parses common line range forms from label text', () => {
     expect(lineRangeFromText('firestore.rules L6-L8')).toBe('L6-L8');
     expect(lineRangeFromText('line 42')).toBe('L42');
+    expect(lineRangeFromText('lines 10-20')).toBe('L10-L20');
+    expect(lineRangeFromText('Lines 1–5')).toBe('L1-L5');
     expect(lineRangeFromText(':10-20')).toBe('L10-L20');
     expect(lineRangeFromText(':7')).toBe('L7');
+    expect(lineRangeFromText('L6')).toBe('L6');
+    expect(lineRangeFromText('1-2')).toBe('L1-L2');
+    expect(lineRangeFromText('L 6-8')).toBe('L6-L8');
+    expect(lineRangeFromText('1 - 2')).toBe('L1-L2');
+    expect(lineRangeFromText(':10-L20')).toBe('L10');
     expect(lineRangeFromText('orgCount')).toBeNull();
+    expect(lineRangeFromText('lines 10')).toBeNull();
   });
 });
 
