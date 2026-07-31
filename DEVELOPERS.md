@@ -478,7 +478,7 @@ Tests live under `packages/mdcp-core/test/`. Integration tests invoke the built 
 
 ### mdcp-cli
 
-Thin Commander wrapper around `mdcp-core`. Source: [`packages/mdcp-cli/src/cli.ts`](packages/mdcp-cli/src/cli.ts).
+Thin [CAC](https://github.com/cacjs/cac) wrapper around `mdcp-core`. Source: [`packages/mdcp-cli/src/cli.ts`](packages/mdcp-cli/src/cli.ts).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-cli run build
