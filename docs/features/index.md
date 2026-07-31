@@ -22,6 +22,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
   - [ADR 0001 — Remove `mdcp export` profiles](./adr/0001-remove-export-profiles.md)
   - [ADR 0002 — Remove `mdcp refs lookup`](./adr/0002-remove-refs-lookup.md)
   - [ADR 0003 — Do not adopt OKF](./adr/0003-do-not-adopt-okf.md)
+  - [ADR 0004 — Decline a hard-gated branch-before-edit skill rule](./adr/0004-decline-branch-before-edit-hard-gate.md)
 - [Design constraints](./design-constraints/index.md)
   - [Protocol](./protocol/00-vision-and-roadmap.md)
 
