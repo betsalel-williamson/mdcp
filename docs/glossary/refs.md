@@ -2,7 +2,7 @@
 
 **Refs** (short for **references**) are the organized set of heading [slugs](./heading-slug.md) and [cross-links](./cross-link.md) MDCP derives from compiled guides so authors and CI can keep Markdown links coherent after stitch.
 
-The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](./refs-registry.md) and validates links at `check` time so the **compiled** document still targets the right sections and files.
+Refs are a **GFM heading + link** concern — not chapters/sections, and not Pandoc [xref](./xref.md) identifiers. The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](./refs-registry.md) and validates links at `check` time so the **compiled** document still targets the right headings and files.
 
 ## Related wording
 

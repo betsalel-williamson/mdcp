@@ -57,6 +57,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [refs registry](#refs-registry)
 - [heading slug](#heading-slug)
 - [cross-link](#cross-link)
+- [xref](#xref)
 - [standalone guide](#standalone-guide)
 - [coverage](#coverage)
 - [ReDoS](#redos)
@@ -434,7 +435,9 @@ mdcp/
 │   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
 │   ├── client-core/        # → packages/mdcp-core/README.md
-│   └── repo-readme/        # → README.md (publish landing)
+│   ├── repo-readme/        # → README.md (publish landing)
+│   ├── vale-local/         # Dogfood-only Vale styles (e.g. MDCP-Xref for Pandoc {#…})
+│   └── .vale.ini           # Peer Vale config (Microsoft + MDCP + MDCP-Xref)
 ├── examples/sample-guides/ # Minimal consumer fixture for tests and tutorials
 ├── legacy/                 # Original bash/Python reference implementation
 ├── .changeset/             # Changesets for semver releases
@@ -469,7 +472,16 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared GFM helpers live under `src/markdown/` and `src/refs/` (ATX headings, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic** — Unicode heading text and GFM links, not English chapter/section vocabulary. Compile may strip leftover `{#…}` markers for cleanup; authoring opinion to **remove** Pandoc-style identifiers is Vale (`MDCP-Xref` in this repo). Compile-time wording and locale-specific heading-key patterns live under `src/locale/` (BCP 47 JSON). Durable prose static analysis (unlinked numbered heading mentions) belongs in Vale styles such as `MDCP` in `@bwilliamson/mdcp-presets` — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+#### Language boundary (maintainer map)
+
+- **GFM ATX headings, marker cleanup** → `src/markdown/` — [GFM](#gfm), [xref](#xref)
+- **Language-agnostic heading slugify** → `src/refs/` (`githubSlugify`) — [heading slug](#heading-slug)
+- **GFM [cross-links](#cross-link) / dead targets** → `src/links/`, `src/validate/` — [refs](#refs)
+- **Compile-time wording + locale heading-key patterns** → `src/locale/` (BCP 47 JSON) — [locale pack](#locale-pack)
+- **Unlinked numbered heading mentions (en-US prose)** → Vale `MDCP` in `@bwilliamson/mdcp-presets` — [Locale and language boundary](docs/features/design-constraints/locale-and-language.md)
+- **Pandoc [xref](#xref) after headings (remove)** → dogfood Vale `MDCP-Xref` (`docs/vale-local/`) — [xref](#xref)
+
+Shared GFM helpers stay **language-agnostic** — Unicode heading text and GFM links, not English chapter/section vocabulary. Compile may strip leftover `{#…}` markers for cleanup; authoring opinion to **remove** them is Vale. See [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -499,7 +511,7 @@ Local runs print a text summary and write HTML/lcov under each package’s `cove
 
 ### mdcp-presets
 
-JSONC markdownlint configs only — no TypeScript build. Edit `*.markdownlint-cli2.jsonc` directly.
+JSONC markdownlint configs plus the shippable `MDCP` Vale style (`vale/MDCP/`, Packages-ready under `vale/package/`). Edit preset files directly — no TypeScript build. Dogfood-only Vale styles (for example `MDCP-Xref`) live under [`docs/vale-local/`](docs/vale-local/README.md), not in the published package.
 
 ### Pull request checklist
 
@@ -592,10 +604,10 @@ Prefer host search then read one shard under `docs/`. Compiled monoliths under `
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
 - **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/`, `repo-readme/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
-- **Vale `MDCP` / `MDCP-Xref`** — prose: unlinked numbered heading mentions; dogfood: Pandoc `{#…}` after headings (remove). Not `mdcp check` core steps — enable with `--require-vale`
-- **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
+- **Vale `MDCP` / `MDCP-Xref`** — prose: unlinked numbered heading mentions; dogfood: Pandoc [xref](#xref) markers after headings (remove). Not `mdcp check` core steps — enable with `--require-vale`. Styles: presets `vale/MDCP/` and [`docs/vale-local/`](docs/vale-local/README.md)
+- **link lint** — built-in validation of [cross-links](#cross-link) runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
 
-Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
+Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`). Terminology: [locale pack](#locale-pack), [xref](#xref), [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 <!-- mdcp-shard: end docs/developer/docs-dogfooding.md -->
 
@@ -605,7 +617,7 @@ Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on
 
 ### Base Requirement
 
-When contributing documentation, rely on **simple GFM (GitHub Flavored Markdown)** as the standard.
+When contributing documentation, rely on **simple [GFM](#gfm) (GitHub Flavored Markdown)** as the standard. MDCP knows headings and links — not chapters/sections as protocol concepts.
 
 ### Open Structure
 
@@ -615,7 +627,8 @@ We use an unopinionated, flexible document structure. The goal is to keep the au
 
 While we are unopinionated about document structure, we are **strict about links**.
 
-- All links in your documentation must be valid and point to existing files or headings.
+- All links in your documentation must be valid and point to existing files or headings ([cross-links](#cross-link)).
+- Prefer GitHub-style [heading slugs](#heading-slug) from heading text. Do **not** author Pandoc [xref](#xref) identifiers (`{#…}` after a heading).
 - If a link is invalid, the CI and documentation checks will fail.
 - Do not create links to files that do not exist yet. If you need to indicate a placeholder, comment it out or write `(TBD)`.
 
@@ -624,6 +637,13 @@ For more details on the link validation rules, please consult the [Format specif
 ### Formatting and Linting
 
 To help avoid formatting errors and enforce consistent style, we recommend using `@bwilliamson/mdcp-presets`. These presets configure tools like Prettier and `markdownlint-cli2` to handle whitespace, indentation, and common styling issues automatically. For configuration details, see [Optional Linters](./packages/mdcp-cli/README.md#optional-linters).
+
+This repository also enables Vale styles:
+
+- **`MDCP`** (from presets) — en-US prose when a numbered heading is mentioned without a GFM link
+- **`MDCP-Xref`** (dogfood, [`docs/vale-local/`](docs/vale-local/README.md)) — warn to remove Pandoc [xref](#xref) markers on headings
+
+See [Locale and language boundary](docs/features/design-constraints/locale-and-language.md) and [Docs dogfooding](#docs-dogfooding).
 
 ---
 
@@ -1076,7 +1096,7 @@ Never unpublish a version that other packages or consumers legitimately depend o
 
 ## Safe markdown parsing (heading helpers)
 
-Maintainer note for why `mdcp-core` centralizes ATX heading parsing and related cleanup in shared **language-agnostic** GFM helpers instead of ad-hoc regular expressions.
+Maintainer note for why `mdcp-core` centralizes ATX heading parsing and related cleanup in shared **language-agnostic** [GFM](#gfm) helpers instead of ad-hoc regular expressions. Authoring opinion against Pandoc [xref](#xref) markers lives in Vale, not in these helpers.
 
 Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
 
@@ -1373,7 +1393,9 @@ Use it before you trust a merge. Command details: [CLI consumer guide](docs/clie
 
 ## GFM
 
-**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code).
+
+MDCP’s format contract is authored GFM: **headings** and **links** (plus ordinary GFM constructs). Not Pandoc, LaTeX, or wikilinks. Not a chapter/section document model. Explicit Pandoc [xref](#xref) identifiers after headings are out of scope for authoring; see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 <!-- mdcp-shard: end docs/glossary/gfm.md -->
 
@@ -1389,9 +1411,14 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 
 ## Locale pack
 
-A **locale pack** is MDCP’s small bundle of natural-language strings and locale-specific patterns used when **compiling** docs (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns).
+A **locale pack** is MDCP’s small bundle of natural-language strings and locale-specific patterns used when **compiling** docs (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns in BCP 47 JSON).
 
-It is **not** [GFM](#gfm) structure. GFM helpers and slugify stay language-agnostic. Prose static analysis (unlinked numbered heading mentions, Pandoc `{#…}` authoring, tone, spelling) belongs in peer **[Vale](https://vale.sh/) style packages** — reusable en-US mention rules ship in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`) — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+It is **not** [GFM](#gfm) structure. GFM helpers and [heading slug](#heading-slug) generation stay language-agnostic under `src/markdown/` and `src/refs/`. Prose static analysis belongs in peer **[Vale](https://vale.sh/) style packages**:
+
+- Unlinked numbered heading mentions (en-US) → `MDCP` in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`)
+- Pandoc [xref](#xref) authoring → dogfood `MDCP-Xref` (remove those markers)
+
+See [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 <!-- mdcp-shard: end docs/glossary/locale-pack.md -->
 
@@ -1409,7 +1436,7 @@ Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ign
 
 **Refs** (short for **references**) are the organized set of heading [slugs](#heading-slug) and [cross-links](#cross-link) MDCP derives from compiled guides so authors and CI can keep Markdown links coherent after stitch.
 
-The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](#refs-registry) and validates links at `check` time so the **compiled** document still targets the right sections and files.
+Refs are a **GFM heading + link** concern — not chapters/sections, and not Pandoc [xref](#xref) identifiers. The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](#refs-registry) and validates links at `check` time so the **compiled** document still targets the right headings and files.
 
 ### Related wording
 
@@ -1444,7 +1471,9 @@ The registry is **generated state**, not authored shards. `mdcp compile` (and `m
 
 GitHub-style fragment id for a heading in **compiled** Markdown (the part after `#` in `[label](#slug)`). Parent concept: [refs](#refs).
 
-MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Duplicate titles in one document get `-1`, `-2` suffixes. Authors should not invent fragments from shard-only titles; [cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
+MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Slugify is **language-agnostic**: it operates on Unicode heading text, not English chapter/section vocabulary. Duplicate titles in one document get `-1`, `-2` suffixes.
+
+Authors should not invent fragments from shard-only titles, and should not author Pandoc [xref](#xref) markers to force ids. [Cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
 
 <!-- mdcp-shard: end docs/glossary/heading-slug.md -->
 
@@ -1454,9 +1483,25 @@ MDCP computes slugs from final heading text after guides are stitched and demote
 
 A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
 
-Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](docs/features/link-validation.md).
+MDCP models **[GFM](#gfm) headings and links** only. It does not treat “chapter” or “section” as protocol concepts. Prefer ordinary GFM links for navigation; [heading slugs](#heading-slug) are computed from heading text (language-agnostic GitHub slug rules).
+
+Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the slug that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](docs/features/link-validation.md).
+
+Not a Pandoc [xref](#xref) (`{#…}` after a heading). Not a Vale prose cue for unlinked “See Chapter…” wording.
 
 <!-- mdcp-shard: end docs/glossary/cross-link.md -->
+
+<!-- mdcp-shard: start docs/glossary/xref.md -->
+
+## xref
+
+An **xref** (in this repository) is a **Pandoc-style explicit identifier** written after a heading title — the brace-hash form `{#…}` (for example a heading line that ends with a custom id marker).
+
+MDCP does **not** use xrefs as a first-class authoring feature. Fragment targets come from [heading slugs](#heading-slug) derived from [GFM](#gfm) heading text. Authors should **remove** Pandoc identifiers; this repo’s dogfood Vale style `MDCP-Xref` warns on them. Compile may strip leftover markers for cleanup — that is defensive, not an invitation to author them. See [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+
+Not the same as a [cross-link](#cross-link) (a GFM markdown link to a heading or shard). Not the same as en-US Vale prose cues when body text mentions a numbered heading without linking (`MDCP` style in `@bwilliamson/mdcp-presets`).
+
+<!-- mdcp-shard: end docs/glossary/xref.md -->
 
 <!-- mdcp-shard: start docs/glossary/standalone-guide.md -->
 
@@ -1488,7 +1533,7 @@ See [Documentation coverage scan](docs/features/coverage-scan.md).
 
 **ReDoS** (Regular expression Denial of Service) is when a regular expression takes far too long on certain inputs — often because overlapping or unbounded quantifiers force the engine to explore many matching paths. Attackers (or accidental pathological strings) can stall a process that runs the pattern on untrusted or library-controlled text.
 
-In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-helpers).
+In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading parsing and leftover Pandoc [xref](#xref) marker cleanup in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-helpers).
 
 <!-- mdcp-shard: end docs/glossary/redos.md -->
 

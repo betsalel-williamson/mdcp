@@ -69,7 +69,7 @@ Prefer host search then read one shard under `docs/`. Compiled monoliths under `
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
 - **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/`, `repo-readme/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
-- **Vale `MDCP` / `MDCP-Xref`** — prose: unlinked numbered heading mentions; dogfood: Pandoc `{#…}` after headings (remove). Not `mdcp check` core steps — enable with `--require-vale`
-- **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](../features/link-validation.md#publish-only-link-policy)
+- **Vale `MDCP` / `MDCP-Xref`** — prose: unlinked numbered heading mentions; dogfood: Pandoc [xref](../glossary/xref.md) markers after headings (remove). Not `mdcp check` core steps — enable with `--require-vale`. Styles: presets `vale/MDCP/` and [`docs/vale-local/`](../vale-local/README.md)
+- **link lint** — built-in validation of [cross-links](../glossary/cross-link.md) runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](../features/link-validation.md#publish-only-link-policy)
 
-Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
+Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`). Terminology: [locale pack](../glossary/locale-pack.md), [xref](../glossary/xref.md), [Locale and language boundary](../features/design-constraints/locale-and-language.md).

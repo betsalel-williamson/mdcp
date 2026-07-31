@@ -23,7 +23,9 @@ mdcp/
 │   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
 │   ├── client-core/        # → packages/mdcp-core/README.md
-│   └── repo-readme/        # → README.md (publish landing)
+│   ├── repo-readme/        # → README.md (publish landing)
+│   ├── vale-local/         # Dogfood-only Vale styles (e.g. MDCP-Xref for Pandoc {#…})
+│   └── .vale.ini           # Peer Vale config (Microsoft + MDCP + MDCP-Xref)
 ├── examples/sample-guides/ # Minimal consumer fixture for tests and tutorials
 ├── legacy/                 # Original bash/Python reference implementation
 ├── .changeset/             # Changesets for semver releases

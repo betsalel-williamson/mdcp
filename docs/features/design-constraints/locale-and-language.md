@@ -4,7 +4,7 @@ MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract: **
 
 ## Preferred homes
 
-- **Pandoc `{#…}` after a heading** (explicit xref identifiers) → peer **Vale**. Dogfood style `MDCP-Xref` warns authors to **remove** them. MDCP does not require or prefer explicit ids; compile may strip leftover markers for cleanup.
+- **Pandoc [xref](../../glossary/xref.md)** (`{#…}` after a heading) → peer **Vale**. Dogfood style `MDCP-Xref` warns authors to **remove** them. MDCP does not require or prefer explicit ids; compile may strip leftover markers for cleanup.
 - **Unlinked numbered heading mentions in prose** (en-US words such as "See Chapter…", bare `Ch. N`, "Section N") → peer **Vale** style `MDCP` in `@bwilliamson/mdcp-presets` (`vale/MDCP`). Language-specific; other languages need their own styles.
 - **Dead internal targets, orphans, refs, compile** → **mdcp-core / CLI**. First-class [MarkDown Context Protocol](../../glossary/mdcp.md) validation of GFM links and heading slugs.
 - **GFM / Markdown shape** → peer **markdownlint**. Format structure, not natural language.

@@ -44,6 +44,7 @@ describe('design scope documentation (#26)', () => {
   it('documents GFM vs locale-pack boundary for opinionated English helpers', () => {
     const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
     const localeGlossary = readRepoDoc('docs/glossary/locale-pack.md');
+    const xrefGlossary = readRepoDoc('docs/glossary/xref.md');
     expect(localeShard).toContain('# Locale and language boundary');
     expect(localeShard).toContain('locale pack');
     expect(localeShard).toContain('Vale');
@@ -57,6 +58,10 @@ describe('design scope documentation (#26)', () => {
     expect(localeGlossary).toContain('style packages');
     expect(localeGlossary).not.toContain('transitional');
     expect(glossaryIndex).toContain('./locale-pack.md');
+    expect(glossaryIndex).toContain('./xref.md');
+    expect(xrefGlossary).toContain('# xref');
+    expect(xrefGlossary).toContain('Pandoc-style explicit identifier');
+    expect(xrefGlossary).toContain('cross-link');
   });
 
   it('keeps markdown helpers language-agnostic and separates Vale xref from MDCP prose', () => {
@@ -64,18 +69,21 @@ describe('design scope documentation (#26)', () => {
     const sampleValeConfig = readRepoDoc('examples/sample-guides/.vale.ini');
     const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
     const xrefMeta = readRepoDoc('docs/vale-local/MDCP-Xref/meta.json');
-    expect(packagesAndTests).toContain('Shared GFM helpers live under `src/markdown/`');
+    const markdownFormatting = readRepoDoc('docs/developer/markdown-formatting.md');
+    expect(packagesAndTests).toContain('Language boundary (maintainer map)');
     expect(packagesAndTests).toContain('language-agnostic');
     expect(packagesAndTests).toContain('@bwilliamson/mdcp-presets');
+    expect(packagesAndTests).toContain('../glossary/xref.md');
     expect(packagesAndTests).not.toContain(
       'Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/`',
     );
-    expect(localeShard).toContain('Pandoc `{#…}` after a heading');
+    expect(localeShard).toContain('../../glossary/xref.md');
     expect(localeShard).toContain('not chapters/sections as protocol concepts');
-    expect(featureCatalog).toContain('Pandoc-style `{#…}` after a heading');
+    expect(featureCatalog).toContain('../glossary/xref.md');
     expect(featureCatalog).toContain('See [Section 2](./other.md#section-2)');
     expect(featureCatalog).toContain('Neither replaces');
     expect(xrefMeta).toContain('Pandoc-style');
+    expect(markdownFormatting).toContain('../glossary/xref.md');
     expect(docsValeConfig).toContain('MDCP-Xref');
     expect(docsValeConfig).not.toContain('BlockIgnores');
     expect(sampleValeConfig).toContain('MDCP-Xref');
@@ -132,6 +140,8 @@ describe('design scope documentation (#26)', () => {
       const compiled = readRepoDoc(outputPath);
       expect(compiled).toContain('## GFM');
       expect(compiled).toContain('## Authored GFM');
+      expect(compiled).toContain('## xref');
+      expect(compiled).toContain('## Locale pack');
     }
   });
 });
