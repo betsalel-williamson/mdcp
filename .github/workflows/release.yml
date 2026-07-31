@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: write # Cancel superseded waiting/queued Release runs
     outputs:
       has_changesets: ${{ steps.detect.outputs.has_changesets }}
       has_missing_releases: ${{ steps.missing.outputs.has_missing_releases }}
@@ -31,6 +32,35 @@ jobs:
       - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
+
+      # Concurrency keeps in_progress publishes; waiting (env approval) runs are
+      # not cancelled by GHA. Newest plan cancels older waiting/queued runs so
+      # only the latest tip needs approval ("latest main wins").
+      - name: Cancel superseded waiting/queued Release runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          current="${GITHUB_RUN_ID}"
+          for status in waiting queued; do
+            mapfile -t ids < <(
+              gh run list \
+                --workflow release.yml \
+                --branch main \
+                --status "$status" \
+                --limit 100 \
+                --json databaseId \
+                --jq '.[].databaseId'
+            )
+            for id in "${ids[@]+"${ids[@]}"}"; do
+              if [ "$id" = "$current" ]; then
+                continue
+              fi
+              echo "Cancelling superseded Release run ${id} (status=${status})"
+              gh run cancel "$id" || true
+            done
+          done
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -97,6 +127,15 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      # After env approval the trigger SHA may be stale. Reset to tip so version
+      # + publish includes all merged changesets; heal still uses package history.
+      - name: Reset to latest origin/main
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
+          echo "Release working tree at $(git rev-parse --short HEAD) (origin/main tip)"
 
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
 

@@ -4,8 +4,9 @@
  * push to main → publish npm → push tags → GitHub Releases.
  *
  * Push happens before npm publish so a failed push cannot leave registry
- * packages without the matching commit on main. Tags are pushed before
- * GitHub Releases so `gh release create` can resolve them; create also
+ * packages without the matching commit on main. If origin/main moved during
+ * versioning, abort without force-push (latest main wins). Tags are pushed
+ * before GitHub Releases so `gh release create` can resolve them; create also
  * passes `--target` so a fresh checkout can heal missing releases.
  *
  * With no pending changesets, ensures git tags + GitHub Releases exist for
@@ -276,6 +277,19 @@ run('git commit -m "chore: release"');
 
 // Push the release commit to main BEFORE npm publish so a failed push cannot
 // leave packages on the registry without the matching commit on main.
+// If main moved during versioning, abort without force-push (latest main wins).
+if (!dryRun) {
+  run('git fetch origin main');
+  const parent = capture('git rev-parse HEAD~1');
+  const tip = capture('git rev-parse origin/main');
+  if (parent !== tip) {
+    console.log(
+      `Release superseded: commit parent ${parent} is not origin/main ${tip}. ` +
+        'Aborting without push (latest main wins). A newer Release run should publish.',
+    );
+    process.exit(0);
+  }
+}
 run('git push origin HEAD:main');
 
 run('pnpm audit --audit-level=high');
