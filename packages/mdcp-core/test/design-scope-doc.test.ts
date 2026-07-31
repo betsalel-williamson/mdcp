@@ -59,22 +59,27 @@ describe('design scope documentation (#26)', () => {
     expect(glossaryIndex).toContain('./locale-pack.md');
   });
 
-  it('keeps markdown helpers scoped to GFM structure and Vale xref prose', () => {
+  it('keeps markdown helpers language-agnostic and separates Vale xref from MDCP prose', () => {
     const docsValeConfig = readRepoDoc('docs/.vale.ini');
     const sampleValeConfig = readRepoDoc('examples/sample-guides/.vale.ini');
-    expect(packagesAndTests).toContain(
-      'Shared GFM / ATX structural helpers live under `src/markdown/`',
-    );
-    expect(packagesAndTests).toContain('unlinked-reference static analysis belongs in Vale');
+    const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
+    const xrefMeta = readRepoDoc('docs/vale-local/MDCP-Xref/meta.json');
+    expect(packagesAndTests).toContain('Shared GFM helpers live under `src/markdown/`');
+    expect(packagesAndTests).toContain('language-agnostic');
     expect(packagesAndTests).toContain('@bwilliamson/mdcp-presets');
     expect(packagesAndTests).not.toContain(
       'Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/`',
     );
-    expect(featureCatalog).toContain('Unlinked chapter/section cues');
+    expect(localeShard).toContain('Pandoc `{#…}` after a heading');
+    expect(localeShard).toContain('not chapters/sections as protocol concepts');
+    expect(featureCatalog).toContain('Pandoc-style `{#…}` after a heading');
     expect(featureCatalog).toContain('See [Section 2](./other.md#section-2)');
-    expect(featureCatalog).toContain('not the same as core link validation');
+    expect(featureCatalog).toContain('Neither replaces');
+    expect(xrefMeta).toContain('Pandoc-style');
     expect(docsValeConfig).toContain('MDCP-Xref');
+    expect(docsValeConfig).not.toContain('BlockIgnores');
     expect(sampleValeConfig).toContain('MDCP-Xref');
+    expect(sampleValeConfig).not.toContain('BlockIgnores');
   });
 
   it('documents preprocessor and templating only in the preprocessor shard', () => {

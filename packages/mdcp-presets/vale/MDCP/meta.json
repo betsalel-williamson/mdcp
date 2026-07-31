@@ -1,4 +1,4 @@
 {
-  "vale_version": ">=3.0.0",
-  "description": "MDCP en-US prose cues (bare chapter/section cross-references). Prefer GFM markdown links to target shards."
+  "name": "MDCP",
+  "description": "MDCP en-US prose cues: numbered heading mentions (Chapter/Section/Ch./Sec.) without a GFM markdown link. Prefer links to target shards; MDCP validates link targets separately."
 }

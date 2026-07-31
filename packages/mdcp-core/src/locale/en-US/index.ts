@@ -8,5 +8,6 @@ export const enUS = createLocalePack({
   id: 'en-US',
   brokenLinks: brokenLinksCopy,
   inserts: insertsCopy,
-  chapterKeyPattern: refsCopy.chapterKeyPattern,
+  headingKeyPattern: refsCopy.headingKeyPattern,
+  headingKeyTemplate: refsCopy.headingKeyTemplate,
 });

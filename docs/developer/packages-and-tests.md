@@ -16,7 +16,7 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared GFM / ATX structural helpers live under `src/markdown/`: heading parsing, slug input cleanup, and compile cleanup for legacy explicit-id markers such as `stripAnchors`. They are structural helpers, not a first-class Pandoc-id authoring path. Compile-time wording lives under `src/locale/`; durable prose and unlinked-reference static analysis belongs in Vale styles, including the `MDCP` style in `@bwilliamson/mdcp-presets` — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
+Shared GFM helpers live under `src/markdown/` and `src/refs/` (ATX headings, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic** — Unicode heading text and GFM links, not English chapter/section vocabulary. Compile may strip leftover `{#…}` markers for cleanup; authoring opinion to **remove** Pandoc-style identifiers is Vale (`MDCP-Xref` in this repo). Compile-time wording and locale-specific heading-key patterns live under `src/locale/` (BCP 47 JSON). Durable prose static analysis (unlinked numbered heading mentions) belongs in Vale styles such as `MDCP` in `@bwilliamson/mdcp-presets` — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test

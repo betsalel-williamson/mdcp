@@ -92,7 +92,7 @@ describe('cli smoke', () => {
     expect(out).toContain('mdcp check passed');
   });
 
-  it('does not run chapter-cue prose lint in core check', () => {
+  it('does not run Vale prose or Pandoc-id checks in core check', () => {
     const docs = mkdtempSync(join(tmpdir(), 'mdcp-no-core-xref-'));
     try {
       const guide = join(docs, 'g');

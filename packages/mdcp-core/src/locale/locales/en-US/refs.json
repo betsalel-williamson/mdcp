@@ -1,3 +1,4 @@
 {
-  "chapterKeyPattern": "^(?<prefix>[A-Z]{2,4})\\s+Chapter\\s+(?<number>\\d+)"
+  "headingKeyPattern": "^(?<prefix>[A-Z]{2,4})\\s+Chapter\\s+(?<number>\\d+)",
+  "headingKeyTemplate": "{prefix}.ch{number}"
 }

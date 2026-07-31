@@ -469,7 +469,7 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared GFM / ATX structural helpers live under `src/markdown/`: heading parsing, slug input cleanup, and compile cleanup for legacy explicit-id markers such as `stripAnchors`. They are structural helpers, not a first-class Pandoc-id authoring path. Compile-time wording lives under `src/locale/`; durable prose and unlinked-reference static analysis belongs in Vale styles, including the `MDCP` style in `@bwilliamson/mdcp-presets` — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+Shared GFM helpers live under `src/markdown/` and `src/refs/` (ATX headings, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic** — Unicode heading text and GFM links, not English chapter/section vocabulary. Compile may strip leftover `{#…}` markers for cleanup; authoring opinion to **remove** Pandoc-style identifiers is Vale (`MDCP-Xref` in this repo). Compile-time wording and locale-specific heading-key patterns live under `src/locale/` (BCP 47 JSON). Durable prose static analysis (unlinked numbered heading mentions) belongs in Vale styles such as `MDCP` in `@bwilliamson/mdcp-presets` — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -592,7 +592,7 @@ Prefer host search then read one shard under `docs/`. Compiled monoliths under `
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
 - **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/`, `repo-readme/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
-- **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
+- **Vale `MDCP` / `MDCP-Xref`** — prose: unlinked numbered heading mentions; dogfood: Pandoc `{#…}` after headings (remove). Not `mdcp check` core steps — enable with `--require-vale`
 - **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
@@ -1074,25 +1074,25 @@ Never unpublish a version that other packages or consumers legitimately depend o
 
 <!-- mdcp-shard: start docs/developer/safe-markdown-parsing.md -->
 
-## Safe markdown parsing (heading and anchor helpers)
+## Safe markdown parsing (heading helpers)
 
-Maintainer note for why `mdcp-core` centralizes ATX heading and Pandoc-style `` handling in shared helpers instead of ad-hoc regular expressions.
+Maintainer note for why `mdcp-core` centralizes ATX heading parsing and related cleanup in shared **language-agnostic** GFM helpers instead of ad-hoc regular expressions.
 
 Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
 
 ### Why this is necessary
 
-GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip `` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](#redos) class of denial-of-service risk.
+GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip leftover `{#…}` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](#redos) class of denial-of-service risk.
 
-Even when everyday docs never hit the pathological case, the open alerts block a clean security dashboard, and the same regex shapes were copied across compile, refs, links, and xref lint. Fixing call sites one-by-one without a shared parse path invites the class to return.
+Even when everyday docs never hit the pathological case, the open alerts block a clean security dashboard, and the same regex shapes were copied across compile, refs, and links. Fixing call sites one-by-one without a shared parse path invites the class to return.
 
 ### What we do instead (Phase A)
 
 Phase A introduces shared **linear** helpers for:
 
 - recognizing and demoting ATX headings
-- stripping Pandoc-style `` markers (including optional preceding whitespace when cleaning compiled output)
-- producing plain heading text for [heading slug](#heading-slug) generation
+- stripping leftover `{#…}` markers when cleaning compiled output (defensive cleanup — authoring opinion to avoid those markers is Vale `MDCP-Xref`)
+- producing plain heading text for language-agnostic [heading slug](#heading-slug) generation
 
 Public package APIs keep their existing names; call sites delegate to the helpers. Duration-budget regression tests exercise the known CodeQL pump classes so a future regex reintroduction fails CI.
 
@@ -1100,12 +1100,12 @@ See [Packages and tests](#packages-and-tests) for where the helper module lives 
 
 ### What Phase B covers
 
-Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example chapter xref lint and code-evidence patterns). Those stay out of the Phase A release gate. Rewrite or keep case-by-case; do not block shipping Phase A on a full regex purge.
+Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example code-evidence patterns). Those stay out of the Phase A release gate. Rewrite or keep case-by-case; do not block shipping Phase A on a full regex purge.
 
 ### Authoring implications
 
-- Prefer the shared helpers for new heading or `` logic; do not add new polynomial-risk regexes for those jobs.
-- Explicit `` markers in shards remain supported; stripping and slug behavior stay aligned with prior golden tests for normal content.
+- Prefer the shared helpers for new heading or slug logic; do not add new polynomial-risk regexes for those jobs.
+- Prefer GFM auto-slugs; do not author Pandoc `{#…}` on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
 - After merge to the default branch, confirm CodeQL alerts for this class close on the next scan of `main`.
 
 <!-- mdcp-shard: end docs/developer/safe-markdown-parsing.md -->
@@ -1116,7 +1116,7 @@ Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example 
 
 Maintainer guide for tracking **GitHub Actions security posture** in this public OSS monorepo. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); dependency and release triage stays in [Security-incident triage](#security-incident-triage). This shard is the audit trail for CI workflow and repository settings against the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html).
 
-Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](#redos)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
+Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](#redos)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-helpers).
 
 ### Status vocabulary
 
@@ -1389,9 +1389,9 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 
 ## Locale pack
 
-A **locale pack** is MDCP’s small bundle of natural-language strings used when **compiling** docs (for example US-English insert captions like `Table 1. …` and `BROKEN LINK` marker copy).
+A **locale pack** is MDCP’s small bundle of natural-language strings and locale-specific patterns used when **compiling** docs (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns).
 
-It is **not** [GFM](#gfm) structure. Prose static analysis (unlinked chapter-style cues, tone, spelling) belongs in peer **[Vale](https://vale.sh/) style packages** — MDCP’s chapter-cue style ships in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`) — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+It is **not** [GFM](#gfm) structure. GFM helpers and slugify stay language-agnostic. Prose static analysis (unlinked numbered heading mentions, Pandoc `{#…}` authoring, tone, spelling) belongs in peer **[Vale](https://vale.sh/) style packages** — reusable en-US mention rules ship in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`) — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 <!-- mdcp-shard: end docs/glossary/locale-pack.md -->
 
@@ -1488,7 +1488,7 @@ See [Documentation coverage scan](docs/features/coverage-scan.md).
 
 **ReDoS** (Regular expression Denial of Service) is when a regular expression takes far too long on certain inputs — often because overlapping or unbounded quantifiers force the engine to explore many matching paths. Attackers (or accidental pathological strings) can stall a process that runs the pattern on untrusted or library-controlled text.
 
-In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
+In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-helpers).
 
 <!-- mdcp-shard: end docs/glossary/redos.md -->
 

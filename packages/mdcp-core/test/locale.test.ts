@@ -36,7 +36,8 @@ describe('locale packs', () => {
       inserts: {
         seeInsertFallback: 'Open insert',
       },
-      chapterKeyPattern: '^(?<prefix>[A-Z]{2,4})\\s+Part\\s+(?<number>\\d+)',
+      headingKeyPattern: '^(?<prefix>[A-Z]{2,4})\\s+Part\\s+(?<number>\\d+)',
+      headingKeyTemplate: '{prefix}.p{number}',
     });
 
     const marker = pack.brokenLinks.formatMarker('Topic', './a.md', '#missing', 'dead anchor');
@@ -44,18 +45,20 @@ describe('locale packs', () => {
     expect(pack.brokenLinks.lineHasMarker(marker)).toBe(true);
     expect(pack.inserts.kindTitle('diagram')).toBe('Diagram');
     expect(pack.inserts.humanizeBasename('éclair-guides')).toBe('Éclair Guides');
-    expect(pack.chapterKeyFromTitle('ADM Part 7 — Details')).toEqual({
+    expect(pack.headingKeyFromTitle('ADM Part 7 — Details')).toEqual({
       prefix: 'ADM',
       number: '7',
     });
+    expect(pack.formatHeadingKey({ prefix: 'ADM', number: '7' })).toBe('adm.p7');
   });
 
-  it('keeps chapter semantic keys in the en-US pack for refs via locale JSON', () => {
-    expect(enUS.chapterKeyFromTitle('ADM Chapter 1 — Start')).toEqual({
+  it('keeps en-US heading-key pattern in locale JSON (not a core chapter concept)', () => {
+    expect(enUS.headingKeyFromTitle('ADM Chapter 1 — Start')).toEqual({
       prefix: 'ADM',
       number: '1',
     });
-    expect(enUS.chapterKeyFromTitle('Introduction')).toBeNull();
+    expect(enUS.headingKeyFromTitle('Introduction')).toBeNull();
+    expect(enUS.formatHeadingKey({ prefix: 'ADM', number: '1' })).toBe('adm.ch1');
   });
 
   it('formats broken-link markers from the active locale pack', () => {
@@ -72,9 +75,16 @@ describe('locale packs', () => {
     expect(enUS.inserts.seeInsertFallback).toBe('See insert');
   });
 
-  it('wires chapter semantic keys through the locale pack', () => {
+  it('wires heading semantic keys through the locale pack', () => {
     const reg = buildSlugRegistry('# Guide\n\n## ADM Chapter 1 — Getting started\n');
     const entry = reg.headings.find((h) => h.title.includes('ADM Chapter 1'));
     expect(entry?.key).toBe('adm.ch1');
+  });
+
+  it('uses language-agnostic slugify for semantic-key fallback', () => {
+    const reg = buildSlugRegistry('# Guide\n\n## 日本語見出し\n');
+    const entry = reg.headings.find((h) => h.title === '日本語見出し');
+    expect(entry?.slug).toBeTruthy();
+    expect(entry!.key).toBe(`guide.${entry!.slug}`);
   });
 });

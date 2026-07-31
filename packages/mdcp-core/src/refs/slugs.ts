@@ -32,13 +32,10 @@ export interface RefsRegistry {
 }
 
 function semanticKey(title: string, guide: string, locale: LocalePack): string | null {
-  const chapter = locale.chapterKeyFromTitle(title);
-  if (chapter) return `${chapter.prefix.toLowerCase()}.ch${chapter.number}`;
-  const safe = title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, 48);
+  const parts = locale.headingKeyFromTitle(title);
+  if (parts) return locale.formatHeadingKey(parts);
+  // Language-agnostic fallback: GitHub slug from heading text (Unicode-safe).
+  const safe = githubSlugify(title).slice(0, 48);
   return safe ? `${guide}.${safe}` : null;
 }
 

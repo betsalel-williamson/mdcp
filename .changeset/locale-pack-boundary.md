@@ -4,4 +4,4 @@
 '@bwilliamson/mdcp-presets': minor
 ---
 
-Ship the `MDCP` Vale style (en-US chapter/section cue prose rules) from `@bwilliamson/mdcp-presets` as a Vale Packages-ready layout, keep compile-time locale strings in mdcp-core, and document Vale multi-language style packages as the durable home for prose static analysis — separate from GFM helpers and first-class link validation.
+Ship the `MDCP` Vale style (en-US unlinked heading-mention prose) from `@bwilliamson/mdcp-presets`, keep compile-time locale strings and heading-key patterns in mdcp-core (BCP 47 JSON + shared formatters), document Pandoc `{#id}` removal as Vale (`MDCP-Xref` dogfood), and keep GFM helpers / slugify language-agnostic — separate from first-class GFM link validation.

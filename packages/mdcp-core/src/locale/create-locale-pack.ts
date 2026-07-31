@@ -12,7 +12,10 @@ export interface CreateLocalePackOptions {
   readonly id: string;
   readonly brokenLinks: LocaleBrokenLinkMessages;
   readonly inserts: LocaleInsertMessages;
-  readonly chapterKeyPattern?: string;
+  /** Locale-specific heading-title pattern with `prefix` / `number` groups. */
+  readonly headingKeyPattern?: string;
+  /** Template for semantic keys; placeholders `{prefix}` and `{number}`. */
+  readonly headingKeyTemplate?: string;
 }
 
 const TEMPLATE_VAR_RE = /\{([A-Za-z][A-Za-z0-9_]*)\}/g;
@@ -99,16 +102,16 @@ export function createInsertsCopy(messages: LocaleInsertMessages): LocaleInsertC
   };
 }
 
-function createChapterKeyFromTitle(
-  chapterKeyPattern: string | undefined,
-): LocalePack['chapterKeyFromTitle'] {
-  if (!chapterKeyPattern) {
+function createHeadingKeyFromTitle(
+  headingKeyPattern: string | undefined,
+): LocalePack['headingKeyFromTitle'] {
+  if (!headingKeyPattern) {
     return () => null;
   }
 
-  const chapterKeyRe = new RegExp(chapterKeyPattern, 'iu');
+  const headingKeyRe = new RegExp(headingKeyPattern, 'iu');
   return (title: string) => {
-    const match = chapterKeyRe.exec(title);
+    const match = headingKeyRe.exec(title);
     if (!match) return null;
 
     const prefix = match.groups?.prefix ?? match[1];
@@ -119,11 +122,23 @@ function createChapterKeyFromTitle(
   };
 }
 
+function createFormatHeadingKey(
+  headingKeyTemplate: string | undefined,
+): LocalePack['formatHeadingKey'] {
+  const template = headingKeyTemplate ?? '{prefix}.ch{number}';
+  return (parts) =>
+    formatTemplate(template, {
+      prefix: parts.prefix.toLocaleLowerCase(),
+      number: parts.number,
+    });
+}
+
 export function createLocalePack(options: CreateLocalePackOptions): LocalePack {
   return {
     id: options.id,
     brokenLinks: createBrokenLinksCopy(options.brokenLinks),
     inserts: createInsertsCopy(options.inserts),
-    chapterKeyFromTitle: createChapterKeyFromTitle(options.chapterKeyPattern),
+    headingKeyFromTitle: createHeadingKeyFromTitle(options.headingKeyPattern),
+    formatHeadingKey: createFormatHeadingKey(options.headingKeyTemplate),
   };
 }

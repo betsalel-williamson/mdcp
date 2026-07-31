@@ -540,7 +540,7 @@ Install **Vale** separately so `vale` is on your `PATH` — see [Vale installati
 
 Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.
 
-A [locale pack](#locale-pack) is MDCP compile-time wording — not a Vale style. Prose chapter-cue rules ship as the **`MDCP` Vale style** in `@bwilliamson/mdcp-presets` (`vale/MDCP/`); see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+A [locale pack](#locale-pack) is MDCP compile-time wording — not a Vale style. Unlinked numbered heading-mention prose ships as the **`MDCP` Vale style** in `@bwilliamson/mdcp-presets` (`vale/MDCP/`); see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
 ### In-scope guide fileset
 
@@ -777,9 +777,9 @@ The registry is **generated state**, not authored shards. `mdcp compile` (and `m
 
 ## Locale pack
 
-A **locale pack** is MDCP’s small bundle of natural-language strings used when **compiling** docs (for example US-English insert captions like `Table 1. …` and `BROKEN LINK` marker copy).
+A **locale pack** is MDCP’s small bundle of natural-language strings and locale-specific patterns used when **compiling** docs (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns).
 
-It is **not** [GFM](#gfm) structure. Prose static analysis (unlinked chapter-style cues, tone, spelling) belongs in peer **[Vale](https://vale.sh/) style packages** — MDCP’s chapter-cue style ships in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`) — see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+It is **not** [GFM](#gfm) structure. GFM helpers and slugify stay language-agnostic. Prose static analysis (unlinked numbered heading mentions, Pandoc `{#…}` authoring, tone, spelling) belongs in peer **[Vale](https://vale.sh/) style packages** — reusable en-US mention rules ship in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`) — see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
 <!-- mdcp-shard: end ../../docs/glossary/locale-pack.md -->
 

@@ -7,10 +7,15 @@ export interface LocalePack {
   readonly inserts: LocaleInsertCopy;
 
   /**
-   * Semantic chapter key parts from a heading title (e.g. `ADM Chapter 1` →
-   * `{ prefix: 'ADM', number: '1' }`), or null when the title does not match.
+   * Locale-specific semantic key parts from a heading title when the title
+   * matches `headingKeyPattern` (en-US example: `ADM Chapter 1` →
+   * `{ prefix: 'ADM', number: '1' }`), or null when it does not match.
+   * MDCP does not model chapters — the pattern string is locale data only.
    */
-  chapterKeyFromTitle(title: string): { prefix: string; number: string } | null;
+  headingKeyFromTitle(title: string): { prefix: string; number: string } | null;
+
+  /** Format a semantic heading key (en-US default template: `{prefix}.ch{number}`). */
+  formatHeadingKey(parts: { prefix: string; number: string }): string;
 }
 
 /** Broken-link marker wording in compiled output. */

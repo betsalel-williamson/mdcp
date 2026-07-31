@@ -36,7 +36,7 @@ npm install -D @bwilliamson/mdcp-presets markdownlint-cli2 @bwilliamson/mdcp-cli
 
 ## Vale style (`MDCP`)
 
-English (en-US) prose cues for MDCP docs — bare chapter and section cross-references that should be GFM markdown links. This is the durable home for that opinion; keep [mdcp-core](https://www.npmjs.com/package/@bwilliamson/mdcp-core) focused on compile and protocol validation. See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+English (en-US) prose cues when docs **mention** a numbered heading (`Chapter` / `Section` / `Ch.` / `Sec.`) without a GFM markdown link. MDCP itself only models headings and links; this style is language-specific static analysis. Keep [mdcp-core](https://www.npmjs.com/package/@bwilliamson/mdcp-core) on compile and protocol validation (including link targets). See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
 | Path                 | Role                                            |
 | -------------------- | ----------------------------------------------- |
@@ -78,12 +78,7 @@ BasedOnStyles = Microsoft, MDCP
 TokenIgnores = (?s)\[.*?\]\(.*?\)
 ```
 
-If your repo uses chapter or section titles in ATX headings, add a local override in your `.vale.ini`:
-
-```ini
-[*.{md,mdx}]
-BlockIgnores = (?m)^#+ .*
-```
+Shipped `MDCP` rules use `scope: ~heading` so ATX heading titles (which may contain the words Chapter/Section) are not matched. Dogfood `MDCP-Xref` uses `scope: heading` for Pandoc `{#…}` identifiers.
 
 Run prose checks with:
 

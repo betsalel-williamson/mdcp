@@ -1,4 +1,4 @@
 {
-  "vale_version": ">=3.0.0",
-  "description": "mdcp dogfood-only GFM cross-reference reminders. Reusable en-US xref rules live in @bwilliamson/mdcp-presets MDCP."
+  "name": "MDCP-Xref",
+  "description": "mdcp dogfood-only: warn on Pandoc-style {#id} after headings. Prefer GFM auto-slugs; mdcp-core does not require explicit ids."
 }
