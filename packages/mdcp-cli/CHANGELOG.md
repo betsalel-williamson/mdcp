@@ -1,5 +1,11 @@
 # @bwilliamson/mdcp-cli
 
+## 0.7.3
+
+### Patch Changes
+
+- 3e608b6: Drop unused `commander` dependency — the CLI already runs on CAC only.
+
 ## 0.7.2
 
 ### Patch Changes
