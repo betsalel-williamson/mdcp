@@ -1,44 +1,21 @@
-import type {
-  LocaleBrokenLinkCopy,
-  LocaleInsertCopy,
-  LocalePack,
-  LocaleXrefPatterns,
-} from '../types.js';
+import brokenLinksCopy from '../locales/en-US/brokenLinks.json' with { type: 'json' };
+import insertsCopy from '../locales/en-US/inserts.json' with { type: 'json' };
+import type { LocaleBrokenLinkCopy, LocaleInsertCopy, LocalePack } from '../types.js';
 
 const CHAPTER_KEY_RE = /^([A-Z]{2,4})\s+Chapter\s+(\d+)/i;
 
-const xrefs: LocaleXrefPatterns = {
-  chapterRef: /\b(?:Ch\.?\s*\d+(?:\s*[–—-]\s*[^|.\n]+)?|Chapter\s+\d+(?:\s*[–—-]\s*[^|.\n]+)?)\b/gi,
-  seeChapter: /\bSee\s+Chapter\s+\d+\b/gi,
-  seeCapitalUnlinked: /\bSee\s+(?!your\s)(?!\[)\w/,
-  seeLowercaseUnlinked: /(?<=[(,])\s*see\s+(?!\[)\w/,
-  seeTableCell: '| See |',
-  seeLinked: /\b[Ss]ee\s+\[/,
-
-  bareCrossRefMessage(match: string): string {
-    return `bare cross-ref: ${JSON.stringify(match)}`;
-  },
-  unlinkedMessage(match: string): string {
-    return `unlinked: ${JSON.stringify(match)}`;
-  },
-  unlinkedSeeCapitalMessage: 'unlinked See reference',
-  unlinkedSeeLowercaseMessage: 'unlinked see reference',
-};
-
-const MARKER_LABEL = 'BROKEN LINK';
-
 const brokenLinks: LocaleBrokenLinkCopy = {
-  markerLabel: MARKER_LABEL,
-  reasonDeadAnchor: 'dead anchor in compiled guide',
-  reasonMissingFile: 'missing file',
-  reasonMissingPublishPath: 'missing publish path',
+  markerLabel: brokenLinksCopy.markerLabel,
+  reasonDeadAnchor: brokenLinksCopy.reasonDeadAnchor,
+  reasonMissingFile: brokenLinksCopy.reasonMissingFile,
+  reasonMissingPublishPath: brokenLinksCopy.reasonMissingPublishPath,
 
   formatMarker(label, originalTarget, brokenTarget, reason): string {
-    return `**${MARKER_LABEL}:** "${label}" (\`${originalTarget}\`) → \`${brokenTarget}\` (${reason})`;
+    return `**${brokenLinksCopy.markerLabel}:** "${label}" (\`${originalTarget}\`) → \`${brokenTarget}\` (${reason})`;
   },
 
   lineHasMarker(line: string): boolean {
-    return line.includes(`**${MARKER_LABEL}:**`);
+    return line.includes(`**${brokenLinksCopy.markerLabel}:**`);
   },
 };
 
@@ -46,7 +23,7 @@ const inserts: LocaleInsertCopy = {
   kindTitle(kind: string): string {
     return kind.charAt(0).toUpperCase() + kind.slice(1);
   },
-  seeInsertFallback: 'See insert',
+  seeInsertFallback: insertsCopy.seeInsertFallback,
   humanizeBasename(basenameWithoutExt: string): string {
     return basenameWithoutExt
       .split('-')
@@ -59,7 +36,6 @@ const inserts: LocaleInsertCopy = {
 /** Default US-English locale pack for opinionated helpers. */
 export const enUS: LocalePack = {
   id: 'en-US',
-  xrefs,
   brokenLinks,
   inserts,
 

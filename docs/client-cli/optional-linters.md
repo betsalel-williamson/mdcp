@@ -40,7 +40,6 @@ MDCP knows the **full fileset** it manages: registered guides in `compileOrder`,
 | ---------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
 | Shard markdownlint (`mdcp lint`, `mdcp check`) | `compileOrder` guide directories                | Legacy flat docs, unrelated subdirs under `--docs-root` |
 | Vale prose (`mdcp prose`, `mdcp check`)        | Same guide directories                          | Same                                                    |
-| Xref lint (`mdcp check`)                       | Same guide directories                          | Same                                                    |
 | Compiled markdownlint                          | Monolith and publish outputs (`compiledConfig`) | Separate pass — not shard trees                         |
 
 Optional overrides **narrow** scope further; they never widen it beyond what you explicitly list:

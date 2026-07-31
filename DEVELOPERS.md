@@ -464,12 +464,12 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Markdown helpers   | `src/markdown/`               |
 | Locale packs       | `src/locale/`                 |
 | Refs / slugs       | `src/refs/`                   |
-| Validation         | `src/validate/`, `src/xrefs/` |
+| Validation         | `src/validate/`, `src/links/` |
 | Shard (split)      | `src/shard/`                  |
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/` — see [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers) for why. Those helpers are **GFM / structure** only. Compile-time wording and transitional xref patterns live under `src/locale/`; durable prose static analysis belongs in Vale styles — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/` — see [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers) for why. Those helpers are **GFM / structure** only. Compile-time wording lives under `src/locale/`; durable prose static analysis belongs in Vale styles — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -1392,8 +1392,6 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 A **locale pack** is MDCP’s small bundle of natural-language strings used when **compiling** docs (for example US-English insert captions like `Table 1. …` and `BROKEN LINK` marker copy).
 
 It is **not** [GFM](#gfm) structure. Prose static analysis (unlinked chapter-style cues, tone, spelling) belongs in peer **[Vale](https://vale.sh/) style packages** — MDCP’s chapter-cue style ships in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`) — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
-
-**As built today:** the default pack may also supply transitional pattern/message strings for built-in `lintXrefs` until those cues move to a Vale style. Shrink the pack to compile-time copy when that parity exists.
 
 <!-- mdcp-shard: end docs/glossary/locale-pack.md -->
 

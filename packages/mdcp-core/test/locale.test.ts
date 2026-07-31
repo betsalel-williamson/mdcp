@@ -3,14 +3,8 @@ import { DEFAULT_LOCALE_ID, enUS, getLocalePack, listLocalePackIds } from '../sr
 import { formatBrokenLinkMarker } from '../src/links/mark-broken.js';
 import { numberedInsertHeading } from '../src/compile/hooks/inline-inserts.js';
 import { buildSlugRegistry } from '../src/refs/slugs.js';
-import { lintXrefs } from '../src/xrefs/lint.js';
-import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { useTmpDir } from './helpers/tmp-dir.js';
 
 describe('locale packs', () => {
-  const work = useTmpDir('mdcp-locale-xrefs-');
-
   it('defaults to en-US and lists registered packs', () => {
     expect(DEFAULT_LOCALE_ID).toBe('en-US');
     expect(listLocalePackIds()).toEqual(['en-US']);
@@ -22,9 +16,7 @@ describe('locale packs', () => {
     expect(() => getLocalePack('fr-FR')).toThrow(/Unknown locale pack/);
   });
 
-  it('keeps US-English xref cues in the en-US pack, not GFM helpers', () => {
-    expect(enUS.xrefs.seeTableCell).toBe('| See |');
-    expect(enUS.xrefs.unlinkedSeeCapitalMessage).toMatch(/See/);
+  it('keeps chapter semantic keys in the en-US pack for refs', () => {
     expect(enUS.chapterKeyFromTitle('ADM Chapter 1 — Start')).toEqual({
       prefix: 'ADM',
       number: '1',
@@ -50,12 +42,5 @@ describe('locale packs', () => {
     const reg = buildSlugRegistry('# Guide\n\n## ADM Chapter 1 — Getting started\n');
     const entry = reg.headings.find((h) => h.title.includes('ADM Chapter 1'));
     expect(entry?.key).toBe('adm.ch1');
-  });
-
-  it('lintXrefs uses locale pack patterns', () => {
-    writeFileSync(join(work.path, 'bad.md'), 'See Section 2 for details.\n');
-    const issues = lintXrefs([work.path], enUS);
-    expect(issues.length).toBeGreaterThan(0);
-    expect(issues[0]).toMatch(/unlinked See reference|bare cross-ref/i);
   });
 });

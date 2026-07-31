@@ -83,7 +83,3 @@ export function shardLintPaths(config: MdcpConfig, docsRoot: string): string[] {
   if (globs?.length) return globs.map((g) => resolve(docsRoot, g));
   return guideScanDirs(config, docsRoot);
 }
-
-export function xrefScanDirs(config: MdcpConfig, docsRoot: string): string[] {
-  return guideScanDirs(config, docsRoot);
-}

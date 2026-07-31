@@ -12,7 +12,7 @@ MDCP inverts the workflow:
 
 1. **Authors edit shards** — one file per section, listed in the guide manifest (`index.md` or `shards.md`).
 2. **Compile stitches shards** — heading levels are normalized, preambles stripped, links rewritten.
-3. **Validation catches drift** — orphans, stale refs, bare cross-references, optional prose/style linters.
+3. **Validation catches drift** — orphans, stale refs, broken internal links, optional prose/style linters.
 4. **Compiled output serves consumers** — monolith and publish files for humans, agents, and CI.
 
 You never hand-maintain the compiled file. Shards are the source of truth; `guides.md` (or a publish target like `README.md`) is generated.
@@ -71,7 +71,6 @@ flowchart TB
 
   subgraph validate["Validation"]
     orphans["Orphan / manifest checks"]
-    xrefs["Xref lint"]
     peers["Peer linters optional"]
   end
 
@@ -108,7 +107,7 @@ Understanding this sequence explains why most commands exist:
            ↓
   mdcp refs generate           Write refs.json from compiled headings
            ↓
-  mdcp check                   Orphans → compile → refs → xrefs → optional linters
+  mdcp check                   Orphans → compile → refs → links → optional linters
 ```
 
 **Split** (`mdcp shard`) is the inverse path — used when bootstrapping shards from an existing monolith, not on every edit cycle.
@@ -134,7 +133,6 @@ Guides with `compile.outputFile` are **excluded from the monolith** so you can p
 | Orphans | `validate/orphans.ts`   | Shard/manifest mismatches                      |
 | Compile | `compile/`              | Assembly failures                              |
 | Refs    | `refs/registry.ts`      | Stale `refs.json`                              |
-| Xrefs   | `xrefs/lint.ts`         | Unlinked chapter-style references              |
 | Linters | `peers/` + host install | markdownlint, Vale, link-check when configured |
 
 Peer linters are **not bundled**. CI uses `--require-lint` / `--require-vale` to fail when tools are missing.
@@ -160,7 +158,6 @@ This repository dogfoods under `docs/`: the features guide compiles into `docs/_
 | Shard split orchestration       | `src/shard/orchestrator.ts` | `shard`                         |
 | Slugs + refs registry           | `src/refs/`                 | `refs`                          |
 | Orphan validation               | `src/validate/orphans.ts`   | `check`                         |
-| Xref lint                       | `src/xrefs/lint.ts`         | `check`                         |
 | Peer binary resolution          | `src/peers/resolve.ts`      | `lint`, `prose`, `links`, `fix` |
 
 Start with `assemble.ts` and `cli.ts` if you are tracing a compile from config to disk.

@@ -1,9 +1,8 @@
-/** Natural-language pack for opinionated linting and compiled prose (not GFM structure). */
+/** Natural-language pack for compiled prose and semantic refs (not GFM structure). */
 export interface LocalePack {
   /** BCP 47 language tag (for example `en-US`). */
   readonly id: string;
 
-  readonly xrefs: LocaleXrefPatterns;
   readonly brokenLinks: LocaleBrokenLinkCopy;
   readonly inserts: LocaleInsertCopy;
 
@@ -12,27 +11,6 @@ export interface LocalePack {
    * `{ prefix: 'ADM', number: '1' }`), or null when the title does not match.
    */
   chapterKeyFromTitle(title: string): { prefix: string; number: string } | null;
-}
-
-/** Cross-reference lint patterns and issue message copy. */
-export interface LocaleXrefPatterns {
-  /** Bare chapter / Ch. N references. */
-  readonly chapterRef: RegExp;
-  /** Unlinked "See Chapter N". */
-  readonly seeChapter: RegExp;
-  /** Capitalized See … that is not already a markdown link. */
-  readonly seeCapitalUnlinked: RegExp;
-  /** Lowercase see … after ( or ,. */
-  readonly seeLowercaseUnlinked: RegExp;
-  /** Table cell that is only the cue word (skip). */
-  readonly seeTableCell: string;
-  /** Line already has a linked See / see. */
-  readonly seeLinked: RegExp;
-
-  bareCrossRefMessage(match: string): string;
-  unlinkedMessage(match: string): string;
-  readonly unlinkedSeeCapitalMessage: string;
-  readonly unlinkedSeeLowercaseMessage: string;
 }
 
 /** Broken-link marker wording in compiled output. */

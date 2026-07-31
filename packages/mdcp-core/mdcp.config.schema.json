@@ -201,12 +201,6 @@
             "target": { "type": "string" },
             "config": { "type": "string" }
           }
-        },
-        "xrefs": {
-          "type": "object",
-          "properties": {
-            "enabled": { "type": "boolean", "default": true }
-          }
         }
       }
     },

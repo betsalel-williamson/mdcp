@@ -48,7 +48,6 @@ function writeInScopeLintFixture(docs: string, configExtra: Record<string, unkno
       guides: [{ name: 'guide', path: 'guide' }],
       refs: { registryFile: 'refs.json' },
       lint: {
-        xrefs: { enabled: false },
         markdownlint: { shardsConfig: SHARDS_PRESET },
       },
       ...configExtra,
@@ -93,6 +92,41 @@ describe('cli smoke', () => {
     expect(out).toContain('mdcp check passed');
   });
 
+  it('does not run chapter-cue prose lint in core check', () => {
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-no-core-xref-'));
+    try {
+      const guide = join(docs, 'g');
+      mkdirSync(guide, { recursive: true });
+      writeFileSync(join(guide, 'index.md'), '# G\n\n- [intro](introduction.md)\n');
+      writeFileSync(
+        join(guide, 'introduction.md'),
+        '# G\n\n## Intro\n\nSee Section 2 for details.\n',
+      );
+      writeFileSync(
+        join(docs, 'mdcp.config.json'),
+        JSON.stringify({
+          outputDir: '.',
+          outputFile: 'guides.md',
+          compileOrder: ['g'],
+          guides: [{ name: 'g', path: 'g' }],
+          refs: { registryFile: 'refs.json' },
+          lint: { links: { enabled: false } },
+        }),
+      );
+
+      const r = spawnSync(
+        'node',
+        [CLI, 'check', '--config', 'mdcp.config.json', '--docs-root', docs, '--skip-vale'],
+        { encoding: 'utf-8', cwd: docs },
+      );
+      expect(r.status).toBe(0);
+      expect(`${r.stdout}${r.stderr}`).not.toContain('xref:');
+      expect(r.stdout).toContain('mdcp check passed');
+    } finally {
+      rmSync(docs, { recursive: true, force: true });
+    }
+  });
+
   it('resolves --config from invocation directory, not --docs-root (#10)', async () => {
     const project = mkdtempSync(join(tmpdir(), 'mdcp-config-cwd-'));
     try {
@@ -108,7 +142,7 @@ describe('cli smoke', () => {
           outputFile: 'guides.md',
           compileOrder: ['g'],
           guides: [{ name: 'g', path: 'g' }],
-          lint: { xrefs: { enabled: false }, links: { enabled: false } },
+          lint: { links: { enabled: false } },
         }),
       );
 
@@ -137,7 +171,7 @@ describe('cli smoke', () => {
           compileOrder: ['guide-a'],
           guides: [{ name: 'guide-a', compile: { outputFile: 'compiled/guide-a.md' } }],
           refs: { registryFile: '.caches/refs.json' },
-          lint: { links: { enabled: false }, xrefs: { enabled: false } },
+          lint: { links: { enabled: false } },
         }),
       );
 
@@ -175,7 +209,6 @@ describe('cli smoke', () => {
           compileOrder: ['g'],
           guides: [{ name: 'g', path: 'g' }],
           refs: { registryFile: '.caches/refs.json' },
-          lint: { xrefs: { enabled: false } },
         }),
       );
 
@@ -204,7 +237,6 @@ describe('cli smoke', () => {
           outputFile: 'guides.md',
           compileOrder: ['g'],
           guides: [{ name: 'g', path: 'g' }],
-          lint: { xrefs: { enabled: false } },
         }),
       );
 
@@ -271,7 +303,6 @@ describe('cli smoke', () => {
           outputDir: '_build/compiled',
           compileOrder: ['glossary'],
           guides: [{ name: 'glossary' }],
-          lint: { xrefs: { enabled: false } },
         }),
       );
 
@@ -331,7 +362,6 @@ describe('cli smoke', () => {
           ],
           refs: { registryFile: 'refs.json' },
           lint: {
-            xrefs: { enabled: false },
             markdownlint: {
               shardsConfig: SHARDS_PRESET,
               shardsGlobs: ['narrow'],
@@ -395,7 +425,7 @@ describe('cli smoke', () => {
           compileOrder: ['g'],
           guides: [{ name: 'g', path: 'g' }],
           refs: { registryFile: 'refs.json' },
-          lint: { links: { enabled: true }, xrefs: { enabled: false } },
+          lint: { links: { enabled: true } },
         }),
       );
 
@@ -429,7 +459,7 @@ describe('cli smoke', () => {
           compileOrder: ['g'],
           guides: [{ name: 'g', path: 'g' }],
           refs: { registryFile: 'refs.json' },
-          lint: { links: { enabled: true }, xrefs: { enabled: false } },
+          lint: { links: { enabled: true } },
         }),
       );
 

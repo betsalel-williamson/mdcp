@@ -58,7 +58,7 @@ CLI authoring rules: [Cross-links and refs — heading slugs](../client-cli/cros
 
 ## Validation
 
-| Export                  | Purpose                                 |
-| ----------------------- | --------------------------------------- |
-| `checkOrphansForGuides` | Detect unlinked or missing shard files  |
-| `lintXrefs`             | Chapter-style cross-reference detection |
+| Export                  | Purpose                                |
+| ----------------------- | -------------------------------------- |
+| `checkOrphansForGuides` | Detect unlinked or missing shard files |
+| `lintLinks`             | Internal markdown link validation      |

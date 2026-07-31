@@ -31,7 +31,7 @@ function writeCoverageFixture(extra: Record<string, unknown> = {}): string {
       standaloneGuides: ['SECURITY.md'],
       scan: { gitignore: false },
       refs: { registryFile: 'refs.json' },
-      lint: { links: { enabled: false }, xrefs: { enabled: false } },
+      lint: { links: { enabled: false } },
       ...extra,
     }),
   );
@@ -109,7 +109,7 @@ describe('mdcp check coverage', () => {
           guides: [{ name: 'g', path: 'g', compile: { scopeRoot: 'shared' } }],
           scan: { gitignore: false, strict: true },
           refs: { registryFile: 'refs.json' },
-          lint: { links: { enabled: false }, xrefs: { enabled: false } },
+          lint: { links: { enabled: false } },
         }),
       );
       const r = spawnSync(

@@ -36,7 +36,7 @@ Optional local with/without-skill grading for helpers is maintainer workflow —
 
 ## Check gate (P0.4)
 
-Structural validation: orphans → compile → refs → **links** → xrefs; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md). Latency targets for large shard sets: [Performance goals and review](./protocol/performance.md).
+Structural validation: orphans → compile → refs → **links**; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md). Latency targets for large shard sets: [Performance goals and review](./protocol/performance.md).
 
 ```bash
 mdcp check --require-lint
@@ -58,9 +58,9 @@ mdcp shard   # requires config.source
 
 Detect shards not in manifest or missing files.
 
-## Xref lint (P1.4)
+## Chapter-cue prose lint (Vale)
 
-Fail on bare `Ch. N` and unlinked chapter-style references (built-in today). **Target home** for those prose cues is a Vale style — see [Locale and language boundary](./design-constraints/locale-and-language.md).
+Bare `Ch. N` and unlinked chapter-style references are prose cues handled by the `MDCP` Vale style in `@bwilliamson/mdcp-presets` — see [Locale and language boundary](./design-constraints/locale-and-language.md).
 
 ## Coverage scan (P1.5)
 

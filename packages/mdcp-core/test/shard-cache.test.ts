@@ -53,7 +53,7 @@ describe('shard cache (#64 P1)', () => {
         compileOrder: ['g'],
         guides: [{ name: 'g', path: 'g' }],
         refs: { registryFile: 'refs.json' },
-        lint: { links: { enabled: true }, xrefs: { enabled: false } },
+        lint: { links: { enabled: true } },
       }),
     );
   }

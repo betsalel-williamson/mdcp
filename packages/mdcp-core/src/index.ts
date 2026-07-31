@@ -15,7 +15,6 @@ export {
   getGuideConfig,
   guideScanDirs,
   shardLintPaths,
-  xrefScanDirs,
   defaultGuideOutputFile,
   effectiveGuideOutputFile,
   resolveUnderOutputDir,
@@ -97,7 +96,6 @@ export {
   checkRefsRegistry,
   genRefsFromCompiled,
 } from './refs/registry.js';
-export { lintXrefs } from './xrefs/lint.js';
 export {
   lintLinks,
   lintCompiledLinks,
@@ -129,7 +127,6 @@ export {
   DEFAULT_LOCALE_ID,
   enUS,
   type LocalePack,
-  type LocaleXrefPatterns,
   type LocaleBrokenLinkCopy,
   type LocaleInsertCopy,
 } from './locale/index.js';

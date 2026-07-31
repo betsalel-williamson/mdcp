@@ -27,7 +27,7 @@ describe('compile-once per command (#64 P0)', () => {
         compileOrder: ['g'],
         guides: [{ name: 'g', path: 'g' }],
         refs: { registryFile: 'refs.json' },
-        lint: { links: { enabled: true }, xrefs: { enabled: false } },
+        lint: { links: { enabled: true } },
       }),
     );
   }
