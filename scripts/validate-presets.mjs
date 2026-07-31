@@ -11,6 +11,13 @@ const files = [
   'markdownlint-compiled.markdownlint-cli2.jsonc',
 ];
 
+const valeFiles = [
+  'vale/MDCP/meta.json',
+  'vale/MDCP/BareChapterRef.yml',
+  'vale/MDCP/UnlinkedSeeChapter.yml',
+  'vale/mdcp.vale.ini',
+];
+
 function stripJsoncComments(text) {
   return text
     .replace(/\/\/.*$/gm, '')
@@ -25,6 +32,17 @@ for (const file of files) {
     console.log(`OK ${file}`);
   } catch (err) {
     console.error(`Invalid JSONC in ${file}: ${err.message}`);
+    process.exit(1);
+  }
+}
+
+for (const file of valeFiles) {
+  const path = join(presetsDir, file);
+  try {
+    readFileSync(path, 'utf-8');
+    console.log(`OK ${file}`);
+  } catch (err) {
+    console.error(`Missing Vale preset ${file}: ${err.message}`);
     process.exit(1);
   }
 }

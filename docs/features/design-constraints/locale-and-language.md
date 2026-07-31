@@ -4,7 +4,7 @@ MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract. Na
 
 ## Preferred homes
 
-- **Unlinked chapter-style cues** (bare Ch. / chapter phrases) → **target:** peer **Vale** style rule + message/link. **Today:** built-in `lintXrefs` (transitional; patterns may live in the locale pack until Vale parity).
+- **Unlinked chapter-style cues** (bare Ch. / chapter phrases) → **target:** peer **Vale** style in `@bwilliamson/mdcp-presets` (`vale/MDCP`). **Today:** built-in `lintXrefs` (transitional; patterns may still live in the core locale pack until Vale parity).
 - **Style-guide tone, spelling, wordiness** → peer **Vale** (Microsoft, custom `En`, …). Multi-language via style packs + glob sections.
 - **Dead internal targets, orphans, refs, compile** → **mdcp-core / CLI**. First-class [MarkDown Context Protocol](../../glossary/mdcp.md) validation.
 - **GFM / Markdown shape** → peer **markdownlint**. Format structure, not natural language.
@@ -17,7 +17,7 @@ Example: a chapter-style mention with no markdown link should raise a **Vale** a
 See Chapter 2 for details.
 ```
 
-Migrate `lintXrefs` cues into a shippable MDCP Vale style (consumers enable it from `.vale.ini`) and retire the core prose regex path when parity exists.
+Migrate `lintXrefs` cues into the shippable **`MDCP` Vale style** in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`; consumers enable it from `.vale.ini`) and retire the core prose regex path when parity exists.
 
 ## How Vale handles multiple languages (model we follow)
 

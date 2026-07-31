@@ -1,0 +1,4 @@
+{
+  "vale_version": ">=3.0.0",
+  "description": "MDCP en-US prose cues (bare chapter-style cross-references). Prefer markdown links to target shards."
+}

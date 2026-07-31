@@ -48,6 +48,8 @@ describe('design scope documentation (#26)', () => {
     expect(localeShard).toContain('Vale');
     expect(localeShard).toContain('BasedOnStyles');
     expect(localeShard).toContain('target:');
+    expect(localeShard).toContain('@bwilliamson/mdcp-presets');
+    expect(localeShard).toContain('vale/MDCP');
     expect(localeShard).toContain('lintXrefs');
     expect(localeShard).toContain('en-US');
     expect(localeShard).toContain('Hunspell');

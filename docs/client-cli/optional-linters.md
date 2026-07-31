@@ -30,7 +30,7 @@ Install **Vale** separately so `vale` is on your `PATH` — see [Vale installati
 
 Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.
 
-A [locale pack](../glossary/locale-pack.md) is MDCP compile-time wording — not a Vale style. Prose rules live in Vale style packages; see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
+A [locale pack](../glossary/locale-pack.md) is MDCP compile-time wording — not a Vale style. Prose chapter-cue rules ship as the **`MDCP` Vale style** in `@bwilliamson/mdcp-presets` (`vale/MDCP/`); see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
 
 ## In-scope guide fileset
 

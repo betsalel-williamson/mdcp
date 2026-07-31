@@ -87,11 +87,11 @@ flowchart TB
   shards --> validate
 ```
 
-| Package                         | Role                                                                                        |
-| ------------------------------- | ------------------------------------------------------------------------------------------- |
-| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `shard`, `refs`, peer linter wrappers.        |
-| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.     |
-| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs for shard and compiled trees (not bundled; opt-in via config). |
+| Package                         | Role                                                                                      |
+| ------------------------------- | ----------------------------------------------------------------------------------------- |
+| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `shard`, `refs`, peer linter wrappers.      |
+| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.   |
+| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs and the `MDCP` Vale style (opt-in via config / `.vale.ini`). |
 
 The CLI is a thin wrapper over core. Integrators (CI, editors, agents) can call core directly or shell out to the CLI.
 

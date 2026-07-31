@@ -1,0 +1,9 @@
+extends: existence
+message: "Bare cross-ref '%s' — wrap it in a markdown link to the target shard (e.g. [Chapter 2](./section.md#…))."
+link: https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints/locale-and-language.md
+level: error
+scope: text
+nonword: true
+tokens:
+  - '\bCh\.?\s*\d+(?:\s*[–—-]\s*[^\s|.\n]+)?'
+  - '\bChapter\s+\d+(?:\s*[–—-]\s*[^\s|.\n]+)?'

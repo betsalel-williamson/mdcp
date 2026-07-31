@@ -1,6 +1,7 @@
 ---
 '@bwilliamson/mdcp-core': minor
 '@bwilliamson/mdcp-cli': patch
+'@bwilliamson/mdcp-presets': minor
 ---
 
-Group US-English opinionated lint/prose helpers behind a locale-pack boundary (`locale/en-US`), separate from GFM structural helpers — following Vale’s multi-language docs model (shared markup engine + language-specific style packages via glob sections, plus locale-named dictionaries) so additional languages can plug in later without forking markdown parsers.
+Ship the `MDCP` Vale style (en-US chapter-cue prose rules) from `@bwilliamson/mdcp-presets` (`vale/MDCP/`), keep compile-time locale strings in mdcp-core, and document Vale multi-language style packages as the durable home for prose static analysis — separate from GFM helpers and first-class link validation.

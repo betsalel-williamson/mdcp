@@ -1,0 +1,8 @@
+extends: existence
+message: "Unlinked '%s' — turn chapter-style mentions into a markdown link to the target shard."
+link: https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints/locale-and-language.md
+level: error
+scope: text
+nonword: true
+tokens:
+  - '\bSee\s+Chapter\s+\d+\b'
