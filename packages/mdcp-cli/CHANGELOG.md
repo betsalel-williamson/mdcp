@@ -1,5 +1,12 @@
 # @bwilliamson/mdcp-cli
 
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies [095b710]
+  - @bwilliamson/mdcp-core@0.7.2
+
 ## 0.7.1
 
 ### Patch Changes
