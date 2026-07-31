@@ -10,9 +10,12 @@ describe('findChapterRefs', () => {
     expect(findChapterRefs('See Ch. 1 for details')).toEqual(['Ch. 1']);
     expect(findChapterRefs('See Ch 2 for details')).toEqual(['Ch 2']);
     expect(findChapterRefs('See Chapter 3 for details')).toEqual(['Chapter 3']);
-    expect(findChapterRefs('Ch. 1 – Introduction')).toEqual(['Ch. 1 – Introduction']);
-    expect(findChapterRefs('Ch. 1 - Introduction more')).toEqual(['Ch. 1 - Introduction more']);
-    expect(findChapterRefs('Ch. 1 — Intro | rest')).toEqual(['Ch. 1 — Intro']);
+    // U+2013 en dash, U+002D hyphen-minus, U+2014 em dash — three distinct separators
+    expect(findChapterRefs('Ch. 1 \u2013 Introduction')).toEqual(['Ch. 1 \u2013 Introduction']);
+    expect(findChapterRefs('Ch. 1 \u002D Introduction more')).toEqual([
+      'Ch. 1 \u002D Introduction more',
+    ]);
+    expect(findChapterRefs('Ch. 1 \u2014 Intro | rest')).toEqual(['Ch. 1 \u2014 Intro']);
     expect(findChapterRefs('Ch. 1. Next sentence')).toEqual(['Ch. 1']);
     expect(findChapterRefs('Chapter 10 - Foo.Bar')).toEqual(['Chapter 10 - Foo']);
   });

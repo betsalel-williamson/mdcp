@@ -42,7 +42,9 @@ describe('codeEvidence — line range detection', () => {
     expect(lineRangeFromText('firestore.rules L6-L8')).toBe('L6-L8');
     expect(lineRangeFromText('line 42')).toBe('L42');
     expect(lineRangeFromText('lines 10-20')).toBe('L10-L20');
-    expect(lineRangeFromText('Lines 1–5')).toBe('L1-L5');
+    expect(lineRangeFromText('Lines 1\u20135')).toBe('L1-L5'); // en dash
+    expect(lineRangeFromText('Lines 1\u20145')).toBe('L1-L5'); // em dash
+    expect(lineRangeFromText('Lines 1\u002D5')).toBe('L1-L5'); // hyphen-minus
     expect(lineRangeFromText(':10-20')).toBe('L10-L20');
     expect(lineRangeFromText(':7')).toBe('L7');
     expect(lineRangeFromText('L6')).toBe('L6');

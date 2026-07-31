@@ -2,7 +2,12 @@
 
 const WORD_CHAR = /[A-Za-z0-9_]/;
 const WS = /\s/;
-const DASHES = new Set(['-', '–', '—']);
+/** Hyphen / en dash / em dash — distinct code points (legacy `[–—-]` class). */
+const DASHES = new Set([
+  '\u002D', // hyphen-minus '-'
+  '\u2013', // en dash '–'
+  '\u2014', // em dash '—'
+]);
 
 function isWordChar(ch: string | undefined): boolean {
   return ch !== undefined && WORD_CHAR.test(ch);
