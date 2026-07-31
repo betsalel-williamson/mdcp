@@ -1,9 +1,12 @@
 /**
  * Locale packs: natural-language opinion for linting and compiled prose.
  *
- * GFM / Markdown structure lives under `markdown/`, `links/`, `compile/`, and
- * `refs/` (slug algorithm). Do not put English tokens in those modules — put
- * them here (Vale styles play the same role for peer prose lint).
+ * Modeled on Vale’s multi-language docs pattern (errata-ai/vale):
+ * - GFM / markup structure stays language-neutral (`../markdown/`, links, slugs).
+ * - Language-specific grammar/static-analysis cues live in a pack folder
+ *   (like a Vale `En` / `en-US` style package), not beside ATX parsers.
+ * - A second language adds another pack (and, for peer Vale, another style +
+ *   `.vale.ini` glob section) — it does not fork the Markdown engine.
  *
  * @see docs/features/design-constraints/locale-and-language.md
  */
