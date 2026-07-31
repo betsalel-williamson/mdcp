@@ -1,23 +1,23 @@
 # Locale and language boundary
 
-MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract. Natural-language **static analysis** (grammar cues, unlinked chapter-style phrases, style-guide tone) belongs with **[Vale](https://vale.sh/) style packages**, not in the core compile/check API. Core may still hold a small **[locale pack](../../glossary/locale-pack.md)** for compile-time generated wording (captions, broken-link markers) — not for prose lint rules.
+MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract. Natural-language **static analysis** (grammar cues, unlinked chapter-style phrases, style-guide tone) **belongs with** **[Vale](https://vale.sh/) style packages**, not as durable gates in the core compile/check API. Core may hold a small **[locale pack](../../glossary/locale-pack.md)** for compile-time generated wording (captions, broken-link markers).
 
 ## Preferred homes
 
-- **Unlinked chapter-style cues** (bare Ch. / chapter phrases) → peer **Vale** style rule + message/link. Language-specific static analysis; hosts already run `mdcp prose` / `--require-vale`.
+- **Unlinked chapter-style cues** (bare Ch. / chapter phrases) → **target:** peer **Vale** style rule + message/link. **Today:** built-in `lintXrefs` (transitional; patterns may live in the locale pack until Vale parity).
 - **Style-guide tone, spelling, wordiness** → peer **Vale** (Microsoft, custom `En`, …). Multi-language via style packs + glob sections.
 - **Dead internal targets, orphans, refs, compile** → **mdcp-core / CLI**. First-class [MarkDown Context Protocol](../../glossary/mdcp.md) validation.
 - **GFM / Markdown shape** → peer **markdownlint**. Format structure, not natural language.
-- **Generated caption / marker copy** (`Table 1. …`, `BROKEN LINK`) → `locale/en-US/` (or config) at compile time. Product output strings — not lint alerts.
+- **Generated caption / marker copy** (`Table 1. …`, `BROKEN LINK`) → compile-time locale pack (default `en-US`). Product output strings — not lint alerts.
 
-Example: a chapter-style mention with no markdown link should raise a **Vale** alert with a clear instruction (and optional `link:` to docs) — do **not** grow a parallel English regex linter inside `mdcp check`. That couples prose opinion to Vale (which already owns locale/style packages) and keeps the CLI surface focused on protocol concerns.
+Example: a chapter-style mention with no markdown link should raise a **Vale** alert with a clear instruction (and optional `link:` to docs) — do **not** grow a parallel English regex linter inside `mdcp check` as the durable design. That couples prose opinion to Vale (which already owns style packages) and keeps the CLI surface focused on protocol concerns.
 
 ```text
 # Illustrative bad cue (handle in Vale, not core):
 See Chapter 2 for details.
 ```
 
-Today’s built-in `lintXrefs` is the transitional stand-in for that Vale rule set; migrate those cues into a shippable MDCP Vale style (consumers enable it from `.vale.ini`) and retire the core prose regex path when parity exists.
+Migrate `lintXrefs` cues into a shippable MDCP Vale style (consumers enable it from `.vale.ini`) and retire the core prose regex path when parity exists.
 
 ## How Vale handles multiple languages (model we follow)
 
@@ -47,7 +47,7 @@ Today’s built-in `lintXrefs` is the transitional stand-in for that Vale rule s
 
 Compile-time locale packs default to **`en-US`**. Prose lint for other languages is a Vale style + `.vale.ini` section — not new branches inside GFM helpers or the check pipeline.
 
-Insert **library directory names** (`diagrams/`, `tables/`, …) stay English path identifiers for now; only user-visible caption and marker **wording** goes through the locale pack.
+Insert **library directory names** (`diagrams/`, `tables/`, …) stay English path identifiers for now; only user-visible caption and marker **wording** goes through the locale pack (plus transitional xref strings until migration).
 
 ## Related
 

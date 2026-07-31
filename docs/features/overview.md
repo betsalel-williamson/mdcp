@@ -191,6 +191,7 @@ This repository dogfoods a **publish landing** layout in [`docs/repo-readme/`](.
 - **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used
 - **GitHub slugs** — computed from compiled headings via [github-slugger](https://www.npmjs.com/package/github-slugger) (html-pipeline algorithm); see [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules)
 - **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.
+- **[Locale and language boundary](./design-constraints/locale-and-language.md)** — GFM structure vs Vale prose vs compile-time locale pack
 - **No preprocessor / templating** — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)
 
 Details: [Design constraints](./design-constraints/index.md).

@@ -515,7 +515,7 @@ These commands use tools installed in **your** repo (not bundled with mdcp):
 | Command      | Peer tool                       | Purpose                                                                   |
 | ------------ | ------------------------------- | ------------------------------------------------------------------------- |
 | `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output (GFM / Markdown structure)                |
-| `mdcp prose` | `vale` (install separately)     | Prose style lint (locale packs; Microsoft style = US English)             |
+| `mdcp prose` | `vale` (install separately)     | Prose style lint (Vale style packages; Microsoft = US English)            |
 | `mdcp links` | `markdown-link-check`           | Optional HTTP URL checks (peer; not built-in internal link validation)    |
 | `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no config paths) |
 
@@ -539,6 +539,8 @@ npm install -D prettier markdownlint-cli2 @bwilliamson/mdcp-presets
 Install **Vale** separately so `vale` is on your `PATH` — see [Vale installation](https://vale.sh/docs/vale-cli/installation/) (Homebrew, Chocolatey, Snap, or GitHub release). After adding a `.vale.ini`, run `vale sync` in that directory.
 
 Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.
+
+A [locale pack](#locale-pack) is MDCP compile-time wording — not a Vale style. Prose rules live in Vale style packages; see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
 ### In-scope guide fileset
 
@@ -771,3 +773,23 @@ Derived catalog of [heading slugs](#heading-slug) from compiled guide output, ty
 The registry is **generated state**, not authored shards. `mdcp compile` (and `mdcp refs gen`) rebuild it; `mdcp check` / `mdcp refs check` verify it still matches the latest compile. Path rules: [Refs registry path](../../docs/features/refs-registry-path.md).
 
 <!-- mdcp-shard: end ../../docs/glossary/refs-registry.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/locale-pack.md -->
+
+## Locale pack
+
+A **locale pack** is MDCP’s small bundle of natural-language strings used when **compiling** docs (for example US-English insert captions like `Table 1. …` and `BROKEN LINK` marker copy).
+
+It is **not** [GFM](#gfm) structure. Prose static analysis (unlinked chapter-style cues, tone, spelling) belongs in peer **[Vale](https://vale.sh/) style packages**, not in durable pack rules — see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+
+**As built today:** the default pack may also supply transitional pattern/message strings for built-in `lintXrefs` until those cues move to a Vale style. Shrink the pack to compile-time copy when that parity exists.
+
+<!-- mdcp-shard: end ../../docs/glossary/locale-pack.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/gfm.md -->
+
+## GFM
+
+**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+
+<!-- mdcp-shard: end ../../docs/glossary/gfm.md -->

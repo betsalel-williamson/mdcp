@@ -5,7 +5,7 @@ These commands use tools installed in **your** repo (not bundled with mdcp):
 | Command      | Peer tool                       | Purpose                                                                   |
 | ------------ | ------------------------------- | ------------------------------------------------------------------------- |
 | `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output (GFM / Markdown structure)                |
-| `mdcp prose` | `vale` (install separately)     | Prose style lint (locale packs; Microsoft style = US English)             |
+| `mdcp prose` | `vale` (install separately)     | Prose style lint (Vale style packages; Microsoft = US English)            |
 | `mdcp links` | `markdown-link-check`           | Optional HTTP URL checks (peer; not built-in internal link validation)    |
 | `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no config paths) |
 
@@ -29,6 +29,8 @@ npm install -D prettier markdownlint-cli2 @bwilliamson/mdcp-presets
 Install **Vale** separately so `vale` is on your `PATH` — see [Vale installation](https://vale.sh/docs/vale-cli/installation/) (Homebrew, Chocolatey, Snap, or GitHub release). After adding a `.vale.ini`, run `vale sync` in that directory.
 
 Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.
+
+A [locale pack](../glossary/locale-pack.md) is MDCP compile-time wording — not a Vale style. Prose rules live in Vale style packages; see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
 
 ## In-scope guide fileset
 

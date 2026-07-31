@@ -16,7 +16,7 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/` — see [Safe markdown parsing](./safe-markdown-parsing.md) for why. Those helpers are **GFM / structure** only. Opinionated US-English (and future locale) wording lives under `src/locale/` — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
+Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/` — see [Safe markdown parsing](./safe-markdown-parsing.md) for why. Those helpers are **GFM / structure** only. Compile-time wording and transitional xref patterns live under `src/locale/`; durable prose static analysis belongs in Vale styles — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test

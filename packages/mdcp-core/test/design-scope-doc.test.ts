@@ -47,12 +47,13 @@ describe('design scope documentation (#26)', () => {
     expect(localeShard).toContain('locale pack');
     expect(localeShard).toContain('Vale');
     expect(localeShard).toContain('BasedOnStyles');
-    expect(localeShard).toContain('Prefer');
+    expect(localeShard).toContain('target:');
     expect(localeShard).toContain('lintXrefs');
     expect(localeShard).toContain('en-US');
     expect(localeShard).toContain('Hunspell');
     expect(localeGlossary).toContain('# Locale pack');
     expect(localeGlossary).toContain('style packages');
+    expect(localeGlossary).toContain('transitional');
     expect(glossaryIndex).toContain('./locale-pack.md');
   });
 

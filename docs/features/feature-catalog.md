@@ -60,7 +60,7 @@ Detect shards not in manifest or missing files.
 
 ## Xref lint (P1.4)
 
-Fail on bare `Ch. N` and unlinked chapter-style references.
+Fail on bare `Ch. N` and unlinked chapter-style references (built-in today). **Target home** for those prose cues is a Vale style — see [Locale and language boundary](./design-constraints/locale-and-language.md).
 
 ## Coverage scan (P1.5)
 
