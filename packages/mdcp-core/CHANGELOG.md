@@ -1,5 +1,11 @@
 # @bwilliamson/mdcp-core
 
+## 0.7.2
+
+### Patch Changes
+
+- 095b710: Index every `linkedSectionFiles` path (including transitive `scopeRoot` shards outside `guideDir`) and prefer same-output `#anchor` rewrite for non-canonical co-compiled targets so `../` links under default `_build` outputs resolve correctly.
+
 ## 0.7.1
 
 ### Patch Changes
