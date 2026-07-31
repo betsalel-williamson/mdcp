@@ -1,0 +1,3 @@
+{
+  "chapterKeyPattern": "^(?<prefix>[A-Z]{2,4})\\s+Chapter\\s+(?<number>\\d+)"
+}

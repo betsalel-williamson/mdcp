@@ -10,6 +10,19 @@
  * @see docs/features/design-constraints/locale-and-language.md
  */
 
-export type { LocaleBrokenLinkCopy, LocaleInsertCopy, LocalePack } from './types.js';
+export type {
+  LocaleBrokenLinkCopy,
+  LocaleBrokenLinkMessages,
+  LocaleInsertCopy,
+  LocaleInsertMessages,
+  LocalePack,
+} from './types.js';
+export {
+  createBrokenLinksCopy,
+  createInsertsCopy,
+  createLocalePack,
+  formatTemplate,
+  type CreateLocalePackOptions,
+} from './create-locale-pack.js';
 export { enUS } from './en-US/index.js';
 export { DEFAULT_LOCALE_ID, getLocalePack, listLocalePackIds } from './resolve.js';
