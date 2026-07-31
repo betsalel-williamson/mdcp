@@ -724,9 +724,7 @@ The skill does **not** ship the `mdcp` binary. Keep this package (or [Agent inte
 
 GitHub-style fragment id for a heading in **compiled** Markdown (the part after `#` in `[label](#slug)`). Parent concept: [refs](#refs).
 
-MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Slugify is **language-agnostic**: it operates on Unicode heading text, not English chapter/section vocabulary. Duplicate titles in one document get `-1`, `-2` suffixes.
-
-Authors should not invent fragments from shard-only titles, and should not author Pandoc [xref](#xref) markers to force ids. [Cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
+MDCP computes slugs from final heading text after guides are stitched and demoted — same rules GitHub uses for README anchors (via `github-slugger`). Duplicate titles in one document get `-1`, `-2` suffixes. Authors should not invent fragments from shard-only titles; [cross-links](#cross-link) must match the compiled slug, and `mdcp check` fails when they do not.
 
 <!-- mdcp-shard: end ../../docs/glossary/heading-slug.md -->
 
@@ -736,7 +734,7 @@ Authors should not invent fragments from shard-only titles, and should not autho
 
 **Refs** (short for **references**) are the organized set of heading [slugs](#heading-slug) and [cross-links](#cross-link) MDCP derives from compiled guides so authors and CI can keep Markdown links coherent after stitch.
 
-Refs are a **GFM heading + link** concern — not chapters/sections, and not Pandoc [xref](#xref) identifiers. The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](#refs-registry) and validates links at `check` time so the **compiled** document still targets the right headings and files.
+The problem refs solve is structural, not retrieval: shards merge, heading levels shift, and duplicate titles get disambiguated — so a hand-guessed `#anchor` or stale path can break after `compile`. MDCP keeps a [refs registry](#refs-registry) and validates links at `check` time so the **compiled** document still targets the right sections and files.
 
 ### Related wording
 
@@ -761,11 +759,7 @@ Not the same as ordinary “search the docs.” Refs are about **correct anchors
 
 A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
 
-MDCP models **[GFM](#gfm) headings and links** only. It does not treat “chapter” or “section” as protocol concepts. Prefer ordinary GFM links for navigation; [heading slugs](#heading-slug) are computed from heading text (language-agnostic GitHub slug rules).
-
-Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the slug that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](../../docs/features/link-validation.md).
-
-Not a Pandoc [xref](#xref) (`{#…}` after a heading). Not a Vale prose cue for unlinked “See Chapter…” wording.
+Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](../../docs/features/link-validation.md).
 
 <!-- mdcp-shard: end ../../docs/glossary/cross-link.md -->
 
@@ -783,35 +777,16 @@ The registry is **generated state**, not authored shards. `mdcp compile` (and `m
 
 ## Locale pack
 
-A **locale pack** is MDCP’s small bundle of natural-language strings and locale-specific patterns used when **compiling** docs (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns in BCP 47 JSON).
+A **locale pack** is MDCP’s small bundle of natural-language strings and locale-specific patterns used when **compiling** docs (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns).
 
-It is **not** [GFM](#gfm) structure. GFM helpers and [heading slug](#heading-slug) generation stay language-agnostic under `src/markdown/` and `src/refs/`. Prose static analysis belongs in peer **[Vale](https://vale.sh/) style packages**:
-
-- Unlinked numbered heading mentions (en-US) → `MDCP` in [`@bwilliamson/mdcp-presets`](https://www.npmjs.com/package/@bwilliamson/mdcp-presets) (`vale/MDCP/`)
-- Pandoc [xref](#xref) authoring → dogfood `MDCP-Xref` (remove those markers)
-
-See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+It is **not** [GFM](#gfm) structure. Prose static analysis belongs in peer **[Vale](https://vale.sh/) style packages** — see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
 <!-- mdcp-shard: end ../../docs/glossary/locale-pack.md -->
-
-<!-- mdcp-shard: start ../../docs/glossary/xref.md -->
-
-## xref
-
-An **xref** (in this repository) is a **Pandoc-style explicit identifier** written after a heading title — the brace-hash form `{#…}` (for example a heading line that ends with a custom id marker).
-
-MDCP does **not** use xrefs as a first-class authoring feature. Fragment targets come from [heading slugs](#heading-slug) derived from [GFM](#gfm) heading text. Authors should **remove** Pandoc identifiers; this repo’s dogfood Vale style `MDCP-Xref` warns on them. Compile may strip leftover markers for cleanup — that is defensive, not an invitation to author them. See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
-
-Not the same as a [cross-link](#cross-link) (a GFM markdown link to a heading or shard). Not the same as en-US Vale prose cues when body text mentions a numbered heading without linking (`MDCP` style in `@bwilliamson/mdcp-presets`).
-
-<!-- mdcp-shard: end ../../docs/glossary/xref.md -->
 
 <!-- mdcp-shard: start ../../docs/glossary/gfm.md -->
 
 ## GFM
 
-**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code).
-
-MDCP’s format contract is authored GFM: **headings** and **links** (plus ordinary GFM constructs). Not Pandoc, LaTeX, or wikilinks. Not a chapter/section document model. Explicit Pandoc [xref](#xref) identifiers after headings are out of scope for authoring; see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
 
 <!-- mdcp-shard: end ../../docs/glossary/gfm.md -->

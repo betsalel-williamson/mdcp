@@ -16,16 +16,7 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-### Language boundary (maintainer map)
-
-- **GFM ATX headings, marker cleanup** → `src/markdown/` — [GFM](../glossary/gfm.md), [xref](../glossary/xref.md)
-- **Language-agnostic heading slugify** → `src/refs/` (`githubSlugify`) — [heading slug](../glossary/heading-slug.md)
-- **GFM [cross-links](../glossary/cross-link.md) / dead targets** → `src/links/`, `src/validate/` — [refs](../glossary/refs.md)
-- **Compile-time wording + locale heading-key patterns** → `src/locale/` (BCP 47 JSON) — [locale pack](../glossary/locale-pack.md)
-- **Unlinked numbered heading mentions (en-US prose)** → Vale `MDCP` in `@bwilliamson/mdcp-presets` — [Locale and language boundary](../features/design-constraints/locale-and-language.md)
-- **Pandoc [xref](../glossary/xref.md) after headings (remove)** → dogfood Vale `MDCP-Xref` (`docs/vale-local/`) — [xref](../glossary/xref.md)
-
-Shared GFM helpers stay **language-agnostic** — Unicode heading text and GFM links, not English chapter/section vocabulary. Compile may strip leftover `{#…}` markers for cleanup; authoring opinion to **remove** them is Vale. See [Locale and language boundary](../features/design-constraints/locale-and-language.md).
+Shared GFM helpers live under `src/markdown/` and `src/refs/` (ATX headings, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Compile-time wording lives under `src/locale/` (BCP 47 JSON). Prose and [xref](../glossary/xref.md) authoring opinion belong in Vale — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -55,7 +46,7 @@ Local runs print a text summary and write HTML/lcov under each package’s `cove
 
 ## mdcp-presets
 
-JSONC markdownlint configs plus the shippable `MDCP` Vale style (`vale/MDCP/`, Packages-ready under `vale/package/`). Edit preset files directly — no TypeScript build. Dogfood-only Vale styles (for example `MDCP-Xref`) live under [`docs/vale-local/`](../vale-local/README.md), not in the published package.
+JSONC markdownlint configs plus the shippable `MDCP` Vale style (`vale/MDCP/`). Dogfood-only styles live under [`docs/vale-local/`](../vale-local/README.md). Edit preset files directly — no TypeScript build.
 
 ## Pull request checklist
 

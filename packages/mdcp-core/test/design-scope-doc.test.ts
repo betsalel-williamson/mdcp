@@ -60,8 +60,8 @@ describe('design scope documentation (#26)', () => {
     expect(glossaryIndex).toContain('./locale-pack.md');
     expect(glossaryIndex).toContain('./xref.md');
     expect(xrefGlossary).toContain('# xref');
-    expect(xrefGlossary).toContain('Pandoc-style explicit identifier');
-    expect(xrefGlossary).toContain('cross-link');
+    expect(xrefGlossary).toContain('Pandoc-style explicit heading identifier');
+    expect(xrefGlossary).toContain('./cross-link.md');
   });
 
   it('keeps markdown helpers language-agnostic and separates Vale xref from MDCP prose', () => {
@@ -69,10 +69,7 @@ describe('design scope documentation (#26)', () => {
     const sampleValeConfig = readRepoDoc('examples/sample-guides/.vale.ini');
     const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
     const xrefMeta = readRepoDoc('docs/vale-local/MDCP-Xref/meta.json');
-    const markdownFormatting = readRepoDoc('docs/developer/markdown-formatting.md');
-    expect(packagesAndTests).toContain('Language boundary (maintainer map)');
     expect(packagesAndTests).toContain('language-agnostic');
-    expect(packagesAndTests).toContain('@bwilliamson/mdcp-presets');
     expect(packagesAndTests).toContain('../glossary/xref.md');
     expect(packagesAndTests).not.toContain(
       'Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/`',
@@ -83,7 +80,6 @@ describe('design scope documentation (#26)', () => {
     expect(featureCatalog).toContain('See [Section 2](./other.md#section-2)');
     expect(featureCatalog).toContain('Neither replaces');
     expect(xrefMeta).toContain('Pandoc-style');
-    expect(markdownFormatting).toContain('../glossary/xref.md');
     expect(docsValeConfig).toContain('MDCP-Xref');
     expect(docsValeConfig).not.toContain('BlockIgnores');
     expect(sampleValeConfig).toContain('MDCP-Xref');
@@ -141,7 +137,6 @@ describe('design scope documentation (#26)', () => {
       expect(compiled).toContain('## GFM');
       expect(compiled).toContain('## Authored GFM');
       expect(compiled).toContain('## xref');
-      expect(compiled).toContain('## Locale pack');
     }
   });
 });

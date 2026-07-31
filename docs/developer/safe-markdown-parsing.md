@@ -1,6 +1,6 @@
 # Safe markdown parsing (heading helpers)
 
-Maintainer note for why `mdcp-core` centralizes ATX heading parsing and related cleanup in shared **language-agnostic** [GFM](../glossary/gfm.md) helpers instead of ad-hoc regular expressions. Authoring opinion against Pandoc [xref](../glossary/xref.md) markers lives in Vale, not in these helpers.
+Maintainer note for why `mdcp-core` centralizes ATX heading parsing and related cleanup in shared **language-agnostic** GFM helpers instead of ad-hoc regular expressions.
 
 Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
 
@@ -29,5 +29,5 @@ Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example 
 ## Authoring implications
 
 - Prefer the shared helpers for new heading or slug logic; do not add new polynomial-risk regexes for those jobs.
-- Prefer GFM auto-slugs; do not author Pandoc `{#…}` on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
+- Prefer GFM auto-slugs; do not author Pandoc [xref](../glossary/xref.md) markers on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
 - After merge to the default branch, confirm CodeQL alerts for this class close on the next scan of `main`.
