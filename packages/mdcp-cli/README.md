@@ -757,7 +757,7 @@ Not the same as ordinary “search the docs.” Refs are about **correct anchors
 
 ## cross-link
 
-A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
+A **cross-link** (also **cross-ref**) is a Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
 
 Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](../../docs/features/link-validation.md).
 
@@ -777,16 +777,6 @@ The registry is **generated state**, not authored shards. `mdcp compile` (and `m
 
 ## Locale pack
 
-A **locale pack** is MDCP’s small bundle of natural-language strings and locale-specific patterns used when **compiling** docs (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns).
-
-It is **not** [GFM](#gfm) structure. Prose static analysis belongs in peer **[Vale](https://vale.sh/) style packages** — see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+A **locale pack** is MDCP’s compile-time bundle of generated wording and locale-specific patterns (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns). Default `en-US`.
 
 <!-- mdcp-shard: end ../../docs/glossary/locale-pack.md -->
-
-<!-- mdcp-shard: start ../../docs/glossary/gfm.md -->
-
-## GFM
-
-**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
-
-<!-- mdcp-shard: end ../../docs/glossary/gfm.md -->

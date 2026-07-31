@@ -1,5 +1,5 @@
 extends: existence
-message: "Remove Pandoc-style heading identifier '%s'; MDCP uses GFM auto-slugs from heading text."
+message: "Remove Pandoc ID '%s'; MDCP uses GFM auto-slugs from heading text."
 link: https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints/locale-and-language.md
 level: error
 scope: heading

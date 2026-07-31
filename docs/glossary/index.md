@@ -34,7 +34,6 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [refs registry](./refs-registry.md)
 - [heading slug](./heading-slug.md)
 - [cross-link](./cross-link.md)
-- [xref](./xref.md)
 - [standalone guide](./standalone-guide.md)
 - [coverage](./coverage.md)
 - [ReDoS](./redos.md)

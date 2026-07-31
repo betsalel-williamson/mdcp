@@ -93,7 +93,7 @@ describe('cli smoke', () => {
   });
 
   it('does not run Vale prose or Pandoc-id checks in core check', () => {
-    const docs = mkdtempSync(join(tmpdir(), 'mdcp-no-core-xref-'));
+    const docs = mkdtempSync(join(tmpdir(), 'mdcp-no-core-prose-lint-'));
     try {
       const guide = join(docs, 'g');
       mkdirSync(guide, { recursive: true });
@@ -120,7 +120,6 @@ describe('cli smoke', () => {
         { encoding: 'utf-8', cwd: docs },
       );
       expect(r.status).toBe(0);
-      expect(`${r.stdout}${r.stderr}`).not.toContain('xref:');
       expect(r.stdout).toContain('mdcp check passed');
     } finally {
       rmSync(docs, { recursive: true, force: true });

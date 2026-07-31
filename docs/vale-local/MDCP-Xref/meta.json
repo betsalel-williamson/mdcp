@@ -1,4 +1,0 @@
-{
-  "name": "MDCP-Xref",
-  "description": "mdcp dogfood-only: warn on Pandoc-style {#id} after headings. Prefer GFM auto-slugs; mdcp-core does not require explicit ids."
-}

@@ -1,24 +1,26 @@
 # Locale and language boundary
 
-MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract: **headings** and **links**, not chapters/sections as protocol concepts. Natural-language **static analysis** belongs with **[Vale](https://vale.sh/) style packages**, not as durable gates in the core compile/check API. Core may hold a small **[locale pack](../../glossary/locale-pack.md)** for compile-time generated wording (captions, broken-link markers) and locale-specific heading-key patterns.
+MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract: **headings** and **[cross-links](../../glossary/cross-link.md)** (ordinary `[]()` markdown links). It does not model chapters/sections as protocol concepts.
+
+Natural-language **static analysis** belongs with **[Vale](https://vale.sh/) style packages**, not as durable gates in the core compile/check API. Core may hold a small **[locale pack](../../glossary/locale-pack.md)** for compile-time generated wording (captions, broken-link markers) and locale-specific heading-key patterns.
 
 ## Preferred homes
 
-- **Pandoc [xref](../../glossary/xref.md)** (`{#…}` after a heading) → peer **Vale**. Dogfood style `MDCP-Xref` warns authors to **remove** them. MDCP does not require or prefer explicit ids; compile may strip leftover markers for cleanup.
-- **Unlinked numbered heading mentions in prose** (en-US words such as "See Chapter…", bare `Ch. N`, "Section N") → peer **Vale** style `MDCP` in `@bwilliamson/mdcp-presets` (`vale/MDCP`). Language-specific; other languages need their own styles.
-- **Dead internal targets, orphans, refs, compile** → **mdcp-core / CLI**. First-class [MarkDown Context Protocol](../../glossary/mdcp.md) validation of GFM links and heading slugs.
-- **GFM / Markdown shape** → peer **markdownlint**. Format structure, not natural language.
-- **Generated caption / marker copy** (`Table 1. …`, `BROKEN LINK`) → compile-time locale pack (default `en-US`). Product output strings — not lint alerts.
-
-MDCP **cross-references** are ordinary GFM links to heading slugs (for example `[Details](./other.md#details)`). Core [link validation](../link-validation.md) checks that those targets resolve. Vale does not replace that check: Vale asks prose _mentions_ to become links, or asks authors to drop Pandoc ids.
+- **GFM cross-refs** (`[label](./shard.md#slug)`) → **mdcp-core / CLI**. First-class [link validation](../link-validation.md) and [refs](../../glossary/refs.md). This is the compile/check job.
+- **Unlinked prose mentions** (en-US examples: "See Chapter…", bare `Ch. N`, "Section N" with no markdown link) → peer **Vale** style `MDCP` in `@bwilliamson/mdcp-presets` (`vale/MDCP`). Language-specific writing cues — not MDCP protocol vocabulary. Other languages need their own Vale styles.
+- **Pandoc IDs** (`{#…}` after a heading) → peer **Vale** (dogfood style `MDCP-PandocId` warns authors to **remove** them). Core may strip leftovers for cleanup; not an authoring feature.
+- **GFM / Markdown shape** → peer **markdownlint**.
+- **Generated caption / marker copy** (`Table 1. …`, `BROKEN LINK`) → compile-time locale pack (default `en-US`).
 
 ```text
-# Illustrative — Vale MDCP (prose mention without a link):
+# Illustrative — Vale MDCP (prose mention without a GFM link):
 See Chapter 2 for details.
 
-# Illustrative — Vale MDCP-Xref (Pandoc id after heading; remove it):
+# Illustrative — Vale MDCP-PandocId (Pandoc ID after heading; remove it):
 ## Details {#…}
 ```
+
+Vale does not replace link validation: Vale asks prose mentions to become links, or asks authors to drop Pandoc IDs. Core checks that authored `.md` paths and `#anchor` fragments resolve.
 
 ## How Vale handles multiple languages (model we follow)
 

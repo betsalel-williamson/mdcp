@@ -15,7 +15,7 @@ Even when everyday docs never hit the pathological case, the open alerts block a
 Phase A introduces shared **linear** helpers for:
 
 - recognizing and demoting ATX headings
-- stripping leftover `{#…}` markers when cleaning compiled output (defensive cleanup — authoring opinion to avoid those markers is Vale `MDCP-Xref`)
+- stripping leftover Pandoc IDs (`{#…}`) when cleaning compiled output (defensive cleanup — authoring opinion to avoid them is Vale `MDCP-PandocId`)
 - producing plain heading text for language-agnostic [heading slug](../glossary/heading-slug.md) generation
 
 Public package APIs keep their existing names; call sites delegate to the helpers. Duration-budget regression tests exercise the known CodeQL pump classes so a future regex reintroduction fails CI.
@@ -29,5 +29,5 @@ Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example 
 ## Authoring implications
 
 - Prefer the shared helpers for new heading or slug logic; do not add new polynomial-risk regexes for those jobs.
-- Prefer GFM auto-slugs; do not author Pandoc [xref](../glossary/xref.md) markers on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
+- Prefer GFM auto-slugs; do not author Pandoc IDs on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
 - After merge to the default branch, confirm CodeQL alerts for this class close on the next scan of `main`.

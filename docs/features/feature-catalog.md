@@ -58,14 +58,9 @@ mdcp shard   # requires config.source
 
 Detect shards not in manifest or missing files.
 
-## Prose and Pandoc-id lint (Vale)
+## Peer Vale prose (not core)
 
-MDCP itself only models **GFM headings and links** — not chapters/sections. Two Vale concerns stay outside core:
-
-1. **Unlinked numbered heading mentions (en-US)** — `See Chapter...`, `See Section...`, bare `Ch. N`, `Section N`, and similar prose — `MDCP` style in `@bwilliamson/mdcp-presets`. Authors should use GFM links, for example `See [Section 2](./other.md#section-2)`. Other languages need their own Vale styles and `.vale.ini` sections.
-2. **Pandoc [xref](../glossary/xref.md)** (`{#…}` after a heading) — dogfood `MDCP-Xref` warns authors to **remove** those identifiers; MDCP uses GFM auto-slugs. Core may strip leftover markers at compile time but does not treat explicit ids as a first-class authoring feature.
-
-Neither replaces [Link validation](./link-validation.md), which checks that authored `.md` paths and `#anchor` fragments resolve. See [Locale and language boundary](./design-constraints/locale-and-language.md).
+en-US writing cues such as an unlinked "See Chapter…" mention, and dogfood warnings to remove Pandoc IDs (`{#…}` after a heading), live in Vale styles — not in `mdcp check`. They do not replace [Link validation](./link-validation.md) for GFM cross-refs. See [Locale and language boundary](./design-constraints/locale-and-language.md).
 
 ## Coverage scan (P1.5)
 

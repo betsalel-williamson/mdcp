@@ -44,45 +44,47 @@ describe('design scope documentation (#26)', () => {
   it('documents GFM vs locale-pack boundary for opinionated English helpers', () => {
     const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
     const localeGlossary = readRepoDoc('docs/glossary/locale-pack.md');
-    const xrefGlossary = readRepoDoc('docs/glossary/xref.md');
+    const crossLinkGlossary = readRepoDoc('docs/glossary/cross-link.md');
     expect(localeShard).toContain('# Locale and language boundary');
     expect(localeShard).toContain('locale pack');
     expect(localeShard).toContain('Vale');
     expect(localeShard).toContain('BasedOnStyles');
     expect(localeShard).toContain('@bwilliamson/mdcp-presets');
     expect(localeShard).toContain('vale/MDCP');
+    expect(localeShard).toContain('Pandoc IDs');
+    expect(localeShard).toContain('GFM cross-refs');
     expect(localeShard).not.toContain('lintXrefs');
+    expect(localeShard).not.toContain('MDCP-Xref');
     expect(localeShard).toContain('en-US');
     expect(localeShard).toContain('Hunspell');
     expect(localeGlossary).toContain('# Locale pack');
-    expect(localeGlossary).toContain('style packages');
+    expect(localeGlossary).toContain('compile-time');
     expect(localeGlossary).not.toContain('transitional');
     expect(glossaryIndex).toContain('./locale-pack.md');
-    expect(glossaryIndex).toContain('./xref.md');
-    expect(xrefGlossary).toContain('# xref');
-    expect(xrefGlossary).toContain('Pandoc-style explicit heading identifier');
-    expect(xrefGlossary).toContain('./cross-link.md');
+    expect(glossaryIndex).not.toContain('./xref.md');
+    expect(crossLinkGlossary).toContain('cross-ref');
   });
 
-  it('keeps markdown helpers language-agnostic and separates Vale xref from MDCP prose', () => {
+  it('keeps markdown helpers language-agnostic and Vale prose out of core vocabulary', () => {
     const docsValeConfig = readRepoDoc('docs/.vale.ini');
     const sampleValeConfig = readRepoDoc('examples/sample-guides/.vale.ini');
     const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
-    const xrefMeta = readRepoDoc('docs/vale-local/MDCP-Xref/meta.json');
+    const pandocMeta = readRepoDoc('docs/vale-local/MDCP-PandocId/meta.json');
     expect(packagesAndTests).toContain('language-agnostic');
-    expect(packagesAndTests).toContain('../glossary/xref.md');
+    expect(packagesAndTests).toContain('Peer Vale');
     expect(packagesAndTests).not.toContain(
       'Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/`',
     );
-    expect(localeShard).toContain('../../glossary/xref.md');
-    expect(localeShard).toContain('not chapters/sections as protocol concepts');
-    expect(featureCatalog).toContain('../glossary/xref.md');
-    expect(featureCatalog).toContain('See [Section 2](./other.md#section-2)');
-    expect(featureCatalog).toContain('Neither replaces');
-    expect(xrefMeta).toContain('Pandoc-style');
-    expect(docsValeConfig).toContain('MDCP-Xref');
+    expect(localeShard).toContain('does not model chapters/sections');
+    expect(featureCatalog).toContain('Peer Vale prose');
+    expect(featureCatalog).toContain('Pandoc IDs');
+    expect(featureCatalog).toContain('not replace');
+    expect(pandocMeta).toContain('MDCP-PandocId');
+    expect(pandocMeta).toContain('Pandoc IDs');
+    expect(docsValeConfig).toContain('MDCP-PandocId');
+    expect(docsValeConfig).not.toContain('MDCP-Xref');
     expect(docsValeConfig).not.toContain('BlockIgnores');
-    expect(sampleValeConfig).toContain('MDCP-Xref');
+    expect(sampleValeConfig).toContain('MDCP-PandocId');
     expect(sampleValeConfig).not.toContain('BlockIgnores');
   });
 
@@ -136,7 +138,8 @@ describe('design scope documentation (#26)', () => {
       const compiled = readRepoDoc(outputPath);
       expect(compiled).toContain('## GFM');
       expect(compiled).toContain('## Authored GFM');
-      expect(compiled).toContain('## xref');
+      expect(compiled).toContain('## cross-link');
+      expect(compiled).not.toContain('## xref');
     }
   });
 });

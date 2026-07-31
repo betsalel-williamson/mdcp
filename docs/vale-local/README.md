@@ -4,4 +4,4 @@ This directory holds committed Vale style source for rules that are local to the
 
 Keep reusable rule logic in `@bwilliamson/mdcp-presets`. Local styles should stay small and dogfood-only.
 
-`MDCP-Xref` warns on Pandoc [xref](../glossary/xref.md) markers after headings. The shipped `MDCP` style covers unlinked numbered heading mentions in prose. See [Locale and language boundary](../features/design-constraints/locale-and-language.md).
+`MDCP-PandocId` warns on Pandoc IDs (`{#…}`) after headings. The shipped `MDCP` style covers unlinked numbered heading mentions in prose. See [Locale and language boundary](../features/design-constraints/locale-and-language.md).

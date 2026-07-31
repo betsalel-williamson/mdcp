@@ -78,7 +78,7 @@ BasedOnStyles = Microsoft, MDCP
 TokenIgnores = (?s)\[.*?\]\(.*?\)
 ```
 
-Shipped `MDCP` rules use `scope: ~heading` so ATX heading titles (which may contain the words Chapter/Section) are not matched. Dogfood `MDCP-Xref` uses `scope: heading` for Pandoc `{#…}` identifiers.
+Shipped `MDCP` rules use `scope: ~heading` so ATX heading titles (which may contain the words Chapter/Section) are not matched. Dogfood `MDCP-PandocId` uses `scope: heading` for Pandoc IDs (`{#…}`).
 
 Run prose checks with:
 

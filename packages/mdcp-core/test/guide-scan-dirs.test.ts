@@ -13,7 +13,7 @@ describe('guideScanDirs', () => {
     expect(guideScanDirs(config, cwd)).toEqual([resolve(cwd, 'features'), resolve(cwd, 'dev')]);
   });
 
-  it('does not expose a prose xref scan helper from core config loading', async () => {
+  it('does not expose a removed prose-lint scan helper from core config loading', async () => {
     const load = await import('../src/config/load.js');
     expect('xrefScanDirs' in load).toBe(false);
   });
