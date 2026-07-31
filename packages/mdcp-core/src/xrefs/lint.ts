@@ -1,13 +1,11 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { isAtxHeading } from '../markdown/index.js';
+import { findChapterRefs, hasUnlinkedLowercaseSee } from './chapter-refs.js';
 
 const LINK_RE = /\[([^\]]*)\]\([^)]*\)/g;
-const CH_REF_RE =
-  /\b(?:Ch\.?\s*\d+(?:\s*[–—-]\s*[^|.\n]+)?|Chapter\s+\d+(?:\s*[–—-]\s*[^|.\n]+)?)\b/gi;
 const SEE_CHAPTER_RE = /\bSee\s+Chapter\s+\d+\b/gi;
 const SEE_CAPITAL_UNLINKED_RE = /\bSee\s+(?!your\s)(?!\[)\w/;
-const SEE_LOWERCASE_UNLINKED_RE = /(?<=[(,])\s*see\s+(?!\[)\w/;
 
 const SKIP_FILES = new Set(['index.md']);
 const SKIP_PREFIXES = ['table-of-contents'];
@@ -38,8 +36,8 @@ function lintFile(path: string, root: string): string[] {
     if (isAtxHeading(stripped)) continue;
 
     const plain = stripLinks(line);
-    for (const m of plain.matchAll(CH_REF_RE)) {
-      issues.push(`${rel}:${num + 1}: bare cross-ref: ${JSON.stringify(m[0])}`);
+    for (const ref of findChapterRefs(plain)) {
+      issues.push(`${rel}:${num + 1}: bare cross-ref: ${JSON.stringify(ref)}`);
     }
     for (const m of line.matchAll(SEE_CHAPTER_RE)) {
       if (!LINK_RE.test(line)) {
@@ -51,7 +49,7 @@ function lintFile(path: string, root: string): string[] {
     if (SEE_CAPITAL_UNLINKED_RE.test(line)) {
       issues.push(`${rel}:${num + 1}: unlinked See reference`);
     }
-    if (SEE_LOWERCASE_UNLINKED_RE.test(line)) {
+    if (hasUnlinkedLowercaseSee(line)) {
       issues.push(`${rel}:${num + 1}: unlinked see reference`);
     }
   }
