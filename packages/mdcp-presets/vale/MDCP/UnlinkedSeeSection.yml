@@ -1,8 +1,8 @@
 extends: existence
-message: "Unlinked '%s' should be a GFM markdown link, e.g. See [Chapter 2](./other.md#chapter-2) for details."
+message: "Unlinked '%s' should be a GFM markdown link, e.g. See [Section 2](./other.md#section-2) for details."
 link: https://github.com/betsalel-williamson/mdcp/blob/main/docs/features/design-constraints/locale-and-language.md
 level: error
 scope: text
 nonword: true
 tokens:
-  - '\bSee\s+Chapter\s+\d+\b'
+  - '\bSee\s+(?:Sec\.?|Section)\s+\d+\b'

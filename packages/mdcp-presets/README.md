@@ -36,39 +36,64 @@ npm install -D @bwilliamson/mdcp-presets markdownlint-cli2 @bwilliamson/mdcp-cli
 
 ## Vale style (`MDCP`)
 
-English (en-US) prose cues for MDCP docs — bare chapter-style cross-references that should be markdown links. This is the durable home for that opinion; keep [mdcp-core](https://www.npmjs.com/package/@bwilliamson/mdcp-core) focused on compile and protocol validation. See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+English (en-US) prose cues for MDCP docs — bare chapter and section cross-references that should be GFM markdown links. This is the durable home for that opinion; keep [mdcp-core](https://www.npmjs.com/package/@bwilliamson/mdcp-core) focused on compile and protocol validation. See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
-| Path                 | Role                                     |
-| -------------------- | ---------------------------------------- |
-| `vale/MDCP/`         | Vale style package (YAML rules)          |
-| `vale/mdcp.vale.ini` | Sample `.vale.ini` snippet for consumers |
+| Path                 | Role                                            |
+| -------------------- | ----------------------------------------------- |
+| `vale/package/`      | Vale Packages-compatible layout for `vale sync` |
+| `vale/MDCP/`         | Source Vale style rules                         |
+| `vale/mdcp.vale.ini` | Sample `.vale.ini` snippet for consumers        |
 
-### Enable in your docs tree
+### Enable with Vale Packages
 
-1. Put `MDCP` on your Vale `StylesPath` (copy or symlink `node_modules/@bwilliamson/mdcp-presets/vale/MDCP` next to other styles such as Microsoft).
-2. Merge rules from `vale/mdcp.vale.ini` into your `.vale.ini` (or start from that file).
+Use `Packages` when consuming the MDCP Vale style as a release zip:
 
 ```ini
 StylesPath = styles
 MinAlertLevel = suggestion
+Packages = https://github.com/betsalel-williamson/mdcp/releases/download/<tag>/mdcp-presets-vale.zip
 
-[*.md]
+[*.{md,mdx}]
 BasedOnStyles = MDCP
-# Ignore already-linked markdown so link labels do not false-positive:
 TokenIgnores = (?s)\[.*?\]\(.*?\)
-# Ignore ATX heading lines (chapter titles in headings are not bare cross-refs):
+```
+
+Then run:
+
+```bash
+vale sync
+```
+
+The package config enables `MDCP` and ignores already-linked GFM markdown tokens so labels such as `[Section 2](./other.md#section-2)` do not false-positive. Vale 3.15.1 syncs local directory packages such as `./node_modules/@bwilliamson/mdcp-presets/vale/package` as style files but moves the package `.vale.ini`, so use the fallback below for npm-directory installs in this version.
+
+Merge with other Vale packages by listing each package and combining styles:
+
+```ini
+StylesPath = styles
+MinAlertLevel = suggestion
+Packages = Microsoft, https://github.com/betsalel-williamson/mdcp/releases/download/<tag>/mdcp-presets-vale.zip
+
+[*.{md,mdx}]
+BasedOnStyles = Microsoft, MDCP
+TokenIgnores = (?s)\[.*?\]\(.*?\)
+```
+
+If your repo uses chapter or section titles in ATX headings, add a local override in your `.vale.ini`:
+
+```ini
+[*.{md,mdx}]
 BlockIgnores = (?m)^#+ .*
 ```
 
-Combine with other styles as needed: `BasedOnStyles = Microsoft, MDCP`.
-
-Then:
+Run prose checks with:
 
 ```bash
 mdcp prose --require-vale
 # or
 mdcp check --require-vale
 ```
+
+If your Vale setup cannot use `Packages`, or you are using the npm directory path on Vale 3.15.1, copy or symlink `node_modules/@bwilliamson/mdcp-presets/vale/MDCP` into your `StylesPath` and merge the `TokenIgnores` example from `vale/package/.vale.ini`.
 
 ## Wire markdownlint into `mdcp.config.json`
 
@@ -104,9 +129,11 @@ Shard lint scope comes from `compileOrder` guide directories (or `lint.markdownl
 @bwilliamson/mdcp-presets/markdownlint-compiled.markdownlint-cli2.jsonc
 @bwilliamson/mdcp-presets/vale/mdcp.vale.ini
 @bwilliamson/mdcp-presets/vale/MDCP/*
+@bwilliamson/mdcp-presets/vale/package/.vale.ini
+@bwilliamson/mdcp-presets/vale/package/styles/MDCP/*
 ```
 
-markdownlint-cli2 expects a filesystem path in `--config`, so the `node_modules/...` form above is the usual approach. Vale needs the `MDCP` folder under `StylesPath`.
+markdownlint-cli2 expects a filesystem path in `--config`, so the `node_modules/...` form above is the usual approach. Vale can sync the packaged MDCP style from `node_modules/@bwilliamson/mdcp-presets/vale/package`.
 
 ## Customizing
 
