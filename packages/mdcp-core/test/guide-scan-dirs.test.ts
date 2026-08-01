@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { resolve, join } from 'node:path';
 import { MdcpConfigSchema } from '../src/config/schema.js';
-import { guideScanDirs, shardLintPaths, xrefScanDirs } from '../src/config/load.js';
+import { guideScanDirs, shardLintPaths } from '../src/config/load.js';
 
 describe('guideScanDirs', () => {
   it('returns compileOrder guide dirs under cwd', () => {
@@ -13,14 +13,19 @@ describe('guideScanDirs', () => {
     expect(guideScanDirs(config, cwd)).toEqual([resolve(cwd, 'features'), resolve(cwd, 'dev')]);
   });
 
-  it('xrefScanDirs matches guideScanDirs', () => {
+  it('does not expose a removed prose-lint scan helper from core config loading', async () => {
+    const load = await import('../src/config/load.js');
+    expect('xrefScanDirs' in load).toBe(false);
+  });
+
+  it('strips removed lint.xrefs config from parsed config', () => {
     const config = MdcpConfigSchema.parse({
       outputDir: '_build',
       compileOrder: ['a', 'b'],
       guides: [{ name: 'b', path: 'custom/b' }],
+      lint: { xrefs: { enabled: false } },
     });
-    const cwd = '/repo/docs';
-    expect(xrefScanDirs(config, cwd)).toEqual(guideScanDirs(config, cwd));
+    expect('xrefs' in (config.lint ?? {})).toBe(false);
   });
 });
 

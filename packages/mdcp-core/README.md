@@ -91,7 +91,7 @@ Use `writeCompiledGuides` when you need to write the monolith and per-guide publ
 | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `loadConfig(path, configBase)`                                                         | Load and validate `mdcp.config.json` (`path` is resolved from `configBase`) |
 | `resolveOutputPath`, `resolveRefsPath`, `resolveGuideDir`, `defaultGuideOutputFile`    | Path resolvers for docs root and `outputDir`                                |
-| `getGuideConfig`, `guideScanDirs`, `shardLintPaths`, `xrefScanDirs`                    | In-scope guide fileset and xref scan helpers                                |
+| `getGuideConfig`, `guideScanDirs`, `shardLintPaths`                                    | In-scope guide fileset and shard lint helpers                               |
 | `MdcpConfigSchema`, `MdcpConfig`, `MdcpConfigInput`, `GuideConfig`, `GuideConfigInput` | Zod schema and types                                                        |
 | `DEFAULT_COMPILE_HOOKS`, `resolveCompileHooks`                                         | Default built-in hook pipeline and guide-level resolution                   |
 
@@ -242,10 +242,10 @@ CLI authoring rules: [Cross-links and refs — heading slugs](../mdcp-cli/README
 
 ### Validation
 
-| Export                  | Purpose                                 |
-| ----------------------- | --------------------------------------- |
-| `checkOrphansForGuides` | Detect unlinked or missing shard files  |
-| `lintXrefs`             | Chapter-style cross-reference detection |
+| Export                  | Purpose                                |
+| ----------------------- | -------------------------------------- |
+| `checkOrphansForGuides` | Detect unlinked or missing shard files |
+| `lintLinks`             | Internal markdown link validation      |
 
 <!-- mdcp-shard: end ../../docs/client-core/api-refs-validation.md -->
 

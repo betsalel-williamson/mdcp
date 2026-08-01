@@ -12,7 +12,7 @@ MDCP inverts the workflow:
 
 1. **Authors edit shards** — one file per section, listed in the guide manifest (`index.md` or `shards.md`).
 2. **Compile stitches shards** — heading levels are normalized, preambles stripped, links rewritten.
-3. **Validation catches drift** — orphans, stale refs, bare cross-references, optional prose/style linters.
+3. **Validation catches drift** — orphans, stale refs, broken internal links, optional prose/style linters.
 4. **Compiled output serves consumers** — monolith and publish files for humans, agents, and CI.
 
 You never hand-maintain the compiled file. Shards are the source of truth; `guides.md` (or a publish target like `README.md`) is generated.
@@ -71,7 +71,6 @@ flowchart TB
 
   subgraph validate["Validation"]
     orphans["Orphan / manifest checks"]
-    xrefs["Xref lint"]
     peers["Peer linters optional"]
   end
 
@@ -87,11 +86,11 @@ flowchart TB
   shards --> validate
 ```
 
-| Package                         | Role                                                                                        |
-| ------------------------------- | ------------------------------------------------------------------------------------------- |
-| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `shard`, `refs`, peer linter wrappers.        |
-| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.     |
-| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs for shard and compiled trees (not bundled; opt-in via config). |
+| Package                         | Role                                                                                      |
+| ------------------------------- | ----------------------------------------------------------------------------------------- |
+| **`@bwilliamson/mdcp-cli`**     | Command-line entry point: `compile`, `check`, `shard`, `refs`, peer linter wrappers.      |
+| **`@bwilliamson/mdcp-core`**    | Library implementation: compile/assemble, refs, validation, shard orchestration, hooks.   |
+| **`@bwilliamson/mdcp-presets`** | Starter markdownlint configs and the `MDCP` Vale style (opt-in via config / `.vale.ini`). |
 
 The CLI is a thin wrapper over core. Integrators (CI, editors, agents) can call core directly or shell out to the CLI.
 
@@ -108,7 +107,7 @@ Understanding this sequence explains why most commands exist:
            ↓
   mdcp refs generate           Write refs.json from compiled headings
            ↓
-  mdcp check                   Orphans → compile → refs → xrefs → optional linters
+  mdcp check                   Orphans → compile → refs → links → optional linters
 ```
 
 **Split** (`mdcp shard`) is the inverse path — used when bootstrapping shards from an existing monolith, not on every edit cycle.
@@ -134,7 +133,6 @@ Guides with `compile.outputFile` are **excluded from the monolith** so you can p
 | Orphans | `validate/orphans.ts`   | Shard/manifest mismatches                      |
 | Compile | `compile/`              | Assembly failures                              |
 | Refs    | `refs/registry.ts`      | Stale `refs.json`                              |
-| Xrefs   | `xrefs/lint.ts`         | Unlinked chapter-style references              |
 | Linters | `peers/` + host install | markdownlint, Vale, link-check when configured |
 
 Peer linters are **not bundled**. CI uses `--require-lint` / `--require-vale` to fail when tools are missing.
@@ -160,7 +158,6 @@ This repository dogfoods under `docs/`: the features guide compiles into `docs/_
 | Shard split orchestration       | `src/shard/orchestrator.ts` | `shard`                         |
 | Slugs + refs registry           | `src/refs/`                 | `refs`                          |
 | Orphan validation               | `src/validate/orphans.ts`   | `check`                         |
-| Xref lint                       | `src/xrefs/lint.ts`         | `check`                         |
 | Peer binary resolution          | `src/peers/resolve.ts`      | `lint`, `prose`, `links`, `fix` |
 
 Start with `assemble.ts` and `cli.ts` if you are tracing a compile from config to disk.
@@ -187,10 +184,11 @@ This repository dogfoods a **publish landing** layout in [`docs/repo-readme/`](.
 
 ## Design boundaries (intentional limits)
 
-- **[GFM](../glossary/gfm.md) only** — no Pandoc, wikilinks, or required `{#heading-ids}`
+- **[GFM](../glossary/gfm.md) only** — no Pandoc, wikilinks, or required Pandoc IDs; heading recognition is an ATX subset today ([GFM scope](./design-constraints/gfm-scope.md#headings))
 - **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used
 - **GitHub slugs** — computed from compiled headings via [github-slugger](https://www.npmjs.com/package/github-slugger) (html-pipeline algorithm); see [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules)
 - **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.
+- **[Locale and language boundary](./design-constraints/locale-and-language.md)** — GFM structure vs Vale prose vs compile-time locale pack
 - **No preprocessor / templating** — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)
 
 Details: [Design constraints](./design-constraints/index.md).

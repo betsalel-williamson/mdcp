@@ -82,10 +82,10 @@ Normative targets below. Measured compliance for dogfood is in [performance-dogf
 
 ### Tier 2 — CI gate (core mdcp only, no peers)
 
-| Operation                                          | Target                  | Rationale                            |
-| -------------------------------------------------- | ----------------------- | ------------------------------------ |
-| `check` (orphans + compile + refs + links + xrefs) | **< 5 s** @ 200 shards  | PR feedback under 10 s total         |
-| Same                                               | **< 15 s** @ 500 shards | Large program still acceptable in CI |
+| Operation                                  | Target                  | Rationale                            |
+| ------------------------------------------ | ----------------------- | ------------------------------------ |
+| `check` (orphans + compile + refs + links) | **< 5 s** @ 200 shards  | PR feedback under 10 s total         |
+| Same                                       | **< 15 s** @ 500 shards | Large program still acceptable in CI |
 
 ### Tier 3 — Full CI (with peer linters)
 
@@ -111,7 +111,6 @@ Track and publish in CI ([performance-dogfood.csv](./performance-dogfood.csv), r
 mdcp check (after P1)
   orphans
   compileWorkspace ──► compileGuideResultsWithContext (once) → disk + refs + link lint
-  xrefs
   markdownlint (shards + compiled)
   Vale
 ```

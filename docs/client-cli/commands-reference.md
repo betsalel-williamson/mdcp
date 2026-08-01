@@ -24,7 +24,7 @@ mdcp compile --config docs/mdcp.config.json --docs-root docs
 # Regenerate the monolith from shards (link order from each guide's index.md / shards.md)
 mdcp compile
 
-# Full validation gate (orphans → compile → refs → links → xrefs; optional peer linters)
+# Full validation gate (orphans → compile → refs → links; optional peer linters)
 mdcp check
 ```
 
@@ -34,16 +34,16 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 
 ## Command summary
 
-| Command          | When you need it                                                                                      |
-| ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default)    |
-| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters; non-fatal coverage report |
-| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                               |
-| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                           |
-| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                                  |
-| `mdcp prose`     | Vale prose lint (peer, if installed)                                                                  |
-| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                           |
-| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                    |
+| Command          | When you need it                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
+| `mdcp check`     | Full gate: orphans → compile → refs → links; optional peer linters; non-fatal coverage report      |
+| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
+| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                        |
+| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
+| `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
+| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
+| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
 
 ## Refs subcommands
 

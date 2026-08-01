@@ -51,6 +51,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [check](#check)
 - [GFM](#gfm)
 - [Authored GFM](#authored-gfm)
+- [locale pack](#locale-pack)
 - [ignoreGuides](#ignoreguides)
 - [refs](#refs)
 - [refs registry](#refs-registry)
@@ -433,7 +434,9 @@ mdcp/
 │   ├── developer/          # This guide → DEVELOPERS.md
 │   ├── client-cli/         # → packages/mdcp-cli/README.md
 │   ├── client-core/        # → packages/mdcp-core/README.md
-│   └── repo-readme/        # → README.md (publish landing)
+│   ├── repo-readme/        # → README.md (publish landing)
+│   ├── vale-local/         # Dogfood-only Vale styles (MDCP-PandocId)
+│   └── .vale.ini           # Peer Vale config
 ├── examples/sample-guides/ # Minimal consumer fixture for tests and tutorials
 ├── legacy/                 # Original bash/Python reference implementation
 ├── .changeset/             # Changesets for semver releases
@@ -461,13 +464,14 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Config schema      | `src/config/`                 |
 | Compile / assemble | `src/compile/`                |
 | Markdown helpers   | `src/markdown/`               |
+| Locale packs       | `src/locale/`                 |
 | Refs / slugs       | `src/refs/`                   |
-| Validation         | `src/validate/`, `src/xrefs/` |
+| Validation         | `src/validate/`, `src/links/` |
 | Shard (split)      | `src/shard/`                  |
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared heading and `` helpers live under `src/markdown/` — see [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers) for why.
+Shared heading/link helpers live under `src/markdown/` and `src/refs/` (`parseHeading` with ATX kind today, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Heading recognition is an ATX subset of GFM — see [GFM scope](docs/features/design-constraints/gfm-scope.md#headings). Compile-time wording lives under `src/locale/` (BCP 47 JSON). Peer Vale owns prose cues and Pandoc ID authoring opinion — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -497,7 +501,7 @@ Local runs print a text summary and write HTML/lcov under each package’s `cove
 
 ### mdcp-presets
 
-JSONC markdownlint configs only — no TypeScript build. Edit `*.markdownlint-cli2.jsonc` directly.
+JSONC markdownlint configs plus the shippable `MDCP` Vale style (`vale/MDCP/`). Dogfood-only styles live under [`docs/vale-local/`](docs/vale-local/README.md). Edit preset files directly — no TypeScript build.
 
 ### Pull request checklist
 
@@ -590,7 +594,7 @@ Prefer host search then read one shard under `docs/`. Compiled monoliths under `
 
 - **markdownlint** — shard preset + compiled preset (includes `DEVELOPERS.md` and published README paths)
 - **Vale** — prose lint on `glossary/`, `features/`, `developer/`, `client-cli/`, `client-core/`, `repo-readme/` (install [Vale](https://vale.sh/docs/vale-cli/installation/) on `PATH`; not an npm dependency)
-- **xref lint** — `mdcp check` flags bare `Ch. N` and unlinked chapter references in shards
+- **Vale `MDCP` / `MDCP-PandocId`** — peer prose: unlinked heading mentions; dogfood: remove Pandoc IDs. Not `mdcp check` core steps — enable with `--require-vale`
 - **link lint** — built-in validation runs on every `docs:check` with default `"error"` severity; publish guides set `compile.crossGuideLinks.ignoreGuides: ["features"]` so cross-guide links keep live `docs/features/` shard paths (publish-relative rebase only); see [Publish-only link policy](docs/features/link-validation.md#publish-only-link-policy)
 
 Run `pnpm vale:sync` after cloning or when `.vale.ini` changes (requires Vale on `PATH`).
@@ -613,7 +617,8 @@ We use an unopinionated, flexible document structure. The goal is to keep the au
 
 While we are unopinionated about document structure, we are **strict about links**.
 
-- All links in your documentation must be valid and point to existing files or headings.
+- All [cross-links](#cross-link) must be valid and point to existing files or headings.
+- Prefer GitHub-style heading slugs from heading text. Do not author Pandoc IDs (`{#…}` after a heading).
 - If a link is invalid, the CI and documentation checks will fail.
 - Do not create links to files that do not exist yet. If you need to indicate a placeholder, comment it out or write `(TBD)`.
 
@@ -1072,25 +1077,26 @@ Never unpublish a version that other packages or consumers legitimately depend o
 
 <!-- mdcp-shard: start docs/developer/safe-markdown-parsing.md -->
 
-## Safe markdown parsing (heading and anchor helpers)
+## Safe markdown parsing (heading helpers)
 
-Maintainer note for why `mdcp-core` centralizes ATX heading and Pandoc-style `` handling in shared helpers instead of ad-hoc regular expressions.
+Maintainer note for why `mdcp-core` centralizes heading parsing and related cleanup in shared **language-agnostic** helpers instead of ad-hoc regular expressions.
 
 Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
 
 ### Why this is necessary
 
-GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip `` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](#redos) class of denial-of-service risk.
+GitHub CodeQL’s `js/polynomial-redos` rule flagged several `mdcp-core` paths that parse headings and strip leftover `{#…}` markers. The patterns used overlapping or unbounded quantifiers (`\s*` next to `{#…}`, `\s+` with a greedy remainder, non-greedy `.*?` between braces) on library-controlled strings. On adversarial input those matches can take time that grows badly with length — a [ReDoS](#redos) class of denial-of-service risk.
 
-Even when everyday docs never hit the pathological case, the open alerts block a clean security dashboard, and the same regex shapes were copied across compile, refs, links, and xref lint. Fixing call sites one-by-one without a shared parse path invites the class to return.
+Even when everyday docs never hit the pathological case, the open alerts block a clean security dashboard, and the same regex shapes were copied across compile, refs, and links. Fixing call sites one-by-one without a shared parse path invites the class to return.
 
 ### What we do instead (Phase A)
 
 Phase A introduces shared **linear** helpers for:
 
-- recognizing and demoting ATX headings
-- stripping Pandoc-style `` markers (including optional preceding whitespace when cleaning compiled output)
-- producing plain heading text for [heading slug](#heading-slug) generation
+- recognizing headings via `parseHeading` (ATX kind today; see [GFM scope](docs/features/design-constraints/gfm-scope.md#headings))
+- demoting recognized headings (rewrite emits ATX)
+- stripping leftover Pandoc IDs (`{#…}`) when cleaning compiled output (defensive cleanup — authoring opinion to avoid them is Vale `MDCP-PandocId`)
+- producing plain heading text for language-agnostic [heading slug](#heading-slug) generation
 
 Public package APIs keep their existing names; call sites delegate to the helpers. Duration-budget regression tests exercise the known CodeQL pump classes so a future regex reintroduction fails CI.
 
@@ -1098,12 +1104,12 @@ See [Packages and tests](#packages-and-tests) for where the helper module lives 
 
 ### What Phase B covers
 
-Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example chapter xref lint and code-evidence patterns). Those stay out of the Phase A release gate. Rewrite or keep case-by-case; do not block shipping Phase A on a full regex purge.
+Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example code-evidence patterns). Those stay out of the Phase A release gate. Rewrite or keep case-by-case; do not block shipping Phase A on a full regex purge.
 
 ### Authoring implications
 
-- Prefer the shared helpers for new heading or `` logic; do not add new polynomial-risk regexes for those jobs.
-- Explicit `` markers in shards remain supported; stripping and slug behavior stay aligned with prior golden tests for normal content.
+- Prefer the shared helpers for new heading or slug logic; do not add new polynomial-risk regexes for those jobs.
+- Prefer GFM auto-slugs; do not author Pandoc IDs on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
 - After merge to the default branch, confirm CodeQL alerts for this class close on the next scan of `main`.
 
 <!-- mdcp-shard: end docs/developer/safe-markdown-parsing.md -->
@@ -1114,7 +1120,7 @@ Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example 
 
 Maintainer guide for tracking **GitHub Actions security posture** in this public OSS monorepo. Vulnerability **reporting** stays in [SECURITY.md](SECURITY.md); dependency and release triage stays in [Security-incident triage](#security-incident-triage). This shard is the audit trail for CI workflow and repository settings against the [OWASP GitHub Actions Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html).
 
-Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](#redos)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
+Work is tracked under epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). The durable checklist lives in [#168 — OWASP GitHub Actions security checklist docs](https://github.com/betsalel-williamson/mdcp/issues/168); see [GitHub Actions security checklist](#github-actions-security-checklist) for row-by-row status. CodeQL findings on library regexes (heading / `` [ReDoS](#redos)) are tracked separately in [Safe markdown parsing](#safe-markdown-parsing-heading-helpers).
 
 ### Status vocabulary
 
@@ -1371,7 +1377,9 @@ Use it before you trust a merge. Command details: [CLI consumer guide](docs/clie
 
 ## GFM
 
-**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+**GitHub Flavored Markdown** ([spec](https://github.github.com/gfm/)) — CommonMark plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+
+MDCP’s authored format contract is GFM, but heading recognition is an **ATX subset** today (setext not yet). See [GFM scope](docs/features/design-constraints/gfm-scope.md#headings).
 
 <!-- mdcp-shard: end docs/glossary/gfm.md -->
 
@@ -1382,6 +1390,14 @@ Use it before you trust a merge. Command details: [CLI consumer guide](docs/clie
 Shard markdown as written before compile — no preprocessor substitution or template conditionals. Compile hooks may transform it during assembly; read [Preprocessor / templating (out of scope)](docs/features/design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope).
 
 <!-- mdcp-shard: end docs/glossary/authored-gfm.md -->
+
+<!-- mdcp-shard: start docs/glossary/locale-pack.md -->
+
+## Locale pack
+
+A **locale pack** is MDCP’s compile-time bundle of generated wording and locale-specific patterns (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns). Default `en-US`.
+
+<!-- mdcp-shard: end docs/glossary/locale-pack.md -->
 
 <!-- mdcp-shard: start docs/glossary/ignore-guides.md -->
 
@@ -1440,7 +1456,7 @@ MDCP computes slugs from final heading text after guides are stitched and demote
 
 ## cross-link
 
-A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
+A **cross-link** (also **cross-ref**) is a Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
 
 Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](docs/features/link-validation.md).
 
@@ -1476,7 +1492,7 @@ See [Documentation coverage scan](docs/features/coverage-scan.md).
 
 **ReDoS** (Regular expression Denial of Service) is when a regular expression takes far too long on certain inputs — often because overlapping or unbounded quantifiers force the engine to explore many matching paths. Attackers (or accidental pathological strings) can stall a process that runs the pattern on untrusted or library-controlled text.
 
-In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-and-anchor-helpers).
+In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `{#…}` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-helpers).
 
 <!-- mdcp-shard: end docs/glossary/redos.md -->
 

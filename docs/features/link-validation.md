@@ -58,7 +58,7 @@ Compiled-phase checks run **after** cross-guide, publish-relative, and intra-gui
 ## Check pipeline
 
 ```text
-orphans → compile → refs → links (built-in) → xrefs → peer linters
+orphans → compile → refs → links (built-in) → peer linters
 ```
 
 Built-in link validation runs when `lint.links.enabled !== false` (default **on**).
@@ -76,7 +76,7 @@ Warn mode: global `--warn-broken-links` or `lint.links.severity: "warn"`. Resolu
 
 ## Check failure summary
 
-`mdcp check` may continue peer linters (markdownlint, Vale) after built-in link or xref failures so one run surfaces every gate. Peer tools often print their own “0 errors” success lines afterward, which can hide why the process still exits **1**.
+`mdcp check` may continue peer linters (markdownlint, Vale) after built-in link failures so one run surfaces every gate. Peer tools often print their own “0 errors” success lines afterward, which can hide why the process still exits **1**.
 
 When any gate fails, `mdcp check` ends with a stderr **failure summary** after all steps:
 
@@ -91,11 +91,11 @@ mdcp check failed:
 Resolve the diagnostics above, then re-run: mdcp check
 ```
 
-| Summary line includes | Role                                                             |
-| --------------------- | ---------------------------------------------------------------- |
-| Failed step name      | Which gate failed (orphans, built-in links, xrefs, peer linters) |
-| Count / pointer       | How many issues, or “see `link:` / `xref:` / peer output above”  |
-| Remediation hint      | Concrete next action for the failure kinds present in that run   |
+| Summary line includes | Role                                                           |
+| --------------------- | -------------------------------------------------------------- |
+| Failed step name      | Which gate failed (orphans, built-in links, peer linters)      |
+| Count / pointer       | How many issues, or “see `link:` / peer output above”          |
+| Remediation hint      | Concrete next action for the failure kinds present in that run |
 
 Success still ends with `mdcp check passed` on stdout. Early hard stops (orphans, refs registry mismatch) keep exiting immediately after their own diagnostics — they do not need a multi-step summary.
 

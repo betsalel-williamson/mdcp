@@ -149,7 +149,6 @@ export const MdcpConfigSchema = z.object({
           config: z.string().optional(),
         })
         .optional(),
-      xrefs: z.object({ enabled: z.boolean().default(true) }).optional(),
     })
     .optional(),
 

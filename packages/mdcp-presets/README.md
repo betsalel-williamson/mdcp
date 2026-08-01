@@ -1,13 +1,14 @@
 # @bwilliamson/mdcp-presets
 
-Starter [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) configs tuned for **mdcp** consumer repos — separate rules for **shard files** and the **compiled monolith**.
+Starter **markdownlint-cli2** configs and a **Vale** style package (`MDCP`) for MarkDown Context Protocol consumer repos.
 
-Install alongside `@bwilliamson/mdcp-cli` when you want `mdcp lint` or `mdcp check --require-lint` without writing lint configs from scratch.
+Install alongside `@bwilliamson/mdcp-cli` when you want `mdcp lint` / `mdcp prose` (or `mdcp check --require-lint` / `--require-vale`) without writing lint configs from scratch.
 
 ## Requirements
 
 - Node.js **>= 18.0.0**
-- `markdownlint-cli2` installed in your repo
+- `markdownlint-cli2` for structure lint
+- [Vale](https://vale.sh/) on `PATH` for prose lint (peer binary; not an npm dependency)
 
 ## Install
 
@@ -15,7 +16,7 @@ Install alongside `@bwilliamson/mdcp-cli` when you want `mdcp lint` or `mdcp che
 npm install -D @bwilliamson/mdcp-presets markdownlint-cli2 @bwilliamson/mdcp-cli
 ```
 
-## Presets
+## Markdownlint presets
 
 | File                                            | Targets                                       | Intent                                                                                  |
 | ----------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------- |
@@ -33,7 +34,63 @@ npm install -D @bwilliamson/mdcp-presets markdownlint-cli2 @bwilliamson/mdcp-cli
 - Validates fragment and reference link integrity on `guides.md`
 - Line-length and duplicate-heading rules stay relaxed (compile output differs from shard layout)
 
-## Wire into `mdcp.config.json`
+## Vale style (`MDCP`)
+
+English (en-US) prose cues when docs **mention** a numbered heading (`Chapter` / `Section` / `Ch.` / `Sec.`) without a GFM markdown link. MDCP itself only models headings and links; this style is language-specific static analysis. Keep [mdcp-core](https://www.npmjs.com/package/@bwilliamson/mdcp-core) on compile and protocol validation (including link targets). See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+
+| Path                 | Role                                            |
+| -------------------- | ----------------------------------------------- |
+| `vale/package/`      | Vale Packages-compatible layout for `vale sync` |
+| `vale/MDCP/`         | Source Vale style rules                         |
+| `vale/mdcp.vale.ini` | Sample `.vale.ini` snippet for consumers        |
+
+### Enable with Vale Packages
+
+Use `Packages` when consuming the MDCP Vale style as a release zip:
+
+```ini
+StylesPath = styles
+MinAlertLevel = suggestion
+Packages = https://github.com/betsalel-williamson/mdcp/releases/download/<tag>/mdcp-presets-vale.zip
+
+[*.{md,mdx}]
+BasedOnStyles = MDCP
+TokenIgnores = (?s)\[.*?\]\(.*?\)
+```
+
+Then run:
+
+```bash
+vale sync
+```
+
+The package config enables `MDCP` and ignores already-linked GFM markdown tokens so labels such as `[Section 2](./other.md#section-2)` do not false-positive. Vale 3.15.1 syncs local directory packages such as `./node_modules/@bwilliamson/mdcp-presets/vale/package` as style files but moves the package `.vale.ini`, so use the fallback below for npm-directory installs in this version.
+
+Merge with other Vale packages by listing each package and combining styles:
+
+```ini
+StylesPath = styles
+MinAlertLevel = suggestion
+Packages = Microsoft, https://github.com/betsalel-williamson/mdcp/releases/download/<tag>/mdcp-presets-vale.zip
+
+[*.{md,mdx}]
+BasedOnStyles = Microsoft, MDCP
+TokenIgnores = (?s)\[.*?\]\(.*?\)
+```
+
+Shipped `MDCP` rules use `scope: ~heading` so ATX heading titles (which may contain the words Chapter/Section) are not matched. Dogfood `MDCP-PandocId` uses `scope: heading` for Pandoc IDs (`{#…}`).
+
+Run prose checks with:
+
+```bash
+mdcp prose --require-vale
+# or
+mdcp check --require-vale
+```
+
+If your Vale setup cannot use `Packages`, or you are using the npm directory path on Vale 3.15.1, copy or symlink `node_modules/@bwilliamson/mdcp-presets/vale/MDCP` into your `StylesPath` and merge the `TokenIgnores` example from `vale/package/.vale.ini`.
+
+## Wire markdownlint into `mdcp.config.json`
 
 Point `lint.markdownlint` at the installed preset files:
 
@@ -62,20 +119,20 @@ Shard lint scope comes from `compileOrder` guide directories (or `lint.markdownl
 
 ## Package exports
 
-The preset files are also exposed as subpath exports if your tooling resolves them:
-
 ```text
 @bwilliamson/mdcp-presets/markdownlint-shards.markdownlint-cli2.jsonc
 @bwilliamson/mdcp-presets/markdownlint-compiled.markdownlint-cli2.jsonc
+@bwilliamson/mdcp-presets/vale/mdcp.vale.ini
+@bwilliamson/mdcp-presets/vale/MDCP/*
+@bwilliamson/mdcp-presets/vale/package/.vale.ini
+@bwilliamson/mdcp-presets/vale/package/styles/MDCP/*
 ```
 
-markdownlint-cli2 expects a filesystem path in `--config`, so the `node_modules/...` form above is the usual approach.
+markdownlint-cli2 expects a filesystem path in `--config`, so the `node_modules/...` form above is the usual approach. Vale can sync the packaged MDCP style from `node_modules/@bwilliamson/mdcp-presets/vale/package`.
 
 ## Customizing
 
-Copy a preset into your repo and edit it, or extend via markdownlint-cli2's `extends` pattern. The shipped presets are a starting point — tune rules to match your style guide.
-
-For prose linting (Vale), configure `vale` in `mdcp.config.json` separately; Vale is not part of this package.
+Copy a preset into your repo and edit it, or extend via markdownlint-cli2's `extends` pattern / Vale rule toggles (`MDCP.BareChapterRef = NO`). The shipped presets are a starting point — tune rules to match your style guide.
 
 ## Related packages
 

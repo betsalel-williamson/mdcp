@@ -11,7 +11,6 @@ import {
   getGuideConfig,
   guideScanDirs,
   shardLintPaths,
-  xrefScanDirs,
   checkOrphansForGuides,
   computeCoverage,
   effectiveGuideOutputFile,
@@ -21,7 +20,6 @@ import {
   checkRefsRegistry,
   resolveRefsPath,
   readRefsRegistry,
-  lintXrefs,
   findPeerBinary,
   runPeer,
   shardFromMonolith,
@@ -438,20 +436,6 @@ cli
           detail: `${linkIssues.length} issue(s) (see \`link:\` lines above)`,
           hints: linkRemediationHints(linkIssues),
         });
-      }
-
-      if (config.lint?.xrefs?.enabled !== false) {
-        const xrefs = lintXrefs(xrefScanDirs(config, getDocsRoot(opts)));
-        for (const x of xrefs) {
-          console.error(`xref: ${x}`);
-        }
-        if (xrefs.length > 0) {
-          failures.push({
-            step: 'xrefs',
-            detail: `${xrefs.length} issue(s) (see \`xref:\` lines above)`,
-            hints: ['Turn bare Ch. N / chapter mentions into markdown links to the target shard.'],
-          });
-        }
       }
 
       const mdlint = findPeerBinary('markdownlint-cli2', getDocsRoot(opts));

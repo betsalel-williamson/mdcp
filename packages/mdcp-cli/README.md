@@ -356,7 +356,7 @@ mdcp compile --config docs/mdcp.config.json --docs-root docs
 # Regenerate the monolith from shards (link order from each guide's index.md / shards.md)
 mdcp compile
 
-# Full validation gate (orphans → compile → refs → links → xrefs; optional peer linters)
+# Full validation gate (orphans → compile → refs → links; optional peer linters)
 mdcp check
 ```
 
@@ -366,16 +366,16 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 
 ### Command summary
 
-| Command          | When you need it                                                                                      |
-| ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default)    |
-| `mdcp check`     | Full gate: orphans → compile → refs → links → xrefs; optional peer linters; non-fatal coverage report |
-| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                               |
-| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                           |
-| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                                  |
-| `mdcp prose`     | Vale prose lint (peer, if installed)                                                                  |
-| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                           |
-| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                    |
+| Command          | When you need it                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
+| `mdcp check`     | Full gate: orphans → compile → refs → links; optional peer linters; non-fatal coverage report      |
+| `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
+| `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                        |
+| `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
+| `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
+| `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
+| `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
 
 ### Refs subcommands
 
@@ -514,8 +514,8 @@ These commands use tools installed in **your** repo (not bundled with mdcp):
 
 | Command      | Peer tool                       | Purpose                                                                   |
 | ------------ | ------------------------------- | ------------------------------------------------------------------------- |
-| `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output                                           |
-| `mdcp prose` | `vale` (install separately)     | Prose style lint                                                          |
+| `mdcp lint`  | `markdownlint-cli2`             | Lint shards and compiled output (GFM / Markdown structure)                |
+| `mdcp prose` | `vale` (install separately)     | Prose style lint (Vale style packages; Microsoft = US English)            |
 | `mdcp links` | `markdown-link-check`           | Optional HTTP URL checks (peer; not built-in internal link validation)    |
 | `mdcp fix`   | `prettier`, `markdownlint-cli2` | Run `prettier --write .` then `markdownlint-cli2 --fix` (no config paths) |
 
@@ -540,6 +540,8 @@ Install **Vale** separately so `vale` is on your `PATH` — see [Vale installati
 
 Wire preset paths in `mdcp.config.json` under `lint.markdownlint`. See `@bwilliamson/mdcp-presets` on npm.
 
+A [locale pack](#locale-pack) is MDCP compile-time wording — not a Vale style. Unlinked numbered heading-mention prose ships as the **`MDCP` Vale style** in `@bwilliamson/mdcp-presets` (`vale/MDCP/`); see [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
+
 ### In-scope guide fileset
 
 MDCP knows the **full fileset** it manages: registered guides in `compileOrder`, resolved via `guides[].path` or `{docsRoot}/{name}/`. Shard markdownlint and Vale prose **only touch documents in that scope** — never legacy flat `.md` files, unregistered sibling folders, or other markdown under `--docs-root` that mdcp does not compile.
@@ -548,7 +550,6 @@ MDCP knows the **full fileset** it manages: registered guides in `compileOrder`,
 | ---------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
 | Shard markdownlint (`mdcp lint`, `mdcp check`) | `compileOrder` guide directories                | Legacy flat docs, unrelated subdirs under `--docs-root` |
 | Vale prose (`mdcp prose`, `mdcp check`)        | Same guide directories                          | Same                                                    |
-| Xref lint (`mdcp check`)                       | Same guide directories                          | Same                                                    |
 | Compiled markdownlint                          | Monolith and publish outputs (`compiledConfig`) | Separate pass — not shard trees                         |
 
 Optional overrides **narrow** scope further; they never widen it beyond what you explicitly list:
@@ -623,7 +624,7 @@ Upgrade notes from earlier MDCP releases are in package **CHANGELOGs** (and GitH
 After setting up a consumer repo:
 
 1. **`mdcp compile`** — per-guide outputs under `_build/` (or explicit `compile.outputFile` targets); optional monolith when `outputFile` is set
-2. **`mdcp check --require-lint`** — orphans, xrefs, markdownlint on in-scope guide shards only
+2. **`mdcp check --require-lint`** — orphans, refs, links, and markdownlint on in-scope guide shards
 3. **`mdcp check --require-vale`** — when Vale is configured
 4. **Hook output** — diagram tables inlined (`inlineInserts`), code evidence blocks resolved (`codeEvidence`), cross-guide links rewritten to monolith `#slug` targets (or left as shard `.md` paths for guides in `compile.crossGuideLinks.ignoreGuides`)
 
@@ -756,7 +757,7 @@ Not the same as ordinary “search the docs.” Refs are about **correct anchors
 
 ## cross-link
 
-A Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
+A **cross-link** (also **cross-ref**) is a Markdown link whose target is another place in the docs set — usually a same-document `[label](#heading-slug)` fragment, or a path to another shard/guide that compile may rewrite.
 
 Cross-links are why [refs](#refs) exist: after assemble, the visible heading text and level can change, so the [heading slug](#heading-slug) that works in a shard may differ from the slug in the compiled file. MDCP rewrites and validates these targets so published and monolith outputs keep working links. See [Built-in link validation](../../docs/features/link-validation.md).
 
@@ -771,3 +772,11 @@ Derived catalog of [heading slugs](#heading-slug) from compiled guide output, ty
 The registry is **generated state**, not authored shards. `mdcp compile` (and `mdcp refs gen`) rebuild it; `mdcp check` / `mdcp refs check` verify it still matches the latest compile. Path rules: [Refs registry path](../../docs/features/refs-registry-path.md).
 
 <!-- mdcp-shard: end ../../docs/glossary/refs-registry.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/locale-pack.md -->
+
+## Locale pack
+
+A **locale pack** is MDCP’s compile-time bundle of generated wording and locale-specific patterns (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns). Default `en-US`.
+
+<!-- mdcp-shard: end ../../docs/glossary/locale-pack.md -->

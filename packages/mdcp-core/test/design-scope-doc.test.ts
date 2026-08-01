@@ -25,6 +25,7 @@ describe('design scope documentation (#26)', () => {
   const preprocessorShard = readRepoDoc(PREPROCESSOR_SHARD);
   const gfmScopeShard = readRepoDoc('docs/features/design-constraints/gfm-scope.md');
   const featureCatalog = readRepoDoc('docs/features/feature-catalog.md');
+  const packagesAndTests = readRepoDoc('docs/developer/packages-and-tests.md');
   const compileHooks = readRepoDoc('docs/client-core/compile-hooks/index.md');
   const glossaryIndex = readRepoDoc('docs/glossary/index.md');
 
@@ -36,7 +37,55 @@ describe('design scope documentation (#26)', () => {
     expect(designConstraintsIndex).toContain('# Design constraints');
     expect(designConstraintsIndex).toContain('./preprocessor-templating.md');
     expect(designConstraintsIndex).toContain('./gfm-scope.md');
+    expect(designConstraintsIndex).toContain('./locale-and-language.md');
     expect(designConstraintsIndex).toContain('./md-tree-integration.md');
+  });
+
+  it('documents GFM vs locale-pack boundary for opinionated English helpers', () => {
+    const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
+    const localeGlossary = readRepoDoc('docs/glossary/locale-pack.md');
+    const crossLinkGlossary = readRepoDoc('docs/glossary/cross-link.md');
+    expect(localeShard).toContain('# Locale and language boundary');
+    expect(localeShard).toContain('locale pack');
+    expect(localeShard).toContain('Vale');
+    expect(localeShard).toContain('BasedOnStyles');
+    expect(localeShard).toContain('@bwilliamson/mdcp-presets');
+    expect(localeShard).toContain('vale/MDCP');
+    expect(localeShard).toContain('Pandoc IDs');
+    expect(localeShard).toContain('GFM cross-refs');
+    expect(localeShard).not.toContain('lintXrefs');
+    expect(localeShard).not.toContain('MDCP-Xref');
+    expect(localeShard).toContain('en-US');
+    expect(localeShard).toContain('Hunspell');
+    expect(localeGlossary).toContain('# Locale pack');
+    expect(localeGlossary).toContain('compile-time');
+    expect(localeGlossary).not.toContain('transitional');
+    expect(glossaryIndex).toContain('./locale-pack.md');
+    expect(glossaryIndex).not.toContain('./xref.md');
+    expect(crossLinkGlossary).toContain('cross-ref');
+  });
+
+  it('keeps markdown helpers language-agnostic and Vale prose out of core vocabulary', () => {
+    const docsValeConfig = readRepoDoc('docs/.vale.ini');
+    const sampleValeConfig = readRepoDoc('examples/sample-guides/.vale.ini');
+    const localeShard = readRepoDoc('docs/features/design-constraints/locale-and-language.md');
+    const pandocMeta = readRepoDoc('docs/vale-local/MDCP-PandocId/meta.json');
+    expect(packagesAndTests).toContain('language-agnostic');
+    expect(packagesAndTests).toContain('Peer Vale');
+    expect(packagesAndTests).not.toContain(
+      'Shared heading and Pandoc-style explicit-id marker helpers live under `src/markdown/`',
+    );
+    expect(localeShard).toContain('does not model chapters/sections');
+    expect(featureCatalog).toContain('Peer Vale prose');
+    expect(featureCatalog).toContain('Pandoc IDs');
+    expect(featureCatalog).toContain('not replace');
+    expect(pandocMeta).toContain('MDCP-PandocId');
+    expect(pandocMeta).toContain('Pandoc IDs');
+    expect(docsValeConfig).toContain('MDCP-PandocId');
+    expect(docsValeConfig).not.toContain('MDCP-Xref');
+    expect(docsValeConfig).not.toContain('BlockIgnores');
+    expect(sampleValeConfig).toContain('MDCP-PandocId');
+    expect(sampleValeConfig).not.toContain('BlockIgnores');
   });
 
   it('documents preprocessor and templating only in the preprocessor shard', () => {
@@ -69,7 +118,13 @@ describe('design scope documentation (#26)', () => {
     expect(gfm).toContain('# GFM');
     expect(authoredGfm).toContain('# Authored GFM');
     expect(gfm).toContain('GitHub Flavored Markdown');
+    expect(gfm).toContain('ATX subset');
     expect(gfmScopeShard).toContain('[GFM](../../glossary/gfm.md)');
+    expect(gfmScopeShard).toContain('## Headings');
+    expect(gfmScopeShard).toContain('Setext');
+    expect(gfmScopeShard).toContain('Not yet');
+    expect(gfmScopeShard).toContain('parseHeading');
+    expect(gfmScopeShard).toContain('https://github.github.com/gfm/');
   });
 
   it('lists glossary in maintainer guide manifests', () => {
@@ -89,6 +144,8 @@ describe('design scope documentation (#26)', () => {
       const compiled = readRepoDoc(outputPath);
       expect(compiled).toContain('## GFM');
       expect(compiled).toContain('## Authored GFM');
+      expect(compiled).toContain('## cross-link');
+      expect(compiled).not.toContain('## xref');
     }
   });
 });
