@@ -1,6 +1,6 @@
 # Locale and language boundary
 
-MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract: **headings** and **[cross-links](../../glossary/cross-link.md)** (ordinary `[]()` markdown links). It does not model chapters/sections as protocol concepts.
+MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract: **headings** (ATX subset today — see [GFM scope](./gfm-scope.md#headings)) and **[cross-links](../../glossary/cross-link.md)** (ordinary `[]()` markdown links). It does not model chapters/sections as protocol concepts.
 
 Natural-language **static analysis** belongs with **[Vale](https://vale.sh/) style packages**, not as durable gates in the core compile/check API. Core may hold a small **[locale pack](../../glossary/locale-pack.md)** for compile-time generated wording (captions, broken-link markers) and locale-specific heading-key patterns.
 
@@ -26,7 +26,7 @@ Vale does not replace link validation: Vale asks prose mentions to become links,
 
 [Vale](https://vale.sh/) (see [errata-ai/vale](https://github.com/errata-ai/vale) and [styles](https://github.com/errata-ai/styles)) does **not** fork its Markdown engine per language. Multi-language docs repos use three pieces:
 
-1. **Markup / format engine** — scopes, ignores, and format parsers stay language-neutral. That maps to MDCP’s GFM helpers (`src/markdown/`, slugify, links) and peer markdownlint.
+1. **Markup / format engine** — scopes, ignores, and format parsers stay language-neutral. That maps to MDCP’s heading/link helpers (`src/markdown/`, slugify, links) and peer markdownlint.
 2. **Style packages** — folders of YAML rules under `StylesPath`. Maintainer guidance for mixed-language trees is to split **shared** rules from **language-specific** ones (for example `General` + `En`), then assign them with `.vale.ini` **glob sections**:
 
    ```ini

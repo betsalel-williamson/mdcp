@@ -118,7 +118,13 @@ describe('design scope documentation (#26)', () => {
     expect(gfm).toContain('# GFM');
     expect(authoredGfm).toContain('# Authored GFM');
     expect(gfm).toContain('GitHub Flavored Markdown');
+    expect(gfm).toContain('ATX subset');
     expect(gfmScopeShard).toContain('[GFM](../../glossary/gfm.md)');
+    expect(gfmScopeShard).toContain('## Headings');
+    expect(gfmScopeShard).toContain('Setext');
+    expect(gfmScopeShard).toContain('Not yet');
+    expect(gfmScopeShard).toContain('parseHeading');
+    expect(gfmScopeShard).toContain('https://github.github.com/gfm/');
   });
 
   it('lists glossary in maintainer guide manifests', () => {

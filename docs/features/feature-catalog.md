@@ -95,7 +95,7 @@ Built-in hooks:
 
 ## Design constraints (summary)
 
-- [GFM](../glossary/gfm.md) only — no Pandoc, no required `{#heading-ids}`
+- [GFM](../glossary/gfm.md) only — no Pandoc IDs as authoring contract; heading recognition is an ATX subset today ([GFM scope](./design-constraints/gfm-scope.md#headings))
 - md-tree for split only — custom compile
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
 - No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)

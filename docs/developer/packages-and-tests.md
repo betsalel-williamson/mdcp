@@ -16,7 +16,7 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared GFM helpers live under `src/markdown/` and `src/refs/` (ATX headings, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Compile-time wording lives under `src/locale/` (BCP 47 JSON). Peer Vale owns prose cues and Pandoc ID authoring opinion — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
+Shared heading/link helpers live under `src/markdown/` and `src/refs/` (`parseHeading` with ATX kind today, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Heading recognition is an ATX subset of GFM — see [GFM scope](../features/design-constraints/gfm-scope.md#headings). Compile-time wording lives under `src/locale/` (BCP 47 JSON). Peer Vale owns prose cues and Pandoc ID authoring opinion — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test

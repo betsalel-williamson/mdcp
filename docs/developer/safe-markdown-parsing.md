@@ -1,6 +1,6 @@
 # Safe markdown parsing (heading helpers)
 
-Maintainer note for why `mdcp-core` centralizes ATX heading parsing and related cleanup in shared **language-agnostic** GFM helpers instead of ad-hoc regular expressions.
+Maintainer note for why `mdcp-core` centralizes heading parsing and related cleanup in shared **language-agnostic** helpers instead of ad-hoc regular expressions.
 
 Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
 
@@ -14,7 +14,8 @@ Even when everyday docs never hit the pathological case, the open alerts block a
 
 Phase A introduces shared **linear** helpers for:
 
-- recognizing and demoting ATX headings
+- recognizing headings via `parseHeading` (ATX kind today; see [GFM scope](../features/design-constraints/gfm-scope.md#headings))
+- demoting recognized headings (rewrite emits ATX)
 - stripping leftover Pandoc IDs (`{#…}`) when cleaning compiled output (defensive cleanup — authoring opinion to avoid them is Vale `MDCP-PandocId`)
 - producing plain heading text for language-agnostic [heading slug](../glossary/heading-slug.md) generation
 

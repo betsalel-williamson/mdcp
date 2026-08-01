@@ -1,6 +1,6 @@
 import GithubSlugger, { slug as githubSlug } from 'github-slugger';
 import { getLocalePack, type LocalePack } from '../locale/index.js';
-import { parseAtxHeading, stripPandocAnchors, headingTitlePlain } from '../markdown/index.js';
+import { parseHeading, stripPandocAnchors, headingTitlePlain } from '../markdown/index.js';
 
 /**
  * Strip mdcp heading adornments before slugging.
@@ -53,7 +53,7 @@ export function buildSlugRegistry(
   const lines = compiledText.split('\n');
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const parsed = parseAtxHeading(line);
+    const parsed = parseHeading(line);
     if (!parsed) continue;
 
     const level = parsed.level;

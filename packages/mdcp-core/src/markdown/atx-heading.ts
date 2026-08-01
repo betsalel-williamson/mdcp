@@ -1,3 +1,4 @@
+/** ATX-specific parse result (GFM ATX subset). Prefer {@link parseHeading} at call sites. */
 export interface AtxHeading {
   level: number;
   marker: string;
@@ -5,6 +6,7 @@ export interface AtxHeading {
   title: string;
 }
 
+/** Parse one ATX heading line (`#`–`######` + space/tab + title). */
 export function parseAtxHeading(line: string): AtxHeading | null {
   let i = 0;
   while (i < line.length && line[i] === '#' && i < 6) i++;

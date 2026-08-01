@@ -184,7 +184,7 @@ This repository dogfoods a **publish landing** layout in [`docs/repo-readme/`](.
 
 ## Design boundaries (intentional limits)
 
-- **[GFM](../glossary/gfm.md) only** — no Pandoc, wikilinks, or required `{#heading-ids}`
+- **[GFM](../glossary/gfm.md) only** — no Pandoc, wikilinks, or required Pandoc IDs; heading recognition is an ATX subset today ([GFM scope](./design-constraints/gfm-scope.md#headings))
 - **md-tree for split only** — custom compile/assemble; upstream md-tree `assemble` is not used
 - **GitHub slugs** — computed from compiled headings via [github-slugger](https://www.npmjs.com/package/github-slugger) (html-pipeline algorithm); see [Cross-links and refs — heading slugs](../client-cli/cross-links-and-refs.md#heading-slugs-github-rules)
 - **Peer linters opt-in** — host repo installs markdownlint, Vale, etc.

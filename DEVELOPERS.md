@@ -471,7 +471,7 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared GFM helpers live under `src/markdown/` and `src/refs/` (ATX headings, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Compile-time wording lives under `src/locale/` (BCP 47 JSON). Peer Vale owns prose cues and Pandoc ID authoring opinion — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+Shared heading/link helpers live under `src/markdown/` and `src/refs/` (`parseHeading` with ATX kind today, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Heading recognition is an ATX subset of GFM — see [GFM scope](docs/features/design-constraints/gfm-scope.md#headings). Compile-time wording lives under `src/locale/` (BCP 47 JSON). Peer Vale owns prose cues and Pandoc ID authoring opinion — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -1079,7 +1079,7 @@ Never unpublish a version that other packages or consumers legitimately depend o
 
 ## Safe markdown parsing (heading helpers)
 
-Maintainer note for why `mdcp-core` centralizes ATX heading parsing and related cleanup in shared **language-agnostic** GFM helpers instead of ad-hoc regular expressions.
+Maintainer note for why `mdcp-core` centralizes heading parsing and related cleanup in shared **language-agnostic** helpers instead of ad-hoc regular expressions.
 
 Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
 
@@ -1093,7 +1093,8 @@ Even when everyday docs never hit the pathological case, the open alerts block a
 
 Phase A introduces shared **linear** helpers for:
 
-- recognizing and demoting ATX headings
+- recognizing headings via `parseHeading` (ATX kind today; see [GFM scope](docs/features/design-constraints/gfm-scope.md#headings))
+- demoting recognized headings (rewrite emits ATX)
 - stripping leftover Pandoc IDs (`{#…}`) when cleaning compiled output (defensive cleanup — authoring opinion to avoid them is Vale `MDCP-PandocId`)
 - producing plain heading text for language-agnostic [heading slug](#heading-slug) generation
 
@@ -1376,7 +1377,9 @@ Use it before you trust a merge. Command details: [CLI consumer guide](docs/clie
 
 ## GFM
 
-**GitHub Flavored Markdown** — standard Markdown plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+**GitHub Flavored Markdown** ([spec](https://github.github.com/gfm/)) — CommonMark plus GitHub extensions (tables, task lists, fenced code). Not Pandoc, LaTeX, or wikilinks.
+
+MDCP’s authored format contract is GFM, but heading recognition is an **ATX subset** today (setext not yet). See [GFM scope](docs/features/design-constraints/gfm-scope.md#headings).
 
 <!-- mdcp-shard: end docs/glossary/gfm.md -->
 
