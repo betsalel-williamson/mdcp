@@ -880,7 +880,7 @@ If a prior run versioned/published but failed before tags/Releases finished, the
 
 ### Pre-1.0 policy (`0.x.y`)
 
-The project is **pre-1.0** (open alpha). Until **1.0.0**, there is **no API stability guarantee**. **Major bumps are disabled** (`pnpm changeset:reject-major`). Use **patch**, **minor** (including breaking-within-0.x), or **build** via `pnpm release:build`.
+Packages and Agent Skills are **pre-1.0** while on `0.x.y`. Until a given item reaches **1.0.0**, that item has **no API stability guarantee**. **Major bumps are disabled** (`pnpm changeset:reject-major`). Use **patch**, **minor** (including breaking-within-0.x), or **build** via `pnpm release:build`.
 
 | Bump      | When                                                                       |
 | --------- | -------------------------------------------------------------------------- |
