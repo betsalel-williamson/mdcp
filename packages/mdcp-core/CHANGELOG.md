@@ -1,5 +1,11 @@
 # @bwilliamson/mdcp-core
 
+## 0.7.3
+
+### Patch Changes
+
+- 473954d: Clarify pre-1.0 stability as per-package (independent versioning); stop gating docs on a single npm 1.0.
+
 ## 0.7.2
 
 ### Patch Changes

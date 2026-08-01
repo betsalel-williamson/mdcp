@@ -1,3 +1,4 @@
+import { getLocalePack, type LocalePack } from '../locale/index.js';
 import { buildSlugRegistry, type RefsRegistry } from '../refs/slugs.js';
 import { extractLinks } from './extract.js';
 import { validateCompiledLinkTarget } from './validate.js';
@@ -13,11 +14,14 @@ export interface LintCompiledLinksOptions {
   allowedPublishPaths?: Set<string>;
   disallowedShardPaths?: Set<string>;
   slugRegistryCache?: Map<string, RefsRegistry>;
+  /** Locale for broken-link marker detection (defaults to en-US). */
+  locale?: LocalePack;
 }
 
 /** Validate links in assembled compiled guide output. */
 export function lintCompiledLinks(options: LintCompiledLinksOptions): LinkIssue[] {
   const issues: LinkIssue[] = [];
+  const locale = options.locale ?? getLocalePack();
   const registry = buildSlugRegistry(options.markdown);
   const lines = options.markdown.split('\n');
   let inFence = false;
@@ -30,7 +34,7 @@ export function lintCompiledLinks(options: LintCompiledLinksOptions): LinkIssue[
     }
     if (inFence) continue;
 
-    if (lines[i].includes('**BROKEN LINK:**')) {
+    if (locale.brokenLinks.lineHasMarker(lines[i])) {
       issues.push({
         kind: 'dead anchor',
         file: options.outputFile,
@@ -44,7 +48,7 @@ export function lintCompiledLinks(options: LintCompiledLinksOptions): LinkIssue[
   }
 
   for (const link of extractLinks(options.markdown)) {
-    if (lines[link.line - 1]?.includes('**BROKEN LINK:**')) continue;
+    if (locale.brokenLinks.lineHasMarker(lines[link.line - 1] ?? '')) continue;
 
     const result = validateCompiledLinkTarget(link.target, registry, {
       outputFile: options.outputFile,

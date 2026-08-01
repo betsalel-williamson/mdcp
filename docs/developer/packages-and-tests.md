@@ -9,13 +9,14 @@ Library source: [`packages/mdcp-core/src/`](../../packages/mdcp-core/src/).
 | Config schema      | `src/config/`                 |
 | Compile / assemble | `src/compile/`                |
 | Markdown helpers   | `src/markdown/`               |
+| Locale packs       | `src/locale/`                 |
 | Refs / slugs       | `src/refs/`                   |
-| Validation         | `src/validate/`, `src/xrefs/` |
+| Validation         | `src/validate/`, `src/links/` |
 | Shard (split)      | `src/shard/`                  |
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared heading and `{#id}` helpers live under `src/markdown/` — see [Safe markdown parsing](./safe-markdown-parsing.md) for why.
+Shared heading/link helpers live under `src/markdown/` and `src/refs/` (`parseHeading` with ATX kind today, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Heading recognition is an ATX subset of GFM — see [GFM scope](../features/design-constraints/gfm-scope.md#headings). Compile-time wording lives under `src/locale/` (BCP 47 JSON). Peer Vale owns prose cues and Pandoc ID authoring opinion — see [Locale and language boundary](../features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -45,7 +46,7 @@ Local runs print a text summary and write HTML/lcov under each package’s `cove
 
 ## mdcp-presets
 
-JSONC markdownlint configs only — no TypeScript build. Edit `*.markdownlint-cli2.jsonc` directly.
+JSONC markdownlint configs plus the shippable `MDCP` Vale style (`vale/MDCP/`). Dogfood-only styles live under [`docs/vale-local/`](../vale-local/README.md). Edit preset files directly — no TypeScript build.
 
 ## Pull request checklist
 

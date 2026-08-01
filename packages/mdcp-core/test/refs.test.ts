@@ -97,7 +97,7 @@ describe('public refs API', () => {
   });
 });
 
-describe('semantic chapter keys', () => {
+describe('semantic heading keys', () => {
   it('assigns semantic keys for acronym chapter headings', () => {
     const text = '# Admin Guide\n\n## ADM Chapter 1 — Getting started\n';
     const reg = buildSlugRegistry(text);

@@ -8,4 +8,5 @@ Intentional limits on what mdcp compiles, validates, and transforms.
 - [Heading references](./heading-references.md)
 - [Peer linters](./peer-linters.md)
 - [GFM scope](./gfm-scope.md)
+- [Locale and language boundary](./locale-and-language.md)
 - [Preprocessor / templating (out of scope)](./preprocessor-templating.md)

@@ -1,3 +1,4 @@
+import { getLocalePack, type LocalePack } from '../locale/index.js';
 import { buildSlugRegistry } from '../refs/slugs.js';
 import { extractLinks } from './extract.js';
 import { validateCompiledLinkTarget } from './validate.js';
@@ -19,6 +20,8 @@ export interface MarkBrokenLinksOptions {
   knownOutputBasenames?: Set<string>;
   /** Intra-guide section slugs valid after rewrite (FIND-* filename slugs, etc.). */
   knownSlugs?: Set<string>;
+  /** Locale for marker copy (defaults to en-US). */
+  locale?: LocalePack;
 }
 
 export function formatBrokenLinkMarker(
@@ -26,8 +29,9 @@ export function formatBrokenLinkMarker(
   originalTarget: string,
   brokenTarget: string,
   reason: string,
+  locale: LocalePack = getLocalePack(),
 ): string {
-  return `**BROKEN LINK:** "${label}" (\`${originalTarget}\`) → \`${brokenTarget}\` (${reason})`;
+  return locale.brokenLinks.formatMarker(label, originalTarget, brokenTarget, reason);
 }
 
 function findProvenance(
@@ -55,6 +59,7 @@ export function markBrokenLinks(
     return { markdown, issues: [] };
   }
 
+  const locale = options.locale ?? getLocalePack();
   const registry = buildSlugRegistry(markdown);
   const issues: LinkIssue[] = [];
   const usedProvenance = new Set<number>();
@@ -76,12 +81,12 @@ export function markBrokenLinks(
     const brokenTarget = result.brokenTarget ?? link.target;
     const reason =
       result.reason === 'dead anchor'
-        ? 'dead anchor in compiled guide'
+        ? locale.brokenLinks.reasonDeadAnchor
         : result.reason === 'missing file'
-          ? 'missing file'
-          : 'missing publish path';
+          ? locale.brokenLinks.reasonMissingFile
+          : locale.brokenLinks.reasonMissingPublishPath;
 
-    const marker = formatBrokenLinkMarker(link.label, originalTarget, brokenTarget, reason);
+    const marker = formatBrokenLinkMarker(link.label, originalTarget, brokenTarget, reason, locale);
     out = out.replace(link.match, marker);
 
     const reportPath = options.compiledOutputPath ?? options.outputFile ?? 'compiled';

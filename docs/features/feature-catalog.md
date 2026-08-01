@@ -36,7 +36,7 @@ Optional local with/without-skill grading for helpers is maintainer workflow —
 
 ## Check gate (P0.4)
 
-Structural validation: orphans → compile → refs → **links** → xrefs; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md). Latency targets for large shard sets: [Performance goals and review](./protocol/performance.md).
+Structural validation: orphans → compile → refs → **links**; peer linters optional. Built-in link validation catches dead internal `.md` paths and `#anchor` fragments — see [Link validation](./link-validation.md). Latency targets for large shard sets: [Performance goals and review](./protocol/performance.md).
 
 ```bash
 mdcp check --require-lint
@@ -58,9 +58,9 @@ mdcp shard   # requires config.source
 
 Detect shards not in manifest or missing files.
 
-## Xref lint (P1.4)
+## Peer Vale prose (not core)
 
-Fail on bare `Ch. N` and unlinked chapter-style references.
+en-US writing cues such as an unlinked "See Chapter…" mention, and dogfood warnings to remove Pandoc IDs (`{#…}` after a heading), live in Vale styles — not in `mdcp check`. They do not replace [Link validation](./link-validation.md) for GFM cross-refs. See [Locale and language boundary](./design-constraints/locale-and-language.md).
 
 ## Coverage scan (P1.5)
 
@@ -95,7 +95,7 @@ Built-in hooks:
 
 ## Design constraints (summary)
 
-- [GFM](../glossary/gfm.md) only — no Pandoc, no required `{#heading-ids}`
+- [GFM](../glossary/gfm.md) only — no Pandoc IDs as authoring contract; heading recognition is an ATX subset today ([GFM scope](./design-constraints/gfm-scope.md#headings))
 - md-tree for split only — custom compile
 - Peer linters opt-in — `--require-lint` / `--require-vale` in CI
 - No preprocessor / templating — see [Preprocessor / templating (out of scope)](./design-constraints/preprocessor-templating.md#preprocessor--templating-out-of-scope)

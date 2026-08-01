@@ -12,7 +12,8 @@ We use an unopinionated, flexible document structure. The goal is to keep the au
 
 While we are unopinionated about document structure, we are **strict about links**.
 
-- All links in your documentation must be valid and point to existing files or headings.
+- All [cross-links](../glossary/cross-link.md) must be valid and point to existing files or headings.
+- Prefer GitHub-style heading slugs from heading text. Do not author Pandoc IDs (`{#…}` after a heading).
 - If a link is invalid, the CI and documentation checks will fail.
 - Do not create links to files that do not exist yet. If you need to indicate a placeholder, comment it out or write `(TBD)`.
 

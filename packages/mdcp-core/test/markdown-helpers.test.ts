@@ -2,6 +2,9 @@ import { describe, it, expect } from 'vitest';
 import {
   parseAtxHeading,
   isAtxHeading,
+  parseHeading,
+  isHeading,
+  formatHeadingAsAtx,
   stripPandocAnchors,
   headingTitlePlain,
   isSlugChar,
@@ -62,6 +65,25 @@ describe('parseAtxHeading', () => {
       whitespace: '   ',
       title: '',
     });
+  });
+});
+
+describe('parseHeading', () => {
+  it('wraps ATX results with kind atx', () => {
+    expect(parseHeading('##  Hello')).toEqual({
+      kind: 'atx',
+      level: 2,
+      title: 'Hello',
+      atx: { marker: '##', whitespace: '  ' },
+    });
+    expect(isHeading('### Title')).toBe(true);
+    expect(isHeading('Title\n===')).toBe(false);
+  });
+
+  it('formats demoted ATX via formatHeadingAsAtx', () => {
+    const h = parseHeading('## Hello');
+    expect(h).not.toBeNull();
+    expect(formatHeadingAsAtx(h!, 3)).toBe('### Hello');
   });
 });
 

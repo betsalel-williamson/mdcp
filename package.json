@@ -17,7 +17,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "vale:sync": "mkdir -p examples/sample-guides/styles docs/styles && (cd examples/sample-guides && vale sync) && (cd docs && vale sync)",
+    "vale:sync": "mkdir -p examples/sample-guides/styles docs/styles && (cd examples/sample-guides && vale sync) && (cd docs && vale sync) && rm -rf docs/styles/MDCP docs/styles/MDCP-PandocId docs/styles/MDCP-Xref examples/sample-guides/styles/MDCP examples/sample-guides/styles/MDCP-PandocId examples/sample-guides/styles/MDCP-Xref && ln -sfn ../../packages/mdcp-presets/vale/MDCP docs/styles/MDCP && ln -sfn ../vale-local/MDCP-PandocId docs/styles/MDCP-PandocId && ln -sfn ../../../packages/mdcp-presets/vale/MDCP examples/sample-guides/styles/MDCP && ln -sfn ../../../docs/vale-local/MDCP-PandocId examples/sample-guides/styles/MDCP-PandocId",
     "verify:peers": "node_modules/.bin/markdownlint-cli2 --version && vale --version",
     "prepare:docs": "pnpm run verify:peers && pnpm run vale:sync",
     "docs:compile:repo": "node packages/mdcp-cli/dist/cli.js compile --config docs/mdcp.config.json --docs-root docs --warn-broken-links",

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { basename, dirname } from 'node:path';
+import { getLocalePack, type LocalePack } from '../../locale/index.js';
 import { githubSlugify } from '../../refs/slugs.js';
 import type { CompileHook, CompileHookState, InlineInsertsHookState } from '../hooks.js';
 import { hookSearchRoots, resolveRelativeFile } from './path-resolve.js';
@@ -41,12 +42,8 @@ export function isInsertLibraryPath(relPath: string): boolean {
   return matches;
 }
 
-function humanizeBasename(resolvedPath: string): string {
-  return basename(resolvedPath, '.md')
-    .split('-')
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+function humanizeBasename(resolvedPath: string, locale: LocalePack): string {
+  return locale.inserts.humanizeBasename(basename(resolvedPath, '.md'));
 }
 
 export function insertKind(resolvedPath: string): string | null {
@@ -55,16 +52,12 @@ export function insertKind(resolvedPath: string): string | null {
   return INSERT_KINDS.has(kind) ? kind : null;
 }
 
-function kindTitle(kind: string): string {
-  return kind.charAt(0).toUpperCase() + kind.slice(1);
+function baseTitle(resolvedPath: string, label: string, locale: LocalePack): string {
+  return label.trim() || humanizeBasename(resolvedPath, locale);
 }
 
-function baseTitle(resolvedPath: string, label: string): string {
-  return label.trim() || humanizeBasename(resolvedPath);
-}
-
-function stripLeadingKind(title: string, kind: string): string {
-  const prefix = kindTitle(kind);
+function stripLeadingKind(title: string, kind: string, locale: LocalePack): string {
+  const prefix = locale.inserts.kindTitle(kind);
   if (new RegExp(`^${prefix}\\b`, 'i').test(title)) {
     return title
       .slice(prefix.length)
@@ -75,23 +68,37 @@ function stripLeadingKind(title: string, kind: string): string {
 }
 
 /** Caption title without kind prefix or serial number. */
-export function insertCaptionTitle(resolvedPath: string, label = ''): string {
+export function insertCaptionTitle(
+  resolvedPath: string,
+  label = '',
+  locale: LocalePack = getLocalePack(),
+): string {
   const kind = insertKind(resolvedPath);
-  const title = baseTitle(resolvedPath, label);
+  const title = baseTitle(resolvedPath, label, locale);
   if (!kind) return title;
-  return stripLeadingKind(title, kind) || humanizeBasename(resolvedPath);
+  return stripLeadingKind(title, kind, locale) || humanizeBasename(resolvedPath, locale);
 }
 
-/** GFM heading for a first inline — e.g. `Table 1. Status codes`. */
-export function numberedInsertHeading(resolvedPath: string, label: string, number: number): string {
+/** GFM heading for a first inline — e.g. `Table 1. Status codes` (en-US captions). */
+export function numberedInsertHeading(
+  resolvedPath: string,
+  label: string,
+  number: number,
+  locale: LocalePack = getLocalePack(),
+): string {
   const kind = insertKind(resolvedPath);
-  if (!kind) return baseTitle(resolvedPath, label);
-  const caption = insertCaptionTitle(resolvedPath, label);
-  return `${kindTitle(kind)} ${number}. ${caption}`;
+  if (!kind) return baseTitle(resolvedPath, label, locale);
+  const caption = insertCaptionTitle(resolvedPath, label, locale);
+  return `${locale.inserts.kindTitle(kind)} ${number}. ${caption}`;
 }
 
-export function insertAnchorSlug(resolvedPath: string, label = '', number = 1): string {
-  return githubSlugify(numberedInsertHeading(resolvedPath, label, number));
+export function insertAnchorSlug(
+  resolvedPath: string,
+  label = '',
+  number = 1,
+  locale: LocalePack = getLocalePack(),
+): string {
+  return githubSlugify(numberedInsertHeading(resolvedPath, label, number, locale));
 }
 
 function nextInsertNumber(state: InlineInsertsHookState, kind: string): number {
@@ -113,18 +120,19 @@ function formatFirstInline(
   content: string,
   label: string,
   state: InlineInsertsHookState,
+  locale: LocalePack,
 ): string {
   const kind = insertKind(resolvedPath);
   const heading = kind
-    ? numberedInsertHeading(resolvedPath, label, nextInsertNumber(state, kind))
-    : baseTitle(resolvedPath, label);
+    ? numberedInsertHeading(resolvedPath, label, nextInsertNumber(state, kind), locale)
+    : baseTitle(resolvedPath, label, locale);
   const anchor = githubSlugify(heading);
   state.firstAnchorByPath.set(resolvedPath, anchor);
   return `\n\n${INSERT_HEADING_PREFIX} ${heading}\n\n${content}\n\n`;
 }
 
-function formatBackLink(label: string, anchor: string): string {
-  const text = label.trim() || 'See insert';
+function formatBackLink(label: string, anchor: string, locale: LocalePack): string {
+  const text = label.trim() || locale.inserts.seeInsertFallback;
   return `[${text}](#${anchor})`;
 }
 
@@ -163,22 +171,24 @@ function replacementForLink(
   searchRoots: string[],
   state: InlineInsertsHookState,
   original: string,
+  locale: LocalePack,
 ): string {
   const insert = resolveInsert(ref.relPath, guideDir, searchRoots);
   if (!insert) return original;
 
   const existing = state.firstAnchorByPath.get(insert.resolvedPath);
   if (existing) {
-    return formatBackLink(ref.label, existing);
+    return formatBackLink(ref.label, existing, locale);
   }
 
-  return formatFirstInline(insert.resolvedPath, insert.content, ref.label, state);
+  return formatFirstInline(insert.resolvedPath, insert.content, ref.label, state, locale);
 }
 
 export const inlineInsertsHook: CompileHook = (ctx) => {
   const guideDir = dirname(ctx.sourceFile);
   const searchRoots = hookSearchRoots(ctx, 'inlineInserts');
   const state = ensureInlineInsertsState(ctx.hookState);
+  const locale = getLocalePack();
   const refs = findInsertLinks(ctx.body);
 
   if (!refs.length) return ctx.body;
@@ -186,7 +196,14 @@ export const inlineInsertsHook: CompileHook = (ctx) => {
   const replacements = refs.map((ref) => ({
     start: ref.start,
     end: ref.end,
-    text: replacementForLink(ref, guideDir, searchRoots, state, ctx.body.slice(ref.start, ref.end)),
+    text: replacementForLink(
+      ref,
+      guideDir,
+      searchRoots,
+      state,
+      ctx.body.slice(ref.start, ref.end),
+      locale,
+    ),
   }));
 
   let out = ctx.body;

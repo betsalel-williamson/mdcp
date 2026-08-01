@@ -1,5 +1,6 @@
 import GithubSlugger, { slug as githubSlug } from 'github-slugger';
-import { parseAtxHeading, stripPandocAnchors, headingTitlePlain } from '../markdown/index.js';
+import { getLocalePack, type LocalePack } from '../locale/index.js';
+import { parseHeading, stripPandocAnchors, headingTitlePlain } from '../markdown/index.js';
 
 /**
  * Strip mdcp heading adornments before slugging.
@@ -30,22 +31,18 @@ export interface RefsRegistry {
   slugs: Record<string, string>;
 }
 
-const CHAPTER_KEY_RE = /^([A-Z]{2,4})\s+Chapter\s+(\d+)/i;
-
-function semanticKey(title: string, guide: string): string | null {
-  const m = title.match(CHAPTER_KEY_RE);
-  if (m) return `${m[1].toLowerCase()}.ch${m[2]}`;
-  const safe = title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, 48);
+function semanticKey(title: string, guide: string, locale: LocalePack): string | null {
+  const parts = locale.headingKeyFromTitle(title);
+  if (parts) return locale.formatHeadingKey(parts);
+  // Language-agnostic fallback: GitHub slug from heading text (Unicode-safe).
+  const safe = githubSlugify(title).slice(0, 48);
   return safe ? `${guide}.${safe}` : null;
 }
 
 export function buildSlugRegistry(
   compiledText: string,
   sourceMap?: Map<string, string>,
+  locale: LocalePack = getLocalePack(),
 ): RefsRegistry {
   const slugger = new GithubSlugger();
   const headings: HeadingEntry[] = [];
@@ -56,7 +53,7 @@ export function buildSlugRegistry(
   const lines = compiledText.split('\n');
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const parsed = parseAtxHeading(line);
+    const parsed = parseHeading(line);
     if (!parsed) continue;
 
     const level = parsed.level;
@@ -69,7 +66,7 @@ export function buildSlugRegistry(
 
     const slug = slugger.slug(headingTextToPlain(rawTitle));
 
-    const key = semanticKey(rawTitle, currentGuide);
+    const key = semanticKey(rawTitle, currentGuide, locale);
     const sourceFile = sourceMap?.get(slug) ?? null;
 
     headings.push({

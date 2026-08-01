@@ -28,6 +28,7 @@ Each term is its own shard under `docs/glossary/`. For large glossaries, split m
 - [check](./check.md)
 - [GFM](./gfm.md)
 - [Authored GFM](./authored-gfm.md)
+- [locale pack](./locale-pack.md)
 - [ignoreGuides](./ignore-guides.md)
 - [refs](./refs.md)
 - [refs registry](./refs-registry.md)

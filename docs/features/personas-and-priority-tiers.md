@@ -46,7 +46,7 @@ Reference: [`docs/repo-readme/`](../repo-readme/index.md) → `README.md`.
 | ---------------------- | ------------------------------- | ---------------------------------------------- |
 | **LLM doc author**     | Edit shards, insert cross-links | `shard`, `compile`, `check` (broken `#` links) |
 | **LLM feature agent**  | Read doc context while coding   | Host search → one shard read                   |
-| **Human doc reviewer** | PR quality gate                 | `check`, `prose`, `lint`, `xrefs`, `links`     |
+| **Human doc reviewer** | PR quality gate                 | `check`, `prose`, `lint`, `links`              |
 | **End-user reader**    | Read glossary, guides, reviews  | `compile` output                               |
 
 ## P0 adoption — evaluator onboarding (validated 2026-06)
@@ -64,7 +64,7 @@ Aligns with GitHub project **Track: 0.5 Spec & adoption** — see [Agent work it
 | ------------- | --------------------- | -------------------- | ----------- |
 | Compile       | `mdcp compile`        | `compile/`           | Implemented |
 | Refs registry | `mdcp refs` / `check` | `refs/`              | Implemented |
-| Check (core)  | `mdcp check`          | orphans, refs, xrefs | Implemented |
+| Check (core)  | `mdcp check`          | orphans, refs, links | Implemented |
 
 Dogfood: `mdcp check` on `docs/` and `examples/sample-guides`.
 
@@ -75,7 +75,6 @@ Dogfood: `mdcp check` on `docs/` and `examples/sample-guides`.
 | Manifest link order | `mdcp compile` | `compile/assemble.ts` | Implemented |
 | Shard split         | `mdcp shard`   | `shard/`              | Implemented |
 | Orphan check        | `mdcp check`   | `validate/orphans.ts` | Implemented |
-| Xref lint           | `mdcp check`   | `xrefs/lint.ts`       | Implemented |
 
 **Dogfood:** Edit a shard under `docs/features/` or `docs/developer/` → `mdcp check`.
 

@@ -15,7 +15,6 @@ export {
   getGuideConfig,
   guideScanDirs,
   shardLintPaths,
-  xrefScanDirs,
   defaultGuideOutputFile,
   effectiveGuideOutputFile,
   resolveUnderOutputDir,
@@ -97,7 +96,6 @@ export {
   checkRefsRegistry,
   genRefsFromCompiled,
 } from './refs/registry.js';
-export { lintXrefs } from './xrefs/lint.js';
 export {
   lintLinks,
   lintCompiledLinks,
@@ -123,3 +121,19 @@ export {
 } from './export/protocol-version.js';
 export { findPeerBinary, runPeer, type PeerTool } from './peers/resolve.js';
 export { shardFromMonolith, runMdTree, type ShardGuideMapping } from './shard/orchestrator.js';
+export {
+  getLocalePack,
+  listLocalePackIds,
+  DEFAULT_LOCALE_ID,
+  enUS,
+  createBrokenLinksCopy,
+  createInsertsCopy,
+  createLocalePack,
+  formatTemplate,
+  type CreateLocalePackOptions,
+  type LocalePack,
+  type LocaleBrokenLinkCopy,
+  type LocaleBrokenLinkMessages,
+  type LocaleInsertCopy,
+  type LocaleInsertMessages,
+} from './locale/index.js';

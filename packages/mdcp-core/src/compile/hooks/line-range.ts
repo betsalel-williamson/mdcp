@@ -45,11 +45,16 @@ export function formatLineFragment(start: string, end?: string): string {
  */
 export function lineRangeFromText(text: string): string | null {
   for (let i = 0; i < text.length; i++) {
-    const found =
-      tryDigitRangeAt(text, i) ??
-      tryPrefixedSingleAt(text, i) ??
-      tryColonRangeAt(text, i) ??
-      tryColonSingleAt(text, i);
+    const c = text[i]!;
+    // Only positions that can start a match — skip pure whitespace / punctuation pumps.
+    if (c === ':') {
+      const found = tryColonRangeAt(text, i) ?? tryColonSingleAt(text, i);
+      if (found) return found;
+      continue;
+    }
+    if (c !== 'L' && c !== 'l' && (c < '0' || c > '9')) continue;
+    if (!isWordBoundary(text, i)) continue;
+    const found = tryDigitRangeAt(text, i) ?? tryPrefixedSingleAt(text, i);
     if (found) return found;
   }
   return null;

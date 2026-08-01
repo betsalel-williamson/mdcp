@@ -1,12 +1,11 @@
-import { parseAtxHeading } from '../markdown/index.js';
+import { formatHeadingAsAtx, parseHeading } from '../markdown/index.js';
 
 const FENCE_RE = /^(`{3,}|~{3,})(.*)$/;
 
 function demoteLine(line: string, levels: number): string {
-  const m = parseAtxHeading(line);
+  const m = parseHeading(line);
   if (!m) return line;
-  const depth = Math.min(m.level + levels, 6);
-  return '#'.repeat(depth) + m.whitespace + m.title;
+  return formatHeadingAsAtx(m, Math.min(m.level + levels, 6));
 }
 
 function mapLinesPreservingFences(text: string, mapFn: (line: string) => string): string {
@@ -71,7 +70,7 @@ export function demoteExceptFirstH1(text: string): string {
       continue;
     }
 
-    const m = parseAtxHeading(line);
+    const m = parseHeading(line);
     if (m && m.level === 1 && !keptFirstH1) {
       keptFirstH1 = true;
       out.push(line);
@@ -92,7 +91,7 @@ export function stripAboutThisGuideHeading(text: string): string {
   let i = 0;
   while (i < lines.length && !lines[i].trim()) i++;
   if (i < lines.length) {
-    const parsed = parseAtxHeading(lines[i].trim());
+    const parsed = parseHeading(lines[i].trim());
     if (parsed?.level === 1 && parsed.title.trim().toLowerCase() === ABOUT_TITLE) {
       i++;
       while (i < lines.length && !lines[i].trim()) i++;
