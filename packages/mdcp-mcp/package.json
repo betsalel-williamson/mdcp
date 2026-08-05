@@ -1,0 +1,57 @@
+{
+  "name": "@bwilliamson/mdcp-mcp",
+  "version": "0.1.0",
+  "description": "MDCP MCP delivery — merge-gate review tools and future Model Context Protocol server",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "bin": {
+    "mdcp-mcp": "./dist/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betsalel-williamson/mdcp.git",
+    "directory": "packages/mdcp-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/betsalel-williamson/mdcp/issues"
+  },
+  "homepage": "https://github.com/betsalel-williamson/mdcp/tree/main/packages/mdcp-mcp#readme",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mdcp",
+    "merge-gate",
+    "documentation"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/cli.ts --format esm --clean",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "cac": "^7.0.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@vitest/coverage-v8": "^4.1.8",
+    "tsup": "^8.4.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}

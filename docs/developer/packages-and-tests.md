@@ -34,6 +34,18 @@ pnpm --filter @bwilliamson/mdcp-cli run build
 node packages/mdcp-cli/dist/cli.js --help
 ```
 
+## mdcp-mcp
+
+Merge-gate review and future MCP server delivery. Source: [`packages/mdcp-mcp/src/`](../../packages/mdcp-mcp/src/). Does not import `mdcp-core`; spawns `mdcp check` when needed.
+
+```bash
+pnpm --filter @bwilliamson/mdcp-mcp run build
+pnpm --filter @bwilliamson/mdcp-mcp test
+node packages/mdcp-mcp/dist/cli.js tools
+```
+
+See [mdcp-mcp and merge gate](./mdcp-mcp-merge-gate.md) for CI wiring and upstream MCP maintainer skills.
+
 ## Test code coverage
 
 Vitest coverage for `@bwilliamson/mdcp-core` and `@bwilliamson/mdcp-cli` (not root `scripts/` tests). This is **test** coverage of TypeScript sources — distinct from the [documentation coverage scan](../features/coverage-scan.md). Note that CLI package totals are understated because smoke tests drive the built binary out-of-process (V8 coverage does not follow that subprocess).
@@ -55,11 +67,13 @@ JSONC markdownlint configs plus the shippable `MDCP` Vale style (`vale/MDCP/`). 
 3. `pnpm docs:compile:repo && pnpm docs:check` if you touched `docs/` shards
 4. `pnpm changeset` if you changed published package behavior (see [Versioning and releases](./versioning-and-releases.md))
 
-CI runs the same core gates as `pnpm run check` (typecheck, lint, format, build, test, `docs:check`), plus:
+CI runs fast gates on every pull request (audit, typecheck, lint, format, build, test). Documentation, skill validation, and merge-gate review run on **merge queue** (`.github/workflows/mdcp-merge-gate.yml`) and on **push to `main`** (`ci.yml`). Locally, `pnpm run check` still runs the full gate.
 
-- `pnpm run verify:peers` — confirm markdownlint-cli2 and Vale are on PATH
+Pull request CI also includes:
+
+- `pnpm run verify:peers` — on push to `main` only (confirm markdownlint-cli2 and Vale are on PATH)
 - `pnpm audit --audit-level=high` — dependency vulnerability scan
-- `pnpm run prepare:docs` — `verify:peers` + `vale:sync` before `docs:check`
+- `pnpm run prepare:docs` — on push to `main` only (`verify:peers` + `vale:sync` before `docs:check`)
 - a separate **coverage** job runs `pnpm test:coverage`, appends package totals to the Actions job summary, and uploads `coverage/` artifacts (informational; no threshold enforcement)
 
 Pull requests also run the **changeset** job when package sources change.

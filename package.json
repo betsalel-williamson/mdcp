@@ -36,6 +36,7 @@
     "presentation:preview": "pnpm run presentation:compile && slidev presentations/la-devops-2026.md",
     "presentation:verify": "pnpm run presentation:compile && slidev export presentations/la-devops-2026.md --format png --output .tmp/slides/",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build && pnpm run test && pnpm run skill:validate && pnpm run docs:check",
+    "merge-gate:run": "node packages/mdcp-mcp/dist/cli.js run",
     "changeset": "changeset",
     "changeset:status": "node scripts/changeset-status.mjs",
     "changeset:reject-major": "node scripts/changeset-reject-major.mjs",

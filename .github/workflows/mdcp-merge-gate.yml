@@ -1,0 +1,71 @@
+name: MDCP Merge Gate
+
+on:
+  merge_group:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number (optional; defaults from merge queue ref or head commit)
+        required: false
+        type: string
+
+concurrency:
+  group: mdcp-merge-gate-${{ github.event.merge_group.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  merge-gate:
+    name: Merge gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Vale
+        run: |
+          VALE_VERSION=3.15.1
+          curl -fsSL "https://github.com/vale-cli/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz" \
+            | sudo tar xz -C /usr/local/bin vale
+
+      - run: pnpm run verify:peers
+      - run: pnpm run build
+      - run: pnpm run prepare:docs
+      - run: pnpm run skill:validate
+      - run: pnpm run docs:check
+      - run: pnpm run docs:compile
+
+      - name: Ensure documentation outputs are up-to-date
+        run: git diff --exit-code
+
+      - name: MDCP merge gate review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ARGS=(run --agent)
+          if [ -n "${{ inputs.pr_number }}" ]; then
+            ARGS+=(--pr "${{ inputs.pr_number }}")
+          fi
+          node packages/mdcp-mcp/dist/cli.js "${ARGS[@]}"

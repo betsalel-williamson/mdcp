@@ -11,10 +11,11 @@ mdcp/
 │   └── mdcp-arch-*/        # WIP archetypes (metadata.internal)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
 ├── skills.sh.json          # skills.sh repo page layout
-├── .agents/skills/         # Dogfood installs (pnpm skill:update) + skill-creator
+├── .agents/skills/         # Maintainer dogfood (pnpm skill:update): MDCP helpers + upstream MCP dev skills (mcp-builder, build-mcp-server, skill-creator) — not published in skills/
 ├── packages/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli
+│   ├── mdcp-mcp/           # @bwilliamson/mdcp-mcp — merge gate + future MCP server
 │   ├── mdcp-presets/       # @bwilliamson/mdcp-presets
 │   └── skill-*/            # Private @bwilliamson/skill-* version carriers + CHANGELOGs
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
