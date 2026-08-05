@@ -63,9 +63,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           ARGS=(run --agent)
-          if [ -n "${{ inputs.pr_number }}" ]; then
-            ARGS+=(--pr "${{ inputs.pr_number }}")
+          if [ -n "$PR_NUMBER" ]; then
+            ARGS+=(--pr "$PR_NUMBER")
           fi
           node packages/mdcp-mcp/dist/cli.js "${ARGS[@]}"

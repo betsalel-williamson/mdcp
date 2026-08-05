@@ -1,4 +1,3 @@
-import { execSync } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ReviewContext } from '../types.js';
@@ -8,6 +7,7 @@ import {
   resolveGithubRepository,
   resolvePrNumberFromCommit,
 } from './client.js';
+import { assertGitSha, gitDiffNameOnly, gitMergeBase, gitRevParse, gitShowAtRef } from './git.js';
 
 export interface ResolveReviewContextOptions {
   prNumber?: number;
@@ -26,7 +26,10 @@ export async function resolveReviewContext(
   if (!prNumber) {
     prNumber = parsePrNumberFromMergeQueueRef(githubRef) ?? undefined;
   }
-  const headSha = opts.headSha ?? process.env.GITHUB_SHA ?? gitRevParse('HEAD');
+  const headSha = assertGitSha(
+    opts.headSha ?? process.env.GITHUB_SHA ?? gitRevParse('HEAD'),
+    'headSha',
+  );
   if (!prNumber) {
     prNumber = (await resolvePrNumberFromCommit(owner, repo, headSha)) ?? undefined;
   }
@@ -37,11 +40,13 @@ export async function resolveReviewContext(
   }
 
   const pr = await fetchPullRequest(owner, repo, prNumber);
-  const baseSha =
+  const baseSha = assertGitSha(
     opts.baseSha ??
-    process.env.GITHUB_BASE_SHA ??
-    process.env.GITHUB_EVENT_PULL_REQUEST_BASE_SHA ??
-    gitMergeBase(pr.baseRef, headSha);
+      process.env.GITHUB_BASE_SHA ??
+      process.env.GITHUB_EVENT_PULL_REQUEST_BASE_SHA ??
+      gitMergeBase(pr.baseRef, headSha),
+    'baseSha',
+  );
 
   return {
     owner,
@@ -54,24 +59,8 @@ export async function resolveReviewContext(
   };
 }
 
-function gitRevParse(ref: string): string {
-  return execSync(`git rev-parse ${ref}`, { encoding: 'utf8' }).trim();
-}
-
-function gitMergeBase(baseRef: string, headSha: string): string {
-  try {
-    return execSync(`git merge-base origin/${baseRef} ${headSha}`, { encoding: 'utf8' }).trim();
-  } catch {
-    return execSync(`git merge-base ${baseRef} ${headSha}`, { encoding: 'utf8' }).trim();
-  }
-}
-
 export function listChangedFiles(baseSha: string, headSha: string): string[] {
-  const out = execSync(`git diff --name-only ${baseSha}..${headSha}`, { encoding: 'utf8' });
-  return out
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean);
+  return gitDiffNameOnly(baseSha, headSha);
 }
 
 export function readFileAtRef(
@@ -86,7 +75,7 @@ export function readFileAtRef(
   }
   const sha = ref === 'head' ? ctx.headSha : ctx.baseSha;
   try {
-    return execSync(`git show ${sha}:${path}`, { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
+    return gitShowAtRef(sha, path);
   } catch {
     return null;
   }
