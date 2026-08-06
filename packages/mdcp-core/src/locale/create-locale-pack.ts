@@ -17,6 +17,11 @@ export interface CreateLocalePackOptions {
    * Trimmed, non-empty; sorted longest-first at pack create time.
    */
   readonly lineRangeWords?: readonly string[];
+  /**
+   * About-this-guide preamble title (en-US: `About this guide`).
+   * Trimmed; empty means strip/promote have no locale title cue.
+   */
+  readonly aboutThisGuideTitle?: string;
   /** Locale-specific heading-title pattern with `prefix` / `number` groups. */
   readonly headingKeyPattern?: string;
   /** Template for semantic keys; placeholders `{prefix}` and `{number}`. */
@@ -161,6 +166,7 @@ export function createLocalePack(options: CreateLocalePackOptions): LocalePack {
     brokenLinks: createBrokenLinksCopy(options.brokenLinks),
     inserts: createInsertsCopy(options.inserts),
     lineRangeWords: normalizeLineRangeWords(options.lineRangeWords),
+    aboutThisGuideTitle: (options.aboutThisGuideTitle ?? '').trim(),
     headingKeyFromTitle: createHeadingKeyFromTitle(options.headingKeyPattern),
     formatHeadingKey: createFormatHeadingKey(options.headingKeyTemplate),
   };

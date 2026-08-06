@@ -65,6 +65,10 @@ describe('locale packs', () => {
     expect(enUS.lineRangeWords).toEqual(['lines', 'line']);
   });
 
+  it('loads en-US aboutThisGuideTitle from locale JSON', () => {
+    expect(enUS.aboutThisGuideTitle).toBe('About this guide');
+  });
+
   it('normalizes lineRangeWords (trim, dedupe, longest-first)', () => {
     const pack = createLocalePack({
       id: 'x-words',

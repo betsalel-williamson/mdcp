@@ -14,6 +14,13 @@ export interface LocalePack {
   readonly lineRangeWords: readonly string[];
 
   /**
+   * Locale display title for the about-this-guide preamble H1/H2
+   * (en-US: `About this guide`). Used for strip matching (case-insensitive)
+   * and shard preamble promotion defaults. Not the `about-this-guide.md` path id.
+   */
+  readonly aboutThisGuideTitle: string;
+
+  /**
    * Locale-specific semantic key parts from a heading title when the title
    * matches `headingKeyPattern` (en-US example: `ADM Chapter 1` →
    * `{ prefix: 'ADM', number: '1' }`), or null when it does not match.

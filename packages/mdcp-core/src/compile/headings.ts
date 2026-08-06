@@ -1,4 +1,6 @@
 import { formatHeadingAsAtx, parseHeading } from '../markdown/index.js';
+import { getLocalePack } from '../locale/index.js';
+import type { LocalePack } from '../locale/types.js';
 
 const FENCE_RE = /^(`{3,}|~{3,})(.*)$/;
 
@@ -84,15 +86,17 @@ export function demoteExceptFirstH1(text: string): string {
   return body;
 }
 
-const ABOUT_TITLE = 'about this guide';
-
-export function stripAboutThisGuideHeading(text: string): string {
+export function stripAboutThisGuideHeading(
+  text: string,
+  locale: LocalePack = getLocalePack(),
+): string {
+  const aboutTitle = locale.aboutThisGuideTitle.trim().toLowerCase();
   const lines = text.split('\n');
   let i = 0;
   while (i < lines.length && !lines[i].trim()) i++;
-  if (i < lines.length) {
+  if (aboutTitle && i < lines.length) {
     const parsed = parseHeading(lines[i].trim());
-    if (parsed?.level === 1 && parsed.title.trim().toLowerCase() === ABOUT_TITLE) {
+    if (parsed?.level === 1 && parsed.title.trim().toLowerCase() === aboutTitle) {
       i++;
       while (i < lines.length && !lines[i].trim()) i++;
     }

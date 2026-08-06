@@ -31,10 +31,10 @@ Duration-budget tests cover rewritten paths. Link extract/rewrite patterns stay 
 
 ### Rewritten (linear scanners)
 
-| Location                         | Former risk shape                                    | Disposition                                                                    |
-| -------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `compile/hooks/code-evidence.ts` | `LINE_RANGE_RE` optional `L`/`lines?` + `\s*` + alts | Imperative `lineRangeFromText`; word cues from the locale pack (not hardcoded) |
-| `compile/headings.ts` About H1   | `^#\s+About…\s*$` (safe but heading-regex sprawl)    | `parseHeading` + case-insensitive title compare                                |
+| Location                         | Former risk shape                                    | Disposition                                                                           |
+| -------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `compile/hooks/code-evidence.ts` | `LINE_RANGE_RE` optional `L`/`lines?` + `\s*` + alts | Imperative `lineRangeFromText`; word cues from the locale pack (not hardcoded)        |
+| `compile/headings.ts` About H1   | `^#\s+About…\s*$` (safe but heading-regex sprawl)    | `parseHeading` + locale `aboutThisGuideTitle` (case-insensitive; not hardcoded en-US) |
 
 ### Moved out of core (Vale)
 

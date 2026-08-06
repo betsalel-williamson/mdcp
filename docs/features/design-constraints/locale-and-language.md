@@ -12,6 +12,7 @@ Natural-language **static analysis** belongs with **[Vale](https://vale.sh/) sty
 - **GFM / Markdown shape** → peer **markdownlint**.
 - **Generated caption / marker copy** (`Table 1. …`, `BROKEN LINK`) → compile-time locale pack (default `en-US`).
 - **codeEvidence line-range word cues** (en-US examples: `line 42`, `lines 12–15`) → compile-time locale pack (`lineRangeWords`). Language-neutral forms (`L6-L8`, `:10-20`, bare `1-2`) and GitHub-style **`#L…` fragment output** stay in core as protocol shape — not localized. See [codeEvidence](../../client-core/compile-hooks/code-evidence.md#codeevidence-line-ranges).
+- **About-this-guide preamble title** (en-US: `About this guide`) → compile-time locale pack (`aboutThisGuideTitle`) for strip matching and shard preamble promotion defaults. The filename `about-this-guide.md` stays an English path identifier.
 
 ```text
 # Illustrative — Vale MDCP (prose mention without a GFM link):
@@ -53,7 +54,7 @@ Compile-time locale packs default to **`en-US`** (BCP 47 JSON + shared formatter
 
 GFM helpers and heading **slugify** stay language-agnostic: they operate on Unicode heading text and GitHub-style slug rules, not on English chapter vocabulary.
 
-Insert **library directory names** (`diagrams/`, `tables/`, …) stay English path identifiers for now. User-visible caption and marker **wording**, plus compile parse-input **word cues** such as code-evidence `line`/`lines`, go through the locale pack.
+Insert **library directory names** (`diagrams/`, `tables/`, …) and default preamble **filenames** (`about-this-guide.md`) stay English path identifiers for now. User-visible caption and marker **wording**, compile parse-input **word cues** such as code-evidence `line`/`lines`, and the about-this-guide **heading title** go through the locale pack.
 
 ## Related
 

@@ -2,6 +2,7 @@ import { mkdirSync, rmSync, writeFileSync, readFileSync, readdirSync, existsSync
 import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createTmpDir, removeTmpDir } from '../tmp-dir.js';
+import { getLocalePack } from '../locale/index.js';
 
 export interface ShardGuideMapping {
   name: string;
@@ -13,7 +14,10 @@ export interface ShardGuideMapping {
   splitLevel?: number;
 }
 
-function promotePreambleToH2(text: string, heading = 'About this guide'): string {
+function promotePreambleToH2(
+  text: string,
+  heading: string = getLocalePack().aboutThisGuideTitle,
+): string {
   const lines = text.split('\n');
   const h1Idx = lines.findIndex((l) => l.startsWith('# ') && !l.startsWith('## '));
   if (h1Idx === -1) return text;
