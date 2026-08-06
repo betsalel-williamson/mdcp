@@ -76,6 +76,7 @@
     "docs/skills.md",
     "docs/vale-local/README.md",
     "packages/mdcp-presets/README.md",
+    "packages/mdcp-mcp/README.md",
     "skills/**/*.md"
   ],
   "scan": {

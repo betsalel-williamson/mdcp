@@ -4,12 +4,14 @@ packages:
 # pnpm supply-chain (2026 best practice)
 minimumReleaseAge: 10080
 # Security patches published inside the age gate (must be allowed through explicitly).
-# - fast-uri@3.1.4: GHSA-v2hh-gcrm-f6hx (ajv → fast-uri)
-# - brace-expansion@5.0.8: GHSA-mh99-v99m-4gvg (eslint → minimatch → brace-expansion)
+# - fast-uri@3.1.5: GHSA-7p8r-x3mc-p8w7 (ajv → fast-uri)
+# - brace-expansion@5.0.9: GHSA-rgw5-rvv9-x895 (eslint → minimatch → brace-expansion)
+# - ip-address@10.3.1: GHSA-mwp4-54f8-5fhr (MCP SDK → express-rate-limit)
 # - js-yaml@5.2.2: GHSA-pm4m-ph32-ghv5 (markdownlint-cli2 → js-yaml)
 minimumReleaseAgeExclude:
-  - fast-uri@3.1.4
-  - brace-expansion@5.0.8
+  - fast-uri@3.1.5
+  - brace-expansion@5.0.9
+  - ip-address@10.3.1
   - js-yaml@5.2.2
 strictDepBuilds: true
 allowBuilds:
@@ -18,9 +20,11 @@ allowBuilds:
 # resolution deterministic and avoid floating to vulnerable or newer-major versions.
 overrides:
   # Pin the patched 3.x line (bare >=3.1.4 can float to vulnerable 4.1.0).
-  fast-uri: 3.1.4
-  # GHSA-mh99-v99m-4gvg: vulnerable <=5.0.7, patched >=5.0.8.
-  brace-expansion@<5.0.8: 5.0.8
+  fast-uri: 3.1.5
+  # GHSA-mh99-v99m-4gvg: vulnerable <=5.0.7; GHSA-rgw5-rvv9-x895: vulnerable <5.0.9.
+  brace-expansion@<5.0.9: 5.0.9
+  # GHSA-mwp4-54f8-5fhr: vulnerable <=10.3.0, patched >=10.3.1 (MCP SDK dev tooling).
+  ip-address@<=10.3.0: 10.3.1
   # GHSA-r28c-9q8g-f849: vulnerable <=8.5.17, patched >=8.5.18.
   postcss@<8.5.18: 8.5.18
   # GHSA-pm4m-ph32-ghv5: vulnerable >=5.0.0 <=5.2.1, patched >=5.2.2.

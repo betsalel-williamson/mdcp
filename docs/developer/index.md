@@ -7,6 +7,7 @@
   - [Cursor Cloud environment](./cursor-cloud-environment.md)
   - [Agent work-item tracking](./agent-work-item-tracking.md)
   - [Repository layout](./repository-layout.md)
+  - [mdcp-mcp and merge gate](./mdcp-mcp-merge-gate.md)
   - [Packages and tests](./packages-and-tests.md)
   - [Docs dogfooding](./docs-dogfooding.md)
   - [Markdown formatting](./markdown-formatting.md)
