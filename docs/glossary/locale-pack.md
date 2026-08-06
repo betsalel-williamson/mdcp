@@ -7,4 +7,4 @@ A **locale pack** is MDCP’s compile-time bundle of natural-language data that 
 - **Parse-input word cues** — authored words a compile hook may recognize (for example en-US `line` / `lines` for [codeEvidence](../client-core/compile-hooks/code-evidence.md) line ranges)
 - **Preamble heading title** — for example en-US `About this guide` for strip/promote defaults (`aboutThisGuideTitle`)
 
-Default `en-US`. Language-neutral markup forms and GitHub-style `#L…` fragment **output** stay outside the pack.
+Default `en-US` (one BCP 47 JSON file per locale under `src/locale/locales/`). Language-neutral markup forms and GitHub-style `#L…` fragment **output** stay outside the pack.

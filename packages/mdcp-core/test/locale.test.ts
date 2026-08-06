@@ -61,12 +61,11 @@ describe('locale packs', () => {
     expect(enUS.formatHeadingKey({ prefix: 'ADM', number: '1' })).toBe('adm.ch1');
   });
 
-  it('loads en-US codeEvidence lineRangeWords longest-first', () => {
+  it('loads en-US translations from a single locale JSON file', () => {
     expect(enUS.lineRangeWords).toEqual(['lines', 'line']);
-  });
-
-  it('loads en-US aboutThisGuideTitle from locale JSON', () => {
     expect(enUS.aboutThisGuideTitle).toBe('About this guide');
+    expect(enUS.inserts.seeInsertFallback).toBe('See insert');
+    expect(enUS.brokenLinks.markerLabel).toBe('BROKEN LINK');
   });
 
   it('normalizes lineRangeWords (trim, dedupe, longest-first)', () => {

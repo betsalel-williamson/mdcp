@@ -50,7 +50,7 @@ Vale does not replace link validation: Vale asks prose mentions to become links,
 
 ## Default and extension
 
-Compile-time locale packs default to **`en-US`** (BCP 47 JSON + shared formatters). Prose lint for other languages is a Vale style + `.vale.ini` section — not new branches inside GFM helpers or the check pipeline.
+Compile-time locale packs default to **`en-US`** (one BCP 47 JSON file per locale + shared formatters). Prose lint for other languages is a Vale style + `.vale.ini` section — not new branches inside GFM helpers or the check pipeline.
 
 GFM helpers and heading **slugify** stay language-agnostic: they operate on Unicode heading text and GitHub-style slug rules, not on English chapter vocabulary.
 
