@@ -12,6 +12,11 @@ export interface CreateLocalePackOptions {
   readonly id: string;
   readonly brokenLinks: LocaleBrokenLinkMessages;
   readonly inserts: LocaleInsertMessages;
+  /**
+   * Authored line-range word cues (for example `lines`, `line`).
+   * Trimmed, non-empty; sorted longest-first at pack create time.
+   */
+  readonly lineRangeWords?: readonly string[];
   /** Locale-specific heading-title pattern with `prefix` / `number` groups. */
   readonly headingKeyPattern?: string;
   /** Template for semantic keys; placeholders `{prefix}` and `{number}`. */
@@ -133,11 +138,29 @@ function createFormatHeadingKey(
     });
 }
 
+/** Trim, drop empties, dedupe case-insensitively, sort longest-first for matching. */
+export function normalizeLineRangeWords(words: readonly string[] | undefined): readonly string[] {
+  if (!words?.length) return [];
+  const seen = new Set<string>();
+  const cleaned: string[] = [];
+  for (const raw of words) {
+    const word = raw.trim();
+    if (!word) continue;
+    const key = word.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    cleaned.push(word);
+  }
+  cleaned.sort((a, b) => b.length - a.length || a.localeCompare(b));
+  return cleaned;
+}
+
 export function createLocalePack(options: CreateLocalePackOptions): LocalePack {
   return {
     id: options.id,
     brokenLinks: createBrokenLinksCopy(options.brokenLinks),
     inserts: createInsertsCopy(options.inserts),
+    lineRangeWords: normalizeLineRangeWords(options.lineRangeWords),
     headingKeyFromTitle: createHeadingKeyFromTitle(options.headingKeyPattern),
     formatHeadingKey: createFormatHeadingKey(options.headingKeyTemplate),
   };

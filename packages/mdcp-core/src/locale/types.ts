@@ -7,6 +7,13 @@ export interface LocalePack {
   readonly inserts: LocaleInsertCopy;
 
   /**
+   * Authored word forms that introduce a line number or range in link labels
+   * (en-US: `lines`, `line`). Longest-first. Not GitHub `#L…` protocol output —
+   * see codeEvidence line-range docs.
+   */
+  readonly lineRangeWords: readonly string[];
+
+  /**
    * Locale-specific semantic key parts from a heading title when the title
    * matches `headingKeyPattern` (en-US example: `ADM Chapter 1` →
    * `{ prefix: 'ADM', number: '1' }`), or null when it does not match.

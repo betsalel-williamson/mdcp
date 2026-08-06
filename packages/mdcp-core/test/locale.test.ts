@@ -61,6 +61,26 @@ describe('locale packs', () => {
     expect(enUS.formatHeadingKey({ prefix: 'ADM', number: '1' })).toBe('adm.ch1');
   });
 
+  it('loads en-US codeEvidence lineRangeWords longest-first', () => {
+    expect(enUS.lineRangeWords).toEqual(['lines', 'line']);
+  });
+
+  it('normalizes lineRangeWords (trim, dedupe, longest-first)', () => {
+    const pack = createLocalePack({
+      id: 'x-words',
+      brokenLinks: {
+        markerLabel: 'X',
+        markerTemplate: '{markerLabel}',
+        reasonDeadAnchor: 'a',
+        reasonMissingFile: 'b',
+        reasonMissingPublishPath: 'c',
+      },
+      inserts: { seeInsertFallback: 'insert' },
+      lineRangeWords: ['  line ', 'lines', 'LINE', '', 'zeile'],
+    });
+    expect(pack.lineRangeWords).toEqual(['lines', 'zeile', 'line']);
+  });
+
   it('formats broken-link markers from the active locale pack', () => {
     const marker = formatBrokenLinkMarker('T', './a.md', '#x', enUS.brokenLinks.reasonDeadAnchor);
     expect(marker).toContain('**BROKEN LINK:**');
