@@ -1,5 +1,8 @@
 /** Linear line-range parser for code-evidence (avoid polynomial-adjacent regexes). */
 
+import { getLocalePack } from '../../locale/index.js';
+import type { LocalePack } from '../../locale/types.js';
+
 const WORD_CHAR = /[A-Za-z0-9_]/;
 const WS = /\s/;
 /** Hyphen / en dash / em dash — distinct code points (legacy `[-–—]` class). */
@@ -29,9 +32,43 @@ function readDigits(text: string, i: number): { value: string; end: number } | n
   return { value: text.slice(start, i), end: i };
 }
 
-function startsIgnoreCase(text: string, i: number, literal: string): boolean {
-  if (i + literal.length > text.length) return false;
-  return text.slice(i, i + literal.length).toLowerCase() === literal;
+function startsIgnoreCase(text: string, i: number, literalLower: string): boolean {
+  if (i + literalLower.length > text.length) return false;
+  return text.slice(i, i + literalLower.length).toLowerCase() === literalLower;
+}
+
+/** Protocol single-letter `L` prefix (GitHub fragment shape — not locale wording). */
+function matchLetterLPrefix(text: string, i: number): number | null {
+  if (!startsIgnoreCase(text, i, 'l')) return null;
+  // Do not treat the start of a longer word cue as bare `L` (handled via locale words).
+  if (
+    i + 1 < text.length &&
+    isWordChar(text[i + 1]!) &&
+    (text[i + 1]! < '0' || text[i + 1]! > '9')
+  ) {
+    return null;
+  }
+  return i + 1;
+}
+
+function wordPrefixEnds(text: string, i: number, words: readonly string[]): number[] {
+  const ends: number[] = [];
+  for (const word of words) {
+    const lower = word.toLowerCase();
+    if (!startsIgnoreCase(text, i, lower)) continue;
+    ends.push(skipWs(text, i + lower.length));
+  }
+  return ends;
+}
+
+function canStartMatch(text: string, i: number, words: readonly string[]): boolean {
+  const c = text[i]!;
+  if (c >= '0' && c <= '9') return true;
+  if (c === 'L' || c === 'l') return true;
+  for (const word of words) {
+    if (startsIgnoreCase(text, i, word.toLowerCase())) return true;
+  }
+  return false;
 }
 
 export function formatLineFragment(start: string, end?: string): string {
@@ -41,9 +78,15 @@ export function formatLineFragment(start: string, end?: string): string {
 
 /**
  * Parse first line-range mention in `text` (parity with former LINE_RANGE_RE).
- * Forms: `L6-L8`, `lines 10-20`, `line 42`, `:10-20`, `:7`, bare `1-2`.
+ * Language-neutral forms: `L6-L8`, `:10-20`, `:7`, bare `1-2`.
+ * Locale word forms: from `locale.lineRangeWords` (en-US: `line` / `lines`).
+ * Output is always a GitHub-style `L…` fragment (not localized).
  */
-export function lineRangeFromText(text: string): string | null {
+export function lineRangeFromText(
+  text: string,
+  locale: LocalePack = getLocalePack(),
+): string | null {
+  const words = locale.lineRangeWords;
   for (let i = 0; i < text.length; i++) {
     const c = text[i]!;
     // Only positions that can start a match — skip pure whitespace / punctuation pumps.
@@ -52,23 +95,22 @@ export function lineRangeFromText(text: string): string | null {
       if (found) return found;
       continue;
     }
-    if (c !== 'L' && c !== 'l' && (c < '0' || c > '9')) continue;
+    if (!canStartMatch(text, i, words)) continue;
     if (!isWordBoundary(text, i)) continue;
-    const found = tryDigitRangeAt(text, i) ?? tryPrefixedSingleAt(text, i);
+    const found = tryDigitRangeAt(text, i, words) ?? tryPrefixedSingleAt(text, i, words);
     if (found) return found;
   }
   return null;
 }
 
-/** `\b(?:L|lines?\s*)?(\d+)\s*[-–—]\s*(?:L)?(\d+)\b` */
-function tryDigitRangeAt(text: string, i: number): string | null {
+/** Optional `L` / locale words, then `\d+\s*[-–—]\s*(?:L)?\d+`. */
+function tryDigitRangeAt(text: string, i: number, words: readonly string[]): string | null {
   if (!isWordBoundary(text, i)) return null;
 
-  // Greedy optional group: try with prefix (L first, then lines?), then without.
   const prefixEnds: number[] = [];
-  if (startsIgnoreCase(text, i, 'l')) prefixEnds.push(i + 1);
-  if (startsIgnoreCase(text, i, 'lines')) prefixEnds.push(skipWs(text, i + 5));
-  else if (startsIgnoreCase(text, i, 'line')) prefixEnds.push(skipWs(text, i + 4));
+  const lEnd = matchLetterLPrefix(text, i);
+  if (lEnd !== null) prefixEnds.push(lEnd);
+  prefixEnds.push(...wordPrefixEnds(text, i, words));
   prefixEnds.push(i);
 
   for (const start of prefixEnds) {
@@ -95,13 +137,27 @@ function tryDigitRangeAt(text: string, i: number): string | null {
   return null;
 }
 
-/** `\b(?:L|line\s*)(\d+)\b` — prefix required. */
-function tryPrefixedSingleAt(text: string, i: number): string | null {
+/**
+ * Shortest locale word forms only (en-US: `line` not `lines`) — parity with
+ * former `\b(?:L|line\s*)(\d+)\b`. Longer plural cues still work for ranges.
+ */
+function singleCueWords(words: readonly string[]): readonly string[] {
+  if (!words.length) return [];
+  let minLen = words[0]!.length;
+  for (const w of words) {
+    if (w.length < minLen) minLen = w.length;
+  }
+  return words.filter((w) => w.length === minLen);
+}
+
+/** Required `L` or shortest locale word, then `\d+`. */
+function tryPrefixedSingleAt(text: string, i: number, words: readonly string[]): string | null {
   if (!isWordBoundary(text, i)) return null;
 
   const ends: number[] = [];
-  if (startsIgnoreCase(text, i, 'l')) ends.push(i + 1);
-  if (startsIgnoreCase(text, i, 'line')) ends.push(skipWs(text, i + 4));
+  const lEnd = matchLetterLPrefix(text, i);
+  if (lEnd !== null) ends.push(lEnd);
+  ends.push(...wordPrefixEnds(text, i, singleCueWords(words)));
 
   for (const start of ends) {
     const d = readDigits(text, start);

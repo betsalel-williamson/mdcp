@@ -14,6 +14,7 @@ import {
 } from '../src/compile/hooks/code-evidence.js';
 import { assembleGuide, compileGuides } from '../src/compile/assemble.js';
 import { resolveGuideLinkBase } from '../src/config/load.js';
+import { createLocalePack } from '../src/locale/index.js';
 import { useTmpDir, withCwd } from './helpers/tmp-dir.js';
 
 const baseCtx = {
@@ -54,6 +55,32 @@ describe('codeEvidence — line range detection', () => {
     expect(lineRangeFromText(':10-L20')).toBe('L10');
     expect(lineRangeFromText('orgCount')).toBeNull();
     expect(lineRangeFromText('lines 10')).toBeNull();
+  });
+
+  it('reads line-range word cues from the locale pack', () => {
+    const de = createLocalePack({
+      id: 'x-de',
+      brokenLinks: {
+        markerLabel: 'X',
+        markerTemplate: '{markerLabel}',
+        reasonDeadAnchor: 'a',
+        reasonMissingFile: 'b',
+        reasonMissingPublishPath: 'c',
+      },
+      inserts: { seeInsertFallback: 'insert' },
+      lineRangeWords: ['zeilen', 'zeile'],
+    });
+
+    expect(lineRangeFromText('zeile 42', de)).toBe('L42');
+    expect(lineRangeFromText('Zeilen 10-20', de)).toBe('L10-L20');
+    expect(lineRangeFromText('zeilen 10', de)).toBeNull();
+    // English word cues are not universal — they come from the active pack.
+    expect(lineRangeFromText('line 42', de)).toBeNull();
+    // Bare digit–dash ranges remain language-neutral even when English words are ignored.
+    expect(lineRangeFromText('lines 10-20', de)).toBe('L10-L20');
+    expect(lineRangeFromText('L6-L8', de)).toBe('L6-L8');
+    expect(lineRangeFromText(':7', de)).toBe('L7');
+    expect(lineRangeFromText('1-2', de)).toBe('L1-L2');
   });
 });
 
