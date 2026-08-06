@@ -1,7 +1,0 @@
-{
-  "markerLabel": "BROKEN LINK",
-  "markerTemplate": "**{markerLabel}:** \"{label}\" (`{originalTarget}`) → `{brokenTarget}` ({reason})",
-  "reasonDeadAnchor": "dead anchor in compiled guide",
-  "reasonMissingFile": "missing file",
-  "reasonMissingPublishPath": "missing publish path"
-}

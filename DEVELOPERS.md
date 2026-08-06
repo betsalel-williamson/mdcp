@@ -471,7 +471,7 @@ Library source: [`packages/mdcp-core/src/`](packages/mdcp-core/src).
 | Protocol helpers   | `src/export/`                 |
 | Peer linters       | `src/peers/`                  |
 
-Shared heading/link helpers live under `src/markdown/` and `src/refs/` (`parseHeading` with ATX kind today, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Heading recognition is an ATX subset of GFM — see [GFM scope](docs/features/design-constraints/gfm-scope.md#headings). Compile-time wording lives under `src/locale/` (BCP 47 JSON). Peer Vale owns prose cues and Pandoc ID authoring opinion — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
+Shared heading/link helpers live under `src/markdown/` and `src/refs/` (`parseHeading` with ATX kind today, plain-text cleanup, GitHub-style **slugify**). They stay **language-agnostic**. Heading recognition is an ATX subset of GFM — see [GFM scope](docs/features/design-constraints/gfm-scope.md#headings). Compile-time wording lives under `src/locale/` (one BCP 47 JSON file per locale). Peer Vale owns prose cues and Pandoc ID authoring opinion — see [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ```bash
 pnpm --filter @bwilliamson/mdcp-core test
@@ -1079,9 +1079,9 @@ Never unpublish a version that other packages or consumers legitimately depend o
 
 ## Safe markdown parsing (heading helpers)
 
-Maintainer note for why `mdcp-core` centralizes heading parsing and related cleanup in shared **language-agnostic** helpers instead of ad-hoc regular expressions.
+Maintainer note for why `mdcp-core` centralizes heading parsing and related cleanup in shared **language-agnostic** helpers instead of ad-hoc regular expressions, and how remaining package regexes were audited for [ReDoS](#redos) risk.
 
-Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174).
+Work is tracked under [#200](https://github.com/betsalel-williamson/mdcp/issues/200) (Phase A, v0.7 release gate) and [#201](https://github.com/betsalel-williamson/mdcp/issues/201) (Phase B follow-up audit), as children of epic [#173 — Repository security posture](https://github.com/betsalel-williamson/mdcp/issues/173). CodeQL setup that surfaces these findings is [#174](https://github.com/betsalel-williamson/mdcp/issues/174). Prose chapter-cue lint moved to Vale in [#230](https://github.com/betsalel-williamson/mdcp/issues/230) / [Locale and language boundary](docs/features/design-constraints/locale-and-language.md).
 
 ### Why this is necessary
 
@@ -1102,15 +1102,61 @@ Public package APIs keep their existing names; call sites delegate to the helper
 
 See [Packages and tests](#packages-and-tests) for where the helper module lives under `mdcp-core`.
 
-### What Phase B covers
+### Phase B inventory (remaining regexes)
 
-Phase B is a broader inventory of remaining regexes in `mdcp-core` (for example code-evidence patterns). Those stay out of the Phase A release gate. Rewrite or keep case-by-case; do not block shipping Phase A on a full regex purge.
+Phase B inventories remaining regexes in `packages/mdcp-core/src/` after Phase A **and** after prose chapter-cue lint moved to [Vale](https://vale.sh/) (`@bwilliamson/mdcp-presets` `vale/MDCP`, [#230](https://github.com/betsalel-williamson/mdcp/pull/230)). Decision rule: **keep** when the shape is clearly linear; **rewrite** when polynomial-adjacent (`\s*` / overlapping optional groups next to digits, or the CodeQL class); **dismiss** when a conservative checker flags a standard markdown-link idiom that stays empirically linear; **out of scope** when the concern is language/prose opinion (belongs in Vale, not core).
+
+Duration-budget tests cover rewritten paths. Link extract/rewrite patterns stay as regexes with the dismissals below — not a full parser purge. Alternatives such as ripgrep, Peggy, or Rust for these scanners are declined for now; see [ADR 0005](docs/features/adr/0005-keep-ts-scanners-over-rg-peggy-rust.md).
+
+#### Rewritten (linear scanners)
+
+| Location                         | Former risk shape                                    | Disposition                                                                           |
+| -------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `compile/hooks/code-evidence.ts` | `LINE_RANGE_RE` optional `L`/`lines?` + `\s*` + alts | Imperative `lineRangeFromText`; word cues from the locale pack (not hardcoded)        |
+| `compile/headings.ts` About H1   | `^#\s+About…\s*$` (safe but heading-regex sprawl)    | `parseHeading` + locale `aboutThisGuideTitle` (case-insensitive; not hardcoded en-US) |
+
+#### Moved out of core (Vale)
+
+| Former core concern                       | Home now                                                                    |
+| ----------------------------------------- | --------------------------------------------------------------------------- |
+| Bare / unlinked “See Chapter…” prose cues | `@bwilliamson/mdcp-presets` Vale style `MDCP` ([vale.sh](https://vale.sh/)) |
+| Pandoc heading-ID authoring opinion       | Dogfood Vale `MDCP-PandocId`                                                |
+
+Do **not** reintroduce `lintXrefs` or chapter-cue regexes in `mdcp-core`.
+
+#### Kept (clearly linear)
+
+| Location                         | Pattern role                   | Rationale                                       |
+| -------------------------------- | ------------------------------ | ----------------------------------------------- |
+| `compile/headings.ts` `FENCE_RE` | Fence open/close markers       | Anchored; `` `{3,}` `` / `~{3,}` then remainder |
+| `refs/slugs.ts` slug cleanup     | `[^a-z0-9]+`, trim dashes      | Single character-class replace                  |
+| `export/protocol-version.ts`     | `mdcp.v…llms.txt` filenames    | Anchored filename; `[\d.]+` is linear           |
+| `compile/section-slug.ts`        | `FIND-N.md`, `.md` suffix      | Anchored / suffix only                          |
+| `compile/section-manifest.ts`    | Dynamic `##` sections heading  | Escaped literal; anchored `^##\s+…\s*$`         |
+| `links/validate.ts`              | `https?://`, `.md` suffix      | Anchored / suffix                               |
+| `compile/assemble.ts`            | Collapse `\n{3,}`              | Bounded quantifier on one character             |
+| `shard/orchestrator.ts`          | Demote leading H1 marker       | Fixed two-character `#` + space prefix          |
+| Misc adornment / path trims      | Bold stars, inline ticks, `./` | Literal or single-class                         |
+
+#### Dismissed (link idioms — keep regex)
+
+| Location                                      | Pattern role                      | Rationale                                                                                       |
+| --------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `links/extract.ts` `MD_LINK_RE`               | Non-image `[label](target)`       | Standard GFM link extract; character-class stars; line-scoped; empirically linear at 40k+ chars |
+| `code-evidence.ts` link match                 | `[…](…)` rewrite                  | Same class; simpler `[^)]*` form already passes conservative checkers                           |
+| `compile/section-manifest.ts` file/slug links | Manifest `.md` / `#slug` links    | Same link idiom; used on small manifests                                                        |
+| `compile/publish-links.ts` rewrite REs        | Intra/cross-guide / publish paths | Nested lookarounds + `.md` suffix; conservative checkers may flag; V8 timings stay linear       |
+| `compile/hooks/inline-inserts.ts`             | Insert-library link match         | Same as publish-links; library-dir alternation is fixed                                         |
+
+These dismissals are intentional: Phase B does **not** replace every regex with parsers. If CodeQL later opens `js/polynomial-redos` on a dismissed site, treat that alert as a new fix ticket (same TDD pattern as Phase A).
 
 ### Authoring implications
 
 - Prefer the shared helpers for new heading or slug logic; do not add new polynomial-risk regexes for those jobs.
+- Prefer imperative scanners when adding line-range style matchers (optional whitespace next to digits or overlapping alternatives). Authored **word** cues for line ranges belong in the locale pack; keep `L` / `:` / bare digit forms and `#L…` output language-neutral in the scanner.
 - Prefer GFM auto-slugs; do not author Pandoc IDs on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
-- After merge to the default branch, confirm CodeQL alerts for this class close on the next scan of `main`.
+- Unlinked chapter/section prose cues are Vale’s job — not a new `mdcp-core` lint path.
+- After merge to the default branch, confirm CodeQL alerts for the heading/anchor class stay closed on the next scan of `main`.
 
 <!-- mdcp-shard: end docs/developer/safe-markdown-parsing.md -->
 
@@ -1395,7 +1441,14 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 
 ## Locale pack
 
-A **locale pack** is MDCP’s compile-time bundle of generated wording and locale-specific patterns (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns). Default `en-US`.
+A **locale pack** is MDCP’s compile-time bundle of natural-language data that is **not** GFM protocol shape. It covers:
+
+- **Generated wording** — for example US-English insert captions like `Table 1. …` and `BROKEN LINK` marker copy
+- **Locale-specific patterns** — optional heading-key patterns for semantic refs
+- **Parse-input word cues** — authored words a compile hook may recognize (for example en-US `line` / `lines` for [codeEvidence](./packages/mdcp-core/README.md#codeevidence) line ranges)
+- **Preamble heading title** — for example en-US `About this guide` for strip/promote defaults (`aboutThisGuideTitle`)
+
+Default `en-US` (one BCP 47 JSON file per locale under `src/locale/locales/`). Language-neutral markup forms and GitHub-style `#L…` fragment **output** stay outside the pack.
 
 <!-- mdcp-shard: end docs/glossary/locale-pack.md -->
 
@@ -1492,7 +1545,7 @@ See [Documentation coverage scan](docs/features/coverage-scan.md).
 
 **ReDoS** (Regular expression Denial of Service) is when a regular expression takes far too long on certain inputs — often because overlapping or unbounded quantifiers force the engine to explore many matching paths. Attackers (or accidental pathological strings) can stall a process that runs the pattern on untrusted or library-controlled text.
 
-In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `{#…}` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. See [Safe markdown parsing](#safe-markdown-parsing-heading-helpers).
+In this repository, CodeQL’s `js/polynomial-redos` rule flags that class of risk. Heading and Pandoc `{#…}` parsing in `mdcp-core` moved to shared linear helpers so those alerts close and the anti-pattern does not spread. A follow-up audit rewrote the polynomial-adjacent code-evidence line-range scanner, recorded keep/dismiss decisions for remaining core regexes, and left en-US chapter-cue prose lint in Vale ([#230](https://github.com/betsalel-williamson/mdcp/pull/230)). See [Safe markdown parsing](#safe-markdown-parsing-heading-helpers).
 
 <!-- mdcp-shard: end docs/glossary/redos.md -->
 

@@ -10,3 +10,4 @@ Delivery backlog and roadmap tracks stay in GitHub issues / the project board �
 - [ADR 0002 — Remove `mdcp refs lookup`](./0002-remove-refs-lookup.md)
 - [ADR 0003 — Do not adopt OKF](./0003-do-not-adopt-okf.md)
 - [ADR 0004 — Decline a hard-gated branch-before-edit skill rule](./0004-decline-branch-before-edit-hard-gate.md)
+- [ADR 0005 — Keep linear TypeScript scanners over rg, Peggy, or Rust](./0005-keep-ts-scanners-over-rg-peggy-rust.md)

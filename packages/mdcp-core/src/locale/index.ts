@@ -1,5 +1,6 @@
 /**
- * Locale packs: natural-language copy for compiled prose and semantic refs.
+ * Locale packs: natural-language copy for compiled prose, semantic refs, and
+ * compile parse-input word cues (for example codeEvidence lineRangeWords).
  *
  * Modeled on Vale’s multi-language docs pattern (errata-ai/vale):
  * - GFM / markup structure stays language-neutral (`../markdown/`, links, slugs).
@@ -22,6 +23,7 @@ export {
   createInsertsCopy,
   createLocalePack,
   formatTemplate,
+  normalizeLineRangeWords,
   type CreateLocalePackOptions,
 } from './create-locale-pack.js';
 export { enUS } from './en-US/index.js';
