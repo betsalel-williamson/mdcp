@@ -777,6 +777,12 @@ The registry is **generated state**, not authored shards. `mdcp compile` (and `m
 
 ## Locale pack
 
-A **locale pack** is MDCP’s compile-time bundle of generated wording and locale-specific patterns (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns). Default `en-US`.
+A **locale pack** is MDCP’s compile-time bundle of natural-language data that is **not** GFM protocol shape. It covers:
+
+- **Generated wording** — for example US-English insert captions like `Table 1. …` and `BROKEN LINK` marker copy
+- **Locale-specific patterns** — optional heading-key patterns for semantic refs
+- **Parse-input word cues** — authored words a compile hook may recognize (for example en-US `line` / `lines` for [codeEvidence](../mdcp-core/README.md#codeevidence) line ranges)
+
+Default `en-US`. Language-neutral markup forms and GitHub-style `#L…` fragment **output** stay outside the pack.
 
 <!-- mdcp-shard: end ../../docs/glossary/locale-pack.md -->

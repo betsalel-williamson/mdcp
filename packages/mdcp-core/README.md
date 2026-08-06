@@ -405,13 +405,18 @@ Markdown (`.md`) links, external URLs, and same-guide shard links are left uncha
 
 ### codeEvidence line ranges
 
-Line ranges are parsed from the **link label** first, then from the path (before any `#` fragment). Supported forms:
+Line ranges are parsed from the **link label** first, then from the path (before any `#` fragment). The hook always emits GitHub-style **`#L…` fragments** (protocol output — not localized).
+
+**Language-neutral forms** (always recognized):
 
 | Form in label or path | Fragment           |
 | --------------------- | ------------------ |
 | `L6-L8`, `L6–L8`      | `#L6-L8`           |
-| `L42`, `line 42`      | `#L42`             |
+| `L42`                 | `#L42`             |
 | `:10-20`, `:10`       | `#L10-L20`, `#L10` |
+| bare `1-2`            | `#L1-L2`           |
+
+**Locale word forms** come from the active [locale pack](#locale-pack) (`lineRangeWords`). Default **en-US** recognizes `line` / `lines` (case-insensitive), for example `line 42` → `#L42` and `lines 12–15` → `#L12-L15`. Other locales may supply different authored words; they are not MDCP protocol vocabulary. See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
 If the URL already has a normalized `#L…` fragment, the hook preserves it (normalizing case to `#L`).
 
@@ -1050,3 +1055,17 @@ MIT
 Guide names listed on the **compiling** guide under `compile.crossGuideLinks.ignoreGuides`. Cross-guide links to those guides keep source shard `.md` paths instead of rewriting to monolith `#slug` targets. Does not exclude the guide from `compileOrder` or the link index — only skips link rewrite for those targets. On publish outputs, [publish-relative rewrite](#publish-relative-link-rewriting) still rebases the shard path for the publish file. Read [Cross-guide link rewriting](#cross-guide-link-rewriting).
 
 <!-- mdcp-shard: end ../../docs/glossary/ignore-guides.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/locale-pack.md -->
+
+## Locale pack
+
+A **locale pack** is MDCP’s compile-time bundle of natural-language data that is **not** GFM protocol shape. It covers:
+
+- **Generated wording** — for example US-English insert captions like `Table 1. …` and `BROKEN LINK` marker copy
+- **Locale-specific patterns** — optional heading-key patterns for semantic refs
+- **Parse-input word cues** — authored words a compile hook may recognize (for example en-US `line` / `lines` for [codeEvidence](#codeevidence) line ranges)
+
+Default `en-US`. Language-neutral markup forms and GitHub-style `#L…` fragment **output** stay outside the pack.
+
+<!-- mdcp-shard: end ../../docs/glossary/locale-pack.md -->

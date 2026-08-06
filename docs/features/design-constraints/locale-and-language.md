@@ -2,7 +2,7 @@
 
 MDCP treats **authored [GFM](../../glossary/gfm.md)** as the format contract: **headings** (ATX subset today — see [GFM scope](./gfm-scope.md#headings)) and **[cross-links](../../glossary/cross-link.md)** (ordinary `[]()` markdown links). It does not model chapters/sections as protocol concepts.
 
-Natural-language **static analysis** belongs with **[Vale](https://vale.sh/) style packages**, not as durable gates in the core compile/check API. Core may hold a small **[locale pack](../../glossary/locale-pack.md)** for compile-time generated wording (captions, broken-link markers) and locale-specific heading-key patterns.
+Natural-language **static analysis** belongs with **[Vale](https://vale.sh/) style packages**, not as durable gates in the core compile/check API. Core may hold a small **[locale pack](../../glossary/locale-pack.md)** for compile-time generated wording (captions, broken-link markers), locale-specific heading-key patterns, and compile **parse-input** word cues where natural language is not protocol vocabulary.
 
 ## Preferred homes
 
@@ -11,6 +11,7 @@ Natural-language **static analysis** belongs with **[Vale](https://vale.sh/) sty
 - **Pandoc IDs** (`{#…}` after a heading) → peer **Vale** (dogfood style `MDCP-PandocId` warns authors to **remove** them). Core may strip leftovers for cleanup; not an authoring feature.
 - **GFM / Markdown shape** → peer **markdownlint**.
 - **Generated caption / marker copy** (`Table 1. …`, `BROKEN LINK`) → compile-time locale pack (default `en-US`).
+- **codeEvidence line-range word cues** (en-US examples: `line 42`, `lines 12–15`) → compile-time locale pack (`lineRangeWords`). Language-neutral forms (`L6-L8`, `:10-20`, bare `1-2`) and GitHub-style **`#L…` fragment output** stay in core as protocol shape — not localized. See [codeEvidence](../../client-core/compile-hooks/code-evidence.md#codeevidence-line-ranges).
 
 ```text
 # Illustrative — Vale MDCP (prose mention without a GFM link):
@@ -52,7 +53,7 @@ Compile-time locale packs default to **`en-US`** (BCP 47 JSON + shared formatter
 
 GFM helpers and heading **slugify** stay language-agnostic: they operate on Unicode heading text and GitHub-style slug rules, not on English chapter vocabulary.
 
-Insert **library directory names** (`diagrams/`, `tables/`, …) stay English path identifiers for now; only user-visible caption and marker **wording** goes through the locale pack.
+Insert **library directory names** (`diagrams/`, `tables/`, …) stay English path identifiers for now. User-visible caption and marker **wording**, plus compile parse-input **word cues** such as code-evidence `line`/`lines`, go through the locale pack.
 
 ## Related
 

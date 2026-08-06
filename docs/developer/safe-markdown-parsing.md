@@ -31,10 +31,10 @@ Duration-budget tests cover rewritten paths. Link extract/rewrite patterns stay 
 
 ### Rewritten (linear scanners)
 
-| Location                         | Former risk shape                                    | Disposition                                     |
-| -------------------------------- | ---------------------------------------------------- | ----------------------------------------------- |
-| `compile/hooks/code-evidence.ts` | `LINE_RANGE_RE` optional `L`/`lines?` + `\s*` + alts | Imperative `lineRangeFromText`                  |
-| `compile/headings.ts` About H1   | `^#\s+About…\s*$` (safe but heading-regex sprawl)    | `parseHeading` + case-insensitive title compare |
+| Location                         | Former risk shape                                    | Disposition                                                                    |
+| -------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `compile/hooks/code-evidence.ts` | `LINE_RANGE_RE` optional `L`/`lines?` + `\s*` + alts | Imperative `lineRangeFromText`; word cues from the locale pack (not hardcoded) |
+| `compile/headings.ts` About H1   | `^#\s+About…\s*$` (safe but heading-regex sprawl)    | `parseHeading` + case-insensitive title compare                                |
 
 ### Moved out of core (Vale)
 
@@ -74,7 +74,7 @@ These dismissals are intentional: Phase B does **not** replace every regex with 
 ## Authoring implications
 
 - Prefer the shared helpers for new heading or slug logic; do not add new polynomial-risk regexes for those jobs.
-- Prefer imperative scanners when adding line-range style matchers (optional whitespace next to digits or overlapping alternatives).
+- Prefer imperative scanners when adding line-range style matchers (optional whitespace next to digits or overlapping alternatives). Authored **word** cues for line ranges belong in the locale pack; keep `L` / `:` / bare digit forms and `#L…` output language-neutral in the scanner.
 - Prefer GFM auto-slugs; do not author Pandoc IDs on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
 - Unlinked chapter/section prose cues are Vale’s job — not a new `mdcp-core` lint path.
 - After merge to the default branch, confirm CodeQL alerts for the heading/anchor class stay closed on the next scan of `main`.

@@ -1110,10 +1110,10 @@ Duration-budget tests cover rewritten paths. Link extract/rewrite patterns stay 
 
 #### Rewritten (linear scanners)
 
-| Location                         | Former risk shape                                    | Disposition                                     |
-| -------------------------------- | ---------------------------------------------------- | ----------------------------------------------- |
-| `compile/hooks/code-evidence.ts` | `LINE_RANGE_RE` optional `L`/`lines?` + `\s*` + alts | Imperative `lineRangeFromText`                  |
-| `compile/headings.ts` About H1   | `^#\s+About…\s*$` (safe but heading-regex sprawl)    | `parseHeading` + case-insensitive title compare |
+| Location                         | Former risk shape                                    | Disposition                                                                    |
+| -------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `compile/hooks/code-evidence.ts` | `LINE_RANGE_RE` optional `L`/`lines?` + `\s*` + alts | Imperative `lineRangeFromText`; word cues from the locale pack (not hardcoded) |
+| `compile/headings.ts` About H1   | `^#\s+About…\s*$` (safe but heading-regex sprawl)    | `parseHeading` + case-insensitive title compare                                |
 
 #### Moved out of core (Vale)
 
@@ -1153,7 +1153,7 @@ These dismissals are intentional: Phase B does **not** replace every regex with 
 ### Authoring implications
 
 - Prefer the shared helpers for new heading or slug logic; do not add new polynomial-risk regexes for those jobs.
-- Prefer imperative scanners when adding line-range style matchers (optional whitespace next to digits or overlapping alternatives).
+- Prefer imperative scanners when adding line-range style matchers (optional whitespace next to digits or overlapping alternatives). Authored **word** cues for line ranges belong in the locale pack; keep `L` / `:` / bare digit forms and `#L…` output language-neutral in the scanner.
 - Prefer GFM auto-slugs; do not author Pandoc IDs on headings (Vale warns in this repo). Compile stripping stays available for legacy content.
 - Unlinked chapter/section prose cues are Vale’s job — not a new `mdcp-core` lint path.
 - After merge to the default branch, confirm CodeQL alerts for the heading/anchor class stay closed on the next scan of `main`.
@@ -1441,7 +1441,13 @@ Shard markdown as written before compile — no preprocessor substitution or tem
 
 ## Locale pack
 
-A **locale pack** is MDCP’s compile-time bundle of generated wording and locale-specific patterns (for example US-English insert captions like `Table 1. …`, `BROKEN LINK` marker copy, and optional heading-key patterns). Default `en-US`.
+A **locale pack** is MDCP’s compile-time bundle of natural-language data that is **not** GFM protocol shape. It covers:
+
+- **Generated wording** — for example US-English insert captions like `Table 1. …` and `BROKEN LINK` marker copy
+- **Locale-specific patterns** — optional heading-key patterns for semantic refs
+- **Parse-input word cues** — authored words a compile hook may recognize (for example en-US `line` / `lines` for [codeEvidence](./packages/mdcp-core/README.md#codeevidence) line ranges)
+
+Default `en-US`. Language-neutral markup forms and GitHub-style `#L…` fragment **output** stay outside the pack.
 
 <!-- mdcp-shard: end docs/glossary/locale-pack.md -->
 
