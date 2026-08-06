@@ -3,8 +3,6 @@
 import { getLocalePack } from '../../locale/index.js';
 import type { LocalePack } from '../../locale/types.js';
 
-const WORD_CHAR = /[A-Za-z0-9_]/;
-const WS = /\s/;
 /** Hyphen / en dash / em dash — distinct code points (legacy `[-–—]` class). */
 const DASHES = new Set([
   '\u002D', // hyphen-minus '-'
@@ -12,8 +10,30 @@ const DASHES = new Set([
   '\u2014', // em dash '—'
 ]);
 
+function isWs(ch: string | undefined): boolean {
+  if (ch === undefined) return false;
+  // Same class as /\s/ for doc text; avoid RegExp.test in hot loops.
+  const code = ch.charCodeAt(0);
+  return (
+    code === 0x20 || // space
+    code === 0x09 || // tab
+    code === 0x0a || // LF
+    code === 0x0d || // CR
+    code === 0x0c || // form feed
+    code === 0x0b || // vertical tab
+    code === 0xa0 // nbsp
+  );
+}
+
 function isWordChar(ch: string | undefined): boolean {
-  return ch !== undefined && WORD_CHAR.test(ch);
+  if (ch === undefined) return false;
+  const code = ch.charCodeAt(0);
+  return (
+    (code >= 0x30 && code <= 0x39) || // 0-9
+    (code >= 0x41 && code <= 0x5a) || // A-Z
+    (code >= 0x61 && code <= 0x7a) || // a-z
+    code === 0x5f // _
+  );
 }
 
 function isWordBoundary(text: string, index: number): boolean {
@@ -21,7 +41,7 @@ function isWordBoundary(text: string, index: number): boolean {
 }
 
 function skipWs(text: string, i: number): number {
-  while (i < text.length && WS.test(text[i]!)) i++;
+  while (i < text.length && isWs(text[i])) i++;
   return i;
 }
 
@@ -34,7 +54,13 @@ function readDigits(text: string, i: number): { value: string; end: number } | n
 
 function startsIgnoreCase(text: string, i: number, literalLower: string): boolean {
   if (i + literalLower.length > text.length) return false;
-  return text.slice(i, i + literalLower.length).toLowerCase() === literalLower;
+  for (let k = 0; k < literalLower.length; k++) {
+    const ch = text[i + k]!;
+    const code = ch.charCodeAt(0);
+    const lower = code >= 0x41 && code <= 0x5a ? String.fromCharCode(code + 0x20) : ch;
+    if (lower !== literalLower[k]) return false;
+  }
+  return true;
 }
 
 /** Protocol single-letter `L` prefix (GitHub fragment shape — not locale wording). */
@@ -51,22 +77,27 @@ function matchLetterLPrefix(text: string, i: number): number | null {
   return i + 1;
 }
 
-function wordPrefixEnds(text: string, i: number, words: readonly string[]): number[] {
+function wordPrefixEnds(text: string, i: number, wordsLower: readonly string[]): number[] {
   const ends: number[] = [];
-  for (const word of words) {
-    const lower = word.toLowerCase();
-    if (!startsIgnoreCase(text, i, lower)) continue;
-    ends.push(skipWs(text, i + lower.length));
+  for (const word of wordsLower) {
+    if (!startsIgnoreCase(text, i, word)) continue;
+    ends.push(skipWs(text, i + word.length));
   }
   return ends;
 }
 
-function canStartMatch(text: string, i: number, words: readonly string[]): boolean {
-  const c = text[i]!;
+function lowerFirstChar(ch: string): string {
+  const code = ch.charCodeAt(0);
+  return code >= 0x41 && code <= 0x5a ? String.fromCharCode(code + 0x20) : ch;
+}
+
+/** True when `c` can start a digit / L / locale-word match (cheap; no slice). */
+function canStartMatch(c: string, wordsLower: readonly string[]): boolean {
   if (c >= '0' && c <= '9') return true;
   if (c === 'L' || c === 'l') return true;
-  for (const word of words) {
-    if (startsIgnoreCase(text, i, word.toLowerCase())) return true;
+  const first = lowerFirstChar(c);
+  for (const word of wordsLower) {
+    if (word[0] === first) return true;
   }
   return false;
 }
@@ -86,31 +117,32 @@ export function lineRangeFromText(
   text: string,
   locale: LocalePack = getLocalePack(),
 ): string | null {
-  const words = locale.lineRangeWords;
+  const wordsLower = locale.lineRangeWords.map((w) => w.toLowerCase());
   for (let i = 0; i < text.length; i++) {
     const c = text[i]!;
-    // Only positions that can start a match — skip pure whitespace / punctuation pumps.
+    // Skip pure whitespace / punctuation pumps without probing locale words.
+    if (isWs(c)) continue;
     if (c === ':') {
       const found = tryColonRangeAt(text, i) ?? tryColonSingleAt(text, i);
       if (found) return found;
       continue;
     }
-    if (!canStartMatch(text, i, words)) continue;
+    if (!canStartMatch(c, wordsLower)) continue;
     if (!isWordBoundary(text, i)) continue;
-    const found = tryDigitRangeAt(text, i, words) ?? tryPrefixedSingleAt(text, i, words);
+    const found = tryDigitRangeAt(text, i, wordsLower) ?? tryPrefixedSingleAt(text, i, wordsLower);
     if (found) return found;
   }
   return null;
 }
 
 /** Optional `L` / locale words, then `\d+\s*[-–—]\s*(?:L)?\d+`. */
-function tryDigitRangeAt(text: string, i: number, words: readonly string[]): string | null {
+function tryDigitRangeAt(text: string, i: number, wordsLower: readonly string[]): string | null {
   if (!isWordBoundary(text, i)) return null;
 
   const prefixEnds: number[] = [];
   const lEnd = matchLetterLPrefix(text, i);
   if (lEnd !== null) prefixEnds.push(lEnd);
-  prefixEnds.push(...wordPrefixEnds(text, i, words));
+  prefixEnds.push(...wordPrefixEnds(text, i, wordsLower));
   prefixEnds.push(i);
 
   for (const start of prefixEnds) {
@@ -141,23 +173,27 @@ function tryDigitRangeAt(text: string, i: number, words: readonly string[]): str
  * Shortest locale word forms only (en-US: `line` not `lines`) — parity with
  * former `\b(?:L|line\s*)(\d+)\b`. Longer plural cues still work for ranges.
  */
-function singleCueWords(words: readonly string[]): readonly string[] {
-  if (!words.length) return [];
-  let minLen = words[0]!.length;
-  for (const w of words) {
+function singleCueWords(wordsLower: readonly string[]): readonly string[] {
+  if (!wordsLower.length) return [];
+  let minLen = wordsLower[0]!.length;
+  for (const w of wordsLower) {
     if (w.length < minLen) minLen = w.length;
   }
-  return words.filter((w) => w.length === minLen);
+  return wordsLower.filter((w) => w.length === minLen);
 }
 
 /** Required `L` or shortest locale word, then `\d+`. */
-function tryPrefixedSingleAt(text: string, i: number, words: readonly string[]): string | null {
+function tryPrefixedSingleAt(
+  text: string,
+  i: number,
+  wordsLower: readonly string[],
+): string | null {
   if (!isWordBoundary(text, i)) return null;
 
   const ends: number[] = [];
   const lEnd = matchLetterLPrefix(text, i);
   if (lEnd !== null) ends.push(lEnd);
-  ends.push(...wordPrefixEnds(text, i, singleCueWords(words)));
+  ends.push(...wordPrefixEnds(text, i, singleCueWords(wordsLower)));
 
   for (const start of ends) {
     const d = readDigits(text, start);
