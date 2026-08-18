@@ -3,33 +3,41 @@ packages:
 
 # pnpm supply-chain (2026 best practice)
 minimumReleaseAge: 10080
-# Security patches published inside the age gate (must be allowed through explicitly).
-# - fast-uri@3.1.4: GHSA-v2hh-gcrm-f6hx (ajv → fast-uri)
-# - brace-expansion@5.0.8: GHSA-mh99-v99m-4gvg (eslint → minimatch → brace-expansion)
-# - js-yaml@5.2.2: GHSA-pm4m-ph32-ghv5 (markdownlint-cli2 → js-yaml)
-minimumReleaseAgeExclude:
-  - fast-uri@3.1.4
-  - brace-expansion@5.0.8
-  - js-yaml@5.2.2
 strictDepBuilds: true
 allowBuilds:
   esbuild: true
 # Pin patched versions to resolve high-severity advisories. Exact/scoped pins keep
 # resolution deterministic and avoid floating to vulnerable or newer-major versions.
 overrides:
-  # Pin the patched 3.x line (bare >=3.1.4 can float to vulnerable 4.1.0).
-  fast-uri: 3.1.4
-  # GHSA-mh99-v99m-4gvg: vulnerable <=5.0.7, patched >=5.0.8.
-  brace-expansion@<5.0.8: 5.0.8
+  # GHSA-7p8r-x3mc-p8w7: vulnerable >=3.0.0 <3.1.5. Pin the patched 3.x line
+  # (bare >=3.1.5 can float to 4.x).
+  fast-uri: 3.1.5
+  # GHSA-rgw5-rvv9-x895: vulnerable >=4.0.0 <5.0.9, patched >=5.0.9.
+  brace-expansion@<5.0.9: 5.0.9
   # GHSA-r28c-9q8g-f849: vulnerable <=8.5.17, patched >=8.5.18.
   postcss@<8.5.18: 8.5.18
-  # GHSA-pm4m-ph32-ghv5: vulnerable >=5.0.0 <=5.2.1, patched >=5.2.2.
-  # Scope to the 5.x line so js-yaml 3.x/4.x consumers stay on their major.
+  # GHSA-5p4m-2wfm-xmqj: !!omap DoS on 3.x/4.x — patched >=3.15.1 / >=4.3.1.
+  # GHSA-pm4m-ph32-ghv5: 5.x line, patched >=5.2.2. Scope each major separately.
+  js-yaml@3: 3.15.1
+  js-yaml@4: 4.3.1
   js-yaml@5: 5.2.2
+  # GHSA-28wg-ghj8-5hjv / GHSA-2v37-7h3g-55p8: patched >=3.3.18. Scope to 3.x.
+  nanoid@3: 3.3.18
+  # GHSA-mwp4-54f8-5fhr: vulnerable <=10.3.0, patched >=10.3.1 (Slidev → MCP SDK).
+  ip-address@<=10.3.0: 10.3.1
   # Slidev → monaco-editor → dompurify (dev-only presentation tooling).
   # GHSA-v2wj-7wpq-c8vv / GHSA-h7mw-gpvr-xq4m / GHSA-crv5-9vww-q3g8: patched >=3.4.0.
   dompurify: ^3.4.0
   # Slidev → MCP SDK → @hono/node-server (dev-only presentation tooling).
   # GHSA-frvp-7c67-39w9: path traversal <2.0.5; GHSA-9mqv-5hh9-4cgg: DoS <=2.0.9.
-  # Pin >=2.0.10 (2.0.11+ still inside minimumReleaseAge).
   '@hono/node-server@<2.0.10': 2.0.10
+
+# Class A: image-size has no published patch (npm latest still 2.0.2;
+# first_patched_version is null). Revisit when >=2.0.3 exists; then override.
+# pnpm 11.13 reads auditConfig.ignoreGhsas (audit.ignore needs >=11.16).
+auditConfig:
+  ignoreGhsas:
+    # GHSA-w3rx-r6r6-pgpr — image-size ICNS infinite-loop DoS (Slidev → pptxgenjs)
+    - GHSA-w3rx-r6r6-pgpr
+    # GHSA-5p2g-fcmc-qvqq — image-size JXL/HEIF infinite-loop DoS (same path)
+    - GHSA-5p2g-fcmc-qvqq
