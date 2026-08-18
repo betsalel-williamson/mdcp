@@ -13,6 +13,7 @@
   - [Agent Skill](./agent-skill.md)
   - [Live skill evals](./live-skill-evals.md)
   - [Versioning and releases](./versioning-and-releases.md)
+  - [Automated updates protocol](./automated-updates-protocol.md)
   - [Publishing](./publishing.md)
   - [Security-incident triage](./security-incident-triage.md)
   - [Safe markdown parsing](./safe-markdown-parsing.md)

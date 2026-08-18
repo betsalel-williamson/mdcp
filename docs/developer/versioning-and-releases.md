@@ -65,15 +65,19 @@ Run `pnpm changeset` when a PR changes:
 
 CI runs `pnpm changeset:reject-major` and `pnpm changeset:status` on pull requests.
 
-## Dependabot
+## Dependabot and other automated updates
 
-| Dependabot PR type                        | Changeset / merge gate                                |
-| ----------------------------------------- | ----------------------------------------------------- |
-| Runtime deps in `packages/*/package.json` | **Human approval** + **patch** changeset before merge |
-| `devDependencies` only, or GitHub Actions | No changeset                                          |
+Classify the blast radius before merging. Full rules: [Automated updates protocol](./automated-updates-protocol.md).
+
+| Dependabot / bot PR type                  | Class | Changeset / merge gate                                                             |
+| ----------------------------------------- | ----- | ---------------------------------------------------------------------------------- |
+| Runtime deps in `packages/mdcp-*/`        | B     | **Human approval** + **patch** changeset before merge; ship via the Release job    |
+| `devDependencies` only, or GitHub Actions | A     | No changeset; merge after green CI                                                 |
+| Paths under `skills/`                     | C     | **Never auto-merge**; human review + changeset targeting `@bwilliamson/skill-<id>` |
 
 ## Related docs
 
 - [Publishing](./publishing.md)
+- [Automated updates protocol](./automated-updates-protocol.md)
 - [Agent Skill](./agent-skill.md)
 - [.changeset/README.md](../../.changeset/README.md)

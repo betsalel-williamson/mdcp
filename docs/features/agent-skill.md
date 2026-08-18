@@ -35,10 +35,11 @@ Skill `scripts/` are thin wrappers into the CLI — see [`skills/mdcp/references
 
 Agent Skills use a **vendoring** approach: skill files live in the project and are versioned with Git.
 
-1. **Commit to Git:** When you run `npx skills add`, the skill's files are copied into your agent's skills directory and tracked in your own source control.
-2. **Docs-as-code Evolution:** The skill version is tied to the commit in your repository. Agent instruction changes are reviewable in Pull Requests alongside the code or configuration changes they support.
-3. **Upgrading:** To upgrade a skill, re-run `npx skills add` (or manually copy the updated folder), review the resulting `git diff`, and commit the changes.
-4. **Authoring/Maintainer Versioning:** Upstream skills live under `skills/` (install surface) and version via private carriers in `packages/skill-<id>/`. Release notes are GitHub Releases / carrier CHANGELOGs — not files under `skills/`. `pnpm release:main` syncs carrier versions into `metadata.version` on matching `SKILL.md` files.
+1. **Default install is tip of `main`:** `npx skills add betsalel-williamson/mdcp` (owner/repo shorthand, no tree or tag URL) resolves this repository’s **default branch tip**. It does not pin a GitHub Release. Safety for consumers is **vendoring + commit** in the installing repo.
+2. **Commit to Git:** When you run `npx skills add`, the skill's files are copied into your agent's skills directory and tracked in your own source control.
+3. **Docs-as-code Evolution:** The skill version is tied to the commit in your repository. Agent instruction changes are reviewable in Pull Requests alongside the code or configuration changes they support.
+4. **Upgrading:** To upgrade a skill, re-run `npx skills add` (or `npx skills update`, or manually copy the updated folder). That re-pulls whatever is on the default-branch tip. Review the resulting `git diff` and commit the changes.
+5. **Authoring/Maintainer Versioning:** Upstream skills live under `skills/` (install surface) and version via private carriers in `packages/skill-<id>/`. Release notes are GitHub Releases / carrier CHANGELOGs — not files under `skills/`. `pnpm release:main` syncs carrier versions into `metadata.version` on matching `SKILL.md` files. Maintainers treat `skills/` edits as human-gated (Class C) per [Automated updates protocol](../developer/automated-updates-protocol.md).
 
 ## Install surfaces
 
