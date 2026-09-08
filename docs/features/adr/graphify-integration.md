@@ -1,88 +1,138 @@
-# ADR: Graphify Integration Evaluation
+# ADR: Graphify as a Companion Peer Tool
 
 **Status:** Proposed  
 **Date:** 2026-09-08  
-**Context:** Evaluate whether [Graphify](https://github.com/Graphify-Labs/graphify) should be integrated into MDCP
+**Context:** Evaluate adding [Graphify](https://github.com/Graphify-Labs/graphify) to MDCP's companion toolchain alongside Prettier, markdownlint-cli2, Vale, and markdown-link-check
 
 ## Summary
 
-Graphify is a Python tool (115K+ stars, Apache-2.0) that transforms codebases into queryable knowledge graphs using deterministic tree-sitter AST parsing. It produces interactive HTML visualizations, structured JSON graphs, and markdown reports. This ADR evaluates whether and how it could complement MDCP's docs-as-code system.
+MDCP's companion toolchain already provides format consistency (Prettier), syntax lint (markdownlint-cli2), prose quality (Vale), and external link health (markdown-link-check). A gap remains: **code-awareness**. Documentation shards reference source-code symbols, files, and APIs, but no peer tool currently validates that those references stay fresh or helps agents understand the codebase structure before writing docs.
 
-## Integration Angles
+Graphify fills this gap. It builds a deterministic knowledge graph from code via tree-sitter AST parsing — no LLM calls for code — producing a `graph.json` that maps every function, class, module, and their relationships. As a peer tool it would serve two roles:
 
-Three plausible integration approaches exist, ranked by fit:
+1. **Context search** — agents query the graph to understand codebase architecture before authoring or updating shards
+2. **Doc freshness** — cross-reference graph entities against MDCP's shard inventory and refs registry to detect stale docs referencing renamed/deleted symbols, or undocumented public APIs
 
-### A. Graphify as a peer tool (like Vale or markdownlint)
+## How It Fits the Peer Pattern
 
-MDCP already resolves and shells out to peer linters. Graphify could serve as another peer — invoked during `mdcp check` or as a standalone command — to validate that documentation shards reference real code entities. The `graph.json` output maps every function, class, and module in the codebase; MDCP's `codeEvidence` hook already resolves symbol references to line numbers in source files. Graphify's graph could make that resolution more accurate and comprehensive.
+MDCP's existing peer integration follows a consistent pattern in `peers/resolve.ts`:
 
-### B. Graph-powered cross-reference enrichment
+- `findPeerBinary(name, cwd)` — discovers the tool on PATH or in `node_modules/.bin/`
+- `runPeer(tool, { cwd, args })` — shells out with graceful skip when not installed
+- CLI flags `--require-*` / `--skip-*` — user controls strictness
+- Config section in `mdcp.config.json` — tool-specific options (scan paths, config file)
 
-MDCP's `refs.json` registry maps heading slugs to source shards. Graphify's entity graph maps code symbols to files and relationships. Combining them could detect documentation gaps — code entities with no corresponding doc shard — or stale docs that reference renamed/deleted symbols.
+Graphify slots into this pattern as `findPeerBinary('graphify', cwd)`. Its Python runtime is irrelevant at the integration boundary — it's discovered on PATH like Vale (a Go binary), not bundled as a Node dependency.
 
-### C. Agent Skill that leverages Graphify for context
+### Proposed config surface
 
-An MDCP skill variant could instruct agents to run `/graphify .` before authoring documentation, giving the agent a structured understanding of the codebase's architecture before it writes or updates shards.
+```jsonc
+// mdcp.config.json
+{
+  "graphify": {
+    "graphFile": "_build/.caches/graph.json",  // consumed by codeEvidence hook + freshness check
+    "scanPaths": ["src", "packages"],           // directories to graph (default: repo root)
+    "mode": "default"                           // "default" or "deep"
+  }
+}
+```
+
+### Proposed CLI additions
+
+| Command | Behavior |
+|---------|----------|
+| `mdcp graph` | Run `graphify extract . --format json --output <graphFile>` as a peer |
+| `mdcp check --skip-graphify` | Skip Graphify during full validation |
+| `mdcp check --require-graphify` | Fail if Graphify not installed |
+
+During `mdcp check`, when Graphify is available:
+1. Run `graphify extract` to produce/refresh `graph.json`
+2. Load the graph and cross-reference against `refs.json` and shard file inventory
+3. Report: undocumented public symbols, shards referencing deleted/renamed entities
 
 ## Pros
 
-### Strong alignment on "structure over search"
+### Completes the toolchain
 
-Both tools reject naive text search in favor of structured representations. MDCP structures docs as a shard DAG; Graphify structures code as a knowledge graph. Together they cover the full code-to-docs pipeline with structured, deterministic representations rather than embedding-based approximation.
+Each existing peer covers one quality dimension. Graphify adds the missing code-to-docs dimension:
 
-### Code-evidence hook enrichment
+| Peer | Dimension |
+|------|-----------|
+| Prettier | Format consistency |
+| markdownlint-cli2 | Markdown syntax |
+| Vale | Prose quality |
+| markdown-link-check | External URL health |
+| **Graphify** | **Code-symbol freshness + context** |
 
-MDCP's `codeEvidence` compile hook resolves source-code links to line-number fragments. Graphify's AST-parsed `graph.json` could provide a richer, more reliable symbol table than the current grep-based resolution — especially for cross-file references, re-exports, and aliased imports across 37+ languages.
+### Strengthens the codeEvidence hook
 
-### Documentation gap detection
+The `codeEvidence` compile hook currently uses regex-based symbol search (`lineForSymbol` in `code-evidence.ts`) to resolve `[symbol](file.ts)` links to line numbers. This works for simple cases but misses re-exports, aliased imports, and overloaded names. Graphify's AST-parsed entity graph provides a more reliable symbol table — the hook could consult `graph.json` as a fallback when grep-style matching is ambiguous.
 
-Graphify identifies every entity (function, class, module) and their relationships. Cross-referencing this against MDCP's shard inventory and refs registry could surface undocumented public APIs, orphaned docs for deleted code, or coverage gaps — a natural extension of MDCP's existing orphan and coverage checks.
+### Zero-LLM for code
 
-### Mature, actively developed
+Graphify's code parsing is deterministic (tree-sitter AST), preserving MDCP's zero-LLM build pipeline. The `graphify extract` command for source code makes no API calls — it only needs LLMs for non-code content (PDFs, images), which MDCP wouldn't use.
 
-At 115K+ stars with daily releases (v0.9.56 as of Sep 2026), Graphify has substantial community validation. The Apache-2.0 license is compatible with MDCP's MIT license. The modular pipeline (`detect → extract → build → cluster → analyze → export`) makes it practical to consume just the pieces needed.
+### Peer-pattern fit is clean
 
-### MCP server mode
+Same discovery/skip/require pattern as every other peer. No new dependency mechanism, no Python embedded in Node, no coupling to Graphify internals. MDCP consumes `graph.json` as a build artifact — if the schema changes, only the consumer code updates.
 
-Graphify can run as an MCP server, which aligns with MDCP's agent-first distribution model. An agent could query the Graphify MCP server for codebase structure while simultaneously using MDCP skills for documentation discipline.
+### Agents benefit immediately
 
-### Multiple export formats
+MDCP skills already instruct agents to understand codebase structure before writing docs. With Graphify installed, the `mdcp-feature-level` skill could instruct agents to run `graphify query` or read `graph.json` for targeted context, replacing the current "grep around and hope" approach.
 
-Graph output in JSON, GraphML, Cypher, and Obsidian vault formats means MDCP could consume the structured data without coupling to Graphify's internal representation.
+### High community momentum
+
+115K+ stars, daily releases, Apache-2.0 license. The risk of abandonware is low. The project has a commercial entity (Graphify Labs) and enterprise offering backing continued development.
 
 ## Cons
 
-### Language runtime mismatch
+### Extra runtime dependency
 
-MDCP is TypeScript/Node.js. Graphify is Python 3.10+. Integration requires either shelling out to a Python process (like the existing peer linter pattern) or consuming Graphify's JSON output as a build artifact. Either approach adds a Python runtime dependency to what is currently a pure Node.js toolchain, complicating installation and CI setup.
+Users need Python 3.10+ and `pip install graphifyy` (or `uv tool install graphifyy`). This is heavier than Vale (single Go binary) but follows the same "install on PATH" contract. CI environments need an extra setup step.
 
-### Heavy dependency footprint
+### Pre-1.0 output schema
 
-Graphify pulls in NetworkX, NumPy, 37+ tree-sitter parsers, and optional LLM provider SDKs. Even a minimal install (`pip install graphifyy`) is substantially heavier than MDCP's current peer tools (Vale is a single Go binary; markdownlint-cli2 is a Node package). This weight may not justify itself for projects that only need documentation validation.
+Graphify is at v0.9.x. The `graph.json` schema may change between versions. MDCP's consumer code would need version-aware parsing or pinned version requirements. Mitigated by consuming only the stable node/edge core (`{id, label, source_file}` / `{source, target, relation}`).
 
-### Pre-1.0 API instability
+### Graph rebuild latency
 
-Despite explosive growth, Graphify is at v0.9.x on a `v8` default branch, suggesting rapid iteration and potential breaking changes. MDCP would need to pin versions carefully and treat Graphify's output schema as unstable, adding maintenance burden.
+On large codebases, `graphify extract` can take seconds to minutes. Running it on every `mdcp check` may slow CI. Mitigated by caching `graph.json` and only rebuilding when source files change (Graphify supports `--update` for incremental rebuilds).
 
-### Overlapping but divergent goals
+### Narrow consumption surface
 
-Graphify builds a general-purpose knowledge graph for AI agent consumption. MDCP enforces a documentation discipline with compile-time validation. The overlap is narrow — code-symbol-to-doc mapping — and the integration surface is smaller than it appears at first glance. Most of Graphify's features (community detection, query interface, visualization) are orthogonal to MDCP's core value proposition.
+MDCP would consume a small fraction of Graphify's output — entity names, file locations, and relationships. Features like community detection, interactive visualization, and the query interface are valuable for agents but orthogonal to the compile/check pipeline. The integration ROI is focused on two specific checks (freshness + evidence), not the full Graphify feature set.
 
-### LLM dependency for non-code content
+### Double-y PyPI name
 
-Graphify's code parsing is deterministic (tree-sitter), but its PDF, image, and natural-language processing requires LLM API calls. MDCP is currently zero-LLM at the toolchain level (agents use LLMs, but `mdcp compile` and `mdcp check` do not). Adding Graphify for documentation enrichment could introduce LLM costs and nondeterminism into what is currently a deterministic build pipeline.
+The package is published as `graphifyy` (not `graphify`) on PyPI due to a naming conflict. This is a minor UX friction for installation instructions.
 
-### Adoption friction for MDCP users
+## Implementation Plan
 
-MDCP targets documentation authors and AI agents. Requiring users to install Python, pip, and Graphify raises the barrier to entry for a tool that currently only needs Node.js. This is especially relevant for CI environments where adding Python adds build time and complexity.
+### Phase 1: Peer discovery + `mdcp graph` command
 
-## Recommendation
+- Add `graphify` config section to `MdcpConfigSchema`
+- Add `findPeerBinary('graphify', cwd)` call in CLI
+- Add `mdcp graph` command that shells out to `graphify extract`
+- Add `--skip-graphify` / `--require-graphify` flags to `mdcp check`
 
-**Start with Approach A: peer tool integration.** Add Graphify as an optional peer (like Vale) — discovered on PATH, never required. Consume `graph.json` output for two specific use cases:
+### Phase 2: Freshness check in `mdcp check`
 
-1. **Enhanced `codeEvidence` hook** — Use the entity graph for more reliable symbol-to-line resolution
-2. **Coverage gap check** — Cross-reference graph entities against the shard inventory during `mdcp check`
+- Load `graph.json` during check
+- Cross-reference graph entities (exported functions, classes, modules) against shard content
+- Report: symbols documented in shards but missing from graph (stale docs), public symbols in graph with no shard mention (undocumented APIs)
+- Severity controlled by config (warn vs. error)
 
-This keeps the integration surface small, avoids hard dependencies, and lets users opt in. Defer Approaches B and C until the peer integration proves its value.
+### Phase 3: Enhanced codeEvidence hook
 
-Do not embed Graphify as a core dependency or rewrite any MDCP pipeline stage to require it.
+- When `graph.json` exists, use it as a symbol lookup fallback in `codeEvidenceHook`
+- Resolve ambiguous symbols (re-exports, aliases) via graph edges rather than regex
+- Fall back to current grep-based resolution when graph is absent
+
+### Phase 4: Skill integration
+
+- Update `mdcp-feature-level` skill to instruct agents to consult `graph.json` or run `graphify query` before authoring shards
+- Add Graphify to the recommended companion toolchain in developer docs
+
+## Decision
+
+Proceed with Graphify as an optional peer tool. Follow the same `findPeerBinary` / `runPeer` / config-section pattern as existing peers. Consume `graph.json` only — no runtime coupling to Graphify's Python process beyond the initial extract command.
