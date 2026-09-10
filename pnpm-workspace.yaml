@@ -4,28 +4,46 @@ packages:
 # pnpm supply-chain (2026 best practice)
 minimumReleaseAge: 10080
 # Security patches published inside the age gate (must be allowed through explicitly).
-# - fast-uri@3.1.4: GHSA-v2hh-gcrm-f6hx (ajv → fast-uri)
-# - brace-expansion@5.0.8: GHSA-mh99-v99m-4gvg (eslint → minimatch → brace-expansion)
+# - fast-uri@3.1.5: GHSA-7p8r-x3mc-p8w7 (ajv → fast-uri)
+# - brace-expansion@5.0.9: GHSA-rgw5-rvv9-x895 (eslint → minimatch → brace-expansion)
 # - js-yaml@5.2.2: GHSA-pm4m-ph32-ghv5 (markdownlint-cli2 → js-yaml)
+# - js-yaml@3.15.1: CVE-2026-59870 (slidev → gray-matter → js-yaml 3.x)
+# - nanoid@3.3.18: GHSA-2v37-7h3g-55p8 (slidev → postcss → nanoid)
+# - browserslist@4.28.7: GHSA-c83g-rgw3-j3cx (slidev → @babel → browserslist)
 minimumReleaseAgeExclude:
-  - fast-uri@3.1.4
-  - brace-expansion@5.0.8
+  - fast-uri@3.1.6
+  - brace-expansion@5.0.9
   - js-yaml@5.2.2
+  - js-yaml@4.3.2
+  - js-yaml@3.15.2
+  - nanoid@3.3.18
+  - browserslist@4.28.7
+  - smol-toml@1.7.1
 strictDepBuilds: true
 allowBuilds:
   esbuild: true
 # Pin patched versions to resolve high-severity advisories. Exact/scoped pins keep
 # resolution deterministic and avoid floating to vulnerable or newer-major versions.
 overrides:
-  # Pin the patched 3.x line (bare >=3.1.4 can float to vulnerable 4.1.0).
-  fast-uri: 3.1.4
-  # GHSA-mh99-v99m-4gvg: vulnerable <=5.0.7, patched >=5.0.8.
-  brace-expansion@<5.0.8: 5.0.8
+  # GHSA-7p8r-x3mc-p8w7 + IDN canonicalization: patched >=3.1.6.
+  # Pin the patched 3.x line (bare >=3.1.6 can float to vulnerable 4.1.0).
+  fast-uri: 3.1.6
+  # GHSA-rgw5-rvv9-x895: DoS via unbounded intermediate arrays, patched >=5.0.9.
+  brace-expansion@<5.0.9: 5.0.9
   # GHSA-r28c-9q8g-f849: vulnerable <=8.5.17, patched >=8.5.18.
   postcss@<8.5.18: 8.5.18
   # GHSA-pm4m-ph32-ghv5: vulnerable >=5.0.0 <=5.2.1, patched >=5.2.2.
-  # Scope to the 5.x line so js-yaml 3.x/4.x consumers stay on their major.
   js-yaml@5: 5.2.2
+  # CVE-2026-59870 + GHSA-2883-xcg3-v3hh: patched >=4.3.2.
+  js-yaml@4: 4.3.2
+  # CVE-2026-59870 + GHSA-2883-xcg3-v3hh: patched >=3.15.2.
+  js-yaml@<3.15.2: 3.15.2
+  # GHSA-2v37-7h3g-55p8: timing attack on nanoid, patched >=3.3.18.
+  nanoid@<3.3.18: 3.3.18
+  # GHSA-c83g-rgw3-j3cx / GHSA-pghv-3wc2-6249: OOM and prototype write, patched >=4.28.7.
+  browserslist@<=4.28.6: 4.28.7
+  # GHSA-7w5x-hrqm-74c2: DoS via malformed TOML, patched >=1.7.1.
+  smol-toml@<=1.7.0: 1.7.1
   # Slidev → monaco-editor → dompurify (dev-only presentation tooling).
   # GHSA-v2wj-7wpq-c8vv / GHSA-h7mw-gpvr-xq4m / GHSA-crv5-9vww-q3g8: patched >=3.4.0.
   dompurify: ^3.4.0
@@ -33,3 +51,11 @@ overrides:
   # GHSA-frvp-7c67-39w9: path traversal <2.0.5; GHSA-9mqv-5hh9-4cgg: DoS <=2.0.9.
   # Pin >=2.0.10 (2.0.11+ still inside minimumReleaseAge).
   '@hono/node-server@<2.0.10': 2.0.10
+# Unfixable advisories (no patched version published yet). Ignore so
+# `pnpm audit --audit-level=high` exits 0 without --ignore-unfixable.
+# - GHSA-w3rx-r6r6-pgpr: image-size — patched >=2.0.3, but 2.0.3 not published
+# - GHSA-5p2g-fcmc-qvqq: image-size — patched >=2.0.3, but 2.0.3 not published
+audit:
+  ignore:
+    - GHSA-w3rx-r6r6-pgpr
+    - GHSA-5p2g-fcmc-qvqq
