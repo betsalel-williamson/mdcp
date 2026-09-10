@@ -23,7 +23,11 @@ coverage/
 .cursor/*
 !.cursor/environment.json
 .cursorindexingignore
-.claude/
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
+.claude/hooks/*
+!.claude/hooks/session-start.sh
 .superpowers/
 # Superpowers agent specs/plans (ephemeral; durable docs live in MDCP shards)
 docs/superpowers/
