@@ -20,6 +20,7 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 ## Acknowledgments
 
 - [Denali Lumma (@dlumma)](https://github.com/dlumma) — early review and feedback
+- [Lisa Crispin](https://lisacrispin.com) (She/Her) — [LinkedIn](https://www.linkedin.com/in/lisacrispin/)
 
 ## License
 
