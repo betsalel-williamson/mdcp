@@ -292,7 +292,7 @@ if (!dryRun) {
 }
 run('git push origin HEAD:main');
 
-run('pnpm audit --audit-level=high --ignore-unfixable');
+run('pnpm audit --audit-level=high');
 run('pnpm exec changeset publish');
 
 // Push tags before GitHub Releases so create can resolve them when present.

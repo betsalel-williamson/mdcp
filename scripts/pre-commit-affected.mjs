@@ -92,5 +92,5 @@ const lockfileOrManifestChanged = files.some(
 );
 
 if (lockfileOrManifestChanged) {
-  run('pnpm audit --audit-level=high --ignore-unfixable');
+  run('pnpm audit --audit-level=high');
 }

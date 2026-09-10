@@ -15,6 +15,6 @@ function run(cmd) {
 }
 
 run('pnpm build');
-run('pnpm audit --audit-level=high --ignore-unfixable');
+run('pnpm audit --audit-level=high');
 run('pnpm skill:validate');
 run('pnpm exec changeset publish');
