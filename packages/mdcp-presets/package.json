@@ -1,6 +1,6 @@
 {
   "name": "@bwilliamson/mdcp-presets",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Starter markdownlint and Vale presets for MarkDown Context Protocol consumers",
   "license": "MIT",
   "type": "module",
