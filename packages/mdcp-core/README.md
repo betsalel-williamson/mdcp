@@ -414,6 +414,9 @@ Line ranges are parsed from the **link label** first, then from the path (before
 | `L6-L8`, `L6–L8`      | `#L6-L8`           |
 | `L42`                 | `#L42`             |
 | `:10-20`, `:10`       | `#L10-L20`, `#L10` |
+| bare `1-2`            | `#L1-L2`           |
+
+**Locale word forms** come from the active [locale pack](#locale-pack) (`lineRangeWords`). Default **en-US** recognizes `line` / `lines` (case-insensitive), for example `line 42` → `#L42` and `lines 12–15` → `#L12-L15`. Other locales may supply different authored words; they are not MDCP protocol vocabulary. See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
 **Locale word forms** come from the active [locale pack](#locale-pack) (`lineRangeWords`). Default **en-US** recognizes `line` / `lines` (case-insensitive), for example `line 42` → `#L42` and `lines 12–15` → `#L12-L15`. Other locales may supply different authored words; they are not MDCP protocol vocabulary. See [Locale and language boundary](../../docs/features/design-constraints/locale-and-language.md).
 
