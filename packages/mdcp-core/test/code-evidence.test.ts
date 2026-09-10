@@ -49,9 +49,9 @@ describe('codeEvidence — line range detection', () => {
     expect(lineRangeFromText(':10-20')).toBe('L10-L20');
     expect(lineRangeFromText(':7')).toBe('L7');
     expect(lineRangeFromText('L6')).toBe('L6');
-    expect(lineRangeFromText('1-2')).toBe('L1-L2');
+    expect(lineRangeFromText('1-2')).toBeNull();
     expect(lineRangeFromText('L 6-8')).toBe('L6-L8');
-    expect(lineRangeFromText('1 - 2')).toBe('L1-L2');
+    expect(lineRangeFromText('1 - 2')).toBeNull();
     expect(lineRangeFromText(':10-L20')).toBe('L10');
     expect(lineRangeFromText('orgCount')).toBeNull();
     expect(lineRangeFromText('lines 10')).toBeNull();
@@ -76,11 +76,11 @@ describe('codeEvidence — line range detection', () => {
     expect(lineRangeFromText('zeilen 10', de)).toBeNull();
     // English word cues are not universal — they come from the active pack.
     expect(lineRangeFromText('line 42', de)).toBeNull();
-    // Bare digit–dash ranges remain language-neutral even when English words are ignored.
-    expect(lineRangeFromText('lines 10-20', de)).toBe('L10-L20');
+    // Prefixed forms remain language-neutral even when English words are ignored.
     expect(lineRangeFromText('L6-L8', de)).toBe('L6-L8');
     expect(lineRangeFromText(':7', de)).toBe('L7');
-    expect(lineRangeFromText('1-2', de)).toBe('L1-L2');
+    // Bare digit ranges are ambiguous — require a prefix.
+    expect(lineRangeFromText('1-2', de)).toBeNull();
   });
 });
 

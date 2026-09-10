@@ -74,7 +74,7 @@ function matchLetterLPrefix(text: string, i: number): number | null {
   ) {
     return null;
   }
-  return i + 1;
+  return skipWs(text, i + 1);
 }
 
 function wordPrefixEnds(text: string, i: number, wordsLower: readonly string[]): number[] {
@@ -109,7 +109,7 @@ export function formatLineFragment(start: string, end?: string): string {
 
 /**
  * Parse first line-range mention in `text` (parity with former LINE_RANGE_RE).
- * Language-neutral forms: `L6-L8`, `:10-20`, `:7`, bare `1-2`.
+ * Language-neutral forms: `L6-L8`, `:10-20`, `:7`.
  * Locale word forms: from `locale.lineRangeWords` (en-US: `line` / `lines`).
  * Output is always a GitHub-style `L…` fragment (not localized).
  */
@@ -143,8 +143,6 @@ function tryDigitRangeAt(text: string, i: number, wordsLower: readonly string[])
   const lEnd = matchLetterLPrefix(text, i);
   if (lEnd !== null) prefixEnds.push(lEnd);
   prefixEnds.push(...wordPrefixEnds(text, i, wordsLower));
-  prefixEnds.push(i);
-
   for (const start of prefixEnds) {
     const d1 = readDigits(text, start);
     if (!d1) continue;
