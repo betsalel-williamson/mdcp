@@ -25,13 +25,18 @@ Markdown (`.md`) links, external URLs, and same-guide shard links are left uncha
 
 ## codeEvidence line ranges
 
-Line ranges are parsed from the **link label** first, then from the path (before any `#` fragment). Supported forms:
+Line ranges are parsed from the **link label** first, then from the path (before any `#` fragment). The hook always emits GitHub-style **`#L…` fragments** (protocol output — not localized).
+
+**Language-neutral forms** (always recognized):
 
 | Form in label or path | Fragment           |
 | --------------------- | ------------------ |
 | `L6-L8`, `L6–L8`      | `#L6-L8`           |
-| `L42`, `line 42`      | `#L42`             |
+| `L42`                 | `#L42`             |
 | `:10-20`, `:10`       | `#L10-L20`, `#L10` |
+| bare `1-2`            | `#L1-L2`           |
+
+**Locale word forms** come from the active [locale pack](../../glossary/locale-pack.md) (`lineRangeWords`). Default **en-US** recognizes `line` / `lines` (case-insensitive), for example `line 42` → `#L42` and `lines 12–15` → `#L12-L15`. Other locales may supply different authored words; they are not MDCP protocol vocabulary. See [Locale and language boundary](../../features/design-constraints/locale-and-language.md).
 
 If the URL already has a normalized `#L…` fragment, the hook preserves it (normalizing case to `#L`).
 

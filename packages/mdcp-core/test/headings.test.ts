@@ -5,6 +5,7 @@ import {
   stripAboutThisGuideHeading,
   extractGuideH1,
 } from '../src/compile/headings.js';
+import { createLocalePack } from '../src/locale/index.js';
 
 describe('demoteHeadings', () => {
   it('demotes ATX headings by one level', () => {
@@ -50,6 +51,27 @@ describe('stripAboutThisGuideHeading', () => {
 
   it('returns empty string when only the about heading remains', () => {
     expect(stripAboutThisGuideHeading('# About this guide\n\n')).toBe('');
+  });
+
+  it('matches the about title from the locale pack', () => {
+    const de = createLocalePack({
+      id: 'x-de',
+      brokenLinks: {
+        markerLabel: 'X',
+        markerTemplate: '{markerLabel}',
+        reasonDeadAnchor: 'a',
+        reasonMissingFile: 'b',
+        reasonMissingPublishPath: 'c',
+      },
+      inserts: { seeInsertFallback: 'insert' },
+      aboutThisGuideTitle: 'Über diesen Leitfaden',
+    });
+
+    expect(stripAboutThisGuideHeading('# Über diesen Leitfaden\n\nBody.\n', de)).toBe('Body.\n\n');
+    // en-US title is not universal when another pack is active
+    expect(stripAboutThisGuideHeading('# About this guide\n\nBody.\n', de)).toBe(
+      '# About this guide\n\nBody.\n\n',
+    );
   });
 });
 

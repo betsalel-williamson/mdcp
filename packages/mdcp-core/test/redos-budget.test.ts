@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { stripExplicitAnchorMarkers } from '../src/compile/anchors.js';
 import { headingTextToPlain } from '../src/refs/slugs.js';
 import { demoteHeadings } from '../src/compile/headings.js';
+import { lineRangeFromText } from '../src/compile/hooks/line-range.js';
 import { manySpaces, nestedOpenAnchors, timeMs } from './helpers/redos-pumps.js';
 
 /** Tight budget: safe linear parsers finish well under this; polynomial paths blow it. */
@@ -33,6 +34,22 @@ describe('ReDoS budget demos (CodeQL js/polynomial-redos)', () => {
     const input = '#' + manySpaces(SPACE_N) + 'Title';
     const ms = timeMs(() => {
       demoteHeadings(input);
+    });
+    expect(ms).toBeLessThan(BUDGET_MS);
+  });
+
+  it('lineRangeFromText stays under budget on long spaces in almost-ranges', () => {
+    const input = '1' + manySpaces(SPACE_N) + '-' + manySpaces(SPACE_N) + 'x';
+    const ms = timeMs(() => {
+      lineRangeFromText(input);
+    });
+    expect(ms).toBeLessThan(BUDGET_MS);
+  });
+
+  it('lineRangeFromText stays under budget on long spaces after lines', () => {
+    const input = 'lines' + manySpaces(SPACE_N) + 'x';
+    const ms = timeMs(() => {
+      lineRangeFromText(input);
     });
     expect(ms).toBeLessThan(BUDGET_MS);
   });

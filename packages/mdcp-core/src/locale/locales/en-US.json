@@ -1,0 +1,16 @@
+{
+  "brokenLinks": {
+    "markerLabel": "BROKEN LINK",
+    "markerTemplate": "**{markerLabel}:** \"{label}\" (`{originalTarget}`) → `{brokenTarget}` ({reason})",
+    "reasonDeadAnchor": "dead anchor in compiled guide",
+    "reasonMissingFile": "missing file",
+    "reasonMissingPublishPath": "missing publish path"
+  },
+  "inserts": {
+    "seeInsertFallback": "See insert"
+  },
+  "headingKeyPattern": "^(?<prefix>[A-Z]{2,4})\\s+Chapter\\s+(?<number>\\d+)",
+  "headingKeyTemplate": "{prefix}.ch{number}",
+  "lineRangeWords": ["lines", "line"],
+  "aboutThisGuideTitle": "About this guide"
+}
