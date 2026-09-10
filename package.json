@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/betsalel-williamson/mdcp.git"
   },
-  "packageManager": "pnpm@11.13.0",
+  "packageManager": "pnpm@11.25.0",
   "scripts": {
     "build": "pnpm -r run build",
     "test": "pnpm -r run test && node --test scripts/*.test.mjs scripts/**/*.test.mjs",
@@ -76,18 +76,18 @@
     ]
   },
   "devDependencies": {
-    "@changesets/cli": "^2.31.1",
-    "@commitlint/cli": "^21.2.1",
-    "@commitlint/config-conventional": "^21.0.2",
+    "@changesets/cli": "^3.0.1",
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
     "@eslint/js": "^10.0.1",
     "@slidev/cli": "latest",
     "@slidev/theme-default": "latest",
-    "eslint": "^10.8.0",
+    "eslint": "^10.9.1",
     "husky": "^9.1.7",
-    "lint-staged": "^17.2.0",
-    "markdownlint-cli2": "^0.23.1",
+    "lint-staged": "^17.4.1",
+    "markdownlint-cli2": "^0.23.2",
     "prettier": "^3.9.6",
     "skills-ref": "^0.1.5",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.69.0"
   }
 }

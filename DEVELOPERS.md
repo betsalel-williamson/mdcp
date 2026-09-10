@@ -1210,14 +1210,13 @@ After CODEOWNERS is on `main`, a repo admin enables review enforcement:
 
 1. Open **Settings → Branches → Branch protection rules → `main`** (or the active ruleset for `main`).
 2. Under **Require a pull request before merging**, enable **Require review from Code Owners**.
-3. Set **Required approving reviews** to at least **1**.
-4. Keep **Dismiss stale pull request approvals when new commits are pushed** enabled (already on as of 2026-07-27).
+3. Keep **Dismiss stale pull request approvals when new commits are pushed** enabled (already on as of 2026-07-27).
 
-As of **2026-07-30**, `main` has `require_code_owner_reviews: true` and `required_approving_review_count: 1` (enabled after the #182 CODEOWNERS landing). Re-verify after any branch-protection edits:
+A separate `required_approving_review_count` is not needed — only maintainers have merge access, so the maintainer merge itself serves as the approval gate. Re-verify after any branch-protection edits:
 
 ```bash
 gh api repos/betsalel-williamson/mdcp/branches/main/protection \
-  --jq '.required_pull_request_reviews | {require_code_owner_reviews, required_approving_review_count}'
+  --jq '.required_pull_request_reviews | {require_code_owner_reviews}'
 ```
 
 To set or repair those toggles (requires admin `gh` auth):
@@ -1225,7 +1224,7 @@ To set or repair those toggles (requires admin `gh` auth):
 ```bash
 gh api -X PATCH repos/betsalel-williamson/mdcp/branches/main/protection/required_pull_request_reviews \
   -F require_code_owner_reviews=true \
-  -F required_approving_review_count=1
+  -F required_approving_review_count=0
 ```
 
 Fork PRs from outside collaborators still run CI under the base-repo policy; code-owner review ensures `@betsalel-williamson` approves changes to owned paths before merge.
@@ -1281,7 +1280,7 @@ This checklist tracks our compliance with the [OWASP GitHub Actions Security Che
 | Environment required reviewers          | `reviewed (2026-07-27)`      | Bound to `release` env; required reviewers are maintainer ops.                                                                                                     |
 | **Code & Supply Chain**                 |                              |                                                                                                                                                                    |
 | Branch protection baseline              | `reviewed (2026-07-27)`      | Main branch protected with PR and status checks.                                                                                                                   |
-| Require approval for external           | `reviewed (2026-07-30)`      | CODEOWNERS on `main`; `require_code_owner_reviews` + 1 approving review enabled.                                                                                   |
+| Require approval for external           | `reviewed (2026-09-10)`      | CODEOWNERS on `main`; `require_code_owner_reviews` enabled. Separate approval count not required — only maintainers can merge.                                     |
 | Dependabot for Actions                  | `reviewed (2026-07-27)`      | Configured for weekly updates.                                                                                                                                     |
 | Dependabot cooldown                     | `reviewed (2026-07-27)`      | Explicit 7-day cooldown on `npm` and `github-actions`.                                                                                                             |
 | Artifact / cache poisoning              | `reviewed (2026-07-27)`      | Removed `cache: pnpm` from `release.yml`; CI jobs still cache.                                                                                                     |
