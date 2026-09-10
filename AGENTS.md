@@ -1,5 +1,14 @@
 # AGENTS.md
 
+## Shard discipline (critical)
+
+Documentation is sharded under `docs/`. Shards are the **source of truth**;
+compiled output is generated. **Never hand-edit compiled files** (`README.md`,
+`DEVELOPERS.md`, package READMEs). Edit the source shard under `docs/` and run
+`pnpm docs:compile:repo`. Files containing `<!-- mdcp-shard: start ... -->`
+markers are compiled — the shard path in the marker names the source file. CI
+fails on `git diff` if compiled files are stale.
+
 ## Cursor Cloud specific instructions
 
 This repo is the **mdcp monorepo** — a documentation-system Agent Skill plus a
@@ -36,10 +45,8 @@ scripts — use those rather than duplicating them here.
   after `.vale.ini` changes). It downloads Vale style packages (network
   required) into gitignored `styles/` dirs; synced styles persist in the
   snapshot.
-- `pnpm docs:check` regenerates and diffs compiled outputs. Committed compiled
-  files (`README.md`, `DEVELOPERS.md`, package `README.md`s) are derived from
-  `docs/` shards — edit the shards and run `pnpm docs:compile:repo`, never hand-
-  edit the compiled files. CI fails on `git diff` if they are stale.
+- `pnpm docs:check` regenerates and diffs compiled outputs — see
+  **Shard discipline** above.
 - Node on this VM is v22 (satisfies `engines >=18`); CI uses Node 24. Do not
   switch Node via nvm/`.nvmrc` unless a version-specific issue appears.
 - `gitleaks` is a **peer binary** (not an npm dep), installed at
