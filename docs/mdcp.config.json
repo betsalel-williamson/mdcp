@@ -71,6 +71,7 @@
   ],
   "standaloneGuides": [
     "AGENTS.md",
+    "CLAUDE.md",
     "CODE_OF_CONDUCT.md",
     "SECURITY.md",
     "docs/skills.md",
