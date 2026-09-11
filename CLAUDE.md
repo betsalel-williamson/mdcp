@@ -16,12 +16,12 @@ source shard under `docs/` and run `pnpm docs:compile:repo`.
 Files that contain `<!-- mdcp-shard: start ... -->` markers are compiled
 output. The shard path in the marker names the source file.
 
-| Shard directory    | Compiled output                    |
-| ------------------ | ---------------------------------- |
-| `docs/repo-readme/`  | `README.md` (repo root)            |
-| `docs/developer/`    | `DEVELOPERS.md` (repo root)        |
-| `docs/client-cli/`   | `packages/mdcp-cli/README.md`      |
-| `docs/client-core/`  | `packages/mdcp-core/README.md`     |
+| Shard directory     | Compiled output                |
+| ------------------- | ------------------------------ |
+| `docs/repo-readme/` | `README.md` (repo root)        |
+| `docs/developer/`   | `DEVELOPERS.md` (repo root)    |
+| `docs/client-cli/`  | `packages/mdcp-cli/README.md`  |
+| `docs/client-core/` | `packages/mdcp-core/README.md` |
 
 CI fails on `git diff` if compiled files are stale, so always compile after
 editing shards: `pnpm docs:compile:repo`.
