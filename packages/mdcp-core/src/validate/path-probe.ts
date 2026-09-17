@@ -78,6 +78,29 @@ export interface PathProbeOptions {
 }
 
 /**
+ * Trim `./` and trailing slashes without a regex.
+ *
+ * The regex forms of these (`/^\.\//`, `/\/+$/`, `/#.*$/`) backtrack on a
+ * span with many repeated `/` or `#`, and a span comes from documentation text
+ * rather than from us — CodeQL js/polynomial-redos flags exactly this. Index
+ * arithmetic is linear whatever the input.
+ */
+function stripLeadingDotSlash(path: string): string {
+  return path.startsWith('./') ? path.slice(2) : path;
+}
+
+function stripTrailingSlashes(path: string): string {
+  let end = path.length;
+  while (end > 0 && path[end - 1] === '/') end--;
+  return path.slice(0, end);
+}
+
+function beforeFragment(text: string): string {
+  const hash = text.indexOf('#');
+  return hash === -1 ? text : text.slice(0, hash);
+}
+
+/**
  * True when a backtick span claims a repository path rather than prose, a
  * command, or a code identifier.
  *
@@ -99,8 +122,8 @@ export function isPathClaim(span: string, extensions?: Set<string>): string | nu
   if (/^[-#$@~]/.test(text) || text.startsWith('/')) return null;
   if (/[*?{}()<>|=:;,![\]]/.test(text)) return null;
 
-  const withoutFragment = text.replace(/#.*$/, '');
-  const bare = withoutFragment.replace(/^\.\//, '').replace(/\/+$/, '');
+  const withoutFragment = beforeFragment(text);
+  const bare = stripTrailingSlashes(stripLeadingDotSlash(withoutFragment));
   if (!bare || !bare.includes('/')) return null;
 
   const isDirectory = withoutFragment.endsWith('/');
@@ -125,8 +148,8 @@ export function lineOptsOut(line: string): boolean {
 
 function isAllowed(path: string, allow: string[]): boolean {
   return allow.some((prefix) => {
-    const normalized = prefix.replace(/^\.\//, '');
-    return path === normalized || path.startsWith(normalized.replace(/\/*$/, '/'));
+    const normalized = stripTrailingSlashes(stripLeadingDotSlash(prefix));
+    return path === normalized || path.startsWith(`${normalized}/`);
   });
 }
 
