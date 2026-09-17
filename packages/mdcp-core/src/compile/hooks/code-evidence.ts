@@ -1,15 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { dirname, relative } from 'node:path';
 import type { CompileHook } from '../hooks.js';
-import { defaultSearchRoots, resolveRelativeFile } from './path-resolve.js';
+import { defaultSearchRoots, hasSourceExtension, resolveRelativeFile } from './path-resolve.js';
 import { formatLineFragment, lineRangeFromText } from './line-range.js';
 
 export { formatLineFragment, lineRangeFromText } from './line-range.js';
 
 const MD_LINK_RE = /\[([^\]]*)\]\(([^)]+)\)/g;
-
-const SOURCE_EXT_RE =
-  /\.(ts|tsx|js|jsx|mjs|cjs|py|go|rs|java|kt|rb|php|cs|swift|rules|yaml|yml|json|toml|sh|bash|zsh|sql|graphql|proto|vue|svelte)$/i;
 
 const IDENT_RE = /^[\w$]+$/;
 
@@ -19,7 +16,7 @@ export function isSourcePath(path: string): boolean {
   }
   if (path.endsWith('.md')) return false;
   const base = path.split('#')[0].split('?')[0];
-  return SOURCE_EXT_RE.test(base) || !base.includes('.');
+  return hasSourceExtension(base) || !base.includes('.');
 }
 
 export function symbolFromLabel(label: string): string | null {

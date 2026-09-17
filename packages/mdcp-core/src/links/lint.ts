@@ -1,5 +1,4 @@
-import { basename } from 'node:path';
-import { resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import type { CompileGuideResult } from '../compile/assemble.js';
 import { compileGuidesFromResults } from '../compile/assemble.js';
 import type { MdcpConfig } from '../config/schema.js';
@@ -11,6 +10,7 @@ import type { RefsRegistry } from '../refs/slugs.js';
 import type { ShardCache } from '../compile/shard-cache.js';
 import { lintCompiledLinks } from './validate-compiled.js';
 import { lintShardLinks } from './validate-shards.js';
+import { resolveStandaloneGuides } from '../validate/coverage.js';
 import type { LinkIssue } from './types.js';
 
 export type { LinkIssue, LinkSeverity } from './types.js';
@@ -31,6 +31,11 @@ export interface LintLinksOptions {
   compileOptions?: import('../compile/assemble.js').CompileOptions;
   linkIndex?: GuideLinkIndex;
   shardCache?: ShardCache;
+  /**
+   * Scan root the `standaloneGuides` globs resolve against — the same root the
+   * coverage pass uses. Standalone guides are link-linted only when this is set.
+   */
+  scanRoot?: string;
 }
 
 function disallowedShardPathsForPublisher(
@@ -61,6 +66,22 @@ function disallowedShardPathsForPublisher(
     }
   }
   return disallowed;
+}
+
+/**
+ * Link-lint the files registered under `standaloneGuides`. These are captured
+ * but never compiled, so nothing else in the gate reads their links. Each file
+ * is its own guide directory: there is no manifest or scope root to resolve
+ * against.
+ */
+function lintStandaloneGuideLinks(config: MdcpConfig, scanRoot: string): LinkIssue[] {
+  const { matched } = resolveStandaloneGuides(scanRoot, config.standaloneGuides);
+  const issues: LinkIssue[] = [];
+  for (const rel of matched) {
+    const shardFile = resolve(scanRoot, rel);
+    issues.push(...lintShardLinks({ shardFile, guideDir: dirname(shardFile) }));
+  }
+  return issues;
 }
 
 export function lintLinks(options: LintLinksOptions): LinkIssue[] {
@@ -135,6 +156,12 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
         );
       }
     }
+  }
+
+  // Standalone guides are never compiled, so the compiled-output pass below
+  // cannot reach them. They need the shard-style pass regardless of `lintShards`.
+  if (options.scanRoot) {
+    issues.push(...lintStandaloneGuideLinks(config, options.scanRoot));
   }
 
   for (const r of results) {

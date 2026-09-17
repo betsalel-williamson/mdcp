@@ -137,8 +137,9 @@ function collectBuiltInLinkIssues(
   docsRoot: string,
   globalOpts: GlobalOpts,
   workspace: ReturnType<typeof compileWorkspace>,
+  scanRoot?: string,
 ): { issues: LinkIssue[]; severity: LinkSeverity } {
-  const issues = runBuiltInLinkLintFromWorkspace(config, docsRoot, workspace);
+  const issues = runBuiltInLinkLintFromWorkspace(config, docsRoot, workspace, scanRoot);
   const severity = resolveLinkSeverity(globalOpts.warnBrokenLinks, config);
   return { issues, severity };
 }
@@ -429,6 +430,7 @@ cli
         docsRoot,
         opts,
         workspace,
+        getScanRoot(config),
       );
       if (reportLinkIssues(linkIssues, linkSeverity)) {
         failures.push({

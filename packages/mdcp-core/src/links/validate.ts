@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve, isAbsolute, basename } from 'node:path';
 import { buildSlugRegistry } from '../refs/slugs.js';
+import { hasSourceExtension } from '../compile/hooks/path-resolve.js';
 import type { RefsRegistry } from '../refs/slugs.js';
 
 export type LinkFailureReason = 'dead anchor' | 'missing file' | 'missing publish path';
@@ -95,6 +96,24 @@ function resolveAllowedPublishTarget(
   return undefined;
 }
 
+/**
+ * Resolve a compiled link that names a source file. The `codeEvidence` hook
+ * rewrites these targets relative to the output file, so an unresolved target
+ * means the file the docs cite is gone. Targets without a known source
+ * extension (a bare word, a directory) stay unvalidated.
+ */
+function validateSourceFileTarget(
+  target: string,
+  filePart: string,
+  options: ValidateCompiledLinkOptions,
+): LinkValidationResult {
+  if (!hasSourceExtension(filePart) || !options.outputFile) return { valid: true };
+  const baseDir = dirname(resolve(options.outputFile));
+  const resolved = isAbsolute(filePart) ? filePart : resolve(baseDir, filePart);
+  if (existsSync(resolved)) return { valid: true };
+  return { valid: false, reason: 'missing file', brokenTarget: target };
+}
+
 /** Validate a link target against a compiled document's slug registry and output path. */
 export function validateCompiledLinkTarget(
   target: string,
@@ -119,7 +138,7 @@ export function validateCompiledLinkTarget(
   const { path: filePart, fragment } = parseTarget(target);
 
   if (!isMarkdownPath(filePart)) {
-    return { valid: true };
+    return validateSourceFileTarget(target, filePart, options);
   }
 
   if (!filePart) {

@@ -47,3 +47,16 @@ export function readTextFileAt(
   if (!resolved) return null;
   return readFileSync(resolved, 'utf-8').trim();
 }
+
+/**
+ * Extensions treated as source files for link resolution. A link whose target
+ * carries one of these names a file in the repository, so an unresolved target
+ * is a defect rather than prose.
+ */
+const SOURCE_EXT_RE =
+  /\.(ts|tsx|js|jsx|mjs|cjs|mts|cts|py|go|rs|java|kt|rb|php|cs|swift|rules|yaml|yml|json|jsonc|toml|ini|sh|bash|zsh|sql|graphql|proto|vue|svelte)$/i;
+
+/** True when `path` ends in a known source-file extension. */
+export function hasSourceExtension(path: string): boolean {
+  return SOURCE_EXT_RE.test(path.split('#')[0].split('?')[0]);
+}
