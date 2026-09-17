@@ -28,6 +28,8 @@ A backtick span is a claim when it carries **a directory segment and a name**.
 
 Fenced code blocks are skipped entirely: a fence holds examples, not claims. A `#fragment` and a leading `./` are trimmed before resolution.
 
+Which extensions can name a file is the **same set the link validators use** — the built-in defaults plus `lint.sourceExtensions` — widened with `.md` and `.mdx`. One knob governs links and prose alike, so a repository on an unlisted stack configures it once. Membership is a set lookup rather than a generated pattern, so a configured value cannot change how matching behaves.
+
 ## Resolution ladder
 
 A claim resolves against the first root that contains it:
@@ -72,6 +74,7 @@ The line scope exists because a whole-file marker on a mostly-descriptive shard 
 | `lint.paths.severity`    | `"off"` | `"off"` skips the probe; `"warn"` reports and exits 0; `"error"` exits 1 |
 | `lint.paths.searchRoots` | `[]`    | Extra resolution roots, relative to the scan root                        |
 | `lint.paths.allow`       | `[]`    | Scan-root-relative prefixes whose absence is expected                    |
+| `lint.sourceExtensions`  | `[]`    | Extra extensions that can name a file, shared with link validation       |
 
 **The default is `off` on purpose.** Turning the probe on for a corpus written without it in mind produces a burst of findings that are correct as written, and a check nobody can get to green is a check nobody enables. A repository turns it on once, cleans up, and keeps it on.
 
@@ -92,6 +95,7 @@ Source shards and standalone guides are scanned; compiled output is not, since i
 - `lint.paths.allow` suppresses a prefix match but not a sibling sharing that prefix
 - The marker alone on a line exempts the file; trailing a content line it exempts that line only
 - `lint.paths.severity` defaults to `off`; `warn` reports with a `path-warn:` prefix and exits 0
+- An extension added by `lint.sourceExtensions` makes a span a claim; documentation extensions stay claimable regardless
 
 ## Path resolution related
 

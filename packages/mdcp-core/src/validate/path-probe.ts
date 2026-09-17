@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path';
 import fg from 'fast-glob';
 import type { MdcpConfig } from '../config/schema.js';
 import { getGuideConfig, guideScanDirs } from '../config/load.js';
+import { sourceExtensionSet } from '../compile/hooks/path-resolve.js';
 import { resolveStandaloneGuides } from './coverage.js';
 
 /**
@@ -35,13 +36,19 @@ export const ILLUSTRATIVE_MARKER = '<!-- mdcp-paths: illustrative -->';
 
 const SPAN_RE = /`([^`\n]+)`/g;
 
+/** Documentation extensions, always claimable alongside the source ones. */
+const DOC_EXTENSIONS = ['md', 'mdx'];
+
 /**
- * Extensions that make a backtick span a path claim even without a directory
- * segment in it. Kept narrow on purpose: a bare `README.md` or `index.md` is
- * unanchored prose, so a path claim needs a directory segment as well.
+ * Extensions that let a backtick span name a file. This is the source-extension
+ * set — defaults plus `lint.sourceExtensions` — widened with documentation
+ * formats, so one config knob governs links and prose alike.
  */
-const PATH_EXT_RE =
-  /\.(md|mdx|ts|tsx|js|jsx|mjs|cjs|mts|cts|py|go|rs|java|kt|rb|php|cs|swift|yaml|yml|json|jsonc|toml|ini|sh|bash|zsh|sql|graphql|proto|vue|svelte)$/i;
+export function pathClaimExtensions(extra: readonly string[] = []): Set<string> {
+  const set = sourceExtensionSet(extra);
+  for (const ext of DOC_EXTENSIONS) set.add(ext);
+  return set;
+}
 
 export interface PathProbeIssue {
   /** Absolute path of the file the claim appears in. */
@@ -66,6 +73,8 @@ export interface PathProbeOptions {
    * reported.
    */
   allow: string[];
+  /** Effective claim extensions (see `pathClaimExtensions`). Defaults apply when absent. */
+  extensions?: Set<string>;
 }
 
 /**
@@ -83,7 +92,7 @@ export interface PathProbeOptions {
  * Returns the resolvable path with `./` and any trailing slash or `#fragment`
  * removed, or null when the span makes no claim.
  */
-export function isPathClaim(span: string): string | null {
+export function isPathClaim(span: string, extensions?: Set<string>): string | null {
   const text = span.trim();
   if (!text || /\s/.test(text)) return null;
   if (/^https?:|^mailto:/i.test(text)) return null;
@@ -95,7 +104,12 @@ export function isPathClaim(span: string): string | null {
   if (!bare || !bare.includes('/')) return null;
 
   const isDirectory = withoutFragment.endsWith('/');
-  if (!isDirectory && !PATH_EXT_RE.test(bare)) return null;
+  if (!isDirectory) {
+    const dot = bare.lastIndexOf('.');
+    const ext = dot > 0 && dot < bare.length - 1 ? bare.slice(dot + 1).toLowerCase() : null;
+    if (!ext) return null;
+    if (!(extensions ?? pathClaimExtensions()).has(ext)) return null;
+  }
   return bare;
 }
 
@@ -124,11 +138,12 @@ function isAllowed(path: string, allow: string[]): boolean {
 export function probePathClaims(
   file: string,
   text: string,
-  options: Pick<PathProbeOptions, 'searchRoots' | 'allow'>,
+  options: Pick<PathProbeOptions, 'searchRoots' | 'allow' | 'extensions'>,
 ): PathProbeIssue[] {
   if (hasIllustrativeMarker(text)) return [];
 
   const roots = [dirname(file), ...options.searchRoots];
+  const extensions = options.extensions ?? pathClaimExtensions();
   const issues: PathProbeIssue[] = [];
   const lines = text.split('\n');
   let inFence = false;
@@ -143,7 +158,7 @@ export function probePathClaims(
     if (lineOptsOut(line)) continue;
 
     for (const match of line.matchAll(SPAN_RE)) {
-      const claim = isPathClaim(match[1]);
+      const claim = isPathClaim(match[1], extensions);
       if (!claim) continue;
       if (isAllowed(claim, options.allow)) continue;
       if (roots.some((root) => existsSync(resolve(root, claim)))) continue;
@@ -210,5 +225,6 @@ export function pathProbeInputs(
     files: [...new Set(files)],
     searchRoots: [...new Set(searchRoots)],
     allow: config.lint?.paths?.allow ?? [],
+    extensions: pathClaimExtensions(config.lint?.sourceExtensions ?? []),
   };
 }

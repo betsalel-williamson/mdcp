@@ -1,7 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { dirname, relative } from 'node:path';
 import type { CompileHook } from '../hooks.js';
-import { defaultSearchRoots, hasSourceExtension, resolveRelativeFile } from './path-resolve.js';
+import {
+  defaultSearchRoots,
+  hasSourceExtension,
+  resolveRelativeFile,
+  sourceExtensionSet,
+} from './path-resolve.js';
 import { formatLineFragment, lineRangeFromText } from './line-range.js';
 
 export { formatLineFragment, lineRangeFromText } from './line-range.js';
@@ -10,13 +15,13 @@ const MD_LINK_RE = /\[([^\]]*)\]\(([^)]+)\)/g;
 
 const IDENT_RE = /^[\w$]+$/;
 
-export function isSourcePath(path: string): boolean {
+export function isSourcePath(path: string, extensions?: Set<string>): boolean {
   if (!path || path.startsWith('http://') || path.startsWith('https://') || path.startsWith('#')) {
     return false;
   }
   if (path.endsWith('.md')) return false;
   const base = path.split('#')[0].split('?')[0];
-  return hasSourceExtension(base) || !base.includes('.');
+  return hasSourceExtension(base, extensions) || !base.includes('.');
 }
 
 export function symbolFromLabel(label: string): string | null {
@@ -66,9 +71,10 @@ function rewriteEvidenceLink(
   guideDir: string,
   searchRoots: string[],
   outputFile?: string,
+  extensions?: Set<string>,
 ): string {
   const [pathPart, fragment] = target.split('#');
-  if (!isSourcePath(pathPart)) return `[${label}](${target})`;
+  if (!isSourcePath(pathPart, extensions)) return `[${label}](${target})`;
 
   const existingLine = fragment?.match(/^L\d+(?:-L\d+)?$/i);
   if (existingLine) {
@@ -89,7 +95,13 @@ function rewriteEvidenceLink(
     if (symbol) lineFrag = lineForSymbol(resolved, symbol);
   }
 
-  if (!lineFrag) return `[${label}](${target})`;
+  // No line to cite — a data file, or a symbol the label does not name. The
+  // path still has to be rebased, or a link correct in the shard breaks in
+  // output published from another directory. `outputPathForLink` leaves an
+  // unresolvable path alone.
+  if (!lineFrag) {
+    return `[${label}](${outputPathForLink(pathPart, resolved, outputFile)})`;
+  }
 
   const outPath = outputPathForLink(pathPart, resolved, outputFile);
   return `[${label}](${outPath}#${lineFrag})`;
@@ -98,9 +110,10 @@ function rewriteEvidenceLink(
 export const codeEvidenceHook: CompileHook = (ctx) => {
   const guideDir = dirname(ctx.sourceFile);
   const searchRoots = evidenceSearchRoots(ctx.scopeRoot);
+  const extensions = sourceExtensionSet(ctx.config.lint?.sourceExtensions ?? []);
 
   return ctx.body.replace(MD_LINK_RE, (match, label: string, target: string) => {
-    if (!isSourcePath(target.split('#')[0])) return match;
-    return rewriteEvidenceLink(label, target, guideDir, searchRoots, ctx.outputFile);
+    if (!isSourcePath(target.split('#')[0], extensions)) return match;
+    return rewriteEvidenceLink(label, target, guideDir, searchRoots, ctx.outputFile, extensions);
   });
 };

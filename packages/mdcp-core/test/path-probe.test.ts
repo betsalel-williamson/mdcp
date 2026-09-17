@@ -9,6 +9,7 @@ import {
   hasIllustrativeMarker,
   isPathClaim,
   lineOptsOut,
+  pathClaimExtensions,
   pathProbeInputs,
   probeDocumentPaths,
   probePathClaims,
@@ -182,5 +183,42 @@ describe('path probe config', () => {
     expect(formatPathProbeIssue(issue, 'warn')).toBe(
       'path-warn: /x/shard.md:7: unresolved path "src/gone.ts"',
     );
+  });
+});
+
+describe('configurable source extensions', () => {
+  it('treats a configured extension as a claim', () => {
+    const text = 'Rules live in `policy/access.rego2`.\n';
+    expect(probePathClaims('/x/shard.md', text, noRoots)).toEqual([]);
+    expect(
+      probePathClaims('/x/shard.md', text, {
+        ...noRoots,
+        extensions: pathClaimExtensions(['rego2']),
+      }),
+    ).toHaveLength(1);
+  });
+
+  it('accepts a configured extension written with a leading dot', () => {
+    expect(pathClaimExtensions(['.rego2']).has('rego2')).toBe(true);
+  });
+
+  it('keeps the defaults and documentation formats alongside additions', () => {
+    const set = pathClaimExtensions(['rego2']);
+    expect(set.has('ts')).toBe(true);
+    expect(set.has('md')).toBe(true);
+    expect(set.has('rego2')).toBe(true);
+  });
+
+  it('carries lint.sourceExtensions into probe inputs', () => {
+    withTmpDir('mdcp-probe-ext-', (work) => {
+      mkdirSync(join(work, 'docs', 'g'), { recursive: true });
+      writeFileSync(join(work, 'docs', 'g', 'index.md'), '# G\n');
+      const config = MdcpConfigSchema.parse({
+        compileOrder: ['g'],
+        lint: { sourceExtensions: ['rego2'], paths: { severity: 'error' } },
+      });
+      const inputs = pathProbeInputs(config, join(work, 'docs'), work);
+      expect(inputs.extensions?.has('rego2')).toBe(true);
+    });
   });
 });

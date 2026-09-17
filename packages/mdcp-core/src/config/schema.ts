@@ -152,6 +152,12 @@ export const MdcpConfigSchema = z.object({
           config: z.string().optional(),
         })
         .optional(),
+      /**
+       * Extra source-file extensions, added to the built-in defaults. A link or
+       * path claim carrying one of these names a file, so an unresolved target
+       * is a defect. Needed by a project on a stack the defaults do not list.
+       */
+      sourceExtensions: z.array(z.string()).default([]),
       /** Backtick-path resolution in documentation prose. Opt-in: default `off`. */
       paths: z
         .object({

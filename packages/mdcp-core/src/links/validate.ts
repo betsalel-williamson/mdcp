@@ -24,6 +24,8 @@ export interface ValidateCompiledLinkOptions {
   disallowedShardPaths?: Set<string>;
   /** Cached slug registries keyed by absolute publish output path. */
   slugRegistryCache?: Map<string, RefsRegistry>;
+  /** Effective source extensions (see `sourceExtensionSet`). Defaults apply when absent. */
+  sourceExtensions?: Set<string>;
 }
 
 function getOrBuildRegistry(
@@ -107,7 +109,9 @@ function validateSourceFileTarget(
   filePart: string,
   options: ValidateCompiledLinkOptions,
 ): LinkValidationResult {
-  if (!hasSourceExtension(filePart) || !options.outputFile) return { valid: true };
+  if (!hasSourceExtension(filePart, options.sourceExtensions) || !options.outputFile) {
+    return { valid: true };
+  }
   const baseDir = dirname(resolve(options.outputFile));
   const resolved = isAbsolute(filePart) ? filePart : resolve(baseDir, filePart);
   if (existsSync(resolved)) return { valid: true };

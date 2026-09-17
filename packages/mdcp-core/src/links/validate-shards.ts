@@ -46,6 +46,8 @@ export interface LintShardLinksOptions {
   guideDir: string;
   scopeRoot?: string;
   snapshot?: ShardSnapshot;
+  /** Effective source extensions (see `sourceExtensionSet`). Defaults apply when absent. */
+  sourceExtensions?: Set<string>;
 }
 
 /** Validate links in a single shard source file. */
@@ -78,7 +80,8 @@ export function lintShardLinks(options: LintShardLinksOptions): LinkIssue[] {
     const filePart = link.target.split('#')[0];
     // A shard link names either another shard or a source file. Anything else
     // (a bare word, a directory) is too ambiguous to resolve, so it is skipped.
-    if (!filePart.endsWith('.md') && !hasSourceExtension(filePart)) continue;
+    if (!filePart.endsWith('.md') && !hasSourceExtension(filePart, options.sourceExtensions))
+      continue;
 
     const resolved =
       resolveRelativeFile(filePart, shardDir, searchRoots) ??

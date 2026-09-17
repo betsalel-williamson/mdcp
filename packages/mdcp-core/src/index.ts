@@ -118,10 +118,16 @@ export {
   type CoverageOptions,
 } from './validate/coverage.js';
 export {
+  DEFAULT_SOURCE_EXTENSIONS,
+  sourceExtensionSet,
+  hasSourceExtension,
+} from './compile/hooks/path-resolve.js';
+export {
   probeDocumentPaths,
   pathProbeInputs,
   probePathClaims,
   isPathClaim,
+  pathClaimExtensions,
   hasIllustrativeMarker,
   lineOptsOut,
   formatPathProbeIssue,

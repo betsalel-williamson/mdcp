@@ -11,6 +11,7 @@ import type { ShardCache } from '../compile/shard-cache.js';
 import { lintCompiledLinks } from './validate-compiled.js';
 import { lintShardLinks } from './validate-shards.js';
 import { resolveStandaloneGuides } from '../validate/coverage.js';
+import { sourceExtensionSet } from '../compile/hooks/path-resolve.js';
 import type { LinkIssue } from './types.js';
 
 export type { LinkIssue, LinkSeverity } from './types.js';
@@ -74,12 +75,16 @@ function disallowedShardPathsForPublisher(
  * is its own guide directory: there is no manifest or scope root to resolve
  * against.
  */
-function lintStandaloneGuideLinks(config: MdcpConfig, scanRoot: string): LinkIssue[] {
+function lintStandaloneGuideLinks(
+  config: MdcpConfig,
+  scanRoot: string,
+  sourceExtensions: Set<string>,
+): LinkIssue[] {
   const { matched } = resolveStandaloneGuides(scanRoot, config.standaloneGuides);
   const issues: LinkIssue[] = [];
   for (const rel of matched) {
     const shardFile = resolve(scanRoot, rel);
-    issues.push(...lintShardLinks({ shardFile, guideDir: dirname(shardFile) }));
+    issues.push(...lintShardLinks({ shardFile, guideDir: dirname(shardFile), sourceExtensions }));
   }
   return issues;
 }
@@ -88,6 +93,7 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
   const issues: LinkIssue[] = [];
   const { config, docsRoot, results } = options;
   const outputDir = config.outputDir;
+  const sourceExtensions = sourceExtensionSet(config.lint?.sourceExtensions ?? []);
 
   const knownOutputBasenames = new Set(results.map((r) => basename(r.outputFile)));
   if (config.outputFile !== undefined) {
@@ -149,10 +155,12 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
       for (const shardFile of files) {
         const snapshot = options.shardCache?.get(resolve(shardFile));
         issues.push(
-          ...lintShardLinks({ shardFile, guideDir, scopeRoot, snapshot }).map((i) => ({
-            ...i,
-            guideName: name,
-          })),
+          ...lintShardLinks({ shardFile, guideDir, scopeRoot, snapshot, sourceExtensions }).map(
+            (i) => ({
+              ...i,
+              guideName: name,
+            }),
+          ),
         );
       }
     }
@@ -161,7 +169,7 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
   // Standalone guides are never compiled, so the compiled-output pass below
   // cannot reach them. They need the shard-style pass regardless of `lintShards`.
   if (options.scanRoot) {
-    issues.push(...lintStandaloneGuideLinks(config, options.scanRoot));
+    issues.push(...lintStandaloneGuideLinks(config, options.scanRoot, sourceExtensions));
   }
 
   for (const r of results) {
@@ -180,6 +188,7 @@ export function lintLinks(options: LintLinksOptions): LinkIssue[] {
         allowedPublishPaths,
         disallowedShardPaths,
         slugRegistryCache,
+        sourceExtensions,
       }),
     );
   }

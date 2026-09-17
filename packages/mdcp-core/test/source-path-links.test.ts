@@ -5,7 +5,8 @@
 import { describe, it, expect } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { hasSourceExtension } from '../src/compile/hooks/path-resolve.js';
+import { hasSourceExtension, sourceExtensionSet } from '../src/compile/hooks/path-resolve.js';
+import { codeEvidenceHook } from '../src/compile/hooks/code-evidence.js';
 import { lintShardLinks } from '../src/links/validate-shards.js';
 import { validateCompiledLinkTarget } from '../src/links/validate.js';
 import { lintLinks } from '../src/links/lint.js';
@@ -158,6 +159,86 @@ describe('lintLinks over standaloneGuides', () => {
       });
       const issues = lintLinks({ config, docsRoot: work, results });
       expect(issues.filter((i) => i.file.endsWith('CHARTER.md'))).toHaveLength(0);
+    });
+  });
+});
+
+describe('configurable source extensions for links', () => {
+  it('defaults cover more than one ecosystem', () => {
+    for (const path of [
+      'src/a.ts',
+      'app/main.py',
+      'cmd/serve.go',
+      'lib/thing.rb',
+      'src/Main.java',
+      'infra/main.tf',
+      'policy/access.rego',
+      'schema/user.proto',
+      'build.gradle',
+      'deploy/values.yaml',
+    ]) {
+      expect(hasSourceExtension(path)).toBe(true);
+    }
+    expect(hasSourceExtension('notes.md')).toBe(false);
+    expect(hasSourceExtension('src/thing.unheardof')).toBe(false);
+  });
+
+  it('accepts an extension a repository adds in config', () => {
+    const extensions = sourceExtensionSet(['unheardof', '.alsoOK']);
+    expect(hasSourceExtension('src/thing.unheardof', extensions)).toBe(true);
+    expect(hasSourceExtension('src/thing.ALSOOK', extensions)).toBe(true);
+    expect(hasSourceExtension('src/thing.ts', extensions)).toBe(true);
+  });
+
+  it('validates a link whose extension comes only from config', () => {
+    withTmpDir('mdcp-ext-link-', (work) => {
+      const guideDir = join(work, 'g');
+      mkdirSync(guideDir, { recursive: true });
+      const shard = join(guideDir, 'section.md');
+      writeFileSync(shard, '## S\n\n[rules](./gone.unheardof)\n');
+      expect(lintShardLinks({ shardFile: shard, guideDir })).toEqual([]);
+      const issues = lintShardLinks({
+        shardFile: shard,
+        guideDir,
+        sourceExtensions: sourceExtensionSet(['unheardof']),
+      });
+      expect(issues.map((i) => i.kind)).toEqual(['missing file']);
+    });
+  });
+});
+
+describe('codeEvidence rebases source links without a line fragment', () => {
+  it('rebases a data-file link for output published elsewhere', () => {
+    withTmpDir('mdcp-evidence-data-', (work) => {
+      const guideDir = join(work, 'g');
+      mkdirSync(guideDir, { recursive: true });
+      mkdirSync(join(work, 'out'), { recursive: true });
+      writeFileSync(join(guideDir, 'measurements.csv'), 'a,b\n1,2\n');
+      const body = codeEvidenceHook({
+        guideName: 'g',
+        filename: 'section.md',
+        body: 'Source: [measurements](./measurements.csv)\n',
+        config: { compileOrder: ['g'] },
+        sourceFile: join(guideDir, 'section.md'),
+        outputFile: join(work, 'out', 'guide.md'),
+      });
+      expect(body).toContain('](../g/measurements.csv)');
+    });
+  });
+
+  it('leaves a link alone when its target does not resolve', () => {
+    withTmpDir('mdcp-evidence-unresolved-', (work) => {
+      const guideDir = join(work, 'g');
+      mkdirSync(guideDir, { recursive: true });
+      const body = codeEvidenceHook({
+        guideName: 'g',
+        filename: 'section.md',
+        body: 'Source: [gone](./gone.csv)\n',
+        config: { compileOrder: ['g'] },
+        sourceFile: join(guideDir, 'section.md'),
+        outputFile: join(work, 'out', 'guide.md'),
+      });
+      expect(body).toContain('](./gone.csv)');
     });
   });
 });
