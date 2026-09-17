@@ -152,6 +152,16 @@ export const MdcpConfigSchema = z.object({
           config: z.string().optional(),
         })
         .optional(),
+      /** Backtick-path resolution in documentation prose. Opt-in: default `off`. */
+      paths: z
+        .object({
+          severity: z.enum(['off', 'warn', 'error']).default('off'),
+          /** Extra resolution roots relative to the scan root, tried after it. */
+          searchRoots: z.array(z.string()).default([]),
+          /** Scan-root-relative prefixes whose absence is expected (build output, caches). */
+          allow: z.array(z.string()).default([]),
+        })
+        .optional(),
     })
     .optional(),
 

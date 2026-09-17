@@ -1,5 +1,7 @@
 # codeEvidence
 
+<!-- mdcp-paths: illustrative -->
+
 Specification for the `codeEvidence` compile hook. Tests in `packages/mdcp-core/test/code-evidence.test.ts` map to the sections below (docs first, then TDD).
 
 ## codeEvidence purpose

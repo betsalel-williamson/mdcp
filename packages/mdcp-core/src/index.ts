@@ -118,6 +118,18 @@ export {
   type CoverageOptions,
 } from './validate/coverage.js';
 export {
+  probeDocumentPaths,
+  pathProbeInputs,
+  probePathClaims,
+  isPathClaim,
+  hasIllustrativeMarker,
+  lineOptsOut,
+  formatPathProbeIssue,
+  ILLUSTRATIVE_MARKER,
+  type PathProbeIssue,
+  type PathProbeOptions,
+} from './validate/path-probe.js';
+export {
   abbreviateProtocolVersion,
   expandProtocolVersion,
   parseLlmsIndexFilename,

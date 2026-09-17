@@ -380,6 +380,8 @@ For manifest compile order and `compile.sectionsHeading`, see [Manifest compile 
 
 ## codeEvidence
 
+<!-- mdcp-paths: illustrative -->
+
 Specification for the `codeEvidence` compile hook. Tests in `packages/mdcp-core/test/code-evidence.test.ts` map to the sections below (docs first, then TDD).
 
 ### codeEvidence purpose
@@ -499,6 +501,8 @@ See [firestore.rules L6-L8](firestore.rules#L6-L8).
 <!-- mdcp-shard: start ../../docs/client-core/compile-hooks/inline-inserts.md -->
 
 ## inlineInserts
+
+<!-- mdcp-paths: illustrative -->
 
 Specification for the `inlineInserts` compile hook. Tests in `packages/mdcp-core/test/inline-inserts.test.ts` map to the sections below (docs first, then TDD).
 
@@ -671,6 +675,8 @@ Catalog link `` `[Walkthrough](../media/walkthrough.md)` `` compiles to `#### Me
 <!-- mdcp-shard: start ../../docs/client-core/compile-hooks/cross-guide-links.md -->
 
 ## Cross-guide link rewriting
+
+<!-- mdcp-paths: illustrative -->
 
 Specification for assembly-time cross-shard and cross-guide link rewriting. Tests in `packages/mdcp-core/test/cross-guide-links.test.ts` map to the sections below (docs first, then TDD).
 
@@ -905,6 +911,8 @@ Review targets use the compiled monolith; ignored guides keep shard paths. Tests
 <!-- mdcp-shard: start ../../docs/client-core/compile-hooks/publish-relative-links.md -->
 
 ## Publish-relative link rewriting
+
+<!-- mdcp-paths: illustrative -->
 
 Specification for assembly-time rebasing of shard-relative file links when a guide publishes outside the shard tree. Tests in `packages/mdcp-core/test/publish-links.test.ts` and `packages/mdcp-core/test/links.test.ts` map to the sections below.
 
