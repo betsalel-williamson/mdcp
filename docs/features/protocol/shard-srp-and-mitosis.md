@@ -24,7 +24,7 @@ When pressure builds along more than one axis, **split** the shard — [idea mit
 
 ### Split when
 
-1. **Dual audience** — consumers and contributors both “need this paragraph” → apply the [placement test](./mdcp-1.0-spec.md#2-default-guide-layout-code-repository-archetype); usually `features`/`client` vs `developer`.
+1. **Dual audience** — consumers and contributors both “need this paragraph” → apply the [placement test](./spec/01-repository-layout.md#placement-test); usually `features`/`client` vs `developer`.
 2. **Dual job** — understanding _why_ mixed with _how to do it_ or with look-up facts → separate explanation, how-to/runbook, and reference/definition shards.
 3. **Dual concern** — two independent capabilities or decisions → one shard each.
 4. **Load failure** — reading the file alone misleads → extract the missing concern or merge with the sibling that must travel with it (mitosis can also mean “these two were never separate organisms”).

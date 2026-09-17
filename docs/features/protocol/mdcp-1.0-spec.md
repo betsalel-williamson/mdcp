@@ -2,47 +2,41 @@
 
 Normative specification for the MarkDown Context Protocol. Parent: [GitHub #48](https://github.com/betsalel-williamson/mdcp/issues/48).
 
-> **Status:** Draft — reference implementation leads; prose reconciled against `mdcp-core` before calling the specification final. Protocol versioning is independent of package semver. Agent entrypoint is the parent **Agent Skill** (`/mdcp`).
+> **Status:** Draft — the reference implementation leads. Every clause below was reconciled against `@bwilliamson/mdcp-core` before publication, but the document is not final until the open questions in [Conformance and versioning](./spec/00-conformance-and-versioning.md#open-questions-before-10-final) are closed. Protocol versioning is independent of package semver.
 
-## 1. Introduction
+## What this specification covers
 
-MDCP defines **offline document context preparation**: shard layout, compile semantics, validation pipeline, and Agent Skill development. It does **not** define wire transport (see [Scope and positioning](./01-scope-and-positioning.md)).
+MDCP defines **offline document context preparation**: how shards are laid out, how a manifest orders them, how a compiler assembles them into rendered documents, and how a validator decides whether a documentation tree is well formed. A third party implementing this document should produce byte-identical output to the reference implementation for the same inputs.
 
-Conformance keywords: **MUST**, **SHOULD**, **MAY** (RFC 2119 sense).
+MDCP does **not** define wire transport, a runtime host protocol, or a delivery API. That boundary is deliberate and is argued in [Scope and positioning](./01-scope-and-positioning.md).
 
-## 2. Default Guide Layout (Code Repository Archetype)
+## How to read the parts
 
-Conforming repositories **SHOULD** organize shards into guides listed in `compileOrder`. This default structure—often referred to as the **Code Repository Archetype**—is the "batteries-included" layout for software engineering projects:
+Each part below is normative unless it says otherwise.
 
-| Guide tier | Typical path | Holds                                                                       | Keep out                                              |
-| ---------- | ------------ | --------------------------------------------------------------------------- | ----------------------------------------------------- |
-| Features   | `features/`  | Product capabilities, design/ADRs, contracts, acceptance criteria           | Maintainer runbooks, CI/eval loops, contributor setup |
-| Client     | `client/`    | Consumer value and usage of the shipped tool                                | Internal contributor process, skill-authoring evals   |
-| Developer  | `developer/` | Repo workflow, tracker integration, releases, skill development, live evals | Product capability specs or end-user tutorials        |
-| Glossary   | `glossary/`  | Shared terms and disambiguation                                             | General code snippets                                 |
+- [Conformance and versioning](./spec/00-conformance-and-versioning.md) — conformance keywords, conformance classes, and `protocolVersion`.
+- [Repository layout](./spec/01-repository-layout.md) — docs root, guides, shards, and the code repository archetype.
+- [Manifest](./spec/02-manifest.md) — manifest discovery, compile order, and transitive inclusion.
+- [Configuration](./spec/03-configuration.md) — `mdcp.config.json` fields, defaults, and required values.
+- [Compile semantics](./spec/04-compile.md) — heading demotion, preamble, titles, source tags, and outputs.
+- [Compile hooks](./spec/05-hooks.md) — the built-in transform set and opt-out rules.
+- [Refs registry](./spec/06-refs-registry.md) — slug algorithm, registry shape, and staleness.
+- [Validation pipeline](./spec/07-validation.md) — ordered obligations and which failures are fatal.
+- [Security and portability](./spec/08-security-and-portability.md) — path resolution, peer execution, and extension boundaries.
+- [Worked example](./spec/09-worked-example.md) — `examples/sample-guides/` annotated against the clauses.
 
-This four-tier taxonomy is fundamental to preventing the system from falling apart as it scales. It enforces strict boundaries that keep developer workflows out of client usage and separate high-level feature specs from low-level code. **Placement test:** if only contributors to the docs repo need the shard, put it in `developer/`; if consumers of the product need it, use `features/` or `client/`.
+## Authoring profile
 
-Each guide **MUST** have a manifest (`index.md` or `shards.md`) defining compile order.
+The parts above specify artifacts and transforms. Two further obligations apply to repositories that adopt the MDCP authoring workflow rather than only its file formats.
 
-Glossary terms **SHOULD** be one shard per entry. Large glossaries **MAY** split manifests across `index.md` and sub-index files (for example `index-protocol.md`) that link term shards; transitive manifest links include terms in compile output.
+Helper skills are part of the MDCP 1.0 authoring profile. Activate one through its skill trigger, for example `/mdcp-feature-level`. A helper skill **MUST** collect `WORK_ITEM` and `WORK_ITEM_LOOKUP` through interactive intake before it edits any shard. Feature work **SHOULD** use [mdcp-feature-level](../../../skills/mdcp-feature-level/SKILL.md). The catalog is in [Agent helper skills](./agent-task-prompts.md).
 
-The MDCP engine itself is agnostic. Other documentation systems (e.g., Legal Operations, HR Policies) **MAY** introduce their own "battery types" (archetypes) with completely different guide tiers using the same underlying `mdcp compile` and `mdcp check` mechanics.
+The Agent Skills pack installed in a consumer docs root **MUST NOT** be hand-edited by agents to carry repository-specific content. Project overlays belong in `docs/extensions/` or in normative shards of the adopting repository. See [Extensions and archetypes](./extensions-and-archetypes.md).
 
-## 3. Agent task subagents
+## Agent context delivery
 
-Helper skills are part of the MDCP 1.0 authoring profile. Activate via the skill trigger (e.g. `/mdcp-feature-level`). See [Agent helper skills](./agent-task-prompts.md).
-
-Helper skills **MUST** collect `WORK_ITEM` and `WORK_ITEM_LOOKUP` via interactive intake before editing. Feature work **SHOULD** use [mdcp-feature-level](../../skills/mdcp-feature-level/SKILL.md).
-
-## 4. Skills and immutability
-
-The Agent Skills pack in a consumer docs root **MUST NOT** be hand-edited by agents for repo-specific content. Project overlays belong in `docs/extensions/` or normative shards. Extension packs and archetypes: [Extensions and archetypes](./extensions-and-archetypes.md).
-
-## 5. Agent context delivery
-
-Agent context comes from the parent **Agent Skill** and one-shard reads. There is no token-strip export profile — see [ADR 0001](../adr/0001-remove-export-profiles.md).
+Agent context comes from the parent Agent Skill and from one-shard reads. MDCP 1.0 defines no token-stripping export profile; the removal is recorded in [ADR 0001](../adr/0001-remove-export-profiles.md).
 
 ## Appendix A (informative)
 
-MDCP vs MCP and delivery adapters: [01-scope-and-positioning.md](./01-scope-and-positioning.md)
+MDCP is not MCP, and this specification makes no claim of equivalence with it. The comparison and the delivery-adapter discussion live in [Scope and positioning](./01-scope-and-positioning.md).
