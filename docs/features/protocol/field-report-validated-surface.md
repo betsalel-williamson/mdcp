@@ -4,7 +4,7 @@ Evidence shard: what `mdcp check` caught and what it structurally could not, mea
 
 ## Setting
 
-Reported 2026-09 from `betsalel-williamson/CSL-TrackpadCameraControl`, a game mod whose documentation is authored as shards and validated by `mdcp check` in a required CI job. One human author plus coding agents, which co-authored 23 of 50 commits.
+Reported 2026-09 from a second repository whose documentation is authored as shards and validated by `mdcp check` in a required CI job. One human author plus coding agents, which co-authored 23 of 50 commits. Repository, organization, and domain details are omitted; counts and mechanisms are the part that generalizes.
 
 | Measure                                  | Value                      |
 | ---------------------------------------- | -------------------------- |
