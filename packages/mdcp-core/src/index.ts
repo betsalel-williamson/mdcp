@@ -118,9 +118,14 @@ export {
   type CoverageOptions,
 } from './validate/coverage.js';
 export {
-  DEFAULT_SOURCE_EXTENSIONS,
-  sourceExtensionSet,
-  hasSourceExtension,
+  DEFAULT_CODE_EXTENSIONS,
+  DEFAULT_DATA_EXTENSIONS,
+  codeExtensionSet,
+  dataExtensionSet,
+  fileExtensionSet,
+  hasCodeExtension,
+  hasFileExtension,
+  type ExtensionConfig,
 } from './compile/hooks/path-resolve.js';
 export {
   probeDocumentPaths,

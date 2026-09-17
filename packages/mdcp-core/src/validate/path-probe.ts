@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path';
 import fg from 'fast-glob';
 import type { MdcpConfig } from '../config/schema.js';
 import { getGuideConfig, guideScanDirs } from '../config/load.js';
-import { sourceExtensionSet } from '../compile/hooks/path-resolve.js';
+import { type ExtensionConfig, fileExtensionSet } from '../compile/hooks/path-resolve.js';
 import { resolveStandaloneGuides } from './coverage.js';
 
 /**
@@ -40,12 +40,13 @@ const SPAN_RE = /`([^`\n]+)`/g;
 const DOC_EXTENSIONS = ['md', 'mdx'];
 
 /**
- * Extensions that let a backtick span name a file. This is the source-extension
- * set — defaults plus `lint.sourceExtensions` — widened with documentation
- * formats, so one config knob governs links and prose alike.
+ * Extensions that let a backtick span name a file: every code and data
+ * extension, widened with documentation formats. Prose asks the same question
+ * link validation does, whether the file exists, so the two share one pair of
+ * config knobs.
  */
-export function pathClaimExtensions(extra: readonly string[] = []): Set<string> {
-  const set = sourceExtensionSet(extra);
+export function pathClaimExtensions(lint?: ExtensionConfig): Set<string> {
+  const set = fileExtensionSet(lint);
   for (const ext of DOC_EXTENSIONS) set.add(ext);
   return set;
 }
@@ -68,11 +69,18 @@ export interface PathProbeOptions {
    */
   searchRoots: string[];
   /**
-   * Scan-root-relative prefixes whose absence is expected — build output,
-   * caches, vendor-managed installs. A claim under one of these is not
-   * reported.
+   * Scan-root-relative prefixes that are real but absent in a clean checkout:
+   * build output, caches, vendor-managed installs. A claim under one of these
+   * is not reported.
    */
-  allow: string[];
+  generated: string[];
+  /**
+   * Paths this repository documents without having: names the protocol defines
+   * for a consumer repository, or another project's tree. Matched exactly,
+   * because the name is what the document declares, so an invented file
+   * beneath one still has to resolve.
+   */
+  vocabulary: string[];
   /** Effective claim extensions (see `pathClaimExtensions`). Defaults apply when absent. */
   extensions?: Set<string>;
 }
@@ -146,11 +154,25 @@ export function lineOptsOut(line: string): boolean {
   return line.includes(ILLUSTRATIVE_MARKER) && line.trim() !== ILLUSTRATIVE_MARKER;
 }
 
-function isAllowed(path: string, allow: string[]): boolean {
-  return allow.some((prefix) => {
-    const normalized = stripTrailingSlashes(stripLeadingDotSlash(prefix));
+function normalizeEntry(entry: string): string {
+  return stripTrailingSlashes(stripLeadingDotSlash(entry));
+}
+
+/**
+ * True when the document has already declared why this path does not resolve.
+ *
+ * The two declarations are different claims, so they match differently. A
+ * generated prefix covers a whole tree, because nothing under it exists until
+ * something builds it. A vocabulary entry is one name the document uses
+ * without instantiating, so matching stops there: `docs/client/` is declared,
+ * `docs/client/onboarding.md` is still an unresolved path.
+ */
+function isDeclared(path: string, options: Pick<PathProbeOptions, 'generated' | 'vocabulary'>) {
+  const generated = options.generated.some((prefix) => {
+    const normalized = normalizeEntry(prefix);
     return path === normalized || path.startsWith(`${normalized}/`);
   });
+  return generated || options.vocabulary.some((entry) => path === normalizeEntry(entry));
 }
 
 /**
@@ -161,7 +183,7 @@ function isAllowed(path: string, allow: string[]): boolean {
 export function probePathClaims(
   file: string,
   text: string,
-  options: Pick<PathProbeOptions, 'searchRoots' | 'allow' | 'extensions'>,
+  options: Pick<PathProbeOptions, 'searchRoots' | 'generated' | 'vocabulary' | 'extensions'>,
 ): PathProbeIssue[] {
   if (hasIllustrativeMarker(text)) return [];
 
@@ -183,7 +205,7 @@ export function probePathClaims(
     for (const match of line.matchAll(SPAN_RE)) {
       const claim = isPathClaim(match[1], extensions);
       if (!claim) continue;
-      if (isAllowed(claim, options.allow)) continue;
+      if (isDeclared(claim, options)) continue;
       if (roots.some((root) => existsSync(resolve(root, claim)))) continue;
       issues.push({ file, line: i + 1, path: match[1].trim() });
     }
@@ -247,7 +269,8 @@ export function pathProbeInputs(
   return {
     files: [...new Set(files)],
     searchRoots: [...new Set(searchRoots)],
-    allow: config.lint?.paths?.allow ?? [],
-    extensions: pathClaimExtensions(config.lint?.sourceExtensions ?? []),
+    generated: config.lint?.paths?.generated ?? [],
+    vocabulary: config.lint?.paths?.vocabulary ?? [],
+    extensions: pathClaimExtensions(config.lint),
   };
 }

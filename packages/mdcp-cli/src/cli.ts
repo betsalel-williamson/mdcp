@@ -534,7 +534,8 @@ cli
             hints: [
               'Update the path to what the repository now contains, or delete the claim when the thing it names is gone.',
               `Add ${ILLUSTRATIVE_MARKER} on its own line when a file's paths teach syntax instead of describing this repository.`,
-              'Add lint.paths.allow for paths that only exist after a build or install.',
+              'Add lint.paths.generated for paths that only exist after a build or install.',
+              'Add lint.paths.vocabulary for a name this repository documents without having.',
             ],
           });
         }

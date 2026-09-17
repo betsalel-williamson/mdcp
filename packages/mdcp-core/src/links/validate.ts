@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve, isAbsolute, basename } from 'node:path';
 import { buildSlugRegistry } from '../refs/slugs.js';
-import { hasSourceExtension } from '../compile/hooks/path-resolve.js';
+import { hasFileExtension } from '../compile/hooks/path-resolve.js';
 import type { RefsRegistry } from '../refs/slugs.js';
 
 export type LinkFailureReason = 'dead anchor' | 'missing file' | 'missing publish path';
@@ -24,8 +24,8 @@ export interface ValidateCompiledLinkOptions {
   disallowedShardPaths?: Set<string>;
   /** Cached slug registries keyed by absolute publish output path. */
   slugRegistryCache?: Map<string, RefsRegistry>;
-  /** Effective source extensions (see `sourceExtensionSet`). Defaults apply when absent. */
-  sourceExtensions?: Set<string>;
+  /** Effective file extensions (see `fileExtensionSet`). Defaults apply when absent. */
+  fileExtensions?: Set<string>;
 }
 
 function getOrBuildRegistry(
@@ -109,7 +109,7 @@ function validateSourceFileTarget(
   filePart: string,
   options: ValidateCompiledLinkOptions,
 ): LinkValidationResult {
-  if (!hasSourceExtension(filePart, options.sourceExtensions) || !options.outputFile) {
+  if (!hasFileExtension(filePart, options.fileExtensions) || !options.outputFile) {
     return { valid: true };
   }
   const baseDir = dirname(resolve(options.outputFile));

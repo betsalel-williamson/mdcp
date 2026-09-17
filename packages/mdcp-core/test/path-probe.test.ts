@@ -18,7 +18,7 @@ import {
 import { MdcpConfigSchema } from '../src/config/schema.js';
 import { withTmpDir } from './helpers/tmp-dir.js';
 
-const noRoots = { searchRoots: [], allow: [] };
+const noRoots = { searchRoots: [], generated: [], vocabulary: [] };
 
 describe('isPathClaim', () => {
   it('accepts a path with a directory segment', () => {
@@ -80,7 +80,7 @@ describe('probePathClaims', () => {
       writeFileSync(join(work, 'pkg', 'src', 'thing.ts'), 'export const x = 1;\n');
       const file = join(work, 'docs', 'shard.md');
       const text = 'See `src/thing.ts`.\n';
-      expect(probePathClaims(file, text, { searchRoots: [join(work, 'pkg')], allow: [] })).toEqual(
+      expect(probePathClaims(file, text, { ...noRoots, searchRoots: [join(work, 'pkg')] })).toEqual(
         [],
       );
       expect(probePathClaims(file, text, noRoots)).toHaveLength(1);
@@ -93,18 +93,28 @@ describe('probePathClaims', () => {
     expect(issues.map((i) => i.path)).toEqual(['src/also-gone.ts']);
   });
 
-  it('does not report a claim under an allow prefix', () => {
+  it('does not report a claim under a generated prefix', () => {
     const text = 'Output lands in `docs/_build/guides.md`.\n';
     expect(
-      probePathClaims('/x/shard.md', text, { searchRoots: [], allow: ['docs/_build'] }),
+      probePathClaims('/x/shard.md', text, { ...noRoots, generated: ['docs/_build'] }),
     ).toEqual([]);
     expect(probePathClaims('/x/shard.md', text, noRoots)).toHaveLength(1);
   });
 
-  it('does not treat a sibling prefix as an allow match', () => {
+  it('does not treat a sibling prefix as a generated match', () => {
     const text = 'See `docs/_buildings/a.md`.\n';
     expect(
-      probePathClaims('/x/shard.md', text, { searchRoots: [], allow: ['docs/_build'] }),
+      probePathClaims('/x/shard.md', text, { ...noRoots, generated: ['docs/_build'] }),
+    ).toHaveLength(1);
+  });
+
+  it('accepts a vocabulary name exactly, not the paths beneath it', () => {
+    // `docs/client/` is a tier the protocol defines and this repository does
+    // not instantiate. An invented file under that name is still a defect.
+    const declared = { ...noRoots, vocabulary: ['docs/client/'] };
+    expect(probePathClaims('/x/shard.md', 'Tiers include `docs/client/`.\n', declared)).toEqual([]);
+    expect(
+      probePathClaims('/x/shard.md', 'See `docs/client/onboarding.md`.\n', declared),
     ).toHaveLength(1);
   });
 
@@ -132,7 +142,8 @@ describe('probeDocumentPaths', () => {
       const issues = probeDocumentPaths({
         files: [join(work, 'a.md'), join(work, 'b.md'), join(work, 'missing.md')],
         searchRoots: [],
-        allow: [],
+        generated: [],
+        vocabulary: [],
       });
       expect(issues.map((i) => i.path).sort()).toEqual(['src/gone-a.ts', 'src/gone-b.ts']);
     });
@@ -186,39 +197,45 @@ describe('path probe config', () => {
   });
 });
 
-describe('configurable source extensions', () => {
+describe('configurable extensions', () => {
   it('treats a configured extension as a claim', () => {
     const text = 'Rules live in `policy/access.rego2`.\n';
     expect(probePathClaims('/x/shard.md', text, noRoots)).toEqual([]);
     expect(
       probePathClaims('/x/shard.md', text, {
         ...noRoots,
-        extensions: pathClaimExtensions(['rego2']),
+        extensions: pathClaimExtensions({ codeExtensions: ['rego2'] }),
       }),
     ).toHaveLength(1);
   });
 
   it('accepts a configured extension written with a leading dot', () => {
-    expect(pathClaimExtensions(['.rego2']).has('rego2')).toBe(true);
+    expect(pathClaimExtensions({ codeExtensions: ['.rego2'] }).has('rego2')).toBe(true);
   });
 
-  it('keeps the defaults and documentation formats alongside additions', () => {
-    const set = pathClaimExtensions(['rego2']);
+  it('claims data extensions as readily as code ones', () => {
+    const set = pathClaimExtensions({ dataExtensions: ['sav'] });
     expect(set.has('ts')).toBe(true);
+    expect(set.has('csv')).toBe(true);
     expect(set.has('md')).toBe(true);
-    expect(set.has('rego2')).toBe(true);
+    expect(set.has('sav')).toBe(true);
   });
 
-  it('carries lint.sourceExtensions into probe inputs', () => {
+  it('carries both extension knobs into probe inputs', () => {
     withTmpDir('mdcp-probe-ext-', (work) => {
       mkdirSync(join(work, 'docs', 'g'), { recursive: true });
       writeFileSync(join(work, 'docs', 'g', 'index.md'), '# G\n');
       const config = MdcpConfigSchema.parse({
         compileOrder: ['g'],
-        lint: { sourceExtensions: ['rego2'], paths: { severity: 'error' } },
+        lint: {
+          codeExtensions: ['rego2'],
+          dataExtensions: ['sav'],
+          paths: { severity: 'error' },
+        },
       });
       const inputs = pathProbeInputs(config, join(work, 'docs'), work);
       expect(inputs.extensions?.has('rego2')).toBe(true);
+      expect(inputs.extensions?.has('sav')).toBe(true);
     });
   });
 });

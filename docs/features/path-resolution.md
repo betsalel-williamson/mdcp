@@ -28,7 +28,7 @@ A backtick span is a claim when it carries **a directory segment and a name**.
 
 Fenced code blocks are skipped entirely: a fence holds examples, not claims. A `#fragment` and a leading `./` are trimmed before resolution.
 
-Which extensions can name a file is the **same set the link validators use** — the built-in defaults plus `lint.sourceExtensions` — widened with `.md` and `.mdx`. One knob governs links and prose alike, so a repository on an unlisted stack configures it once. Membership is a set lookup rather than a generated pattern, so a configured value cannot change how matching behaves.
+Which extensions can name a file is the **same set the link validators use** — every built-in code and data extension, plus `lint.codeExtensions` and `lint.dataExtensions` — widened with `.md` and `.mdx`. Prose asks the question links ask, whether the file exists, so both read one pair of knobs and a repository on an unlisted stack configures it once. Membership is a set lookup rather than a generated pattern, so a configured value cannot change how matching behaves.
 
 ## Resolution ladder
 
@@ -53,7 +53,16 @@ Two scopes, one marker — `<!-- mdcp-paths: illustrative -->`:
 
 The line scope exists because a whole-file marker on a mostly-descriptive shard would exempt its real claims too. Prefer the narrower scope.
 
-`lint.paths.allow` covers a third case that is not authorial at all: paths that are real but absent in a clean checkout — build output, caches, vendor-managed installs — and vocabulary the repository documents without instantiating. An allow entry matches a path or any path beneath it, never a sibling that merely shares a prefix.
+Two more cases are not authorial at all, and they are declared in config rather than in the prose, because they are properties of the repository rather than of a sentence.
+
+| Knob                    | Matching | The claim it declares                                                                    |
+| ----------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `lint.paths.generated`  | Prefix   | Real here, absent in a clean checkout: build output, caches, vendor-managed installs     |
+| `lint.paths.vocabulary` | Exact    | A name this repository documents without having: a protocol tier, another project's tree |
+
+They match differently because they claim different things. Nothing under a generated prefix exists until something builds it, so the prefix covers the whole tree. A vocabulary entry is one name the document uses without instantiating, so matching stops at that name: `docs/client/` is declared, and `docs/client/onboarding.md` is still an unresolved path. Neither matches a sibling that merely shares a prefix. <!-- mdcp-paths: illustrative -->
+
+This repository uses `vocabulary` for `docs/client/` and `docs/extensions/`, two tiers the protocol defines that mdcp itself does not instantiate. Filing them as generated would have been the wrong claim: they are not waiting for a build, they are names belonging to a consumer's tree.
 
 ## Path resolution config
 
@@ -63,7 +72,8 @@ The line scope exists because a whole-file marker on a mostly-descriptive shard 
     "paths": {
       "severity": "error",
       "searchRoots": ["packages/mdcp-presets"],
-      "allow": ["docs/_build", ".caches"]
+      "generated": ["docs/_build", ".caches"],
+      "vocabulary": ["docs/client"]
     }
   }
 }
@@ -73,8 +83,10 @@ The line scope exists because a whole-file marker on a mostly-descriptive shard 
 | ------------------------ | ------- | ------------------------------------------------------------------------ |
 | `lint.paths.severity`    | `"off"` | `"off"` skips the probe; `"warn"` reports and exits 0; `"error"` exits 1 |
 | `lint.paths.searchRoots` | `[]`    | Extra resolution roots, relative to the scan root                        |
-| `lint.paths.allow`       | `[]`    | Scan-root-relative prefixes whose absence is expected                    |
-| `lint.sourceExtensions`  | `[]`    | Extra extensions that can name a file, shared with link validation       |
+| `lint.paths.generated`   | `[]`    | Prefixes absent in a clean checkout                                      |
+| `lint.paths.vocabulary`  | `[]`    | Exact names this repository documents without having                     |
+| `lint.codeExtensions`    | `[]`    | Extra code extensions, shared with link validation                       |
+| `lint.dataExtensions`    | `[]`    | Extra data extensions, shared with link validation                       |
 
 **The default is `off` on purpose.** Turning the probe on for a corpus written without it in mind produces a burst of findings that are correct as written, and a check nobody can get to green is a check nobody enables. A repository turns it on once, cleans up, and keeps it on.
 
@@ -92,10 +104,11 @@ Source shards and standalone guides are scanned; compiled output is not, since i
 - A bare name (`index.md`), a single segment (`src/`), a command, a glob, a flag, an npm scope and a code identifier are not claims
 - A claim inside a fenced code block is not reported
 - A claim resolves against the file's own directory, the scan root, the docs root, a guide `scopeRoot`, or a `lint.paths.searchRoots` entry
-- `lint.paths.allow` suppresses a prefix match but not a sibling sharing that prefix
+- `lint.paths.generated` suppresses a prefix match but not a sibling sharing that prefix
+- `lint.paths.vocabulary` suppresses the name itself but not a path beneath it
 - The marker alone on a line exempts the file; trailing a content line it exempts that line only
 - `lint.paths.severity` defaults to `off`; `warn` reports with a `path-warn:` prefix and exits 0
-- An extension added by `lint.sourceExtensions` makes a span a claim; documentation extensions stay claimable regardless
+- An extension added by `lint.codeExtensions` or `lint.dataExtensions` makes a span a claim; documentation extensions stay claimable regardless
 
 ## Path resolution related
 

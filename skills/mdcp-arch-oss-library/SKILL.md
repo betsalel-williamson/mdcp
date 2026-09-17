@@ -60,5 +60,5 @@ Agents use host search and the `docs/glossary/refs.md` registry / `mdcp check` f
 
 ## Extension hooks
 
-- Add `docs/extensions/api-pointer-conventions.md` for language-specific path rules.
+- Add an `api-pointer-conventions.md` shard under `docs/extensions/` for language-specific path rules.
 - Optional formatting pack under `skills/mdcp-format-*` for JavaDoc-style cross-links in compiled README output (future).

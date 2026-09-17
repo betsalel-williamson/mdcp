@@ -8,7 +8,9 @@ Internal markdown links can compile cleanly but still be broken in published out
 
 MDCP validates link integrity at **shard**, **standalone-guide**, and **compiled-guide** level, emits **`BROKEN LINK`** markers in compiled output by default, and fails `mdcp compile` / `mdcp check` with IDE-clickable `path:line:` diagnostics unless warn mode is enabled.
 
-Validated target classes are `.md` paths, `#fragment` anchors, and **source-file paths** — a link whose target carries a source extension (`.ts`, `.py`, `.yaml`, …) names a file in the repository, so an unresolved target is a defect. No built-in extension list covers every stack, so `lint.sourceExtensions` adds to the defaults. This is what keeps a shard from citing a module that has been deleted. Targets that name no resolvable file — a bare word, a directory path — stay unvalidated, because nothing distinguishes a stale one from an illustrative one.
+Validated target classes are `.md` paths, `#fragment` anchors, and **file paths** — a link whose target carries a known extension (`.ts`, `.py`, `.yaml`, `.csv`, …) names a file in the repository, so an unresolved target is a defect. This is what keeps a shard from citing a module that has been deleted. Targets that name no resolvable file — a bare word, a directory path — stay unvalidated, because nothing distinguishes a stale one from an illustrative one.
+
+The extensions come from two built-in lists, because a file's contents decide what can be said about it. **Code** extensions name files a symbol can cite a line in, which the [code evidence hook](../client-core/compile-hooks/code-evidence.md) does. **Data** extensions name files that hold configuration or records, validated for existence exactly like code but never cited by line, since a symbol found in inert content is an occurrence rather than a declaration. Neither list covers every stack, so `lint.codeExtensions` and `lint.dataExtensions` add to them; moving an extension into the code list is also how a repository asks for lines to be cited in a format that ships as data.
 
 Peer `mdcp links` / `markdown-link-check` remains optional for external URL HTTP checks — not a substitute for internal link validation.
 
@@ -132,7 +134,8 @@ Success still ends with `mdcp check passed` on stdout. Early hard stops (orphans
 | `lint.links.enabled`       | `true`    | Run built-in link validation                        |
 | `lint.links.severity`      | `"error"` | `"error"` exits 1; `"warn"` exits 0                 |
 | `lint.links.config`        | —         | Peer `markdown-link-check` only (not built-in gate) |
-| `lint.sourceExtensions`    | `[]`      | Extra source-file extensions, added to the defaults |
+| `lint.codeExtensions`      | `[]`      | Extra code extensions, validated and line-citable   |
+| `lint.dataExtensions`      | `[]`      | Extra data extensions, validated, never line-cited  |
 
 Per-guide: `guides[].compile.links.markBroken`.
 
@@ -162,7 +165,8 @@ link: docs/client-cli/consumer-migration.md:42: dead anchor "#missing-slug" (slu
 - Compiled link to a source file that does not resolve reports `missing file`
 - Link target without a resolvable file class (bare word, directory) stays unvalidated
 - `standaloneGuides` files are link-linted, globs included, at the scan root
-- An extension listed in `lint.sourceExtensions` is validated like a built-in one, with or without a leading dot
+- An extension listed in `lint.codeExtensions` or `lint.dataExtensions` is validated like a built-in one, with or without a leading dot
+- A data-file link is validated and rebased but carries no `#L` fragment; the same extension listed in `lint.codeExtensions` gets one
 - Compiled dead anchor after demotion
 - Compiled dead path after publish-relative link rewrite
 - Manifest-first guide link index — transitive guide does not overwrite manifest owner; index includes every `linkedSectionFiles` path for the compiling guide

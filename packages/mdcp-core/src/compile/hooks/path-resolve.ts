@@ -49,16 +49,15 @@ export function readTextFileAt(
 }
 
 /**
- * Extensions treated as source files for link resolution. A link whose target
- * carries one of these names a file in the repository, so an unresolved target
- * is a defect rather than prose.
+ * Extensions of files whose contents are code: a language, a template, a
+ * schema or an infrastructure definition. A symbol can name a line in one of
+ * these, which is what `codeEvidence` cites.
  *
  * No list of this kind is complete — a repository can be written in a language
- * or configured with a format that is not here — so it is a default rather than
- * a fixed set. `lint.sourceExtensions` adds to it, which is what a project
- * building on an unlisted stack needs.
+ * that is not here — so it is a default rather than a fixed set.
+ * `lint.codeExtensions` adds to it.
  */
-export const DEFAULT_SOURCE_EXTENSIONS: readonly string[] = [
+export const DEFAULT_CODE_EXTENSIONS: readonly string[] = [
   // JavaScript and TypeScript
   'ts',
   'tsx',
@@ -149,28 +148,12 @@ export const DEFAULT_SOURCE_EXTENSIONS: readonly string[] = [
   'twig',
   'razor',
   'cshtml',
-  // Data, schema and interface definitions
-  'json',
-  'jsonc',
-  'json5',
-  'yaml',
-  'yml',
-  'toml',
-  'ini',
-  'cfg',
-  'conf',
-  'properties',
-  'env',
-  'xml',
-  'xsd',
-  'csv',
-  'tsv',
+  // Schema and interface definition languages
   'sql',
   'graphql',
   'gql',
   'proto',
   'thrift',
-  'avsc',
   'cue',
   'jsonnet',
   'libsonnet',
@@ -190,13 +173,49 @@ export const DEFAULT_SOURCE_EXTENSIONS: readonly string[] = [
   'rules',
   'rego',
   'star',
-  // Notebooks and misc
-  'ipynb',
+  // Other executable formats
   'sol',
   'gd',
   'tres',
   'tscn',
 ];
+
+/**
+ * Extensions of files that hold data rather than code: configuration, tabular
+ * records, serialized documents.
+ *
+ * A link to one of these still names a file that has to exist, so data
+ * extensions are validated exactly like code ones. What they do not get is a
+ * cited line: a symbol found in inert content is an occurrence, not a
+ * declaration, so `codeEvidence` links a data file without a `#L` fragment. A
+ * repository that does want lines cited in, say, its workflow YAML moves the
+ * extension by listing it in `lint.codeExtensions`.
+ */
+export const DEFAULT_DATA_EXTENSIONS: readonly string[] = [
+  'json',
+  'jsonc',
+  'json5',
+  'yaml',
+  'yml',
+  'toml',
+  'ini',
+  'cfg',
+  'conf',
+  'properties',
+  'env',
+  'xml',
+  'xsd',
+  'csv',
+  'tsv',
+  'avsc',
+  'ipynb',
+];
+
+/** The two extension lists a repository can extend, as `config.lint` holds them. */
+export interface ExtensionConfig {
+  codeExtensions?: readonly string[];
+  dataExtensions?: readonly string[];
+}
 
 function extensionOf(path: string): string | null {
   const bare = path.split('#')[0].split('?')[0];
@@ -206,34 +225,53 @@ function extensionOf(path: string): string | null {
   return base.slice(dot + 1).toLowerCase();
 }
 
-/**
- * Build the effective extension set: the defaults plus whatever a repository
- * adds. A leading dot on a configured entry is accepted, since that is how
- * people write extensions.
- */
-export function sourceExtensionSet(extra: readonly string[] = []): Set<string> {
-  const set = new Set(DEFAULT_SOURCE_EXTENSIONS);
+function extendSet(set: Set<string>, extra: readonly string[] = []): Set<string> {
   for (const entry of extra) {
+    // A leading dot is accepted, since that is how people write extensions.
     const normalized = entry.trim().replace(/^\./, '').toLowerCase();
     if (normalized) set.add(normalized);
   }
   return set;
 }
 
+/** Code extensions: the defaults plus `lint.codeExtensions`. */
+export function codeExtensionSet(lint?: ExtensionConfig): Set<string> {
+  return extendSet(new Set(DEFAULT_CODE_EXTENSIONS), lint?.codeExtensions);
+}
+
+/** Data extensions: the defaults plus `lint.dataExtensions`. */
+export function dataExtensionSet(lint?: ExtensionConfig): Set<string> {
+  return extendSet(new Set(DEFAULT_DATA_EXTENSIONS), lint?.dataExtensions);
+}
+
 /**
- * True when `path` ends in a source-file extension.
- *
- * `extensions` is either the set from `sourceExtensionSet` — build it once when
- * checking many paths — or the raw `lint.sourceExtensions` array. Membership is
- * a set lookup rather than a generated regex, so a configured value cannot
- * change how matching behaves.
+ * Every extension that can name a file, code and data together. This is the
+ * set link validation and the prose path probe ask about: both are answering
+ * whether a file exists, a question that does not care what is inside it.
  */
-export function hasSourceExtension(
-  path: string,
-  extensions?: Set<string> | readonly string[],
-): boolean {
+export function fileExtensionSet(lint?: ExtensionConfig): Set<string> {
+  const set = codeExtensionSet(lint);
+  for (const ext of dataExtensionSet(lint)) set.add(ext);
+  return set;
+}
+
+/**
+ * True when `path` ends in an extension from `extensions`.
+ *
+ * Build the set once with `fileExtensionSet` or `codeExtensionSet` when
+ * checking many paths; omitting it uses every default. Membership is a set
+ * lookup rather than a generated regex, so a configured value cannot change
+ * how matching behaves.
+ */
+export function hasFileExtension(path: string, extensions?: Set<string>): boolean {
   const ext = extensionOf(path);
   if (!ext) return false;
-  const set = extensions instanceof Set ? extensions : sourceExtensionSet(extensions ?? []);
-  return set.has(ext);
+  return (extensions ?? fileExtensionSet()).has(ext);
+}
+
+/** True when `path` ends in a code extension, the ones a line can be cited in. */
+export function hasCodeExtension(path: string, extensions?: Set<string>): boolean {
+  const ext = extensionOf(path);
+  if (!ext) return false;
+  return (extensions ?? codeExtensionSet()).has(ext);
 }

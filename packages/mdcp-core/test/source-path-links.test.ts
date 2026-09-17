@@ -5,7 +5,11 @@
 import { describe, it, expect } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { hasSourceExtension, sourceExtensionSet } from '../src/compile/hooks/path-resolve.js';
+import {
+  fileExtensionSet,
+  hasCodeExtension,
+  hasFileExtension,
+} from '../src/compile/hooks/path-resolve.js';
 import { codeEvidenceHook } from '../src/compile/hooks/code-evidence.js';
 import { lintShardLinks } from '../src/links/validate-shards.js';
 import { validateCompiledLinkTarget } from '../src/links/validate.js';
@@ -15,13 +19,23 @@ import { compileGuideResults } from '../src/compile/assemble.js';
 import { MdcpConfigSchema } from '../src/config/schema.js';
 import { withTmpDir } from './helpers/tmp-dir.js';
 
-describe('hasSourceExtension', () => {
-  it('accepts source files and rejects prose, markdown and directories', () => {
-    expect(hasSourceExtension('src/thing.ts')).toBe(true);
-    expect(hasSourceExtension('config/app.yaml#L3')).toBe(true);
-    expect(hasSourceExtension('notes.md')).toBe(false);
-    expect(hasSourceExtension('src/')).toBe(false);
-    expect(hasSourceExtension('path')).toBe(false);
+describe('hasFileExtension', () => {
+  it('accepts files and rejects prose, markdown and directories', () => {
+    expect(hasFileExtension('src/thing.ts')).toBe(true);
+    expect(hasFileExtension('config/app.yaml#L3')).toBe(true);
+    expect(hasFileExtension('notes.md')).toBe(false);
+    expect(hasFileExtension('src/')).toBe(false);
+    expect(hasFileExtension('path')).toBe(false);
+  });
+
+  it('separates code from data while validating both', () => {
+    // A data file's existence is as checkable as a code file's. What the two
+    // do not share is a citable line, which is why the sets are distinct.
+    expect(hasFileExtension('data/measurements.csv')).toBe(true);
+    expect(hasCodeExtension('data/measurements.csv')).toBe(false);
+    expect(hasCodeExtension('src/thing.ts')).toBe(true);
+    expect(hasFileExtension('deploy/values.yaml')).toBe(true);
+    expect(hasCodeExtension('deploy/values.yaml')).toBe(false);
   });
 });
 
@@ -163,7 +177,7 @@ describe('lintLinks over standaloneGuides', () => {
   });
 });
 
-describe('configurable source extensions for links', () => {
+describe('configurable extensions for links', () => {
   it('defaults cover more than one ecosystem', () => {
     for (const path of [
       'src/a.ts',
@@ -177,17 +191,21 @@ describe('configurable source extensions for links', () => {
       'build.gradle',
       'deploy/values.yaml',
     ]) {
-      expect(hasSourceExtension(path)).toBe(true);
+      expect(hasFileExtension(path)).toBe(true);
     }
-    expect(hasSourceExtension('notes.md')).toBe(false);
-    expect(hasSourceExtension('src/thing.unheardof')).toBe(false);
+    expect(hasFileExtension('notes.md')).toBe(false);
+    expect(hasFileExtension('src/thing.unheardof')).toBe(false);
   });
 
-  it('accepts an extension a repository adds in config', () => {
-    const extensions = sourceExtensionSet(['unheardof', '.alsoOK']);
-    expect(hasSourceExtension('src/thing.unheardof', extensions)).toBe(true);
-    expect(hasSourceExtension('src/thing.ALSOOK', extensions)).toBe(true);
-    expect(hasSourceExtension('src/thing.ts', extensions)).toBe(true);
+  it('accepts an extension a repository adds in config, code or data', () => {
+    const extensions = fileExtensionSet({
+      codeExtensions: ['unheardof', '.alsoOK'],
+      dataExtensions: ['sav'],
+    });
+    expect(hasFileExtension('src/thing.unheardof', extensions)).toBe(true);
+    expect(hasFileExtension('src/thing.ALSOOK', extensions)).toBe(true);
+    expect(hasFileExtension('data/records.sav', extensions)).toBe(true);
+    expect(hasFileExtension('src/thing.ts', extensions)).toBe(true);
   });
 
   it('validates a link whose extension comes only from config', () => {
@@ -200,7 +218,7 @@ describe('configurable source extensions for links', () => {
       const issues = lintShardLinks({
         shardFile: shard,
         guideDir,
-        sourceExtensions: sourceExtensionSet(['unheardof']),
+        fileExtensions: fileExtensionSet({ codeExtensions: ['unheardof'] }),
       });
       expect(issues.map((i) => i.kind)).toEqual(['missing file']);
     });
@@ -223,6 +241,33 @@ describe('codeEvidence rebases source links without a line fragment', () => {
         outputFile: join(work, 'out', 'guide.md'),
       });
       expect(body).toContain('](../g/measurements.csv)');
+    });
+  });
+
+  it('cites a line in code but not in data', () => {
+    withTmpDir('mdcp-evidence-split-', (work) => {
+      const guideDir = join(work, 'g');
+      mkdirSync(guideDir, { recursive: true });
+      writeFileSync(join(guideDir, 'store.ts'), 'line one\nexport const threshold = 1;\n');
+      writeFileSync(join(guideDir, 'thresholds.csv'), 'name,value\nthreshold,1\n');
+      const run = (body: string, lint?: Record<string, string[]>) =>
+        codeEvidenceHook({
+          guideName: 'g',
+          filename: 'section.md',
+          body,
+          config: { compileOrder: ['g'], ...(lint ? { lint } : {}) },
+          sourceFile: join(guideDir, 'section.md'),
+        });
+
+      expect(run('See [`threshold`](./store.ts)\n')).toContain('./store.ts#L2');
+      // The same symbol occurs in the data file, as a cell rather than a
+      // declaration, so the link is left without a fragment.
+      expect(run('See [`threshold`](./thresholds.csv)\n')).toContain('](./thresholds.csv)');
+      expect(run('See [`threshold`](./thresholds.csv)\n')).not.toContain('#L');
+      // A repository that wants lines cited in a data format says so.
+      expect(run('See [`threshold`](./thresholds.csv)\n', { codeExtensions: ['csv'] })).toContain(
+        './thresholds.csv#L2',
+      );
     });
   });
 

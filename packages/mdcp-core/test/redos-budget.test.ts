@@ -66,11 +66,12 @@ describe('ReDoS budget demos (CodeQL js/polynomial-redos)', () => {
     expect(ms).toBeLessThan(BUDGET_MS);
   });
 
-  it('allow-prefix matching stays under budget on a long trailing slash run', () => {
+  it('declaration matching stays under budget on a long trailing slash run', () => {
     const ms = timeMs(() => {
       probePathClaims('/x/shard.md', 'See `docs/a.md`.\n', {
         searchRoots: [],
-        allow: [trailingSlashRun(SLASH_N)],
+        generated: [trailingSlashRun(SLASH_N)],
+        vocabulary: [trailingSlashRun(SLASH_N)],
       });
     });
     expect(ms).toBeLessThan(BUDGET_MS);

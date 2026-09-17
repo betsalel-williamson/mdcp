@@ -132,7 +132,7 @@
         "packages/mdcp-presets",
         "tests/skills/mdcp"
       ],
-      "allow": [
+      "generated": [
         "docs/_build",
         "_build",
         ".caches",
@@ -140,11 +140,10 @@
         ".tmp",
         "build",
         "node_modules",
-        "docs/client",
-        "docs/extensions",
         ".claude/skills",
         ".windsurf/skills"
-      ]
+      ],
+      "vocabulary": ["docs/client", "docs/extensions"]
     }
   },
   "vale": {
