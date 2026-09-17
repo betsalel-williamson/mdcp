@@ -32,6 +32,7 @@ Product documentation for **what mdcp is designed to do** — the problems it so
     - [Scope and positioning](./protocol/01-scope-and-positioning.md)
     - [Alternatives and adoption](./protocol/02-alternatives-and-adoption.md)
     - [Benefit claims and evidence](./protocol/benefit-claims-and-evidence.md)
+    - [Field report: a fully automated repository](./protocol/field-report-automated-repository.md)
     - [Usage model](./protocol/usage-model.md)
     - [Shard single responsibility and idea mitosis](./protocol/shard-srp-and-mitosis.md)
     - [Acknowledgments](./protocol/acknowledgments.md)
