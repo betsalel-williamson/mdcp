@@ -24,7 +24,9 @@ Specialized workflows that build on the parent skill. Use these to trigger speci
 
 Optional archetype skills for specific documentation architectures (Work in Progress).
 
-| Skill                                                                         | Description                           |
-| ----------------------------------------------------------------------------- | ------------------------------------- |
-| [mdcp-arch-oss-library](../skills/mdcp-arch-oss-library/SKILL.md)             | Open-source library archetype.        |
-| [mdcp-arch-product-docs-site](../skills/mdcp-arch-product-docs-site/SKILL.md) | Product documentation site archetype. |
+| Skill                                                                         | Description                                                                  |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [mdcp-arch-oss-library](../skills/mdcp-arch-oss-library/SKILL.md)             | Open-source library archetype.                                               |
+| [mdcp-arch-product-docs-site](../skills/mdcp-arch-product-docs-site/SKILL.md) | Product documentation site archetype.                                        |
+| [mdcp-arch-gtm](../skills/mdcp-arch-gtm/SKILL.md)                             | Go-to-market archetype.                                                      |
+| [mdcp-arch-research](../skills/mdcp-arch-research/SKILL.md)                   | Research project archetype: dated records kept separate from product shards. |

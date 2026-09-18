@@ -133,6 +133,8 @@ importers:
 
   packages/skill-mdcp-arch-product-docs-site: {}
 
+  packages/skill-mdcp-arch-research: {}
+
   packages/skill-mdcp-design-architecture: {}
 
   packages/skill-mdcp-doc-only: {}
