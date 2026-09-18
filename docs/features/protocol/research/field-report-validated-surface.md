@@ -1,6 +1,6 @@
 # Field report: the edge of the validated surface
 
-Evidence shard: what `mdcp check` caught and what it structurally could not, measured on a second repository by injecting defects and by replaying every commit. Parent: [Vision and roadmap](./00-vision-and-roadmap.md). The durable position this report argues for is [Enforceable rules](../design-constraints/enforceable-rules.md).
+Evidence shard: what `mdcp check` caught and what it structurally could not, measured on a second repository by injecting defects and by replaying every commit. Parent: [Vision and roadmap](../00-vision-and-roadmap.md). The durable position this report argues for is [Enforceable rules](../../design-constraints/enforceable-rules.md).
 
 ## Setting
 
@@ -67,15 +67,15 @@ These are static sizes rather than observed consumption. The corpus doesn't reco
 - **Every file that can carry a link should have its links checked.** This is the report's strongest finding, and it restates the conclusion of the first corpus: a rule with no failing check is a preference. Here the boundary was not a missing rule but a scoping decision that bought a fast, quiet check and paid with the only persistent breakage in the repository.
 - **A scan ignore list answers one question and is used for two.** "This file is not a shard, so do not expect it in a manifest" and "do not check the links in this file" are separate exemptions behind one configuration key. Every link in the third and fourth rows above broke because the second exemption was granted along with the first.
 - **Anchor identity should not depend on manifest order.** A suffix assigned by compile position makes a stable-looking anchor positional, and no signal distinguishes a fragment that resolves uniquely from one that resolves to the first of seven.
-- **A size ceiling cannot be normative as one number.** Shard size here is bimodal by job rather than normal: glossary entries average 63 words and audit records 722. One ceiling would be either meaningless for the first or violated by every instance of the second. The corpus doesn't impose a ceiling. It splits on responsibility instead, which is the position [Shard single responsibility and idea mitosis](./shard-srp-and-mitosis.md) already argues.
+- **A size ceiling cannot be normative as one number.** Shard size here is bimodal by job rather than normal: glossary entries average 63 words and audit records 722. One ceiling would be either meaningless for the first or violated by every instance of the second. The corpus doesn't impose a ceiling. It splits on responsibility instead, which is the position [Shard single responsibility and idea mitosis](../shard-srp-and-mitosis.md) already argues.
 
 Specific checker proposals are tracked in the issue tracker rather than here, so this shard stays a record of what was observed.
 
 ## Related
 
 - [Field report: a fully automated repository](./field-report-automated-repository.md) — the first corpus, on content drift
-- [Enforceable rules](../design-constraints/enforceable-rules.md) — the durable design position
-- [Link validation](../link-validation.md) — the structural checks that held
-- [Documentation coverage scan](../coverage-scan.md) — where the scan boundary is drawn
-- [Shard single responsibility and idea mitosis](./shard-srp-and-mitosis.md) — splitting on responsibility rather than length
-- [Benefit claims and evidence](./benefit-claims-and-evidence.md) — how field evidence may be used in public copy
+- [Enforceable rules](../../design-constraints/enforceable-rules.md) — the durable design position
+- [Link validation](../../link-validation.md) — the structural checks that held
+- [Documentation coverage scan](../../coverage-scan.md) — where the scan boundary is drawn
+- [Shard single responsibility and idea mitosis](../shard-srp-and-mitosis.md) — splitting on responsibility rather than length
+- [Benefit claims and evidence](../benefit-claims-and-evidence.md) — how field evidence may be used in public copy
