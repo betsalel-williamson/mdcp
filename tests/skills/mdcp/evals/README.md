@@ -1,6 +1,6 @@
 # Parent `mdcp` live evals
 
-Fixtures and prompts for the optional [skill-creator](../../../.agents/skills/skill-creator/SKILL.md) loop. Not a CI gate.
+Fixtures and prompts for the optional [skill-creator](../../../../.agents/skills/skill-creator/SKILL.md) loop. Not a CI gate.
 
 ## Layout
 
