@@ -16,7 +16,7 @@ This npm package is **not** the MDCP Agent Skill.
 
 - **This CLI** — shell/`npx` tool (`mdcp compile`, `mdcp check`, …) via `@bwilliamson/mdcp-cli` on npm
 - **Core** — programmatic library used by the CLI: [`@bwilliamson/mdcp-core`](https://www.npmjs.com/package/@bwilliamson/mdcp-core)
-- **Agent Skill** — host instructions (`SKILL.md`, subagents): [root README](../../README.md) / `npx skills add … --skill mdcp`
+- **Agent Skill** — host instructions (`SKILL.md` and its workflows): [root README](../../README.md) / `npx skills add … --skill mdcp`
 
 Slash `/mdcp` in an agent host loads the **skill**. The shell command `mdcp` runs **this CLI**. They are separate installs and separate docs.
 
@@ -28,7 +28,7 @@ Slash `/mdcp` in an agent host loads the **skill**. The shell command `mdcp` run
 
 [![npm version](https://img.shields.io/npm/v/@bwilliamson/mdcp-cli.svg)](https://www.npmjs.com/package/@bwilliamson/mdcp-cli)
 
-This package installs the **`mdcp` CLI** for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
+This package installs the **`mdcp` CLI** (MarkDown Context Protocol) for use in your repo or CI. It works in **any** codebase — language, framework, and repo layout do not matter; mdcp only manages your documentation shards and compile pipeline.
 
 This is **not** the Agent Skill. For skill install (`npx skills add`, `/mdcp help me get started`), see [root README](../../README.md) or [Agent Skill (related)](#agent-skill-related).
 
@@ -318,6 +318,28 @@ When a manifest has preamble prose with example inline links before an ordered `
 }
 ```
 
+### Review thresholds
+
+`mdcp review` reads optional thresholds from a top-level `review` object. Each value is a positive integer; omitted keys keep their defaults.
+
+```json
+{
+  "review": {
+    "maxIndexEntries": 12,
+    "maxShardWords": 2500,
+    "minDuplicateWords": 25
+  }
+}
+```
+
+| Field                      | Default | Role                                                                                  |
+| -------------------------- | ------- | ------------------------------------------------------------------------------------- |
+| `review.maxIndexEntries`   | `12`    | Most shard links one index group lists before `index-size` fires                      |
+| `review.maxShardWords`     | `2500`  | Most prose words one shard holds before `long-shard` fires                            |
+| `review.minDuplicateWords` | `25`    | Fewest words a paragraph needs before `duplicate-paragraph` compares it across shards |
+
+`mdcp review` also honors `scan.ignore` and `scan.root`, so paths the coverage scan skips stay out of the review. Signal definitions: [Commands reference](#sprawl-review).
+
 ### Schema-only fields
 
 | Field                | Notes                                             |
@@ -327,6 +349,71 @@ When a manifest has preamble prose with example inline links before an ordered `
 Full schema and examples: [mdcp.config.json in sample-guides](../../examples/sample-guides/mdcp.config.json).
 
 <!-- mdcp-shard: end ../../docs/client-cli/config-essentials.md -->
+
+<!-- mdcp-shard: start ../../docs/client-cli/consumer-migration.md -->
+
+## Consumer migration
+
+Add `source` to your config pointing at your existing monolith, then:
+
+```bash
+mdcp shard
+mdcp compile
+mdcp check
+```
+
+### Guide manifests and compile order
+
+Compile order comes from link order in each guide's `index.md` or `shards.md`. List shards in the manifest in the order you want them stitched.
+
+When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` — see [Manifest compile order](../../docs/features/manifest-compile-order.md).
+
+After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — there is no separate manifest sync step.
+
+### Output layout
+
+MDCP uses an NPM-style two-root layout.
+
+| Concept          | Default                            | Notes                                                                    |
+| ---------------- | ---------------------------------- | ------------------------------------------------------------------------ |
+| Docs root        | `--docs-root`                      | One subdirectory per guide; `compileOrder` selects which folders compile |
+| Output root      | `outputDir: "_build"`              | Safe to delete; all generated paths relative here unless absolute        |
+| Per-guide output | `{name}.md` under `_build`         | Or `guide.md` when only one guide                                        |
+| Monolith         | Opt-in via top-level `outputFile`  | Omitted by default                                                       |
+| Refs registry    | `.caches/refs.json` under `_build` | Derived state, not publish-facing                                        |
+
+Path resolution details: [Config essentials — path layout](#path-layout).
+
+### Compile hooks and multi-guide links
+
+Built-in hooks run by default — omit `compile.hooks` for the common case. Specs and multi-guide / `ignoreGuides` examples live in **core** docs (not duplicated here):
+
+- [Default compile hooks](../../docs/features/default-compile-hooks.md)
+- [Compile hooks](../mdcp-core/README.md#compile-hooks)
+- [Cross-guide links](../mdcp-core/README.md#cross-guide-link-rewriting)
+
+CLI config path rules remain in [Config essentials](#config-essentials).
+
+### Steps for a new consumer repo
+
+1. Add `mdcp.config.json` to your docs shard directory
+2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](#--config-vs---docs-root))
+3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
+4. Discover shards with host search; validate cross-link slugs with `mdcp check` (optional `mdcp refs-list`; prefer GitHub auto-slugs over ``)
+5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
+
+Upgrade notes from earlier MDCP releases are in package **CHANGELOGs** (and GitHub Releases), not in the feature catalog.
+
+### Verification checklist
+
+After setting up a consumer repo:
+
+1. **`mdcp compile`** — per-guide outputs under `_build/` (or explicit `compile.outputFile` targets); optional monolith when `outputFile` is set
+2. **`mdcp check --require-lint`** — orphans, refs, links, and markdownlint on in-scope guide shards
+3. **`mdcp check --require-vale`** — when Vale is configured
+4. **Hook output** — diagram tables inlined (`inlineInserts`), code evidence blocks resolved (`codeEvidence`), cross-guide links rewritten to monolith `#slug` targets (or left as shard `.md` paths for guides in `compile.crossGuideLinks.ignoreGuides`)
+
+<!-- mdcp-shard: end ../../docs/client-cli/consumer-migration.md -->
 
 <!-- mdcp-shard: start ../../docs/client-cli/commands-reference.md -->
 
@@ -370,12 +457,44 @@ When `mdcp check` fails after continuing through peer linters, it prints a stder
 | ---------------- | -------------------------------------------------------------------------------------------------- |
 | `mdcp compile`   | Regenerate compiled outputs and `refs.json` under `outputDir` (exits 1 on broken links by default) |
 | `mdcp check`     | Full gate: orphans → compile → refs → links; optional peer linters; non-fatal coverage report      |
+| `mdcp review`    | Report documentation sprawl signals across guide shards (report-only; `--strict` to fail)          |
 | `mdcp shard`     | Split a monolith into shards (requires `config.source`)                                            |
 | `mdcp refs-list` | List heading slugs from `refs.json` as JSON                                                        |
 | `mdcp lint`      | markdownlint-cli2 on shards and compiled output (peer, if installed)                               |
 | `mdcp prose`     | Vale prose lint (peer, if installed)                                                               |
 | `mdcp links`     | markdown-link-check on compiled output (peer, if installed)                                        |
 | `mdcp fix`       | Prettier + markdownlint `--fix` (install peers in host repo first)                                 |
+
+### Sprawl review
+
+`mdcp review` reads every shard compile reads for the guides in `compileOrder`, including nested shards and each guide manifest (`index.md` by default), and reports signals that a shard or index needs a human or agent to look at it. It never writes files and skips paths matched by `scan.ignore`. The signals point at [idea mitosis](#idea-mitosis) candidates; deciding whether to split, merge, or regroup stays with the reviewer (see [Shard single responsibility and idea mitosis](../../docs/features/protocol/shard-srp-and-mitosis.md)).
+
+```bash
+mdcp review --config docs/mdcp.config.json --docs-root docs
+mdcp review --config docs/mdcp.config.json --docs-root docs --json
+mdcp review --config docs/mdcp.config.json --docs-root docs --guide client-cli
+```
+
+| Signal                | Fires when                                                                                                                                                              | Fix                                                                               |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `index-size`          | One group of an index lists more than `review.maxIndexEntries` shard links. A group is the links under one `##` or deeper heading, or the links before any such heading | Group entries under headings named for the reader's task                          |
+| `long-shard`          | A shard holds more than `review.maxShardWords` prose words                                                                                                              | Check whether it serves two audiences or jobs; split it if so (idea mitosis)      |
+| `duplicate-paragraph` | The same paragraph of at least `review.minDuplicateWords` words appears in two or more shards                                                                           | Keep the paragraph in the shard that owns the rule and link to it from the others |
+| `similar-titles`      | Two shards in one guide have the same first `#` heading                                                                                                                 | Merge the shards, or retitle them so each title names its one job                 |
+
+Prose words exclude fenced code, front matter, HTML comments, and link targets. Table cell text and headings count as prose. Paragraphs and titles compare after folding case and whitespace and dropping emphasis markers and link targets; titles also drop punctuation. Each list item is its own paragraph.
+
+Text output groups findings by signal and lists docs-root-relative paths. `--json` prints an array of `{ signal, severity, files, detail, fix }` objects, where `severity` is always `"warning"`. A duplicate paragraph's `detail` names every `path:line` location.
+
+| Option           | Effect                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| `--json`         | Print findings as a JSON array                                                              |
+| `--strict`       | Exit 1 when there is at least one finding                                                   |
+| `--guide <name>` | Review one guide from `compileOrder`; keep findings that involve at least one of its shards |
+
+With `--guide`, a duplicate paragraph is reported when any copy sits in that guide, so duplication across guides still shows up. The shard count covers that guide only. An unknown guide name exits 1 and lists the guide names.
+
+Without `--strict`, `mdcp review` exits 0. Thresholds live under `review` in config; see [Config essentials](#review-thresholds).
 
 ### Refs subcommands
 
@@ -565,71 +684,6 @@ The `@bwilliamson/mdcp-presets` shard config supplies **rules and exclusions** (
 
 <!-- mdcp-shard: end ../../docs/client-cli/optional-linters.md -->
 
-<!-- mdcp-shard: start ../../docs/client-cli/consumer-migration.md -->
-
-## Consumer migration
-
-Add `source` to your config pointing at your existing monolith, then:
-
-```bash
-mdcp shard
-mdcp compile
-mdcp check
-```
-
-### Guide manifests and compile order
-
-Compile order comes from link order in each guide's `index.md` or `shards.md`. List shards in the manifest in the order you want them stitched.
-
-When a manifest has preamble prose with example inline links (not section shards), set `compile.sectionsHeading` — see [Manifest compile order](../../docs/features/manifest-compile-order.md).
-
-After changing a guide's `index.md`, run `mdcp compile` and `mdcp check` — there is no separate manifest sync step.
-
-### Output layout
-
-MDCP uses an NPM-style two-root layout.
-
-| Concept          | Default                            | Notes                                                                    |
-| ---------------- | ---------------------------------- | ------------------------------------------------------------------------ |
-| Docs root        | `--docs-root`                      | One subdirectory per guide; `compileOrder` selects which folders compile |
-| Output root      | `outputDir: "_build"`              | Safe to delete; all generated paths relative here unless absolute        |
-| Per-guide output | `{name}.md` under `_build`         | Or `guide.md` when only one guide                                        |
-| Monolith         | Opt-in via top-level `outputFile`  | Omitted by default                                                       |
-| Refs registry    | `.caches/refs.json` under `_build` | Derived state, not publish-facing                                        |
-
-Path resolution details: [Config essentials — path layout](#path-layout).
-
-### Compile hooks and multi-guide links
-
-Built-in hooks run by default — omit `compile.hooks` for the common case. Specs and multi-guide / `ignoreGuides` examples live in **core** docs (not duplicated here):
-
-- [Default compile hooks](../../docs/features/default-compile-hooks.md)
-- [Compile hooks](../mdcp-core/README.md#compile-hooks)
-- [Cross-guide links](../mdcp-core/README.md#cross-guide-link-rewriting)
-
-CLI config path rules remain in [Config essentials](#config-essentials).
-
-### Steps for a new consumer repo
-
-1. Add `mdcp.config.json` to your docs shard directory
-2. Add repo-root npm scripts, for example `mdcp compile --config docs/mdcp.config.json --docs-root docs` (see [Config essentials](#--config-vs---docs-root))
-3. Add `mdcp check --require-lint` (and `--require-vale` when Vale is configured)
-4. Discover shards with host search; validate cross-link slugs with `mdcp check` (optional `mdcp refs-list`; prefer GitHub auto-slugs over ``)
-5. Update CI to build and invoke `@bwilliamson/mdcp-cli`
-
-Upgrade notes from earlier MDCP releases are in package **CHANGELOGs** (and GitHub Releases), not in the feature catalog.
-
-### Verification checklist
-
-After setting up a consumer repo:
-
-1. **`mdcp compile`** — per-guide outputs under `_build/` (or explicit `compile.outputFile` targets); optional monolith when `outputFile` is set
-2. **`mdcp check --require-lint`** — orphans, refs, links, and markdownlint on in-scope guide shards
-3. **`mdcp check --require-vale`** — when Vale is configured
-4. **Hook output** — diagram tables inlined (`inlineInserts`), code evidence blocks resolved (`codeEvidence`), cross-guide links rewritten to monolith `#slug` targets (or left as shard `.md` paths for guides in `compile.crossGuideLinks.ignoreGuides`)
-
-<!-- mdcp-shard: end ../../docs/client-cli/consumer-migration.md -->
-
 <!-- mdcp-shard: start ../../docs/client-cli/why-mdcp-for-agents.md -->
 
 ## Why mdcp for coding agents
@@ -646,7 +700,7 @@ Which **CLI commands** address common docs failures when agents edit the repo:
 
 Typical loop: edit shards → `mdcp compile` → `mdcp check` → optional `mdcp refs-list` → read one shard when the next turn needs doc context.
 
-Install and flags: [Install and quick start](#install-and-quick-start). Agent **behavior** (when to edit docs, subagents) is the [Agent Skill](../../README.md), not this package.
+Install and flags: [Install and quick start](#install-and-quick-start). Agent **behavior** (when to edit docs, which workflow to follow) is the [Agent Skill](../../README.md), not this package.
 
 <!-- mdcp-shard: end ../../docs/client-cli/why-mdcp-for-agents.md -->
 
@@ -695,10 +749,10 @@ MIT
 
 ## LLM collaboration
 
-Agent workflow (subagents, intake, docs-first turns) lives in the **Agent Skill**, not this CLI package.
+Agent workflow (task workflows, intake, docs-first turns) lives in the **Agent Skill**, not this CLI package.
 
 - Skill landing: [root README](../../README.md)
-- Helper skills catalog and invoke recipes: [`docs/skills.md`](../../docs/skills.md)
+- Skill and workflow catalog: [`docs/skills.md`](../../docs/skills.md)
 
 This CLI package covers shell commands only. Wire scripts with [Agent integration](#agent-integration); install with [Install and quick start](#install-and-quick-start).
 
@@ -717,6 +771,18 @@ The **MDCP Agent Skill** is a separate install from `@bwilliamson/mdcp-cli`.
 The skill does **not** ship the `mdcp` binary. Keep this package (or [Agent integration](#agent-integration) scripts) for `mdcp compile` / `mdcp check`.
 
 <!-- mdcp-shard: end ../../docs/client-cli/agent-skill.md -->
+
+<!-- mdcp-shard: start ../../docs/glossary/idea-mitosis.md -->
+
+## idea mitosis
+
+**Idea mitosis** is splitting a documentation shard when it grows a second responsibility — a second audience, job (explain vs how-to vs look-up), or independent concern — or when reading the file alone misleads. After a split, update the guide index and cross-link the daughter shards.
+
+Do not split only because a file is long. Prefer one primary concern per shard.
+
+See [Shard single responsibility and idea mitosis](../../docs/features/protocol/shard-srp-and-mitosis.md).
+
+<!-- mdcp-shard: end ../../docs/glossary/idea-mitosis.md -->
 
 <!-- mdcp-shard: start ../../docs/glossary/heading-slug.md -->
 

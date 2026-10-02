@@ -6,8 +6,7 @@ mdcp/
 ├── README.md               # Compiled from docs/repo-readme/ (committed)
 ├── DEVELOPERS.md           # Compiled from docs/developer/ (committed)
 ├── skills/                 # Agent Skills install surface only (npx skills add)
-│   ├── mdcp/               # Parent skill (no package.json / CHANGELOG here)
-│   ├── mdcp-*/             # Helper skills
+│   ├── mdcp/               # The MDCP skill + workflows (no package.json / CHANGELOG here)
 │   └── mdcp-arch-*/        # WIP archetypes (metadata.internal)
 ├── tests/skills/           # Live eval fixtures (optional; not publishable packs)
 ├── skills.sh.json          # skills.sh repo page layout
@@ -16,6 +15,7 @@ mdcp/
 │   ├── mdcp-core/          # @bwilliamson/mdcp-core
 │   ├── mdcp-cli/           # @bwilliamson/mdcp-cli
 │   ├── mdcp-presets/       # @bwilliamson/mdcp-presets
+│   ├── mdcp-site/          # Starlight docs site (private, unversioned)
 │   └── skill-*/            # Private @bwilliamson/skill-* version carriers + CHANGELOGs
 ├── docs/                   # Sharded docs (mdcp.config.json) — dogfood target
 │   ├── glossary/           # Shared acronyms and terms (cross-guide, like insert libraries)

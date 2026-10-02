@@ -24,11 +24,11 @@ Filter for new capabilities: [Direct value bar](../design-constraints/direct-val
 
 ## Phased delivery
 
-| Phase  | Surface                                                                                            | Access model                                                                                              |
-| ------ | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **V1** | **Agent Skills** pack (`skills/mdcp` via `npx skills add`) + `mdcp compile`/`check` + task helpers | **V1 transport:** repo access (git clone, SSH, IDE) — delivery surface for shards, not the content domain |
-| **V2** | MDCP MCP server (shard read, glossary search)                                                      | Repo access                                                                                               |
-| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                      | Opt-in publish                                                                                            |
+| Phase  | Surface                                                                                              | Access model                                                                                              |
+| ------ | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **V1** | **Agent Skills** pack (`skills/mdcp` via `npx skills add`) + `mdcp compile`/`check` + task workflows | **V1 transport:** repo access (git clone, SSH, IDE) — delivery surface for shards, not the content domain |
+| **V2** | MDCP MCP server (shard read, glossary search)                                                        | Repo access                                                                                               |
+| **V3** | Hosted context API (OpenAPI spec, API keys, polyglot clients)                                        | Opt-in publish                                                                                            |
 
 ```text
   V1 authoring     shards → compile → check → Agent Skill (/mdcp)
@@ -58,7 +58,7 @@ MDCP is **not** an MCP server. MCP delivers runtime access; MDCP enforces shard 
 
 MDCP authoring is [GFM-only](../design-constraints/gfm-scope.md). Compiled GFM output can feed Pandoc, MkDocs, Docusaurus, or other publish pipelines. Agent-only guides and publish-only guides may differ in scope.
 
-Helper skills are part of the V1 authoring profile — [Agent helper skills](./agent-task-prompts.md).
+Skill workflows are part of the V1 authoring profile — [Skill workflows](./skill-workflows.md).
 
 ## Related issues
 

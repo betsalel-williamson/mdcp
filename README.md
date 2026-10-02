@@ -8,7 +8,7 @@
 
 [![skills.sh](https://skills.sh/b/betsalel-williamson/mdcp)](https://skills.sh/betsalel-williamson/mdcp)
 
-**mdcp** is a **documentation system** delivered as an [Agent Skill](https://agentskills.io) plus a small compile/check toolchain. It is for people who know good docs compound — and that unvalidated monolith READMEs get expensive as product ideas keep arriving.
+**mdcp** (MarkDown Context Protocol) is a **documentation system** delivered as an [Agent Skill](https://agentskills.io) plus a small compile/check toolchain. It is for people who know good docs compound — and that unvalidated monolith READMEs get expensive as product ideas keep arriving.
 
 Instead of dumping every mind map, architecture note, and spec into one file that overwhelms both humans and LLM context windows, MDCP keeps that intent in small, validated Markdown **shards** — for example `docs/features/my-feature.md`, `docs/procedures/line-changeover.md`, `docs/equipment/press-manual.md`, or `docs/training/onboarding-module.md`. Agents learn to read **one shard at a time**, update shards before changing the system (software, procedures, or training), and run checks in CI — so documentation stays findable and trustworthy as the system grows. Discover and install via [skills.sh](https://skills.sh/betsalel-williamson/mdcp).
 
@@ -112,7 +112,7 @@ flowchart TB
   shards --> check["mdcp check — validation gate"]
 ```
 
-- **[Skill](https://agentskills.io)** ([MDCP sense](docs/glossary/skill.md)) — instructions your agent follows (`/mdcp`, helpers).
+- **[Skill](https://agentskills.io)** ([MDCP sense](docs/glossary/skill.md)) — instructions your agent follows (`/mdcp`, which picks a workflow for each task).
 - **[Shards](docs/glossary/shard.md)** — source of truth; compiled READMEs are generated — do not hand-edit them.
 - **[Check](docs/glossary/check.md)** — keeps the docs system honest as it grows.
 
@@ -126,7 +126,7 @@ Deeper model: [Overview](docs/features/overview.md). Install path: [Get started]
 
 MDCP has **three separate surfaces**. Each has its own docs — do not treat them as one install or one README.
 
-- **Agent Skill** — `npx skills add … --skill mdcp`. How agents maintain shards (`/mdcp`, subagents). Docs: **this README**.
+- **Agent Skill** — `npx skills add … --skill mdcp`. How agents maintain shards (`/mdcp` and its workflows). Docs: **this README**.
 - **CLI** — `npm i -D @bwilliamson/mdcp-cli`. Shell commands only. Docs: [`@bwilliamson/mdcp-cli`](./packages/mdcp-cli/README.md).
 - **Core** — `npm i @bwilliamson/mdcp-core`. Programmatic API only. Docs: [`@bwilliamson/mdcp-core`](./packages/mdcp-core/README.md).
 
