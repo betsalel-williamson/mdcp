@@ -16,9 +16,9 @@ doc-only). Adapt teaching depth to **EXPERIENCE**.
 **Bootstrap out of scope:** inventing TDD rituals or atomic commit grouping
 during scaffold only — the day-to-day workflows own those when the tutorial runs.
 
-## Intake (ask before editing)
+## Intake
 
-Ask for missing values; wait; do not invent. Skip only if already provided.
+Ask only for values the request does not give, and only when someone can answer; otherwise follow **When nobody can answer** in `SKILL.md` (default **EXPERIENCE** is expert).
 
 1. **FEATURE** — feature or project name for initial docs
 2. **PERSONA** — primary audience for the client / end-user guide
@@ -88,6 +88,16 @@ Seed domain terms that meet the inclusion bar; one `.md` per term + index.
 
 `mdcp compile` then `mdcp check` until clean. After cross-links, re-check;
 fragments must match **compiled** output (`mdcp refs list` if needed).
+
+`mdcp check` runs Vale whenever a `vale` binary is on `PATH`, reading
+`.vale.ini` from the docs root, and fails when that file is missing. Settle
+this before the first check so a fresh scaffold passes as is:
+
+- If the user asked for prose linting, write a real `.vale.ini` (styles plus
+  `vale sync`) and fix what it reports.
+- Otherwise write a placeholder `.vale.ini` in the docs root holding only
+  `MinAlertLevel = error` and a comment saying styles come later.
+  Tell the user prose linting is off until they add styles.
 
 If the project is under active development, with changes landing every week,
 recommend the weekly review routine from `SKILL.md`. For a one-off project, say

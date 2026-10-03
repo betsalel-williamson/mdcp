@@ -23,7 +23,7 @@ before handing off to normal delivery.
 
 | Obligation                  | As-built expectation                                                                                                               |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Bootstrap intake            | Ask for `FEATURE`, `PERSONA`, and `EXPERIENCE` (novice vs expert) before editing                                                   |
+| Bootstrap intake            | Collect `FEATURE`, `PERSONA`, and `EXPERIENCE` (novice vs expert); ask only when someone can answer, else default to expert        |
 | Inspect repo state          | Detect greenfield vs brownfield; discover package manager and existing docs before scaffolding                                     |
 | Install toolchain           | Add CLI/presets with the repo’s package manager; wire `mdcp compile` / `mdcp check` into scripts                                   |
 | Scaffold four-tier guides   | Create `docs/features/`, `docs/client/`, `docs/developer/`, `docs/glossary/` with indexes and starter shards                       |
@@ -31,7 +31,7 @@ before handing off to normal delivery.
 | Seed domain terms           | Add initial glossary entries that meet the bar; link from starter shards                                                           |
 | Brownfield migration        | Scaffold **alongside** legacy docs; mark migrated legacy files ready to archive — never auto-delete                                |
 | Experience-adaptive depth   | Novice: tutorial shards and concept pauses; expert: concise FEATURE starters only                                                  |
-| Validate                    | Run `mdcp compile` / `mdcp check` until clean                                                                                      |
+| Validate                    | Run `mdcp compile` / `mdcp check` until clean; with Vale installed and no prose linting asked for, add a placeholder `.vale.ini`   |
 | First-feature tutorial      | After bootstrap, offer walkthrough (default yes for novice); resolve `EXAMPLE_MODE`; run workflow phases in order                  |
 | EXAMPLE_MODE                | **recommended** (`hello-greeting`) or **bring-your-own** (user FEATURE / PERSONA; one small slice)                                 |
 | Closing CTA                 | Star, review/feedback, share; explore [dora.dev/ai](https://dora.dev/ai/); join [dora.community/join](https://dora.community/join) |
