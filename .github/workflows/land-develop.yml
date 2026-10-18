@@ -66,6 +66,12 @@ jobs:
           esac
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # MDCP is archived and its develop branch is retired: nothing to land.
+          if ! git ls-remote --exit-code --heads origin develop >/dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "No develop branch: MDCP is archived, so ${BRANCH} has nothing to land." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           git fetch origin develop
           develop_sha="$(git rev-parse origin/develop)"
           echo "develop_sha=${develop_sha}" >> "$GITHUB_OUTPUT"
