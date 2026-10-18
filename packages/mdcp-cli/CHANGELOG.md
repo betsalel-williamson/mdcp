@@ -1,5 +1,393 @@
 # @bwilliamson/mdcp-cli
 
+## 0.8.0
+
+### Minor Changes
+
+- 9bc05cd: Make the file extension lists broad, split and configurable
+
+  The set of extensions that mark a link target or path claim as naming a file was
+  a fixed regex covering about 30 mostly web-stack extensions. It is now two
+  default lists. **Code** extensions span JVM, .NET, systems, scripting, template,
+  schema and infrastructure formats: a symbol can cite a line in one of these.
+  **Data** extensions cover configuration, tabular and serialized formats, which
+  are validated for existence exactly like code but never cited by line, because
+  an identifier found in inert content is an occurrence rather than a declaration.
+
+  `lint.codeExtensions` and `lint.dataExtensions` extend the defaults for a project
+  on a stack they do not list. Moving an extension into the code list is also how a
+  repository asks for lines to be cited in a format that ships as data, its
+  workflow YAML for instance. Entries are accepted with or without a leading dot,
+  and matching is a set lookup rather than a generated pattern, so a configured
+  value cannot change how matching behaves.
+
+  Both lists together govern link validation and path resolution in prose, which
+  additionally always accepts `.md` and `.mdx`. The `codeEvidence` compile hook
+  rewrites links for either list and cites lines only from the code one.
+
+  Broadening the defaults exposed a compile bug: `codeEvidence` rebased a file
+  link relative to the output file only when it also added an `#L` line fragment,
+  so a link to a data file stayed shard-relative and broke in output published
+  from another directory. It now rebases whenever the target resolves.
+
+- 9bc05cd: Add `mdcp review`, a report-only command that flags documentation sprawl across guide shards: index groups with too many shard links (`index-size`), shards with too many prose words (`long-shard`), paragraphs repeated in two or more shards (`duplicate-paragraph`), and shards in one guide that share a title (`similar-titles`). Each finding names the files and a fix. Use `--json` for machine-readable output, `--strict` to exit 1 when there are findings, and `--guide <name>` to review one guide (duplicates shared with other guides included). Tune thresholds with the new optional `review` config object (`maxIndexEntries`, `maxShardWords`, `minDuplicateWords`); paths in `scan.ignore` are skipped. Core exports `reviewDocs` and `formatReviewReport`.
+- 9bc05cd: Add opt-in path resolution for backtick paths in prose
+
+  `mdcp check` can now resolve backtick-quoted repository paths in shards and
+  standalone guides, and fail on the ones that resolve nowhere. This catches a
+  document describing code, files or a component that no longer exists — prose a
+  link check never reads.
+
+  Off by default (`lint.paths.severity: "off"`). Turning it on for a corpus
+  written without it produces findings that are correct as written, so a
+  repository enables it deliberately, cleans up once, and keeps it on.
+
+  A claim needs a directory segment and a name, so a bare `index.md`, a single
+  `src/`, a command line, a glob, a flag and a code identifier are not claims.
+  Claims resolve against the file's own directory, the scan root, the docs root,
+  each guide `scopeRoot`, and `lint.paths.searchRoots`.
+
+  Two config lists declare why a path legitimately does not resolve, and they say
+  which case they are rather than sharing one allow-list. `lint.paths.generated`
+  covers paths that exist only after a build or install, matched as a prefix since
+  nothing under one exists yet. `lint.paths.vocabulary` covers a name the
+  repository documents without having, such as a protocol tier a consumer creates,
+  matched exactly so an invented file beneath that name still has to resolve.
+
+  Because no pattern separates a stale path from an always-illustrative one, the
+  discriminator is authorial: `<!-- mdcp-paths: illustrative -->` exempts the file
+  when it stands alone on a line, or one line when it trails content.
+
+- 9bc05cd: List every compiled output in the refs registry, each slugged on its own
+
+  With top-level `outputFile` set, `mdcp compile`, `mdcp refs-gen` and
+  `mdcp check` built `refs.json` from the monolith alone. A guide with
+  `compile.outputFile` isn't in the monolith, so adding a monolith dropped every
+  publish output's headings from `refs.json` and from `mdcp refs-list`.
+
+  The registry now has an `outputs` array beside the top-level `headings` and
+  `slugs`, with one entry for each file compile writes. The entries list each
+  compiled guide in `compileOrder`, publish outputs included, then the monolith.
+  An entry gives the file's path relative to the docs root in `file`, the guide's
+  name in `guideName` for a compiled guide, and that file's `headings` and
+  `slugs`. Each file is slugged on its own, so a guide's `setup` heading keeps
+  that slug in its compiled guide when the monolith numbers it `setup-1`. Each
+  heading's `line` is a line of the file as compile writes it, banner included.
+  The top-level `headings` and `slugs` don't change.
+
+  `@bwilliamson/mdcp-core` adds `refsOutputTexts(results, options)`, which
+  returns each compiled output's docs-root-relative file and written text from
+  `compiledOutputDocuments`, and `buildRefsRegistry(compiledText, outputs)`.
+  `genRefsFromCompiled` and `checkRefsRegistry` take that list as an optional
+  third argument. Without it they write and check a registry with no `outputs`,
+  as before. So `checkRefsRegistry` without `outputs` reports a `refs.json` that
+  `mdcp compile` wrote as stale. Pass `refsOutputTexts(results, options)` to
+  check it. `RefsRegistry` gains the optional `outputs` field, and the package
+  exports the `RefsOutput` and `RefsOutputText` types.
+
+  `LinkIssue` gains `inMonolith`, which link lint sets on each issue it reports
+  for the monolith. `formatLinkIssue` then labels the issue
+  `(guide "a" in the monolith)`. It used to label it `(compiled guide "a")`,
+  though the issue's file is the monolith and not that compiled guide.
+
+  `mdcp refs-list` now prints the headings of every output, each with its
+  `file`. A guide in the monolith appears twice, once for its compiled guide and
+  once for the monolith. JSON entries gain a `file` field. `--format table`
+  starts each line with the file, and the slug is now the second column. For a
+  `refs.json` without `outputs`, `mdcp refs-list` prints the top-level headings.
+  On stderr it gives the registry's path and suggests `mdcp refs-gen`. The hint
+  that `mdcp check` prints for a dead anchor now points at
+  `mdcp refs-list --format table` for the slugs of a compiled output. It also
+  says that a bare `#fragment` can point at a section's id, which the registry
+  leaves out with the headings of a standalone guide.
+
+  `mdcp refs-check` reports a `refs.json` from an earlier version as stale until
+  a compile rewrites it.
+
+- 9bc05cd: Validate source-file link targets and link-lint standalone guides
+
+  `mdcp check` now fails on a link whose target names a source file that does not
+  resolve, in shard sources and in compiled output. Previously any target not
+  ending in `.md` was skipped, so a link to a deleted module passed the gate
+  indefinitely.
+
+  Files registered under `standaloneGuides` are now link-linted with the same
+  checks a shard gets. They are never compiled, so no phase read their links
+  before; the docs already claimed they were validated.
+
+  Targets that name no resolvable file class — a bare word, a directory path —
+  stay unvalidated.
+
+- 9bc05cd: `mdcp prose` and `mdcp check` run Vale over the files that `standaloneGuides` registers, as well as the guide directories. They add the standalone files when `vale.scanGlobs` is set too, because that setting replaces only the guide directories. Each standalone guide is linted once, even when it is inside a scanned directory or two `standaloneGuides` entries match it. The exception is a guide that a scanned directory also reaches through a symlinked subdirectory, which Vale lints under both names.
+
+  Vale gets absolute paths in every setup. Vale runs from the docs root, so when `vale.scanGlobs` is unset and a guide has no `guides[].path`, a relative `--docs-root` such as `docs` used to give Vale `docs/<guide>`, which resolves nowhere from there. When that was Vale's only path, Vale read it as text and passed without linting anything. With any other path next to it, such as a second guide, Vale stopped with a runtime error. Those guide shards are linted now in both cases, so expect new alerts from them as well as from the standalone guides.
+
+  When `vale.scanGlobs` is unset and a guide has no `guides[].path`, `--docs-root .` used to give Vale relative paths such as `guide`, so a relative `.vale.ini` section such as `[guide/*.md]` matched. That section stops matching now. The files it named get the settings of the Markdown section, such as `[*.md]`, instead, and Vale prints absolute file paths. Start such a section with `**/`, as in `[**/guide/*.md]`, which matches before and after this change.
+
+  With Vale installed, `mdcp check` and `mdcp prose` fail after this upgrade, with or without `--require-vale`, when a standalone guide or a newly linted shard breaks an error-level Vale rule. A `vale.scanGlobs` entry for a missing path, such as a glob, can fail them too, because Vale does not expand globs. When a missing path is Vale's only argument, Vale reads it as text and passes without linting anything. With more than one path, as when standalone guides are added, a missing one stops Vale with a runtime error. `mdcp check` points a runtime error at `.vale.ini` and `vale.scanGlobs`, and points alerts at the opt-out below.
+
+  To keep Vale off one file, such as vendored text, give it a section at the end of `.vale.ini`, after every section that matches the file, such as `[*.md]` or `[*.{md,mdx}]`:
+
+  ```ini
+  [**/CODE_OF_CONDUCT.md]
+  BasedOnStyles =
+  ```
+
+  Start the section with `**/`, because mdcp passes Vale absolute paths, and a section such as `[CODE_OF_CONDUCT.md]` never matches. A rule that an earlier section sets by name, such as `MDCP.DatedClaim = warning`, stays on until this section sets it to `NO`. The CLI README's "Opt a standalone guide out of Vale" section has the full example.
+
+  `standaloneGuides` globs match without the coverage scan's ignore list, so a broad glob such as `**/README.md` also sends files under `node_modules` to Vale. List narrower globs.
+
+### Patch Changes
+
+- 9bc05cd: The CLI README links the new Check gate spec in the features guide, which lists the `mdcp check` stages in order and says which ones stop the run. The command summary row for `mdcp check` no longer gives a stage list. That list left out the path stage and called coverage non-fatal, though coverage fails the run under `scan.strict: true`. The daily workflow section and the consumer verification checklist link the spec instead of listing stages. The checklist's `--require-lint` item says that the flag requires markdownlint-cli2 for each configured markdownlint stage, the compiled one included. The README also says that coverage under `scan.strict: true` stops the run before the failure summary prints. The optional linters section says that `mdcp links` exits 1 when the config sets neither `lint.links.target` nor top-level `outputFile`. With a target set, the command prints an info line and exits 0 when markdown-link-check is missing, where the section said it skips quietly.
+- 9bc05cd: README cleanup. The CLI README explains in one section, "Not the Agent Skill", how the CLI, the core library and the Agent Skill differ. The "LLM collaboration" and "Agent Skill (related)" sections that repeated it are gone. The core README folds its Overview section into About.
+
+  Deep links to the CLI README's `#llm-collaboration` and `#agent-skill-related` anchors no longer resolve, so point them at `#not-the-agent-skill`. The core README's `#overview` anchor is gone too, and its content is now under `#about-bwilliamsonmdcp-core`.
+
+  Both READMEs now put their related packages, further reading and license after the guide sections, just before the glossary. In the CLI README these sat inside the Agent integration section, and in the core README they came before the API sections. The related packages are a list instead of a table, and the presets entry describes the MDCP Vale style as well as the markdownlint configs. The `#related-packages`, `#further-reading` and `#license` anchors don't change.
+
+  The CLI README says once, in the `refs` glossary entry, that refs check links and do not find documents. Other CLI sections no longer repeat it, and the command reference links to that entry. The `refs` and `refs registry` glossary entries use the registered command names `mdcp refs-gen` and `mdcp refs-check`, and the config table calls `refs.registryFile` the refs registry file instead of a lookup table.
+
+  The CLI README gives the output layout and its defaults once, under "Path layout" in Config essentials. Project layout and Consumer migration link there instead of repeating the outputs table, so links to `#generated-output-outputdir-default-_build` or `#output-layout` should point at `#path-layout`. Config essentials renames "Guide = one subdirectory" to "Resolution bases", and the refs registry section renames its own "Path layout" heading to "Registry location", so the README has one "Path layout" heading. In the core README, the API Config section says which defaults `loadConfig` fills and links to Config essentials for the output layout instead of listing it.
+
+  Config essentials gives the minimal config and its top-level field table their own "Minimal config" section. They used to sit under "Link validation" and read as part of it. The "Opt-in output backup", "Link validation" and "`sectionsHeading`" subsections are gone. A new "Feature settings" section lists the default of each link, path and backup key, and links to the feature spec that explains each key. Links to `#opt-in-output-backup`, `#link-validation` or `#sectionsheading` should point at `#feature-settings`.
+
+  The CLI README's Consumer migration section is now about moving an existing document into shards. Its "Steps for a new consumer repo" are gone: the Quick start already had the config and repo-root commands, and it now ends with adding the `docs:compile` and `docs:check` scripts (with `--require-lint`) and running them in CI. Links to `#steps-for-a-new-consumer-repo` should point at `#quick-start`. The manifest section is one paragraph that links to the Manifest compile order spec. The pointer to upgrade notes moved to Stability. The core README's Stability section now asks for the changelog and release notes of each MDCP package you use, in the same words as the CLI README.
+
+- 9bc05cd: Use "compiled guide" for the file compile writes for one guide, and keep "monolith" for the optional top-level `outputFile`. The `mdcp compile` help text now reads "Stitch shards into compiled guides". The `ignoreGuides` type docs now say that links to a listed guide's shards keep source `.md` paths instead of `#slug` targets in the file that holds the target guide. The `standaloneGuides` schema description now says a standalone guide doesn't get compile output of its own. The `mdcp shard` help text now reads "Split a source document into shards (md-tree)". The `mdcp` skill's context guardrails tell agents not to load whole compiled output (a compiled guide or the monolith). The product docs site archetype skill now says "one large file" instead of "monolith" for an oversized authoring tree.
+- 9bc05cd: Lint each compiled output against its own slugs, and lint the monolith as a document
+
+  `lintLinks` accepted a compiled `#fragment` when it matched a heading of the
+  output or the slug of any shard in the guide link index. So a guide could link
+  `#topic` to a heading that only another guide's compiled guide has, and
+  `mdcp check` passed. The monolith was never linted as a document, apart from
+  its BROKEN LINK markers. Issue lines also left out the banner, so a diagnostic
+  named a line two lines above the link in the written file.
+
+  Each `CompileGuideResult` now has `knownSlugs`, the slugs broken-link marking
+  accepted besides the headings of `text`: the slug of each section `text`
+  stitches, such as a `FIND-*` finding id or a declared `{#id}`. A guide in the
+  monolith also has `monolithKnownSlugs` for `monolithText`, the section slugs of
+  every copy there. Link lint checks a fragment in an output against that
+  output's headings and known slugs, so compile and check agree. A fragment on a
+  link to another output still has to match a heading there, so a link to a
+  shard that the output doesn't stitch fails, even when the shard is in the
+  directory of the output's guide. It passes only when another heading there has
+  the same slug, and it then points at that heading.
+
+  Broken-link marking now accepts only the slugs of sections the document
+  stitches. It used to accept the slug of each shard that the guide link index
+  gives the guide, such as a shard in the guide's directory. So a link to such a
+  shard that the guide doesn't stitch passed compile and check and pointed at no
+  heading. Compile now marks it. In the monolith, a link to a shard that no
+  guide there stitches is marked too, unless another heading or section there has
+  the slug the link takes. Such a link then points at that heading, or at no
+  heading when only a section's declared `{#id}` has the slug, and compile and
+  link lint pass it in the monolith. Each copy in the monolith accepts the section
+  slugs of every copy, whichever guide is the shard's owner.
+
+  Link lint reads each output as compile writes it, banner included, through the
+  new `compiledOutputDocuments` export. It lints the monolith as a document of
+  its own and leaves out an issue that the guide's compiled guide already
+  reports for the same link. It matches a link issue or a BROKEN LINK marker at
+  the same line of the guide's text first. It reports a monolith issue under the
+  guide whose copy holds its line, as it does for a compiled guide. Called without
+  `compileOptions`, `lintLinks` now counts the banner from config in its line
+  numbers and lints the monolith too. The `knownSlugs` option of `assembleGuide`
+  is now marked deprecated. Assembly already ignored it.
+
+  `mdcp compile` and `mdcp check` report these issues. A diagnostic now gives the
+  line of the written file, banner included, and a monolith issue gives the guide
+  whose copy holds its line.
+
+  Compile now adds a newline to a `banner` that lacks one. The banner's last line
+  used to share a line with the guide's title, which then had no anchor in the
+  written file. A later heading with the same title lost its number too. A link
+  to either heading named a slug that the written file didn't have.
+
+  A check that passed before can fail when a guide links a `#fragment` that only
+  another output has. Link it through its shard file instead, so compile
+  rewrites the link to that output. That doesn't clear a link to a `FIND-*`
+  shard or to a heading with a `{#id}` marker, since no heading in the other
+  output has the id that the rewritten link gives.
+
+- 9bc05cd: Match compiled `.md` links to compile outputs by path, not file name
+
+  `mdcp check` skipped a compiled `.md` link whenever its file name matched any
+  output of the run. With the root `README.md` as an output, a link to a package
+  `README.md` passed even when that file was gone or its `#fragment` named no
+  heading. Publish-only output had a similar fallback that took an allowed publish
+  path with the same file name as the target.
+
+  A link now points at another output only when its resolved path is that
+  output's path. Its `#fragment` is checked against the headings in that output's
+  compiled text, before or after the output is written, from publish-only output
+  as well. Any other `.md` target has to exist, and its fragment has to match one
+  of its headings. The monolith counts as an output only when at least one guide
+  is stitched into it, so a link to a monolith that is never written reports
+  `missing publish path`, even when an earlier run left the file on disk.
+
+  A check that passed before can now fail. A link to a sibling package README
+  with a stale fragment is the likely case. Some failures are in links that
+  compile writes itself, so editing shards won't clear them. A cross-output link
+  to a `FIND-*` shard or to a heading with a `{#id}` marker is one. Compile
+  rewrites it to `other.md#find-004` or `other.md#id`, but the heading in that
+  output gets a slug from its text, such as `find-004--example-finding`.
+
+  The `knownOutputBasenames` option is deprecated and ignored.
+  `lintCompiledLinks` and `validateCompiledLinkTarget` take `knownOutputPaths`,
+  the absolute paths of the run's outputs, instead. They also take
+  `unwrittenOutputPaths` for configured outputs that the run doesn't write.
+
+- 9bc05cd: The coverage section of the README now says the scan does not follow symbolic links, so a `standaloneGuides` entry whose path is a symlink is reported as missing. Register the file the link points to.
+- 9bc05cd: The guide tier glossary entry in both READMEs links only to Default guide layout in the MDCP 1.0 spec, which now holds the placement test as well as the four tiers.
+- 9bc05cd: The core README's cross-guide section now states how `compile.crossGuideLinks.ignoreGuides` and same compiled output preference interact. Compile behaves as before.
+
+  A link to a shard that the compiling guide stitches takes the in-document anchor when the shard's owner in the guide link index is non-canonical, even when the compiling guide lists that owner in `ignoreGuides`. A non-canonical owner is only the first guide in `compileOrder` whose walk reached the shard. A `../` link to a shard whose canonical owner is listed keeps its shard path. A `./` or bare link to such a shard still takes the in-document anchor through the intra-guide pass when the compiling guide stitches the shard. The matching rules and the exclusions list read as if every link to a listed guide kept its shard path, and now link the precedence rule. The `ignoreGuides` summaries in the core README's API config section, compile hooks overview and glossary entry, and in the CLI README's consumer migration steps, read the same way. Each now points at the `compile.crossGuideLinks.ignoreGuides` section, which links both rules. The type docs of `AssembleGuideOptions.ignoreGuides` and `CrossGuideLinkRewriteOptions.ignoreGuides` now name the same exceptions.
+
+- 9bc05cd: `resolveGuideDir` and `guideScanDirs` return absolute paths when `docsRoot` is relative. With a relative `--docs-root` such as `docs`, a guide with no `guides[].path` used to reach markdownlint as `docs/<guide>` when `lint.markdownlint.shardsGlobs` is unset. markdownlint-cli2 runs from the docs root, where `docs/<guide>` doesn't exist, so `mdcp lint` and `mdcp check` linted none of those guides' shards and passed. Those shards are linted now, so expect new markdownlint findings from them.
+
+  Without `shardsGlobs`, `shardLintPaths` returns a glob for the `.md` and `.markdown` files in each guide directory, such as `<guide>/**/*.{md,markdown}`. It used to return the bare directory, which markdownlint-cli2 expands to every file in it, so an image or text file beside the shards was linted as Markdown. API callers that read the result as a list of directories should call `guideScanDirs` instead.
+
+  `shardLintPaths` returns paths for markdownlint-cli2 running with the docs root as its cwd, as `mdcp lint` and `mdcp check` run it. API callers must run markdownlint-cli2 from the docs root with them. From any other cwd, markdownlint-cli2 resolves the relative paths against that directory, so it misses the guide shards and lints the wrong files or none. A guide under the docs root gets a glob relative to the docs root, which keeps the checkout path out of it. An absolute `--docs-root` used to put the checkout path into each guide directory, and each `shardsGlobs` entry was resolved to an absolute path, so under a directory whose name has glob characters, such as `repo (copy)` or `proj {a,b}`, the shard pass linted 0 files and passed.
+
+  A guide outside the docs root, such as one at `guides[].path: "../pkg/guide"`, gets an absolute glob, so the shard preset's `!**/index.md` still reaches it next to in-root guides, and a symlinked docs root still finds it. Glob characters and quotes in each path that goes into a glob are escaped.
+
+  `shardsGlobs` entries go to markdownlint-cli2 as written, and it resolves them against its cwd, the docs root. A negated entry such as `!legacy/**` excludes files now, where it used to become `<docsRoot>/!legacy/**` and exclude nothing. An entry that starts with `../` gets the escaped absolute directory those segments name in their place, followed by `/**` for a directory. The shard preset's exclusions then apply to it too. A negated `../` entry also gets `**` in front of that path, which lets it exclude files. A `.` entry becomes `**`, so markdownlint-cli2 still lints every file under the docs root.
+
+  The same relative paths kept `mdcp check` from reporting an orphan shard at the top of a guide when the manifest linked a nested shard with the same file name, such as `sub/a.md` next to an unlisted `a.md`. That orphan is reported now, and `checkOrphansForGuides` resolves a relative `dir` against the process cwd. A shard that a guide reaches in a sibling directory whose name starts with the guide's name, such as `guide-shared/x.md` from `guide`, no longer counts as listed in a `guide-shared` guide, so an orphan there is reported as it is for a sibling with any other name. The shard counts under its file name in `guide` instead, as a shard in a sibling with any other name does, so an unlisted `x.md` at the top of `guide` passes.
+
+  The compiled markdownlint preset lists `_build/guides.md` as well as `guides.md`, so it lints a monolith named `guides.md` under the default `outputDir`. It used to list only `guides.md`, which matches only with `outputDir: "."`, so under the default layout the compiled pass linted 0 files and passed. Expect new findings from the compiled pass under that layout, from the rules both presets leave on, such as `MD022`, and from `MD052` and `MD053`, which check reference links and their definitions. A `guides.md` left at the docs root by an earlier `outputDir: "."` layout is linted too, so delete it. With no monolith, or a monolith with another name or path, copy the preset and point its `globs` at your compiled outputs.
+
+  The compiled preset now keeps every rule setting of the shard preset, so a rule the shard pass turns off, such as `MD024` or `MD033`, no longer fails the compiled pass. With `outputDir: "."`, the compiled pass reports fewer findings than before, except from `MD003`, which now requires ATX headings as the shard preset does, so a monolith with setext or closed ATX headings fails it.
+
+  The shard preset excludes `_build/**` as well as `guides.md`. A guide at `guides[].path: "."` gets `**/*.{md,markdown}`, and a `.` entry in `shardsGlobs` becomes `**`, so the shard pass also linted the compiled outputs under the default `outputDir`. An absolute `--docs-root` did that before. A relative one linted 0 files, so it shows up there only now. Any other compiled output, such as one under another `outputDir`, needs its own exclusion in a copy of the preset.
+
+  The CLI README's in-scope guide fileset section says how both markdownlint passes resolve their paths.
+
+- 9bc05cd: Assemble a guide in the monolith once for its compiled guide and once for the monolith
+
+  A guide without `compile.outputFile` is written to its own compiled guide and,
+  when the config sets top-level `outputFile`, into the monolith too. Compile
+  assembled it once, against the monolith, and wrote that text to both files.
+  Its compiled guide then had paths and source tags relative to the monolith,
+  so they broke whenever the monolith was in another directory. A link
+  between two guides in the monolith compiled to a `#slug` that the linking
+  guide's compiled guide doesn't have, so compile replaced it with a BROKEN LINK
+  marker in both files and exited 1. In the monolith itself, a section link could
+  point at an earlier guide's heading with the same title, and `mdcp check`
+  passed.
+
+  Compile now assembles such a guide twice. Its compiled guide rebases paths and
+  source tags relative to itself, and it links another guide in the monolith
+  through that guide's compiled guide, such as `b.md#topic`, when that guide
+  stitches the target shard. Otherwise it links the monolith. Its copy in the
+  monolith rebases relative to the monolith and links the monolith's own
+  headings. One slugger numbers every guide in the monolith, in `compileOrder`,
+  so a section link there takes `#setup-1` when an earlier guide also has a Setup
+  heading. A publish output that links a guide in the monolith takes the
+  monolith's slug. An explicit `#fragment` is never renumbered, so a hand-written
+  `#setup` can still point at an earlier guide's heading in the monolith.
+
+  Compile marks broken links in a guide's copy in the monolith after every copy is
+  assembled, against the headings of the whole monolith. So a link such as
+  `../a/setup.md#details` to a sub-heading of another guide stays a link there.
+  `lintLinks` reports a BROKEN LINK marker that appears only in the monolith. It
+  matches each marker in a guide's copy in the monolith to the same marker in
+  that guide's compiled guide, so a marker in both files is reported once, even
+  when the rest of its line differs. A stale `#fragment` on a link to another
+  guide in the monolith is reported once for each file: as a dead anchor in the
+  linking guide's compiled guide and as a marker in the monolith.
+  `LocaleBrokenLinkCopy` gains the optional `findMarkers` method, which returns
+  each marker on a line, and `createLocalePack` provides it.
+
+  `markBrokenLinks` now replaces each broken link where it stands, and its marker
+  gives the target that link was written with. It used to pair a broken link
+  with the first unused shard link of the same label among the broken ones, and
+  to replace the first text that matched the link, which could be in an earlier
+  code span. So a marker could name another link's target, or replace the text in
+  the code span and leave the broken link as it was. It now pairs the k-th link
+  with a label with the k-th provenance entry with that label. A link then gets
+  the same marker in a compiled guide and in the monolith. `extractLinks` gives
+  each link's `offset` in the markdown.
+
+  `CompileGuideResult.text` is now each guide's own compiled guide. For a guide
+  in the monolith it used to hold the monolith copy, so code that read it as the
+  monolith copy should read the new optional `monolithText` instead.
+  `compileGuidesFromResults` and `compileGuides` stitch the monolith from
+  `monolithText`. `GuideLinkEntry` gains the optional `guideFile` and
+  `monolithSlug` fields. Both are set only for a shard whose owner is in the
+  monolith: `guideFile` only when the owner stitches the shard, and
+  `monolithSlug` only when some copy in the monolith stitches it.
+  `assembleGuide` and `rewriteCrossGuideFileLinks` take a `monolithFile` option.
+
+  `mdcp compile` and `mdcp check` change with it. A link between two guides in the
+  monolith no longer fails them, and a link that compile marks only in the
+  monolith now does.
+
+  Compile output changes for configs with a monolith. It can also change in a
+  config without one, for a broken link that shares its label with an earlier
+  link or whose text also appears in an earlier code span. A guide in the
+  monolith takes about twice as long to assemble. Its compile hooks, a
+  registered custom hook included, run twice for each shard, with fresh
+  `hookState` for each assembly.
+
+- 9bc05cd: README corrections from a doc review: the CLI README documents the `--backup` options, `refs-list --format`, the `lint.codeExtensions`, `lint.dataExtensions` and `lint.paths.*` config keys, and the registered `refs-gen`/`refs-check`/`refs-list` names. Code examples that showed empty code where a heading id was stripped now render. The core README lists `computeCoverage` and `probeDocumentPaths`.
+- 9bc05cd: Keep `{#id}` examples inside code when compile strips anchor markers
+
+  `stripExplicitAnchorMarkers`, which backs the `stripAnchors` hook and the post-stitch strip, removed every `{#id}` marker in the document. When a guide quoted the syntax in an inline code span, the span compiled to an empty pair of backticks, and a fenced example lost its ids too. The strip now keeps a marker inside an inline code span or a fenced code block.
+
+  Heading lines keep the old rule. A line that parses as an ATX heading at column 0 loses every marker, even inside a fence or a code span. mdcp computes heading slugs from titles with every marker removed. Stripping the whole line keeps the compiled heading on the slug that refs and rewritten links use, however a fence is read. To show the syntax on a heading inside a fenced example, start the heading line one to three spaces in. mdcp doesn't read that line as a heading, so it keeps its marker.
+
+  Fences are found line by line. A fence counts when it starts at most three columns in, measured from the text of the innermost list item around it, or right after a list marker, and the scan doesn't read blockquotes or HTML. It misses a fence behind `>`. A marker in such a fence still goes unless a code span on its line holds it. Code spans are paired within each line, so a span that wraps onto the line, or a backslash-escaped backtick before it, can shift the pairing. A shifted pairing can drop a quoted marker or keep a prose one.
+
+  The strip itself works line by line too. It trims whitespace only on the marker's own line, so a marker that opens a paragraph leaves the blank line above it in place. When a marker opens a line's text, the whitespace after it goes instead, and the line keeps its indent. The strip still drops a line that contains only a marker. With the markers on separate lines, the time grows linearly with the document.
+
+  `mdcp compile` output changes the same way. The CLI and core READMEs quote the syntax again, and the core README gives `stripAnchors` its own section with these rules.
+
+- 9bc05cd: Honor `vale.strictMinAlertLevel` in `mdcp check` and stop hiding warnings in `mdcp prose`
+
+  `mdcp check` always ran Vale with `--minAlertLevel=error` and ignored `vale.strictMinAlertLevel`. It now passes that setting, which still defaults to `error`, and so does `mdcp prose --strict`. A plain `mdcp prose` passed `vale.strictMinAlertLevel` (default `error`) whenever the config had a `vale` block, so by default it hid every warning and suggestion. It now passes no level, and the `MinAlertLevel` in `.vale.ini` decides what it shows. The setting now applies only to strict runs. If you set it below `error` to see more in a plain `mdcp prose`, set `MinAlertLevel` in `.vale.ini` instead.
+
+  Exit codes are unchanged. Of Vale's alerts, only error-level ones make it exit non-zero. A lower level adds alerts to the output and doesn't fail either command.
+
+  The README's Vale section also names the new `MDCP.DatedClaim` rule of the `MDCP` style.
+
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+- Updated dependencies [9bc05cd]
+  - @bwilliamson/mdcp-core@0.9.0
+
 ## 0.7.6
 
 ### Patch Changes
