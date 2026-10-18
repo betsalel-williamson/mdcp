@@ -4,6 +4,8 @@
 
 You are free to continue using MDCP: the `mdcp` skill, the `@bwilliamson/mdcp-*` packages and this repository stay available as they are. Please consider migrating to Merlon Docs, which is the 1.0.0 release of this project, with the improvements made since the last MDCP release.
 
+**MDCP will not receive security fixes.** The upgrade path is to migrate to Merlon Docs, which is backwards compatible with MDCP repositories.
+
 To install the new skill:
 
 ```bash

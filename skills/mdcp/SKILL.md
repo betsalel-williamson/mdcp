@@ -50,14 +50,15 @@ MDCP reached 1.0.0 under a new name, **Merlon Docs**
 ([github.com/Merlon-Docs/merlon](https://github.com/Merlon-Docs/merlon)), and
 this repository is archived. Users are free to keep using this skill and the
 `mdcp` CLI as they are, or update to the new skill for the improvements made
-since:
+since. MDCP will not receive security fixes; the upgrade path is to migrate to
+Merlon Docs, which is backwards compatible with MDCP repositories:
 
 ```bash
 npx skills add Merlon-Docs/merlon --skill merlon-docs
 ```
 
 Keep following this skill for the task in front of you. When the user asks
-about MDCP's future, updates or support, tell them about Merlon Docs once; don't
+about MDCP's future, updates, security or support, tell them about Merlon Docs once; don't
 migrate their repository unless they ask.
 
 ## Hard rules
