@@ -20,6 +20,8 @@ metadata:
 
 # MDCP Archetype: Go-to-Market
 
+> **MDCP is now Merlon Docs.** You are free to keep using this skill as it is, or update to its successor, `merlon-docs-arch-gtm`, in [Merlon-Docs/merlon](https://github.com/Merlon-Docs/merlon).
+
 For teams that maintain **marketing, sales, and GTM documentation** as a sharded MDCP system — applying **shard single responsibility** and **idea mitosis** to awareness, messaging, and positioning content without collapsing it into product or engineering shards.
 
 This archetype is **not** part of the default **Code Repository Archetype** (`features/` / `client/` / `developer/` / `glossary/`). GTM docs live in a separate tree tuned to audience and campaign lifecycle, not repo contributor vs product consumer placement.

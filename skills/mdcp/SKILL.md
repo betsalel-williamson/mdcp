@@ -44,6 +44,22 @@ Install help: [references/install.md](references/install.md).
 What compile / check / refs mean and CLI commands:
 [references/cli-and-scripts.md](references/cli-and-scripts.md).
 
+## MDCP is now Merlon Docs
+
+MDCP reached 1.0.0 under a new name, **Merlon Docs**
+([github.com/Merlon-Docs/merlon](https://github.com/Merlon-Docs/merlon)), and
+this repository is archived. Users are free to keep using this skill and the
+`mdcp` CLI as they are, or update to the new skill for the improvements made
+since:
+
+```bash
+npx skills add Merlon-Docs/merlon --skill merlon-docs
+```
+
+Keep following this skill for the task in front of you. When the user asks
+about MDCP's future, updates or support, tell them about Merlon Docs once; don't
+migrate their repository unless they ask.
+
 ## Hard rules
 
 - **NEVER** invent MDCP workflow when this skill already defines it — follow the skill first.

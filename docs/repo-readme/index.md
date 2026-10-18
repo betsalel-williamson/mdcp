@@ -1,6 +1,7 @@
 # MDCP — documentation system Agent Skill
 
 - [MDCP — documentation system Agent Skill](#table-of-contents)
+  - [MDCP is now Merlon Docs](./now-merlon-docs.md)
   - [What this tool is](./what-this-tool-is.md)
   - [Get started](./get-started.md)
   - [Why use MDCP?](./about.md)

@@ -1,6 +1,6 @@
 # Documentation site
 
-The public docs site at <https://betsalel-williamson.github.io/mdcp/> is an [Astro Starlight](https://starlight.astro.build/) build in [`packages/mdcp-site/`](../../packages/mdcp-site/). It is a private workspace package with no version. Changesets ignores it, and release tooling never tags or publishes it.
+The former public docs site is an [Astro Starlight](https://starlight.astro.build/) build in [`packages/mdcp-site/`](../../packages/mdcp-site/). It is a private workspace package with no version. Changesets ignores it, and release tooling never tags or publishes it.
 
 ## Content comes from shards
 
@@ -41,7 +41,7 @@ Both commands run `pnpm build` and `pnpm docs:compile:repo` first, because the s
 
 ## Deployment
 
-[`.github/workflows/pages.yml`](../../.github/workflows/pages.yml) builds the site on pull requests that touch `docs/` or the site package, and deploys it to GitHub Pages from `develop`. Landings push `develop` with the workflow's own token, which starts no other workflows, so the [land workflow](../../.github/workflows/land-develop.yml) dispatches the deploy after each landing. The repository's Pages source must be set to **GitHub Actions**, and the `github-pages` environment must allow deployments from `develop`.
+MDCP is archived, so GitHub Pages no longer serves this build. [`.github/workflows/pages.yml`](../../.github/workflows/pages.yml) runs only when dispatched by hand, and it deploys the static page in [`packages/mdcp-site/redirect/`](../../packages/mdcp-site/redirect/), which says MDCP is now Merlon Docs and sends visitors to <https://merlon-docs.github.io/merlon/>. The same page is the site's `404.html`, so every old deep link reaches it. `pnpm run site:build` still builds the Starlight site locally.
 
 ## Coverage scan
 
