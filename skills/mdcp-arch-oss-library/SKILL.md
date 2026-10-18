@@ -21,6 +21,8 @@ metadata:
 
 # MDCP Archetype: OSS Library
 
+> **MDCP is now Merlon Docs.** You are free to keep using this skill as it is, or update to its successor, `merlon-docs-arch-oss-library`, in [Merlon-Docs/merlon](https://github.com/Merlon-Docs/merlon).
+
 For publishable packages (npm, PyPI, crates.io) where **API truth lives in source** and a sharded documentation system holds intent, stability guarantees, and migration notes without duplicating the API surface.
 
 ## Layout

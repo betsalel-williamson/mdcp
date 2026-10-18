@@ -2,14 +2,15 @@
 
 ## Supported versions
 
-| Version | Supported |
-| ------- | --------- |
-| 0.5.x   | Yes       |
-| < 0.5   | No        |
+**MDCP is archived and no longer receives security fixes.** MDCP is now [Merlon Docs](https://github.com/Merlon-Docs/merlon), and the upgrade path for any MDCP version is to migrate to Merlon Docs, which is backwards compatible with MDCP repositories.
 
-Update this table when a new minor line is published. Versioning policy: [docs/developer/versioning-and-releases.md](docs/developer/versioning-and-releases.md).
+| Version  | Supported                  |
+| -------- | -------------------------- |
+| All MDCP | No: migrate to Merlon Docs |
 
-## Reporting a vulnerability
+Report vulnerabilities in Merlon Docs through its [security policy](https://github.com/Merlon-Docs/merlon/security/policy).
+
+## Reporting a vulnerability (historical)
 
 Please report security issues privately — do not open a public GitHub issue for undisclosed vulnerabilities.
 

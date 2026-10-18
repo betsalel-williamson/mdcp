@@ -4,7 +4,7 @@
   "groupings": [
     {
       "title": "Documentation system",
-      "description": "MDCP: one skill that picks its workflow for bootstrap, docs-only, design, feature, UX, and doc review.",
+      "description": "Archived: MDCP is now Merlon Docs. Install Merlon-Docs/merlon --skill merlon-docs for updates and security fixes.",
       "skills": ["mdcp"]
     }
   ]

@@ -23,6 +23,8 @@ metadata:
 
 # MDCP Archetype: Research Project
 
+> **MDCP is now Merlon Docs.** You are free to keep using this skill as it is, or update to its successor, `merlon-docs-arch-research`, in [Merlon-Docs/merlon](https://github.com/Merlon-Docs/merlon).
+
 For work that produces **evidence** rather than a shipping surface: field reports, corpus measurements, benchmarks, surveys, and experiments. Use it standalone for a research repository, or as an overlay that adds a research tier to a project that already has product documentation.
 
 ## The problem this archetype solves

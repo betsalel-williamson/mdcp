@@ -22,6 +22,8 @@ metadata:
 
 # MDCP Archetype: Product Docs Site
 
+> **MDCP is now Merlon Docs.** You are free to keep using this skill as it is, or update to its successor, `merlon-docs-arch-product-docs-site`, in [Merlon-Docs/merlon](https://github.com/Merlon-Docs/merlon).
+
 For products that publish human-facing docs via **MkDocs, Docusaurus, VitePress**, or similar while a sharded MDCP documentation system remains the authoring source of truth. Site navigation can then grow without turning the authoring tree into one large file.
 
 ## Layout
