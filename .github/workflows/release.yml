@@ -1,9 +1,9 @@
 name: Release
 
+# MDCP is archived and its npm packages are deprecated in favor of Merlon Docs,
+# so a push to main no longer releases. Dispatch this workflow by hand if a
+# release is ever needed again.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 concurrency:

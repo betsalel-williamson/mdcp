@@ -966,6 +966,8 @@ mdcp uses [Semantic Versioning 2.0.0](https://semver.org/) and [Changesets](http
 
 Independent versioning is configured in [`.changeset/config.json`](.changeset/config.json) (`fixed` is empty). Dependents of a bumped workspace package still get a **patch** internal dependency update (`updateInternalDependencies`).
 
+MDCP is archived: its npm packages are deprecated in favor of [Merlon Docs](https://github.com/Merlon-Docs/merlon), the `develop` branch is retired, and the [release workflow](.github/workflows/release.yml) runs only when dispatched by hand. The rest of this page describes the process as it ran before the archive.
+
 ### Branches
 
 | Branch     | Role                                                                    | Who merges into it                                     |

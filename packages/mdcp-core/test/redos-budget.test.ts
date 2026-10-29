@@ -16,8 +16,8 @@ import '../src/compile/hooks/builtin.js';
 import { manySpaces, nestedOpenAnchors, timeMs, trailingSlashRun } from './helpers/redos-pumps.js';
 import { useTmpDir } from './helpers/tmp-dir.js';
 
-/** Tight budget: safe linear parsers finish well under this; polynomial paths blow it. */
-const BUDGET_MS = 50;
+/** Tight budget: safe linear parsers finish well under this; polynomial paths blow it. Scaled under coverage. */
+const BUDGET_MS = 50 * Number(process.env.MDCP_TIMING_SCALE ?? '1');
 const SPACE_N = 40_000;
 const ANCHOR_N = 25_000;
 const SLASH_N = 20_000;
